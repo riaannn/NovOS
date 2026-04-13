@@ -125,15 +125,15 @@ window.onbeforeunload = function(e) {
 
 const DEFAULT_SHORTCUTS = {
     web: [
-        {name: "GN Math", url: "https://blahaj.dedyn.io/gn.html", icon: "https://cdn.discordapp.com/avatars/1366573040846241894/b449678987d3a22819a5ba8a8a9cba1b.webp?size=80"},
-        {name: "AnuraOS", url: "https://anura.pro", icon: "https://i.imgur.com/6vvxLxR.jpeg"}
+        {name: "GN Math", url: "https://blahaj.dedyn.io/gn.html", icon: "https://cdn.discordapp.com/avatars/1366573040846241894/b449678987d3a22819a5ba8a8a9cba1b.webp?size=80", isDefault: true},
+        {name: "AnuraOS", url: "https://anura.pro", icon: "https://i.imgur.com/6vvxLxR.jpeg", isDefault: true}
     ],
     games: [
-        {name: "Angry Birds Epic", url: "https://riaannn.github.io/Angry-Birds-Epic/", icon: "https://i.imgur.com/ql7Gz9e.jpeg"},
-        {name: "Bad Piggies", url: "https://riaannn.github.io/Bad-Piggies/", icon: "https://i.imgur.com/YnB7K1p.png"},
+        {name: "Angry Birds Epic", url: "https://riaannn.github.io/Angry-Birds-Epic/", icon: "https://i.imgur.com/ql7Gz9e.jpeg", isDefault: true},
+        {name: "Bad Piggies", url: "https://riaannn.github.io/Bad-Piggies/", icon: "https://i.imgur.com/YnB7K1p.png", isDefault: true},
     ],
     secrets: [
-        {name: "Yandere Simulator", url: "https://riaannn.github.io/Yandere-Simulator/", icon: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/8939caba-2c60-4aeb-bb20-d61b0458b178/daamgvz-d0dd1426-a94f-4a2e-97e2-c54cd9aa51cc.png"}
+        {name: "Yandere Simulator", url: "https://riaannn.github.io/Yandere-Simulator/", icon: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/8939caba-2c60-4aeb-bb20-d61b0458b178/daamgvz-d0dd1426-a94f-4a2e-97e2-c54cd9aa51cc.png", isDefault: true}
     ]
 };
 
@@ -144,9 +144,18 @@ const DATA = {
         {id:"drive", name:"Drive", title:"My Drive - Google Drive", icon:"https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png"},
         {id:"canvas", name:"Canvas", title:"Dashboard", icon:"https://wdmcs.instructure.com/favicon.ico"}
     ],
-    shortcuts: (() => JSON.parse(localStorage.getItem("userShortcuts")) || DEFAULT_SHORTCUTS)(),
+    // FIXED: Merge hardcoded defaults with user-added custom ones
+    shortcuts: (() => {
+        const userCustom = JSON.parse(localStorage.getItem("userCustomShortcuts")) || { web: [], games: [], secrets: [] };
+        return {
+            web: [...DEFAULT_SHORTCUTS.web, ...userCustom.web],
+            games: [...DEFAULT_SHORTCUTS.games, ...userCustom.games],
+            secrets: [...DEFAULT_SHORTCUTS.secrets, ...userCustom.secrets]
+        };
+    })(),
     editingIndex: null,
-    editingCategory: null
+    editingCategory: null,
+    isEditingDefault: false
 };
 
 const Launcher = {
@@ -157,7 +166,6 @@ const Launcher = {
         const win = window.open("about:blank", "_blank");
         if (!win) return alert("Enable popups!");
 
-        // The inner script now reloads only the iframe by targeting its src
         win.document.write(`
             <!DOCTYPE html>
             <html>
@@ -237,40 +245,61 @@ const UI = {
     openAddModal() {
         DATA.editingIndex = null;
         DATA.editingCategory = DATA.currentTab;
+        DATA.isEditingDefault = false;
         document.getElementById("modalTitle").innerText = "Add Shortcut";
         document.getElementById("editName").value = document.getElementById("editUrl").value = document.getElementById("editIcon").value = "";
         document.getElementById("deleteBtn").style.display = "none";
         this.toggleModal("editModal", true);
     },
     openEditModal(category, index) {
+        const item = DATA.shortcuts[category][index];
         DATA.editingIndex = index;
         DATA.editingCategory = category;
-        const item = DATA.shortcuts[category][index];
+        DATA.isEditingDefault = !!item.isDefault;
+
         document.getElementById("modalTitle").innerText = "Edit Shortcut";
         document.getElementById("editName").value = item.name;
         document.getElementById("editUrl").value = item.url;
         document.getElementById("editIcon").value = item.icon;
-        document.getElementById("deleteBtn").style.display = "block";
+        
+        // Hide delete for system defaults
+        document.getElementById("deleteBtn").style.display = DATA.isEditingDefault ? "none" : "block";
         this.toggleModal("editModal", true);
     },
     saveShortcut() {
-        const item = { name: document.getElementById("editName").value, url: document.getElementById("editUrl").value, icon: document.getElementById("editIcon").value };
-        if (DATA.editingIndex === null) DATA.shortcuts[DATA.editingCategory].push(item);
-        else DATA.shortcuts[DATA.editingCategory][DATA.editingIndex] = item;
+        const item = { 
+            name: document.getElementById("editName").value, 
+            url: document.getElementById("editUrl").value, 
+            icon: document.getElementById("editIcon").value 
+        };
+        
+        if (DATA.editingIndex === null) {
+            DATA.shortcuts[DATA.editingCategory].push(item);
+        } else {
+            // Keep the isDefault flag if we are editing a default one
+            if (DATA.isEditingDefault) item.isDefault = true;
+            DATA.shortcuts[DATA.editingCategory][DATA.editingIndex] = item;
+        }
         this.sync();
     },
     deleteShortcut() {
         DATA.shortcuts[DATA.editingCategory].splice(DATA.editingIndex, 1);
         this.sync();
     },
+    // FIXED: Only save non-default shortcuts to localStorage
     sync() {
-        localStorage.setItem("userShortcuts", JSON.stringify(DATA.shortcuts));
+        const customOnly = {
+            web: DATA.shortcuts.web.filter(i => !i.isDefault),
+            games: DATA.shortcuts.games.filter(i => !i.isDefault),
+            secrets: DATA.shortcuts.secrets.filter(i => !i.isDefault)
+        };
+        localStorage.setItem("userCustomShortcuts", JSON.stringify(customOnly));
         this.renderGrid();
         this.toggleModal("editModal", false);
     },
     forceReset() {
-        if(confirm("Restore defaults?")) {
-            localStorage.removeItem("userShortcuts");
+        if(confirm("Restore defaults and wipe custom shortcuts?")) {
+            localStorage.removeItem("userCustomShortcuts");
             location.reload();
         }
     },
