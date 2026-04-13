@@ -21,62 +21,39 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-gradient);
             color: var(--text-main);
-            height: 100vh;
-            width: 100vw;
-            line-height: 1.6;
-            overflow: hidden; 
+            height: 100vh; width: 100vw;
+            line-height: 1.6; overflow: hidden; 
         }
 
-        .container { 
-            max-width: 1100px; 
-            margin: 0 auto; 
-            padding: 40px 20px; 
-            height: 100%; 
-            overflow-y: auto; 
-            overflow-x: hidden;
-        }
-        
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; height: 100%; overflow-y: auto; }
         header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
         .logo { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
         .logo-box { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
 
-        .search-container { margin-bottom: 40px; display: flex; justify-content: center; }
+        .search-container { margin-bottom: 40px; display: flex; justify-content: center; gap: 10px; }
         .search-input {
             width: 100%; max-width: 500px; padding: 14px 24px; border-radius: 18px;
             background: var(--glass); border: 1px solid var(--border); color: white;
             font-size: 1rem; outline: none; transition: var(--transition);
         }
 
-        .action-area { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-bottom: 60px; }
-        
-        .utopia-launch-btn {
-            display: flex; align-items: center; gap: 12px; background: var(--glass);
-            border: 1px dashed var(--border); padding: 14px 32px; border-radius: 20px;
-            cursor: pointer; transition: var(--transition); backdrop-filter: blur(10px);
-            text-decoration: none; color: white;
-        }
-        .utopia-launch-btn:hover { border-color: var(--accent); transform: translateY(-3px); background: rgba(99, 102, 241, 0.1); }
-
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; padding-bottom: 40px; }
         .card { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 25px; text-align: center; transition: var(--transition); position: relative; }
-        .card.hidden { display: none; }
         .card:hover { border-color: var(--accent); transform: translateY(-8px); background: rgba(255,255,255,0.06); }
         .card-icon { width: 80px; height: 80px; border-radius: 22px; margin-bottom: 20px; object-fit: cover; cursor: pointer; }
 
         .btn-group { display: flex; gap: 8px; margin-top: 15px; }
         .btn { padding: 10px 18px; border-radius: 12px; cursor: pointer; font-weight: 600; border: 1px solid var(--border); background: var(--glass); color: var(--text-main); transition: var(--transition); font-size: 12px; flex: 1; outline: none; }
         .btn-primary { background: var(--accent); border: none; color: white; }
+        .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); }
         
         .tabs { display: flex; justify-content: center; gap: 12px; margin-bottom: 40px; }
-        .tab.active { background: var(--accent); color: white; border-color: transparent; }
+        .tab.active { background: var(--accent); color: white; }
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 10000; }
         .modal.active { display: flex; }
         .modal-content { background: #0f172a; padding: 40px; border-radius: 32px; width: 90%; max-width: 480px; border: 1px solid var(--border); }
-        
-        .edit-field { margin-bottom: 15px; text-align: left; }
-        .edit-label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; }
-        .edit-input { width: 100%; border-radius: 12px; padding: 10px 15px; background: var(--glass); border: 1px solid var(--border); color: white; }
+        .edit-input { width: 100%; border-radius: 12px; padding: 10px 15px; background: var(--glass); border: 1px solid var(--border); color: white; margin-bottom: 15px;}
     </style>
 </head>
 <body>
@@ -91,23 +68,13 @@
     </header>
 
     <div class="search-container">
-        <input type="text" class="search-input" id="searchBar" placeholder="Search saved shortcuts..." oninput="UI.filterGrid()">
-    </div>
-
-    <div class="action-area">
-        <div class="utopia-launch-btn" onclick="Launcher.promptOpen()">
-            <img src="https://www.gstatic.com/images/icons/material/system/2x/language_white_24dp.png" style="width:24px;height:24px;opacity:0.8;">
-            <div class="utopia-text-group">
-                <span style="display:block; font-size:0.65rem; color:var(--text-muted); text-transform:uppercase;">Manual Access</span>
-                <span style="display:block; font-weight:800; font-size:1.1rem;">OPEN DIRECT URL</span>
-            </div>
-        </div>
+        <input type="text" class="search-input" id="searchBar" placeholder="Search or Enter URL..." oninput="UI.renderGrid()">
+        <button class="btn btn-primary" style="flex: 0 1 auto; width: 120px;" onclick="UI.openAddModal()">+ ADD NEW</button>
     </div>
 
     <div class="tabs" id="tabBar">
         <button class="btn tab active" onclick="UI.switchTab('web')">WEB</button>
         <button class="btn tab" onclick="UI.switchTab('games')">GAMES</button>
-        <button class="btn tab" onclick="UI.switchTab('apps')">APPS</button>
     </div>
 
     <div class="grid" id="mainGrid"></div>
@@ -115,21 +82,13 @@
 
 <div class="modal" id="editModal">
     <div class="modal-content">
-        <h2 style="margin-bottom: 20px;">Edit Shortcut</h2>
-        <div class="edit-field">
-            <span class="edit-label">Display Name</span>
-            <input type="text" id="editName" class="edit-input">
-        </div>
-        <div class="edit-field">
-            <span class="edit-label">URL</span>
-            <input type="text" id="editUrl" class="edit-input">
-        </div>
-        <div class="edit-field">
-            <span class="edit-label">Icon URL</span>
-            <input type="text" id="editIcon" class="edit-input">
-        </div>
+        <h2 id="modalTitle" style="margin-bottom: 20px;">Edit Shortcut</h2>
+        <input type="text" id="editName" class="edit-input" placeholder="Name">
+        <input type="text" id="editUrl" class="edit-input" placeholder="URL">
+        <input type="text" id="editIcon" class="edit-input" placeholder="Icon URL">
         <div class="btn-group">
-            <button class="btn btn-primary" onclick="UI.saveEdit()">SAVE CHANGES</button>
+            <button class="btn btn-primary" onclick="UI.saveShortcut()">SAVE</button>
+            <button id="deleteBtn" class="btn btn-danger" onclick="UI.deleteShortcut()">DELETE</button>
             <button class="btn" onclick="UI.toggleModal('editModal', false)">CANCEL</button>
         </div>
     </div>
@@ -137,32 +96,10 @@
 
 <div class="modal" id="altLinksModal">
     <div class="modal-content">
-        <h2 style="margin-bottom: 10px;">Alternate Links</h2>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Mirror list for when main links are blocked.</p>
-        <textarea style="width:100%; height:150px; background:rgba(0,0,0,0.2); color:var(--accent); border-radius:12px; padding:15px; border:1px solid var(--border); font-family:monospace;" readonly>
-MAIN: truffled.lol
-
-MIRROR 1: computerlab.strangled.net
-
-
-
-MIRROR 2: https://calculatorsolver-truffled.azure-cost-estimator.se/
-
-
-
-MIRROR 3: https://algebra1topics.arionskyclub.com
-
-
-
-MIRROR 4: https://supermath.salavat.ru
-
--------------------------------------
-
-MAIN: (ANGRY BIRDS EPIC) https://truffled.lol/games/Epic/index.html
-
-
-
-MIRROR 1: https://riaannn.github.io/Epic/
+        <h2>Alternate Links</h2>
+        <textarea style="width:100%; height:150px; background:rgba(0,0,0,0.2); color:var(--accent); border-radius:12px; padding:15px; border:1px solid var(--border); margin-top:15px;" readonly>
+Truffled: computerlab.strangled.net
+Granny: https://riaannn.github.io/Granny/
         </textarea>
         <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="UI.toggleModal('altLinksModal', false)">CLOSE</button>
     </div>
@@ -172,28 +109,31 @@ MIRROR 1: https://riaannn.github.io/Epic/
     <div class="modal-content">
         <h2 style="margin-bottom: 24px; text-align: center;">Tab Disguise</h2>
         <div id="presetGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;"></div>
-        <button class="btn btn-primary" style="width: 100%; margin-top: 32px;" onclick="UI.toggleModal('settingsModal', false)">SAVE CHANGES</button>
+        <button class="btn btn-danger" style="width: 100%; margin-top: 20px;" onclick="UI.forceReset()">FORCE RESET ALL DATA</button>
+        <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="UI.toggleModal('settingsModal', false)">SAVE</button>
     </div>
 </div>
 
 <script>
-// Prevent accidental tab closing logic
-window.addEventListener('beforeunload', function (e) {
-    e.preventDefault();
-    e.returnValue = '';
-});
+window.addEventListener('mousedown', () => window.interacted = true, {once: true});
+window.onbeforeunload = function(e) {
+    if (window.interacted) {
+        e.preventDefault();
+        return (e.returnValue = "Sure you want to leave?");
+    }
+};
 
 const DEFAULT_SHORTCUTS = {
     web: [
-        {name: "Truffled", url: "https://computerlab.strangled.net/", icon: "https://i.imgur.com/Avqlk5Q.jpeg"},
+        {name: "GN Math", url: "https://blahaj.dedyn.io/gn.html", icon: "https://cdn.discordapp.com/avatars/1366573040846241894/b449678987d3a22819a5ba8a8a9cba1b.webp?size=80"},
         {name: "AnuraOS", url: "https://anura.pro", icon: "https://i.imgur.com/6vvxLxR.jpeg"}
     ],
     games: [
-        {name: "GN Math", url: "https://blahaj.dedyn.io/gn.html", icon: "https://cdn.discordapp.com/avatars/1366573040846241894/b449678987d3a22819a5ba8a8a9cba1b.webp?size=80"},
-        {name: "Angry Birds Epic", url: "https://riaannn.github.io/Epic/", icon: "https://i.imgur.com/ql7Gz9e.jpeg"}
+        {name: "Angry Birds Epic", url: "https://riaannn.github.io/Angry-Birds-Epic/", icon: "https://i.imgur.com/ql7Gz9e.jpeg"},
+        {name: "Bad Piggies", url: "https://riaannn.github.io/Bad-Piggies/", icon: "https://i.imgur.com/YnB7K1p.png"},
     ],
-    apps: [
-        {name: "GeforceNow", url: "https://universityeducation.camdvr.org/a/hvtrs8%2F-pna%7B.eedopcgnmw%2Ccmm-mcln%2F", icon: "https://i.imgur.com/T65qqQJ.png"}
+    secrets: [
+        {name: "Yandere Simulator", url: "https://riaannn.github.io/Yandere-Simulator/", icon: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/8939caba-2c60-4aeb-bb20-d61b0458b178/daamgvz-d0dd1426-a94f-4a2e-97e2-c54cd9aa51cc.png"}
     ]
 };
 
@@ -202,72 +142,51 @@ const DATA = {
     presets: [
         {id:"google", name:"Google", title:"Google", icon:"https://www.google.com/favicon.ico"},
         {id:"drive", name:"Drive", title:"My Drive - Google Drive", icon:"https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png"},
-        {id:"canvas", name:"Canvas", title:"Dashboard", icon:"https://wdmcs.instructure.com/favicon.ico"},
-        {id:"gmail", name:"Gmail", title:"Gmail", icon:"https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico"}
+        {id:"canvas", name:"Canvas", title:"Dashboard", icon:"https://wdmcs.instructure.com/favicon.ico"}
     ],
-    shortcuts: JSON.parse(localStorage.getItem("userShortcuts")) || DEFAULT_SHORTCUTS,
-    editingItem: { category: null, index: null }
+    shortcuts: (() => JSON.parse(localStorage.getItem("userShortcuts")) || DEFAULT_SHORTCUTS)(),
+    editingIndex: null,
+    editingCategory: null
 };
 
 const Launcher = {
     selectedPreset: JSON.parse(localStorage.getItem("preset")) || DATA.presets[1],
-
+    
     open(url) {
-        if (!url) return;
-        let finalUrl = this.formatUrl(url);
+        if (!url.startsWith('http')) url = 'https://' + url;
         const win = window.open("about:blank", "_blank");
-        if (!win) return alert("Pop-up blocked!");
+        if (!win) return alert("Enable popups!");
 
+        // The inner script now reloads only the iframe by targeting its src
         win.document.write(`
             <!DOCTYPE html>
-            <html style="margin:0;padding:0;width:100%;height:100%;overflow:hidden;">
+            <html>
             <head>
                 <title>${this.selectedPreset.title}</title>
                 <link rel="icon" href="${this.selectedPreset.icon}">
                 <style>
-                    body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
-                    iframe { border:none; width:100%; height:100%; display: block; }
-                    #refresh {
-                        position: fixed; bottom: 20px; right: 20px;
-                        width: 44px; height: 44px; border-radius: 50%;
-                        background: #6366f1; color: white; border: none; cursor: pointer;
-                        display: flex; align-items: center; justify-content: center;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000;
-                        transition: opacity 0.3s, transform 0.2s;
+                    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+                    iframe { border: none; width: 100%; height: 100%; }
+                    .ref {
+                        position: fixed; bottom: 25px; right: 25px; width: 50px; height: 50px;
+                        background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+                        cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 99999;
+                        transition: 0.3s; opacity: 0.4;
                     }
-                    #refresh:hover { transform: scale(1.1); }
-                    .hidden { opacity: 0 !important; pointer-events: none !important; }
+                    .ref:hover { opacity: 1; transform: scale(1.1) rotate(45deg); }
+                    .ref svg { fill: white; width: 24px; }
                 </style>
             </head>
             <body>
-                <button id="refresh" onclick="document.getElementById('content').src = document.getElementById('content').src">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-                </button>
-                <iframe id="content" src="${finalUrl}" allow="fullscreen; autoplay; clipboard-read; clipboard-write;"></iframe>
-                <script>
-                    window.onbeforeunload = function() { return "Leave site?"; };
-                    function updateBtn() {
-                        const isFull = window.innerHeight === window.screen.height || document.fullscreenElement;
-                        document.getElementById('refresh').classList.toggle('hidden', !!isFull);
-                    }
-                    window.addEventListener('resize', updateBtn);
-                    document.addEventListener('fullscreenchange', updateBtn);
-                <\/script>
+                <div class="ref" onclick="document.getElementById('content').src += '';" title="Reload Frame">
+                    <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                </div>
+                <iframe id="content" src="${url}" allowfullscreen></iframe>
             </body>
             </html>
         `);
-    },
-
-    formatUrl(url) {
-        url = url.trim();
-        if (/^https?:\/\/.*/i.test(url)) return url;
-        if (url.includes('.') && !url.includes(' ')) return "https://" + url;
-        return "https://www.google.com/search?q=" + encodeURIComponent(url);
-    },
-
-    promptOpen() {
-        const u = prompt("Enter URL or search term:");
-        if (u) this.open(u);
+        win.document.close();
+        window.interacted = true;
     },
 
     setPreset(id) {
@@ -280,79 +199,90 @@ const Launcher = {
 const UI = {
     renderGrid() {
         const grid = document.getElementById("mainGrid");
-        const items = DATA.shortcuts[DATA.currentTab] || [];
-        grid.innerHTML = items.map((item, index) => `
+        const query = document.getElementById("searchBar").value.toLowerCase().trim();
+        let displayItems = [];
+
+        if (query.includes('.') || query.startsWith('http')) {
+            displayItems.push({ name: "Open Direct Link", url: query, icon: "https://www.google.com/s2/favicons?domain=" + query, isDirect: true });
+        }
+
+        const tabItems = DATA.shortcuts[DATA.currentTab] || [];
+        tabItems.forEach((item, index) => {
+            if (query === "" || item.name.toLowerCase().includes(query)) {
+                displayItems.push({ ...item, index, category: DATA.currentTab });
+            }
+        });
+
+        if (query.includes("yandere")) {
+            const secretItems = DATA.shortcuts.secrets || [];
+            secretItems.forEach((item, index) => {
+                if (item.name.toLowerCase().includes(query)) displayItems.push({ ...item, index, category: 'secrets' });
+            });
+        }
+
+        grid.innerHTML = displayItems.map((item) => `
             <div class="card">
-                <img src="${item.icon}" class="card-icon" onclick="Launcher.open('${item.url}')">
-                <div style="font-weight:600; margin-bottom:15px;">${item.name}</div>
+                <img src="${item.icon}" class="card-icon" onerror="this.src='https://i.imgur.com/ql7Gz9e.jpeg'" onclick="Launcher.open('${item.url}')">
+                <div style="font-weight:600;">${item.name}</div>
                 <div class="btn-group">
-                    <button class="btn" onclick="UI.universalCopy('${item.url}', this)">Copy</button>
-                    <button class="btn" onclick="UI.openEditModal('${DATA.currentTab}', ${index})">Edit</button>
+                    ${item.isDirect ? '' : `<button class="btn" onclick="UI.openEditModal('${item.category}', ${item.index})">Edit</button>`}
                 </div>
             </div>`).join('');
     },
-
+    switchTab(tab) {
+        DATA.currentTab = tab;
+        document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase() === tab));
+        this.renderGrid();
+    },
+    openAddModal() {
+        DATA.editingIndex = null;
+        DATA.editingCategory = DATA.currentTab;
+        document.getElementById("modalTitle").innerText = "Add Shortcut";
+        document.getElementById("editName").value = document.getElementById("editUrl").value = document.getElementById("editIcon").value = "";
+        document.getElementById("deleteBtn").style.display = "none";
+        this.toggleModal("editModal", true);
+    },
     openEditModal(category, index) {
+        DATA.editingIndex = index;
+        DATA.editingCategory = category;
         const item = DATA.shortcuts[category][index];
-        DATA.editingItem = { category, index };
+        document.getElementById("modalTitle").innerText = "Edit Shortcut";
         document.getElementById("editName").value = item.name;
         document.getElementById("editUrl").value = item.url;
         document.getElementById("editIcon").value = item.icon;
+        document.getElementById("deleteBtn").style.display = "block";
         this.toggleModal("editModal", true);
     },
-
-    saveEdit() {
-        const { category, index } = DATA.editingItem;
-        DATA.shortcuts[category][index] = {
-            name: document.getElementById("editName").value,
-            url: document.getElementById("editUrl").value,
-            icon: document.getElementById("editIcon").value
-        };
+    saveShortcut() {
+        const item = { name: document.getElementById("editName").value, url: document.getElementById("editUrl").value, icon: document.getElementById("editIcon").value };
+        if (DATA.editingIndex === null) DATA.shortcuts[DATA.editingCategory].push(item);
+        else DATA.shortcuts[DATA.editingCategory][DATA.editingIndex] = item;
+        this.sync();
+    },
+    deleteShortcut() {
+        DATA.shortcuts[DATA.editingCategory].splice(DATA.editingIndex, 1);
+        this.sync();
+    },
+    sync() {
         localStorage.setItem("userShortcuts", JSON.stringify(DATA.shortcuts));
         this.renderGrid();
         this.toggleModal("editModal", false);
     },
-
-    universalCopy(text, btn) {
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
-        try {
-            document.execCommand('copy');
-            const originalText = btn.innerText;
-            btn.innerText = "Copied!";
-            setTimeout(() => btn.innerText = originalText, 1500);
-        } catch (err) {}
-        document.body.removeChild(textArea);
+    forceReset() {
+        if(confirm("Restore defaults?")) {
+            localStorage.removeItem("userShortcuts");
+            location.reload();
+        }
     },
-
-    filterGrid() {
-        const query = document.getElementById("searchBar").value.toLowerCase();
-        document.querySelectorAll('.card').forEach(card => {
-            card.classList.toggle('hidden', !card.innerText.toLowerCase().includes(query));
-        });
-    },
-
-    renderPresets() {
-        document.getElementById("presetGrid").innerHTML = DATA.presets.map(p => `
-            <div class="preset-card ${Launcher.selectedPreset.id === p.id ? 'active' : ''}" 
-                 onclick="Launcher.setPreset('${p.id}')" 
-                 style="padding:16px; border-radius:16px; background:var(--glass); display:flex; align-items:center; gap:12px; cursor:pointer; border:${Launcher.selectedPreset.id === p.id ? '2px solid var(--accent)' : '2px solid transparent'};">
-                <img src="${p.icon}" style="width:20px; height:20px; border-radius:4px;">
-                <span>${p.name}</span>
-            </div>`).join('');
-    },
-
-    switchTab(tabId) {
-        DATA.currentTab = tabId;
-        document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.innerText.toLowerCase() === tabId));
-        this.renderGrid();
-    },
-
     toggleModal(id, show) {
         document.getElementById(id).classList.toggle('active', show);
         if (show && id === 'settingsModal') this.renderPresets();
+    },
+    renderPresets() {
+        document.getElementById("presetGrid").innerHTML = DATA.presets.map(p => `
+            <div onclick="Launcher.setPreset('${p.id}')" style="padding:10px; background:var(--glass); border-radius:10px; cursor:pointer; border:1px solid ${Launcher.selectedPreset.id === p.id ? 'var(--accent)' : 'transparent'}">
+                <img src="${p.icon}" style="width:16px;"> ${p.name}
+            </div>`).join('');
     }
 };
 
