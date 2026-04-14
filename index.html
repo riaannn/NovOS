@@ -15,7 +15,6 @@
             --border: rgba(255, 255, 255, 0.1);
             --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -24,32 +23,37 @@
             height: 100vh; width: 100vw;
             line-height: 1.6; overflow: hidden; 
         }
-
+        #safe-start {
+            position: fixed; inset: 0; background: var(--bg-gradient);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 999999; transition: opacity 0.6s ease, visibility 0.6s;
+        }
+        .loader-circle {
+            width: 50px; height: 50px; border: 3px solid var(--glass);
+            border-top: 3px solid var(--accent); border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; height: 100%; overflow-y: auto; }
         header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
         .logo { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
         .logo-box { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
-
         .search-container { margin-bottom: 40px; display: flex; justify-content: center; gap: 10px; }
         .search-input {
             width: 100%; max-width: 500px; padding: 14px 24px; border-radius: 18px;
             background: var(--glass); border: 1px solid var(--border); color: white;
             font-size: 1rem; outline: none; transition: var(--transition);
         }
-
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; padding-bottom: 40px; }
         .card { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 25px; text-align: center; transition: var(--transition); position: relative; }
         .card:hover { border-color: var(--accent); transform: translateY(-8px); background: rgba(255,255,255,0.06); }
         .card-icon { width: 80px; height: 80px; border-radius: 22px; margin-bottom: 20px; object-fit: cover; cursor: pointer; }
-
         .btn-group { display: flex; gap: 8px; margin-top: 15px; }
         .btn { padding: 10px 18px; border-radius: 12px; cursor: pointer; font-weight: 600; border: 1px solid var(--border); background: var(--glass); color: var(--text-main); transition: var(--transition); font-size: 12px; flex: 1; outline: none; }
         .btn-primary { background: var(--accent); border: none; color: white; }
         .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); }
-        
         .tabs { display: flex; justify-content: center; gap: 12px; margin-bottom: 40px; }
         .tab.active { background: var(--accent); color: white; }
-
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 10000; }
         .modal.active { display: flex; }
         .modal-content { background: #0f172a; padding: 40px; border-radius: 32px; width: 90%; max-width: 480px; border: 1px solid var(--border); }
@@ -57,7 +61,10 @@
     </style>
 </head>
 <body>
-
+<div id="safe-start">
+    <div class="loader-circle"></div>
+    <div style="font-weight: 800; letter-spacing: 2px; color: var(--accent);">INITIALIZING GRID...</div>
+</div>
 <div class="container">
     <header>
         <div class="logo"><div class="logo-box"></div> CLOAKED</div>
@@ -66,18 +73,15 @@
             <button class="btn" onclick="UI.toggleModal('settingsModal', true)">CLOAK</button>
         </div>
     </header>
-
     <div class="search-container">
         <input type="text" class="search-input" id="searchBar" placeholder="Search or Enter URL..." oninput="UI.renderGrid()">
         <button class="btn btn-primary" style="flex: 0 1 auto; width: 120px;" onclick="UI.openAddModal()">+ ADD NEW</button>
     </div>
-
     <div class="tabs" id="tabBar">
-        <button class="btn tab active" onclick="UI.switchTab('web')">WEB</button>
-        <button class="btn tab" onclick="UI.switchTab('games')">GAMES</button>
+        <button class="btn tab" onclick="UI.switchTab('web')">WEB</button>
+        <button class="btn tab active" onclick="UI.switchTab('games')">GAMES</button>
         <button class="btn tab" onclick="UI.switchTab('apps')">APPS</button>
     </div>
-
     <div class="grid" id="mainGrid"></div>
 </div>
 
@@ -116,13 +120,16 @@ Granny: https://riaannn.github.io/Granny/
 </div>
 
 <script>
-window.addEventListener('mousedown', () => window.interacted = true, {once: true});
-window.onbeforeunload = function(e) {
-    if (window.interacted) {
-        e.preventDefault();
-        return (e.returnValue = "Sure you want to leave?");
-    }
+window.onload = function() {
+    const loader = document.getElementById('safe-start');
+    loader.style.opacity = '0';
+    setTimeout(() => { loader.style.visibility = 'hidden'; }, 600);
 };
+
+window.addEventListener('beforeunload', (e) => {
+    e.preventDefault();
+    e.returnValue = '';
+});
 
 const DEFAULT_SHORTCUTS = {
     web: [
@@ -143,7 +150,7 @@ const DEFAULT_SHORTCUTS = {
 };
 
 const DATA = {
-    currentTab: "web",
+    currentTab: "games",
     presets: [
         {id:"google", name:"Google", title:"Google", icon:"https://www.google.com/favicon.ico"},
         {id:"drive", name:"Drive", title:"My Drive - Google Drive", icon:"https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png"},
@@ -165,12 +172,10 @@ const DATA = {
 
 const Launcher = {
     selectedPreset: JSON.parse(localStorage.getItem("preset")) || DATA.presets[1],
-    
     open(url) {
         if (!url.startsWith('http')) url = 'https://' + url;
         const win = window.open("about:blank", "_blank");
         if (!win) return alert("Enable popups!");
-
         win.document.write(`
             <!DOCTYPE html>
             <html>
@@ -180,54 +185,49 @@ const Launcher = {
                 <style>
                     body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
                     iframe { border: none; width: 100%; height: 100%; }
-                    .ref {
-                        position: fixed; bottom: 25px; right: 25px; width: 50px; height: 50px;
-                        background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-                        cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 99999;
-                        transition: 0.3s; opacity: 0.4;
+                    #refresh-btn {
+                        position: fixed; bottom: 20px; right: 20px; width: 45px; height: 45px;
+                        background: #6366f1; color: white; border: none; border-radius: 50%;
+                        cursor: pointer; display: flex; align-items: center; justify-content: center;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 9999; opacity: 0.6; transition: 0.3s;
                     }
-                    .ref:hover { opacity: 1; transform: scale(1.1) rotate(45deg); }
-                    .ref svg { fill: white; width: 24px; }
-                    .hidden { display: none !important; }
+                    #refresh-btn:hover { opacity: 1; transform: scale(1.1); }
+                    #refresh-btn svg { width: 24px; height: 24px; fill: currentColor; }
                 </style>
                 <script>
-                    window.addEventListener('mousedown', () => window.interacted = true, {once: true});
-                    window.onbeforeunload = function(e) {
-                        if (window.interacted) {
-                            e.preventDefault();
-                            return (e.returnValue = "Unsaved progress will be lost.");
-                        }
-                    };
+                    window.addEventListener('beforeunload', (e) => {
+                        e.preventDefault();
+                        e.returnValue = '';
+                    });
 
                     function checkFullscreen() {
-                        const btn = document.querySelector('.ref');
-                        // Detection for F11 (OS fullscreen) and Browser Fullscreen API
-                        const isFullscreen = (window.innerHeight === screen.height) || 
-                                             (document.fullscreenElement !== null);
+                        const btn = document.getElementById('refresh-btn');
+                        // Detection for F11: If inner height equals screen height, tab bar is hidden
+                        const isF11 = window.innerHeight === window.screen.height;
+                        const isStandardFS = !!document.fullscreenElement;
                         
-                        if (isFullscreen) {
-                            btn.classList.add('hidden');
+                        if (isF11 || isStandardFS) {
+                            btn.style.display = 'none';
                         } else {
-                            btn.classList.remove('hidden');
+                            btn.style.display = 'flex';
                         }
                     }
 
+                    // Trigger on resize (handles F11 toggling) and standard fullscreen change
                     window.addEventListener('resize', checkFullscreen);
                     document.addEventListener('fullscreenchange', checkFullscreen);
                 <\/script>
             </head>
             <body>
-                <div class="ref" onclick="document.getElementById('content').src += '';" title="Reload Frame">
-                    <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                </div>
+                <button id="refresh-btn" onclick="document.getElementById('content').src = document.getElementById('content').src;" title="Refresh Page">
+                    <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                </button>
                 <iframe id="content" src="${url}" allowfullscreen></iframe>
             </body>
             </html>
         `);
         win.document.close();
-        window.interacted = true;
     },
-
     setPreset(id) {
         this.selectedPreset = DATA.presets.find(p => p.id === id);
         localStorage.setItem("preset", JSON.stringify(this.selectedPreset));
@@ -240,25 +240,21 @@ const UI = {
         const grid = document.getElementById("mainGrid");
         const query = document.getElementById("searchBar").value.toLowerCase().trim();
         let displayItems = [];
-
         if (query.includes('.') || query.startsWith('http')) {
             displayItems.push({ name: "Open Direct Link", url: query, icon: "https://www.google.com/s2/favicons?domain=" + query, isDirect: true });
         }
-
         const tabItems = DATA.shortcuts[DATA.currentTab] || [];
         tabItems.forEach((item, index) => {
             if (query === "" || item.name.toLowerCase().includes(query)) {
                 displayItems.push({ ...item, index, category: DATA.currentTab });
             }
         });
-
         if (query.includes("yandere")) {
             const secretItems = DATA.shortcuts.secrets || [];
             secretItems.forEach((item, index) => {
                 if (item.name.toLowerCase().includes(query)) displayItems.push({ ...item, index, category: 'secrets' });
             });
         }
-
         grid.innerHTML = displayItems.map((item) => `
             <div class="card">
                 <img src="${item.icon}" class="card-icon" onerror="this.src='https://i.imgur.com/ql7Gz9e.jpeg'" onclick="Launcher.open('${item.url}')">
@@ -287,12 +283,10 @@ const UI = {
         DATA.editingIndex = index;
         DATA.editingCategory = category;
         DATA.isEditingDefault = !!item.isDefault;
-
         document.getElementById("modalTitle").innerText = "Edit Shortcut";
         document.getElementById("editName").value = item.name;
         document.getElementById("editUrl").value = item.url;
         document.getElementById("editIcon").value = item.icon;
-        
         document.getElementById("deleteBtn").style.display = DATA.isEditingDefault ? "none" : "block";
         this.toggleModal("editModal", true);
     },
@@ -302,7 +296,6 @@ const UI = {
             url: document.getElementById("editUrl").value, 
             icon: document.getElementById("editIcon").value 
         };
-        
         if (DATA.editingIndex === null) {
             DATA.shortcuts[DATA.editingCategory].push(item);
         } else {
