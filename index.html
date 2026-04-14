@@ -75,6 +75,7 @@
     <div class="tabs" id="tabBar">
         <button class="btn tab active" onclick="UI.switchTab('web')">WEB</button>
         <button class="btn tab" onclick="UI.switchTab('games')">GAMES</button>
+        <button class="btn tab" onclick="UI.switchTab('apps')">APPS</button>
     </div>
 
     <div class="grid" id="mainGrid"></div>
@@ -125,12 +126,16 @@ window.onbeforeunload = function(e) {
 
 const DEFAULT_SHORTCUTS = {
     web: [
-        {name: "GN Math", url: "https://blahaj.dedyn.io/gn.html", icon: "https://cdn.discordapp.com/avatars/1366573040846241894/b449678987d3a22819a5ba8a8a9cba1b.webp?size=80", isDefault: true},
+        {name: "GN Math", url: "https://genizymath.github.io/", icon: "https://genizymath.github.io/images/favicon.png", isDefault: true},
         {name: "AnuraOS", url: "https://anura.pro", icon: "https://i.imgur.com/6vvxLxR.jpeg", isDefault: true}
     ],
     games: [
         {name: "Angry Birds Epic", url: "https://riaannn.github.io/Angry-Birds-Epic/", icon: "https://i.imgur.com/ql7Gz9e.jpeg", isDefault: true},
-        {name: "Bad Piggies", url: "https://riaannn.github.io/Bad-Piggies/", icon: "https://i.imgur.com/YnB7K1p.png", isDefault: true},
+        {name: "Bad Piggies", url: "https://riaannn.github.io/Bad-Piggies/", icon: "https://preview.redd.it/which-of-these-app-icons-is-the-best-in-your-opinion-for-v0-eooqvsjlfb971.png?width=185&format=png&auto=webp&s=e8267058bec260d939d0bdc052bb1c9bc4516787", isDefault: true},
+        {name: "Baldi's Basics", url: "https://riaannn.github.io/Baldis-Basics/", icon: "https://play-lh.googleusercontent.com/EPV1TB4So1lB0DGrdCVExDpNU8ML67nd8OqBeoOIM-s6sDicxmDdPvCXD6n7LKevFl0", isDefault: true},
+    ],
+    apps: [
+        {name: "Browser.lol", url: "https://browser.lol/create", icon: "https://browser.lol/img/favicon/favicon.ico", isDefault: true}
     ],
     secrets: [
         {name: "Yandere Simulator", url: "https://riaannn.github.io/Yandere-Simulator/", icon: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/8939caba-2c60-4aeb-bb20-d61b0458b178/daamgvz-d0dd1426-a94f-4a2e-97e2-c54cd9aa51cc.png", isDefault: true}
@@ -144,12 +149,12 @@ const DATA = {
         {id:"drive", name:"Drive", title:"My Drive - Google Drive", icon:"https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png"},
         {id:"canvas", name:"Canvas", title:"Dashboard", icon:"https://wdmcs.instructure.com/favicon.ico"}
     ],
-    // FIXED: Merge hardcoded defaults with user-added custom ones
     shortcuts: (() => {
-        const userCustom = JSON.parse(localStorage.getItem("userCustomShortcuts")) || { web: [], games: [], secrets: [] };
+        const userCustom = JSON.parse(localStorage.getItem("userCustomShortcuts")) || { web: [], games: [], apps: [], secrets: [] };
         return {
             web: [...DEFAULT_SHORTCUTS.web, ...userCustom.web],
             games: [...DEFAULT_SHORTCUTS.games, ...userCustom.games],
+            apps: [...DEFAULT_SHORTCUTS.apps, ...userCustom.apps],
             secrets: [...DEFAULT_SHORTCUTS.secrets, ...userCustom.secrets]
         };
     })(),
@@ -183,7 +188,33 @@ const Launcher = {
                     }
                     .ref:hover { opacity: 1; transform: scale(1.1) rotate(45deg); }
                     .ref svg { fill: white; width: 24px; }
+                    .hidden { display: none !important; }
                 </style>
+                <script>
+                    window.addEventListener('mousedown', () => window.interacted = true, {once: true});
+                    window.onbeforeunload = function(e) {
+                        if (window.interacted) {
+                            e.preventDefault();
+                            return (e.returnValue = "Unsaved progress will be lost.");
+                        }
+                    };
+
+                    function checkFullscreen() {
+                        const btn = document.querySelector('.ref');
+                        // Detection for F11 (OS fullscreen) and Browser Fullscreen API
+                        const isFullscreen = (window.innerHeight === screen.height) || 
+                                             (document.fullscreenElement !== null);
+                        
+                        if (isFullscreen) {
+                            btn.classList.add('hidden');
+                        } else {
+                            btn.classList.remove('hidden');
+                        }
+                    }
+
+                    window.addEventListener('resize', checkFullscreen);
+                    document.addEventListener('fullscreenchange', checkFullscreen);
+                <\/script>
             </head>
             <body>
                 <div class="ref" onclick="document.getElementById('content').src += '';" title="Reload Frame">
@@ -262,7 +293,6 @@ const UI = {
         document.getElementById("editUrl").value = item.url;
         document.getElementById("editIcon").value = item.icon;
         
-        // Hide delete for system defaults
         document.getElementById("deleteBtn").style.display = DATA.isEditingDefault ? "none" : "block";
         this.toggleModal("editModal", true);
     },
@@ -276,7 +306,6 @@ const UI = {
         if (DATA.editingIndex === null) {
             DATA.shortcuts[DATA.editingCategory].push(item);
         } else {
-            // Keep the isDefault flag if we are editing a default one
             if (DATA.isEditingDefault) item.isDefault = true;
             DATA.shortcuts[DATA.editingCategory][DATA.editingIndex] = item;
         }
@@ -286,11 +315,11 @@ const UI = {
         DATA.shortcuts[DATA.editingCategory].splice(DATA.editingIndex, 1);
         this.sync();
     },
-    // FIXED: Only save non-default shortcuts to localStorage
     sync() {
         const customOnly = {
             web: DATA.shortcuts.web.filter(i => !i.isDefault),
             games: DATA.shortcuts.games.filter(i => !i.isDefault),
+            apps: DATA.shortcuts.apps.filter(i => !i.isDefault),
             secrets: DATA.shortcuts.secrets.filter(i => !i.isDefault)
         };
         localStorage.setItem("userCustomShortcuts", JSON.stringify(customOnly));
