@@ -1,349 +1,543 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; img-src * data:; content-src *;">
-    <title>Cloaked Launcher</title>
-    <style>
-        :root {
-            --bg-gradient: radial-gradient(circle at top, #1e293b 0%, #05070a 100%);
-            --surface: #0f172a;
-            --accent: #6366f1;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-main);
-            height: 100vh; width: 100vw;
-            line-height: 1.6; overflow: hidden; 
-        }
-        #safe-start {
-            position: fixed; inset: 0; background: var(--bg-gradient);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 999999; transition: opacity 0.6s ease, visibility 0.6s;
-        }
-        .loader-circle {
-            width: 50px; height: 50px; border: 3px solid var(--glass);
-            border-top: 3px solid var(--accent); border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: 20px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; height: 100%; overflow-y: auto; }
-        header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
-        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        .logo-box { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
-        .search-container { margin-bottom: 40px; display: flex; justify-content: center; gap: 10px; }
-        .search-input {
-            width: 100%; max-width: 500px; padding: 14px 24px; border-radius: 18px;
-            background: var(--glass); border: 1px solid var(--border); color: white;
-            font-size: 1rem; outline: none; transition: var(--transition);
-        }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; padding-bottom: 40px; }
-        .card { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 25px; text-align: center; transition: var(--transition); position: relative; }
-        .card:hover { border-color: var(--accent); transform: translateY(-8px); background: rgba(255,255,255,0.06); }
-        .card-icon { width: 80px; height: 80px; border-radius: 22px; margin-bottom: 20px; object-fit: cover; cursor: pointer; }
-        .btn-group { display: flex; gap: 8px; margin-top: 15px; }
-        .btn { padding: 10px 18px; border-radius: 12px; cursor: pointer; font-weight: 600; border: 1px solid var(--border); background: var(--glass); color: var(--text-main); transition: var(--transition); font-size: 12px; flex: 1; outline: none; }
-        .btn-primary { background: var(--accent); border: none; color: white; }
-        .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); }
-        .tabs { display: flex; justify-content: center; gap: 12px; margin-bottom: 40px; }
-        .tab.active { background: var(--accent); color: white; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 10000; }
-        .modal.active { display: flex; }
-        .modal-content { background: #0f172a; padding: 40px; border-radius: 32px; width: 90%; max-width: 480px; border: 1px solid var(--border); }
-        .edit-input { width: 100%; border-radius: 12px; padding: 10px 15px; background: var(--glass); border: 1px solid var(--border); color: white; margin-bottom: 15px;}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; img-src * data:; content-src *;">
+<title>Cloaked Launcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#050508;--surface:#0a0a12;--panel:#0d0d1a;
+  --accent:#00ff9d;--accent2:#ff2d78;
+  --text:#c8ffd4;--muted:#3a5545;
+  --border:rgba(0,255,157,0.12);
+  --glow:0 0 20px rgba(0,255,157,0.3);
+  --glow-hot:0 0 20px rgba(255,45,120,0.4);
+  --font-d:'Orbitron',monospace;--font-m:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font-m);cursor:none}
+
+#cursor{position:fixed;width:16px;height:16px;pointer-events:none;z-index:999999;transform:translate(-50%,-50%);will-change:left,top}
+#cursor::before{content:'';position:absolute;inset:0;border:2px solid var(--accent);clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);animation:cursorSpin 3s linear infinite}
+#cursor::after{content:'';position:absolute;top:50%;left:50%;width:4px;height:4px;margin:-2px;background:var(--accent);border-radius:50%}
+@keyframes cursorSpin{to{transform:rotate(360deg)}}
+
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.05) 2px,rgba(0,0,0,0.05) 4px)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99997;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.6) 100%)}
+
+/* Boot */
+#boot{position:fixed;inset:0;z-index:100000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:opacity 0.8s 0.4s,visibility 0.8s 0.4s}
+#boot.hide{opacity:0;visibility:hidden}
+.boot-logo{font-family:var(--font-d);font-size:2.8rem;font-weight:900;color:var(--accent);text-shadow:0 0 40px var(--accent),0 0 80px rgba(0,255,157,0.3);letter-spacing:0.4em;margin-bottom:24px;animation:logoFlicker 0.1s 2.4s steps(1) 3}
+@keyframes logoFlicker{50%{opacity:0}}
+.boot-line{font-size:0.72rem;color:var(--accent);white-space:nowrap;overflow:hidden;width:0;animation:typeIn 0.35s forwards}
+.boot-line:nth-child(2){animation-delay:0s}.boot-line:nth-child(3){animation-delay:.35s}.boot-line:nth-child(4){animation-delay:.65s}.boot-line:nth-child(5){animation-delay:.9s}.boot-line:nth-child(6){animation-delay:1.1s;color:var(--accent2)}
+@keyframes typeIn{to{width:300px}}
+
+/* Portal overlay */
+#portal{position:fixed;inset:0;z-index:90000;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0}
+#portal.active{pointer-events:all}
+.portal-ring{position:absolute;border-radius:50%;border:2px solid var(--accent);opacity:0;transform:scale(0)}
+#pr1{width:40px;height:40px}
+#pr2{width:80px;height:80px;border-color:rgba(0,255,157,0.6)}
+#pr3{width:140px;height:140px;border-color:rgba(0,255,157,0.3)}
+#portal-flash{position:absolute;inset:0;background:var(--accent);opacity:0}
+#portal.run #pr1{animation:ringExpand 0.5s cubic-bezier(0.4,0,0.2,1) forwards}
+#portal.run #pr2{animation:ringExpand 0.5s 0.05s cubic-bezier(0.4,0,0.2,1) forwards}
+#portal.run #pr3{animation:ringExpand 0.5s 0.1s cubic-bezier(0.4,0,0.2,1) forwards}
+#portal.run #portal-flash{animation:flashPulse 0.5s 0.35s ease-out forwards}
+@keyframes ringExpand{0%{opacity:1;transform:scale(0)}60%{opacity:0.8}100%{opacity:0;transform:scale(8)}}
+@keyframes flashPulse{0%{opacity:0.4}100%{opacity:0}}
+
+/* Layout */
+#app{display:grid;grid-template-rows:56px 1fr;grid-template-columns:210px 1fr;height:100vh;width:100vw;grid-template-areas:"topbar topbar" "sidebar main"}
+
+/* Topbar */
+#topbar{grid-area:topbar;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:rgba(10,10,18,0.95);backdrop-filter:blur(10px);position:relative;z-index:100}
+#topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent) 40%,transparent);opacity:0.5}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-d);font-size:0.85rem;font-weight:900;letter-spacing:0.3em;color:var(--accent);text-shadow:var(--glow)}
+.logo-diamond{width:18px;height:18px;background:var(--accent);clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);animation:pulseDia 2s ease-in-out infinite}
+@keyframes pulseDia{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+.topbar-right{display:flex;align-items:center;gap:10px}
+#clock{font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;padding:0 14px;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+.sys-btn{font-size:0.6rem;letter-spacing:0.15em;padding:5px 14px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:none;text-transform:uppercase;transition:all 0.2s;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)}
+.sys-btn:hover{color:var(--accent);border-color:rgba(0,255,157,0.5);background:rgba(0,255,157,0.05)}
+.sys-btn.hot{color:var(--accent2);border-color:rgba(255,45,120,0.25)}
+.sys-btn.hot:hover{border-color:var(--accent2);background:rgba(255,45,120,0.07)}
+
+/* Sidebar */
+#sidebar{grid-area:sidebar;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0;position:relative;overflow:hidden}
+#sidebar::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:linear-gradient(180deg,transparent,var(--accent) 50%,transparent);opacity:0.3}
+.s-label{font-size:0.52rem;letter-spacing:0.3em;color:var(--muted);text-transform:uppercase;padding:0 18px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.s-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+.nav-tab{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:0.68rem;letter-spacing:0.08em;color:var(--muted);cursor:none;border:1px solid transparent;text-transform:uppercase;transition:all 0.2s;margin:0 8px 3px;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)}
+.nav-tab:hover{color:var(--text);border-color:var(--border);background:rgba(255,255,255,0.02)}
+.nav-tab.active{color:var(--accent);border-color:rgba(0,255,157,0.2);background:rgba(0,255,157,0.04)}
+.tab-icon{font-size:0.8rem}
+.tab-count{margin-left:auto;font-size:0.52rem;padding:2px 5px;background:rgba(0,255,157,0.08);color:var(--accent);border:1px solid rgba(0,255,157,0.15);clip-path:polygon(3px 0%,100% 0%,calc(100% - 3px) 100%,0% 100%)}
+.sidebar-stats{padding:16px 18px 0;display:flex;flex-direction:column;gap:7px}
+.stat-row{display:flex;justify-content:space-between;font-size:0.58rem;color:var(--muted)}
+.stat-val{color:var(--accent);font-family:var(--font-d);font-size:0.6rem}
+.sidebar-bottom{padding:16px 12px;margin-top:auto;border-top:1px solid var(--border)}
+.sidebar-search{width:100%;background:rgba(0,255,157,0.02);border:1px solid var(--border);color:var(--text);font-family:var(--font-m);font-size:0.68rem;padding:8px 10px;outline:none;transition:all 0.2s;clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%)}
+.sidebar-search:focus{border-color:rgba(0,255,157,0.4);background:rgba(0,255,157,0.04)}
+.sidebar-search::placeholder{color:var(--muted)}
+.add-btn{width:100%;margin-top:8px;padding:8px;font-size:0.6rem;letter-spacing:0.2em;color:var(--accent);border:1px solid rgba(0,255,157,0.2);background:rgba(0,255,157,0.03);cursor:none;text-transform:uppercase;transition:all 0.2s;clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%)}
+.add-btn:hover{background:rgba(0,255,157,0.09);border-color:var(--accent)}
+
+/* Main */
+#main{grid-area:main;overflow-y:auto;padding:22px 24px;scrollbar-width:thin;scrollbar-color:rgba(0,255,157,0.3) transparent}
+#main::-webkit-scrollbar{width:2px}
+#main::-webkit-scrollbar-thumb{background:rgba(0,255,157,0.3)}
+#statusbar{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);font-size:0.58rem;color:var(--muted);letter-spacing:0.12em}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.15}}
+#statusbar span.hi{color:var(--text)}
+.sep{color:var(--border)}
+
+/* Grid */
+#mainGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;contain:layout}
+
+/* Card */
+.card{background:var(--panel);border:1px solid var(--border);position:relative;overflow:hidden;cursor:none;transition:border-color 0.22s,transform 0.22s,box-shadow 0.22s;clip-path:polygon(10px 0%,100% 0%,100% calc(100% - 10px),calc(100% - 10px) 100%,0% 100%,0% 10px);animation:cardIn 0.25s both;will-change:transform}
+@keyframes cardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity 0.3s}
+.card:hover{border-color:rgba(0,255,157,0.45);transform:translateY(-3px);box-shadow:0 6px 24px rgba(0,255,157,0.1)}
+.card:hover::after{opacity:1}
+.card-corner{position:absolute;top:0;right:0;width:10px;height:10px;background:var(--bg);z-index:2;clip-path:polygon(0 0,100% 0,100% 100%);transition:background 0.2s}
+.card:hover .card-corner{background:rgba(0,255,157,0.7)}
+.card-num{position:absolute;top:5px;left:7px;font-family:var(--font-d);font-size:0.45rem;color:rgba(0,255,157,0.25);z-index:2;letter-spacing:0.05em}
+.card-thumb{width:100%;height:100px;object-fit:cover;display:block;filter:saturate(0.65) brightness(0.8);transition:filter 0.3s;loading:lazy}
+.card:hover .card-thumb{filter:saturate(1) brightness(1)}
+.card-body{padding:8px 10px}
+.card-name{font-size:0.62rem;letter-spacing:0.04em;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
+.card-actions{display:flex;gap:5px}
+.card-launch{flex:1;font-size:0.52rem;letter-spacing:0.12em;text-transform:uppercase;padding:5px;border:1px solid rgba(0,255,157,0.18);background:rgba(0,255,157,0.04);color:var(--accent);cursor:none;transition:all 0.2s;clip-path:polygon(3px 0%,100% 0%,calc(100% - 3px) 100%,0% 100%)}
+.card-launch:hover{background:var(--accent);color:#000}
+.card-edit{font-size:0.52rem;letter-spacing:0.08em;text-transform:uppercase;padding:5px 7px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:none;transition:all 0.2s;clip-path:polygon(3px 0%,100% 0%,calc(100% - 3px) 100%,0% 100%)}
+.card-edit:hover{color:var(--text);border-color:rgba(255,255,255,0.15)}
+.card.direct{border-color:rgba(255,45,120,0.2)}
+.card.direct:hover{border-color:var(--accent2);box-shadow:0 6px 24px rgba(255,45,120,0.1)}
+.card.direct .card-launch{border-color:rgba(255,45,120,0.25);color:var(--accent2);background:rgba(255,45,120,0.04)}
+.card.direct .card-launch:hover{background:var(--accent2);color:#fff}
+.card.direct::after{background:linear-gradient(90deg,transparent,var(--accent2),transparent)}
+.card.direct:hover .card-corner{background:rgba(255,45,120,0.7)}
+
+.empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);font-size:0.68rem;letter-spacing:0.12em}
+
+/* Modals */
+.modal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center}
+.modal.active{display:flex}
+.modal-box{background:var(--panel);width:90%;max-width:440px;border:1px solid var(--border);clip-path:polygon(14px 0%,100% 0%,100% calc(100% - 14px),calc(100% - 14px) 100%,0% 100%,0% 14px);animation:modalIn 0.18s cubic-bezier(0.4,0,0.2,1)}
+@keyframes modalIn{from{opacity:0;transform:scale(0.96) translateY(6px)}to{opacity:1;transform:none}}
+.modal-header{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.modal-header h2{font-family:var(--font-d);font-size:0.75rem;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase}
+.modal-body{padding:18px 22px}
+.f-label{font-size:0.52rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
+.f-input{width:100%;background:rgba(0,255,157,0.02);border:1px solid var(--border);color:var(--text);font-family:var(--font-m);font-size:0.72rem;padding:8px 10px;outline:none;margin-bottom:12px;clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);transition:all 0.2s}
+.f-input:focus{border-color:rgba(0,255,157,0.4)}
+.modal-actions{display:flex;gap:8px;margin-top:4px}
+.m-btn{flex:1;padding:9px;font-family:var(--font-m);font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;cursor:none;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all 0.2s;clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%)}
+.m-btn:hover{color:var(--text);border-color:rgba(255,255,255,0.2)}
+.m-btn.primary{color:var(--accent);border-color:rgba(0,255,157,0.25);background:rgba(0,255,157,0.04)}
+.m-btn.primary:hover{background:var(--accent);color:#000}
+.m-btn.danger{color:var(--accent2);border-color:rgba(255,45,120,0.2)}
+.m-btn.danger:hover{background:var(--accent2);color:#fff}
+.alt-ta{width:100%;height:110px;background:rgba(0,255,157,0.02);border:1px solid var(--border);color:var(--accent);font-family:var(--font-m);font-size:0.68rem;padding:10px;resize:none;outline:none;margin-top:10px;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)}
+.preset-item{padding:10px 12px;background:rgba(0,255,157,0.02);border:1px solid var(--border);cursor:none;transition:all 0.2s;display:flex;align-items:center;gap:9px;font-size:0.62rem;color:var(--muted);clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%)}
+.preset-item:hover{border-color:rgba(0,255,157,0.25);color:var(--text)}
+.preset-item.selected{border-color:var(--accent);color:var(--accent);background:rgba(0,255,157,0.05)}
+.preset-item img{width:13px;height:13px}
+</style>
 </head>
 <body>
-<div id="safe-start">
-    <div class="loader-circle"></div>
-    <div style="font-weight: 800; letter-spacing: 2px; color: var(--accent);">INITIALIZING GRID...</div>
-</div>
-<div class="container">
-    <header>
-        <div class="logo"><div class="logo-box"></div> CLOAKED</div>
-        <div style="display: flex; gap: 12px;">
-            <button class="btn btn-primary" onclick="UI.toggleModal('altLinksModal', true)">ALTERNATE LINKS</button>
-            <button class="btn" onclick="UI.toggleModal('settingsModal', true)">CLOAK</button>
-        </div>
-    </header>
-    <div class="search-container">
-        <input type="text" class="search-input" id="searchBar" placeholder="Search or Enter URL..." oninput="UI.renderGrid()">
-        <button class="btn btn-primary" style="flex: 0 1 auto; width: 120px;" onclick="UI.openAddModal()">+ ADD NEW</button>
-    </div>
-    <div class="tabs" id="tabBar">
-        <button class="btn tab" onclick="UI.switchTab('web')">WEB</button>
-        <button class="btn tab active" onclick="UI.switchTab('games')">GAMES</button>
-        <button class="btn tab" onclick="UI.switchTab('apps')">APPS</button>
-    </div>
-    <div class="grid" id="mainGrid"></div>
+<div id="cursor"></div>
+
+<div id="boot">
+  <div class="boot-logo">CLOAKED</div>
+  <div class="boot-line">> SYSTEM BOOT v2.5.0...</div>
+  <div class="boot-line">> INITIALIZING GAME VAULT...</div>
+  <div class="boot-line">> LOADING SHORTCUT MANIFESTS...</div>
+  <div class="boot-line">> CLOAK PROTOCOL ENGAGED</div>
+  <div class="boot-line">> [OK] ALL SYSTEMS NOMINAL</div>
 </div>
 
+<!-- Portal transition overlay -->
+<div id="portal">
+  <div class="portal-ring" id="pr1"></div>
+  <div class="portal-ring" id="pr2"></div>
+  <div class="portal-ring" id="pr3"></div>
+  <div id="portal-flash"></div>
+</div>
+
+<div id="app">
+  <header id="topbar">
+    <div class="logo">
+      <div class="logo-diamond"></div>
+      CLK//SYS
+    </div>
+    <div class="topbar-right">
+      <div id="clock">00:00:00</div>
+      <button class="sys-btn hot" onclick="UI.toggleModal('altLinksModal',true)">ALT LINKS</button>
+      <button class="sys-btn" onclick="UI.toggleModal('settingsModal',true)">⬡ CLOAK</button>
+    </div>
+  </header>
+
+  <nav id="sidebar">
+    <div class="s-label">Navigation</div>
+    <div class="nav-tab" id="tab-web" onclick="UI.switchTab('web')"><span class="tab-icon">◈</span>Web<span class="tab-count" id="cnt-web">0</span></div>
+    <div class="nav-tab active" id="tab-games" onclick="UI.switchTab('games')"><span class="tab-icon">◉</span>Games<span class="tab-count" id="cnt-games">0</span></div>
+    <div class="nav-tab" id="tab-apps" onclick="UI.switchTab('apps')"><span class="tab-icon">◇</span>Apps<span class="tab-count" id="cnt-apps">0</span></div>
+
+    <div class="sidebar-stats">
+      <div class="s-label" style="margin-top:12px">Vault Status</div>
+      <div class="stat-row"><span>TOTAL</span><span class="stat-val" id="stat-total">—</span></div>
+      <div class="stat-row"><span>TAB</span><span class="stat-val" id="stat-tab">GAMES</span></div>
+      <div class="stat-row"><span>CLOAK</span><span class="stat-val" id="stat-cloak">CANVAS</span></div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="s-label">Search</div>
+      <input type="text" class="sidebar-search" id="searchBar" placeholder="QUERY / URL..." oninput="UI.renderGrid()">
+      <button class="add-btn" onclick="UI.openAddModal()">+ ADD SHORTCUT</button>
+    </div>
+  </nav>
+
+  <main id="main">
+    <div id="statusbar">
+      <div class="status-dot"></div>
+      <span class="hi">VAULT ONLINE</span>
+      <span class="sep">|</span>
+      ENTRIES: <span class="hi" id="status-count">0</span>
+      <span class="sep">|</span>
+      TAB: <span class="hi" id="status-tab">GAMES</span>
+    </div>
+    <div id="mainGrid"></div>
+  </main>
+</div>
+
+<!-- Edit Modal -->
 <div class="modal" id="editModal">
-    <div class="modal-content">
-        <h2 id="modalTitle" style="margin-bottom: 20px;">Edit Shortcut</h2>
-        <input type="text" id="editName" class="edit-input" placeholder="Name">
-        <input type="text" id="editUrl" class="edit-input" placeholder="URL">
-        <input type="text" id="editIcon" class="edit-input" placeholder="Icon URL">
-        <div class="btn-group">
-            <button class="btn btn-primary" onclick="UI.saveShortcut()">SAVE</button>
-            <button id="deleteBtn" class="btn btn-danger" onclick="UI.deleteShortcut()">DELETE</button>
-            <button class="btn" onclick="UI.toggleModal('editModal', false)">CANCEL</button>
-        </div>
+  <div class="modal-box">
+    <div class="modal-header"><span style="color:var(--accent)">◈</span><h2 id="modalTitle">Edit Entry</h2></div>
+    <div class="modal-body">
+      <div class="f-label">Display Name</div>
+      <input type="text" id="editName" class="f-input" placeholder="IDENTIFIER">
+      <div class="f-label">Target URL</div>
+      <input type="text" id="editUrl" class="f-input" placeholder="https://...">
+      <div class="f-label">Icon URL</div>
+      <input type="text" id="editIcon" class="f-input" placeholder="https://...">
+      <div class="modal-actions">
+        <button class="m-btn primary" onclick="UI.saveShortcut()">COMMIT</button>
+        <button id="deleteBtn" class="m-btn danger" onclick="UI.deleteShortcut()">PURGE</button>
+        <button class="m-btn" onclick="UI.toggleModal('editModal',false)">ABORT</button>
+      </div>
     </div>
+  </div>
 </div>
 
+<!-- Alt Links Modal -->
 <div class="modal" id="altLinksModal">
-    <div class="modal-content">
-        <h2>Alternate Links</h2>
-        <textarea style="width:100%; height:150px; background:rgba(0,0,0,0.2); color:var(--accent); border-radius:12px; padding:15px; border:1px solid var(--border); margin-top:15px;" readonly>
-Truffled: computerlab.strangled.net
-Granny: https://riaannn.github.io/Granny/
-        </textarea>
-        <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="UI.toggleModal('altLinksModal', false)">CLOSE</button>
+  <div class="modal-box">
+    <div class="modal-header"><span style="color:var(--accent2)">⬡</span><h2 style="color:var(--accent2)">Alternate Links</h2></div>
+    <div class="modal-body">
+      <textarea class="alt-ta" readonly>Truffled: computerlab.strangled.net
+Granny: https://riaannn.github.io/Granny/</textarea>
+      <div class="modal-actions" style="margin-top:12px">
+        <button class="m-btn primary" onclick="UI.toggleModal('altLinksModal',false)">CLOSE</button>
+      </div>
     </div>
+  </div>
 </div>
 
+<!-- Settings Modal -->
 <div class="modal" id="settingsModal">
-    <div class="modal-content">
-        <h2 style="margin-bottom: 24px; text-align: center;">Tab Disguise</h2>
-        <div id="presetGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;"></div>
-        <button class="btn btn-danger" style="width: 100%; margin-top: 20px;" onclick="UI.forceReset()">FORCE RESET ALL DATA</button>
-        <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="UI.toggleModal('settingsModal', false)">SAVE</button>
+  <div class="modal-box">
+    <div class="modal-header"><span style="color:var(--accent)">⬡</span><h2>Cloak Profile</h2></div>
+    <div class="modal-body">
+      <div class="f-label">Tab Disguise</div>
+      <div id="presetGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px"></div>
+      <div class="modal-actions">
+        <button class="m-btn danger" onclick="UI.forceReset()">WIPE ALL DATA</button>
+        <button class="m-btn primary" onclick="UI.toggleModal('settingsModal',false)">CONFIRM</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <script>
-window.onload = function() {
-    const loader = document.getElementById('safe-start');
-    loader.style.opacity = '0';
-    setTimeout(() => { loader.style.visibility = 'hidden'; }, 600);
+// Cursor — RAF-throttled for perf
+const cursor=document.getElementById('cursor');
+let mx=0,my=0,rafId=null;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;if(!rafId)rafId=requestAnimationFrame(()=>{cursor.style.left=mx+'px';cursor.style.top=my+'px';rafId=null;})});
+
+// Clock
+function tick(){const n=new Date();document.getElementById('clock').textContent=[n.getHours(),n.getMinutes(),n.getSeconds()].map(v=>String(v).padStart(2,'0')).join(':')}
+tick();setInterval(tick,1000);
+
+// Boot
+window.onload=()=>setTimeout(()=>document.getElementById('boot').classList.add('hide'),2800);
+window.addEventListener('beforeunload',e=>{e.preventDefault();e.returnValue='';});
+
+const DEFAULT_SHORTCUTS={
+  web:[
+    {name:"GN Math",url:"https://genizymath.github.io/",icon:"https://genizymath.github.io/images/favicon.png",isDefault:true},
+    {name:"AnuraOS",url:"https://anura.pro",icon:"https://i.imgur.com/6vvxLxR.jpeg",isDefault:true},
+    {name:"Truffled",url:"https://anura.pro",icon:"https://truffled.lol/png/logo.png",isDefault:true}
+  ],
+  games:[
+    {name:"Angry Birds Epic",url:"https://riaannn.github.io/Angry-Birds-Epic/",icon:"https://i.imgur.com/ql7Gz9e.jpeg",isDefault:true},
+    {name:"Bad Piggies",url:"https://riaannn.github.io/Bad-Piggies/",icon:"https://preview.redd.it/which-of-these-app-icons-is-the-best-in-your-opinion-for-v0-eooqvsjlfb971.png?width=185&format=png&auto=webp&s=e8267058bec260d939d0bdc052bb1c9bc4516787",isDefault:true},
+    {name:"Baldi's Basics",url:"https://riaannn.github.io/Baldis-Basics/",icon:"https://play-lh.googleusercontent.com/EPV1TB4So1lB0DGrdCVExDpNU8ML67nd8OqBeoOIM-s6sDicxmDdPvCXD6n7LKevFl0",isDefault:true}
+  ],
+  apps:[
+    {name:"WatchParty",url:"https://watchparty.me",icon:"https://www.watchparty.me/favicon.ico",isDefault:true}
+  ],
+  secrets:[
+    {name:"Yandere Simulator",url:"https://riaannn.github.io/Yandere-Simulator/",icon:"https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/8939caba-2c60-4aeb-bb20-d61b0458b178/daamgvz-d0dd1426-a94f-4a2e-97e2-c54cd9aa51cc.png",isDefault:true}
+  ]
 };
 
-window.addEventListener('beforeunload', (e) => {
-    e.preventDefault();
-    e.returnValue = '';
-});
-
-const DEFAULT_SHORTCUTS = {
-    web: [
-        {name: "GN Math", url: "https://genizymath.github.io/", icon: "https://genizymath.github.io/images/favicon.png", isDefault: true},
-        {name: "AnuraOS", url: "https://anura.pro", icon: "https://i.imgur.com/6vvxLxR.jpeg", isDefault: true}
-    ],
-    games: [
-        {name: "Angry Birds Epic", url: "https://riaannn.github.io/Angry-Birds-Epic/", icon: "https://i.imgur.com/ql7Gz9e.jpeg", isDefault: true},
-        {name: "Bad Piggies", url: "https://riaannn.github.io/Bad-Piggies/", icon: "https://preview.redd.it/which-of-these-app-icons-is-the-best-in-your-opinion-for-v0-eooqvsjlfb971.png?width=185&format=png&auto=webp&s=e8267058bec260d939d0bdc052bb1c9bc4516787", isDefault: true},
-        {name: "Baldi's Basics", url: "https://riaannn.github.io/Baldis-Basics/", icon: "https://play-lh.googleusercontent.com/EPV1TB4So1lB0DGrdCVExDpNU8ML67nd8OqBeoOIM-s6sDicxmDdPvCXD6n7LKevFl0", isDefault: true},
-    ],
-    apps: [
-        {name: "WatchParty", url: "https://watchparty.me", icon: "https://www.watchparty.me/favicon.ico", isDefault: true}
-    ],
-    secrets: [
-        {name: "Yandere Simulator", url: "https://riaannn.github.io/Yandere-Simulator/", icon: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/8939caba-2c60-4aeb-bb20-d61b0458b178/daamgvz-d0dd1426-a94f-4a2e-97e2-c54cd9aa51cc.png", isDefault: true}
-    ]
+const DATA={
+  currentTab:"games",
+  presets:[
+    {id:"google",name:"Google",title:"Google",icon:"https://www.google.com/favicon.ico"},
+    {id:"canvas",name:"Canvas",title:"Dashboard",icon:"https://wdmcs.instructure.com/favicon.ico"}
+  ],
+  shortcuts:(()=>{
+    const uc=JSON.parse(localStorage.getItem("userCustomShortcuts"))||{web:[],games:[],apps:[],secrets:[]};
+    return{
+      web:[...DEFAULT_SHORTCUTS.web,...uc.web],
+      games:[...DEFAULT_SHORTCUTS.games,...uc.games],
+      apps:[...DEFAULT_SHORTCUTS.apps,...uc.apps],
+      secrets:[...DEFAULT_SHORTCUTS.secrets,...uc.secrets]
+    };
+  })(),
+  editingIndex:null,editingCategory:null,isEditingDefault:false
 };
 
-const DATA = {
-    currentTab: "games",
-    presets: [
-        {id:"google", name:"Google", title:"Google", icon:"https://www.google.com/favicon.ico"},
-        {id:"drive", name:"Drive", title:"My Drive - Google Drive", icon:"https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png"},
-        {id:"canvas", name:"Canvas", title:"Dashboard", icon:"https://wdmcs.instructure.com/favicon.ico"}
-    ],
-    shortcuts: (() => {
-        const userCustom = JSON.parse(localStorage.getItem("userCustomShortcuts")) || { web: [], games: [], apps: [], secrets: [] };
-        return {
-            web: [...DEFAULT_SHORTCUTS.web, ...userCustom.web],
-            games: [...DEFAULT_SHORTCUTS.games, ...userCustom.games],
-            apps: [...DEFAULT_SHORTCUTS.apps, ...userCustom.apps],
-            secrets: [...DEFAULT_SHORTCUTS.secrets, ...userCustom.secrets]
-        };
-    })(),
-    editingIndex: null,
-    editingCategory: null,
-    isEditingDefault: false
+// ─── Portal Transition ────────────────────────────────────────────────────────
+const Portal={
+  run(cb){
+    const el=document.getElementById('portal');
+    el.style.opacity='1';
+    el.classList.add('active','run');
+    // After rings + flash finish (~520ms), open window, then fade portal out
+    setTimeout(()=>{cb();},420);
+    setTimeout(()=>{
+      el.style.transition='opacity 0.3s';
+      el.style.opacity='0';
+    },520);
+    setTimeout(()=>{
+      el.classList.remove('active','run');
+      el.style.transition='';
+      el.style.opacity='0';
+    },820);
+  }
 };
 
-const Launcher = {
-    selectedPreset: JSON.parse(localStorage.getItem("preset")) || DATA.presets[1],
-    open(url) {
-        if (!url.startsWith('http')) url = 'https://' + url;
-        const win = window.open("about:blank", "_blank");
-        if (!win) return alert("Enable popups!");
-        
-        // Using Google's favicon proxy for the cloaked tab icon to ensure it loads while iframed
-        const proxyIcon = `https://www.google.com/s2/favicons?sz=64&domain=${this.selectedPreset.icon}`;
+// ─── Launched Window Controls ─────────────────────────────────────────────────
+const WIN_CONTROLS=`
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body,html{width:100%;height:100%;overflow:hidden;background:#000}
+  iframe{border:none;width:100%;height:100%;display:block}
+  #wportal{position:fixed;inset:0;z-index:99999;background:#050508;display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .wring{position:absolute;border-radius:50%;border:2px solid #00ff9d;opacity:0;transform:scale(0)}
+  #wr1{width:40px;height:40px}
+  #wr2{width:80px;height:80px;border-color:rgba(0,255,157,0.6)}
+  #wr3{width:140px;height:140px;border-color:rgba(0,255,157,0.3)}
+  #wflash{position:absolute;inset:0;background:#00ff9d;opacity:0}
+  #wportal.run #wr1{animation:wring 0.5s cubic-bezier(0.4,0,0.2,1) forwards}
+  #wportal.run #wr2{animation:wring 0.5s 0.05s cubic-bezier(0.4,0,0.2,1) forwards}
+  #wportal.run #wr3{animation:wring 0.5s 0.1s cubic-bezier(0.4,0,0.2,1) forwards}
+  #wportal.run #wflash{animation:wflash 0.45s 0.3s ease-out forwards}
+  @keyframes wring{0%{opacity:1;transform:scale(0)}70%{opacity:0.7}100%{opacity:0;transform:scale(9)}}
+  @keyframes wflash{0%{opacity:0.5}100%{opacity:0}}
+  #ctrl{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:6px;z-index:9998;opacity:0.7;transition:opacity .2s}
+  #ctrl:hover{opacity:1}
+  .cb{width:36px;height:36px;background:rgba(5,5,8,0.92);border:1px solid rgba(0,255,157,0.35);color:#00ff9d;cursor:pointer;display:flex;align-items:center;justify-content:center;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);transition:background .15s,border-color .15s}
+  .cb:hover{background:rgba(0,255,157,0.15);border-color:#00ff9d}
+  .cb.active{background:rgba(0,255,157,0.18);border-color:#00ff9d}
+  .cb svg{width:14px;height:14px;fill:#00ff9d;flex-shrink:0}
+  #ctrl.hidden{display:none}
+  #stray{position:fixed;bottom:18px;right:62px;display:flex;align-items:center;z-index:9998;width:0;overflow:hidden;transition:width 0.25s cubic-bezier(0.4,0,0.2,1),opacity 0.2s;opacity:0}
+  #stray.open{width:240px;opacity:1}
+  #surl{flex:1;height:36px;background:rgba(5,5,8,0.96);border:1px solid rgba(0,255,157,0.45);border-right:none;color:#00ff9d;font-family:'Share Tech Mono',monospace;font-size:0.68rem;padding:0 10px;outline:none;clip-path:polygon(6px 0%,100% 0%,100% 100%,0% 100%);white-space:nowrap}
+  #surl::placeholder{color:rgba(0,255,157,0.35);font-size:0.6rem}
+  #sgo{width:36px;height:36px;flex-shrink:0;background:rgba(0,255,157,0.12);border:1px solid rgba(0,255,157,0.45);color:#00ff9d;cursor:pointer;display:flex;align-items:center;justify-content:center;clip-path:polygon(0% 0%,calc(100% - 6px) 0%,100% 50%,calc(100% - 6px) 100%,0% 100%);transition:background .15s}
+  #sgo:hover{background:rgba(0,255,157,0.25)}
+  #sgo svg{width:13px;height:13px;fill:#00ff9d}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<div id="wportal"><div class="wring" id="wr1"></div><div class="wring" id="wr2"></div><div class="wring" id="wr3"></div><div id="wflash"></div></div>
+<div id="stray"><input id="surl" type="text" placeholder="ENTER URL..." autocomplete="off" spellcheck="false"><button id="sgo" onclick="searchGo()"><svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></button></div>
+<div id="ctrl">
+  <button class="cb" id="btn-fs" title="Fullscreen" onclick="toggleFS()"><svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
+  <button class="cb" id="btn-search" title="Navigate" onclick="toggleSearch()"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button>
+  <button class="cb" id="btn-reload" title="Reload" onclick="doReload()"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>
+</div>
+<iframe id="c" allow="fullscreen;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+<script>
+window.addEventListener('beforeunload',e=>{e.preventDefault();e.returnValue='';});
+const fr=document.getElementById('c');
+function setHome(u){
+  const wp=document.getElementById('wportal');
+  wp.classList.add('run');
+  setTimeout(()=>{fr.src=u;},400);
+  setTimeout(()=>{wp.style.transition='opacity 0.35s';wp.style.opacity='0';},500);
+  setTimeout(()=>{wp.style.display='none';},860);
+}
+function doReload(){fr.src=fr.src;}
+function toggleSearch(){
+  const open=document.getElementById('stray').classList.toggle('open');
+  document.getElementById('btn-search').classList.toggle('active',open);
+  if(open)setTimeout(()=>document.getElementById('surl').focus(),260);
+  else document.getElementById('surl').value='';
+}
+function searchGo(){
+  let v=document.getElementById('surl').value.trim();
+  if(!v)return;
+  if(!v.startsWith('http'))v='https://'+v;
+  fr.src=v;
+  document.getElementById('stray').classList.remove('open');
+  document.getElementById('btn-search').classList.remove('active');
+  document.getElementById('surl').value='';
+}
+document.getElementById('surl').addEventListener('keydown',e=>{if(e.key==='Enter')searchGo();if(e.key==='Escape')toggleSearch();});
+function toggleFS(){
+  const el=document.documentElement;
+  if(!document.fullscreenElement)el.requestFullscreen&&el.requestFullscreen();
+  else document.exitFullscreen&&document.exitFullscreen();
+}
+function updateCtrl(){
+  const inFS=!!document.fullscreenElement||window.innerHeight===screen.height;
+  document.getElementById('ctrl').classList.toggle('hidden',inFS);
+  if(inFS){document.getElementById('stray').classList.remove('open');document.getElementById('btn-search').classList.remove('active');}
+}
+document.addEventListener('fullscreenchange',updateCtrl);
+window.addEventListener('resize',updateCtrl);
+updateCtrl();
+<\/script>`;
 
-        win.document.write(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>${this.selectedPreset.title}</title>
-                <link rel="icon" href="${proxyIcon}">
-                <style>
-                    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
-                    iframe { border: none; width: 100%; height: 100%; }
-                    #refresh-btn {
-                        position: fixed; bottom: 20px; right: 20px; width: 45px; height: 45px;
-                        background: #6366f1; color: white; border: none; border-radius: 50%;
-                        cursor: pointer; display: flex; align-items: center; justify-content: center;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 9999; opacity: 0.6; transition: 0.3s;
-                    }
-                    #refresh-btn:hover { opacity: 1; transform: scale(1.1); }
-                    #refresh-btn svg { width: 24px; height: 24px; fill: currentColor; }
-                </style>
-                <script>
-                    window.addEventListener('beforeunload', (e) => {
-                        e.preventDefault();
-                        e.returnValue = '';
-                    });
-
-                    function checkFullscreen() {
-                        const btn = document.getElementById('refresh-btn');
-                        const isF11 = window.innerHeight === window.screen.height;
-                        const isStandardFS = !!document.fullscreenElement;
-                        
-                        if (isF11 || isStandardFS) {
-                            btn.style.display = 'none';
-                        } else {
-                            btn.style.display = 'flex';
-                        }
-                    }
-
-                    window.addEventListener('resize', checkFullscreen);
-                    document.addEventListener('fullscreenchange', checkFullscreen);
-                <\/script>
-            </head>
-            <body>
-                <button id="refresh-btn" onclick="document.getElementById('content').src = document.getElementById('content').src;" title="Refresh Page">
-                    <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                </button>
-                <iframe id="content" src="${url}" allow="fullscreen; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </body>
-            </html>
-        `);
-        win.document.close();
-    },
-    setPreset(id) {
-        this.selectedPreset = DATA.presets.find(p => p.id === id);
-        localStorage.setItem("preset", JSON.stringify(this.selectedPreset));
-        UI.renderPresets();
-    }
+const Launcher={
+  selectedPreset:JSON.parse(localStorage.getItem("preset"))||DATA.presets[1],
+  open(url){
+    if(!url.startsWith('http'))url='https://'+url;
+    Portal.run(()=>{
+      const win=window.open("about:blank","_blank");
+      if(!win){alert("Enable popups!");return;}
+      const pi=`https://www.google.com/s2/favicons?sz=64&domain=${this.selectedPreset.icon}`;
+      win.document.write(`<!DOCTYPE html><html><head>
+        <title>${this.selectedPreset.title}</title>
+        <link rel="icon" href="${pi}">
+        ${WIN_CONTROLS}
+      </head><body>
+        <script>setHome('${url.replace(/'/g,"\\'")}');<\/script>
+      </body></html>`);
+      win.document.close();
+    });
+  },
+  setPreset(id){
+    this.selectedPreset=DATA.presets.find(p=>p.id===id);
+    localStorage.setItem("preset",JSON.stringify(this.selectedPreset));
+    document.getElementById('stat-cloak').textContent=this.selectedPreset.name.toUpperCase();
+    UI.renderPresets();
+  }
 };
 
-const UI = {
-    renderGrid() {
-        const grid = document.getElementById("mainGrid");
-        const query = document.getElementById("searchBar").value.toLowerCase().trim();
-        let displayItems = [];
-        if (query.includes('.') || query.startsWith('http')) {
-            // Using proxy for search bar direct links
-            const proxyIcon = `https://www.google.com/s2/favicons?sz=64&domain=${query}`;
-            displayItems.push({ name: "Open Direct Link", url: query, icon: proxyIcon, isDirect: true });
-        }
-        const tabItems = DATA.shortcuts[DATA.currentTab] || [];
-        tabItems.forEach((item, index) => {
-            if (query === "" || item.name.toLowerCase().includes(query)) {
-                displayItems.push({ ...item, index, category: DATA.currentTab });
-            }
-        });
-        if (query.includes("yandere")) {
-            const secretItems = DATA.shortcuts.secrets || [];
-            secretItems.forEach((item, index) => {
-                if (item.name.toLowerCase().includes(query)) displayItems.push({ ...item, index, category: 'secrets' });
-            });
-        }
-        grid.innerHTML = displayItems.map((item) => `
-            <div class="card">
-                <img src="${item.icon}" class="card-icon" onerror="this.src='https://i.imgur.com/ql7Gz9e.jpeg'" onclick="Launcher.open('${item.url}')">
-                <div style="font-weight:600;">${item.name}</div>
-                <div class="btn-group">
-                    ${item.isDirect ? '' : `<button class="btn" onclick="UI.openEditModal('${item.category}', ${item.index})">Edit</button>`}
-                </div>
-            </div>`).join('');
-    },
-    switchTab(tab) {
-        DATA.currentTab = tab;
-        document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase() === tab));
-        this.renderGrid();
-    },
-    openAddModal() {
-        DATA.editingIndex = null;
-        DATA.editingCategory = DATA.currentTab;
-        DATA.isEditingDefault = false;
-        document.getElementById("modalTitle").innerText = "Add Shortcut";
-        document.getElementById("editName").value = document.getElementById("editUrl").value = document.getElementById("editIcon").value = "";
-        document.getElementById("deleteBtn").style.display = "none";
-        this.toggleModal("editModal", true);
-    },
-    openEditModal(category, index) {
-        const item = DATA.shortcuts[category][index];
-        DATA.editingIndex = index;
-        DATA.editingCategory = category;
-        DATA.isEditingDefault = !!item.isDefault;
-        document.getElementById("modalTitle").innerText = "Edit Shortcut";
-        document.getElementById("editName").value = item.name;
-        document.getElementById("editUrl").value = item.url;
-        document.getElementById("editIcon").value = item.icon;
-        document.getElementById("deleteBtn").style.display = DATA.isEditingDefault ? "none" : "block";
-        this.toggleModal("editModal", true);
-    },
-    saveShortcut() {
-        const item = { 
-            name: document.getElementById("editName").value, 
-            url: document.getElementById("editUrl").value, 
-            icon: document.getElementById("editIcon").value 
-        };
-        if (DATA.editingIndex === null) {
-            DATA.shortcuts[DATA.editingCategory].push(item);
-        } else {
-            if (DATA.isEditingDefault) item.isDefault = true;
-            DATA.shortcuts[DATA.editingCategory][DATA.editingIndex] = item;
-        }
-        this.sync();
-    },
-    deleteShortcut() {
-        DATA.shortcuts[DATA.editingCategory].splice(DATA.editingIndex, 1);
-        this.sync();
-    },
-    sync() {
-        const customOnly = {
-            web: DATA.shortcuts.web.filter(i => !i.isDefault),
-            games: DATA.shortcuts.games.filter(i => !i.isDefault),
-            apps: DATA.shortcuts.apps.filter(i => !i.isDefault),
-            secrets: DATA.shortcuts.secrets.filter(i => !i.isDefault)
-        };
-        localStorage.setItem("userCustomShortcuts", JSON.stringify(customOnly));
-        this.renderGrid();
-        this.toggleModal("editModal", false);
-    },
-    forceReset() {
-        if(confirm("Restore defaults and wipe custom shortcuts?")) {
-            localStorage.removeItem("userCustomShortcuts");
-            location.reload();
-        }
-    },
-    toggleModal(id, show) {
-        document.getElementById(id).classList.toggle('active', show);
-        if (show && id === 'settingsModal') this.renderPresets();
-    },
-    renderPresets() {
-        document.getElementById("presetGrid").innerHTML = DATA.presets.map(p => {
-            // Apply proxy to preset preview icons as well
-            const proxyIcon = `https://www.google.com/s2/favicons?sz=32&domain=${p.icon}`;
-            return `
-            <div onclick="Launcher.setPreset('${p.id}')" style="padding:10px; background:var(--glass); border-radius:10px; cursor:pointer; border:1px solid ${Launcher.selectedPreset.id === p.id ? 'var(--accent)' : 'transparent'}">
-                <img src="${proxyIcon}" style="width:16px;"> ${p.name}
-            </div>`;
-        }).join('');
-    }
+const UI={
+  renderGrid(){
+    const grid=document.getElementById("mainGrid");
+    const q=document.getElementById("searchBar").value.toLowerCase().trim();
+    let items=[];
+    if(q.includes('.')||q.startsWith('http'))
+      items.push({name:"Open Direct Link",url:q,icon:`https://www.google.com/s2/favicons?sz=64&domain=${q}`,isDirect:true});
+    (DATA.shortcuts[DATA.currentTab]||[]).forEach((item,index)=>{
+      if(!q||item.name.toLowerCase().includes(q))items.push({...item,index,category:DATA.currentTab});
+    });
+    if(q.includes("yandere"))
+      (DATA.shortcuts.secrets||[]).forEach((item,index)=>{
+        if(item.name.toLowerCase().includes(q))items.push({...item,index,category:'secrets'});
+      });
+    document.getElementById('status-count').textContent=items.length;
+    if(!items.length){grid.innerHTML=`<div class="empty">◌&nbsp; NO ENTRIES MATCH QUERY</div>`;return;}
+    const frag=document.createDocumentFragment();
+    items.forEach((item,i)=>{
+      const d=document.createElement('div');
+      d.className='card'+(item.isDirect?' direct':'');
+      d.style.animationDelay=i*0.02+'s';
+      const url=item.url.replace(/'/g,'%27');
+      d.innerHTML=`
+        <div class="card-num">${String(i+1).padStart(3,'0')}</div>
+        <div class="card-corner"></div>
+        <img src="${item.icon}" class="card-thumb" loading="lazy" onerror="this.src='https://i.imgur.com/ql7Gz9e.jpeg'" onclick="Launcher.open('${url}')">
+        <div class="card-body">
+          <div class="card-name" title="${item.name}">${item.name}</div>
+          <div class="card-actions">
+            <button class="card-launch" onclick="Launcher.open('${url}')">LAUNCH</button>
+            ${!item.isDirect?`<button class="card-edit" onclick="UI.openEditModal('${item.category}',${item.index})">EDIT</button>`:''}
+          </div>
+        </div>`;
+      frag.appendChild(d);
+    });
+    grid.innerHTML='';
+    grid.appendChild(frag);
+    this.updateCounts();
+  },
+  updateCounts(){
+    ['web','games','apps'].forEach(t=>{document.getElementById('cnt-'+t).textContent=DATA.shortcuts[t].length;});
+    document.getElementById('stat-total').textContent=DATA.shortcuts.web.length+DATA.shortcuts.games.length+DATA.shortcuts.apps.length;
+    document.getElementById('stat-cloak').textContent=Launcher.selectedPreset.name.toUpperCase();
+  },
+  switchTab(tab){
+    DATA.currentTab=tab;
+    document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tab-'+tab).classList.add('active');
+    document.getElementById('status-tab').textContent=tab.toUpperCase();
+    document.getElementById('stat-tab').textContent=tab.toUpperCase();
+    this.renderGrid();
+  },
+  openAddModal(){
+    DATA.editingIndex=null;DATA.editingCategory=DATA.currentTab;DATA.isEditingDefault=false;
+    document.getElementById("modalTitle").textContent="New Entry";
+    document.getElementById("editName").value=document.getElementById("editUrl").value=document.getElementById("editIcon").value="";
+    document.getElementById("deleteBtn").style.display="none";
+    this.toggleModal("editModal",true);
+  },
+  openEditModal(category,index){
+    const item=DATA.shortcuts[category][index];
+    DATA.editingIndex=index;DATA.editingCategory=category;DATA.isEditingDefault=!!item.isDefault;
+    document.getElementById("modalTitle").textContent="Edit Entry";
+    document.getElementById("editName").value=item.name;
+    document.getElementById("editUrl").value=item.url;
+    document.getElementById("editIcon").value=item.icon;
+    document.getElementById("deleteBtn").style.display=DATA.isEditingDefault?"none":"block";
+    this.toggleModal("editModal",true);
+  },
+  saveShortcut(){
+    const item={name:document.getElementById("editName").value,url:document.getElementById("editUrl").value,icon:document.getElementById("editIcon").value};
+    if(DATA.editingIndex===null)DATA.shortcuts[DATA.editingCategory].push(item);
+    else{if(DATA.isEditingDefault)item.isDefault=true;DATA.shortcuts[DATA.editingCategory][DATA.editingIndex]=item;}
+    this.sync();
+  },
+  deleteShortcut(){DATA.shortcuts[DATA.editingCategory].splice(DATA.editingIndex,1);this.sync();},
+  sync(){
+    const c={web:DATA.shortcuts.web.filter(i=>!i.isDefault),games:DATA.shortcuts.games.filter(i=>!i.isDefault),apps:DATA.shortcuts.apps.filter(i=>!i.isDefault),secrets:DATA.shortcuts.secrets.filter(i=>!i.isDefault)};
+    localStorage.setItem("userCustomShortcuts",JSON.stringify(c));
+    this.renderGrid();this.toggleModal("editModal",false);
+  },
+  forceReset(){if(confirm("Wipe all custom data?")){localStorage.removeItem("userCustomShortcuts");location.reload();}},
+  toggleModal(id,show){document.getElementById(id).classList.toggle('active',show);if(show&&id==='settingsModal')this.renderPresets();},
+  renderPresets(){
+    document.getElementById("presetGrid").innerHTML=DATA.presets.map(p=>`
+      <div class="preset-item${Launcher.selectedPreset.id===p.id?' selected':''}" onclick="Launcher.setPreset('${p.id}')">
+        <img src="https://www.google.com/s2/favicons?sz=32&domain=${p.icon}"> ${p.name}
+      </div>`).join('');
+  }
 };
 
 UI.renderGrid();
