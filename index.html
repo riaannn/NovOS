@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; img-src * data:; content-src *;">
     <title>Cloaked Launcher</title>
     <style>
         :root {
@@ -176,12 +177,16 @@ const Launcher = {
         if (!url.startsWith('http')) url = 'https://' + url;
         const win = window.open("about:blank", "_blank");
         if (!win) return alert("Enable popups!");
+        
+        // Using Google's favicon proxy for the cloaked tab icon to ensure it loads while iframed
+        const proxyIcon = `https://www.google.com/s2/favicons?sz=64&domain=${this.selectedPreset.icon}`;
+
         win.document.write(`
             <!DOCTYPE html>
             <html>
             <head>
                 <title>${this.selectedPreset.title}</title>
-                <link rel="icon" href="${this.selectedPreset.icon}">
+                <link rel="icon" href="${proxyIcon}">
                 <style>
                     body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
                     iframe { border: none; width: 100%; height: 100%; }
@@ -202,7 +207,6 @@ const Launcher = {
 
                     function checkFullscreen() {
                         const btn = document.getElementById('refresh-btn');
-                        // Detection for F11: If inner height equals screen height, tab bar is hidden
                         const isF11 = window.innerHeight === window.screen.height;
                         const isStandardFS = !!document.fullscreenElement;
                         
@@ -213,7 +217,6 @@ const Launcher = {
                         }
                     }
 
-                    // Trigger on resize (handles F11 toggling) and standard fullscreen change
                     window.addEventListener('resize', checkFullscreen);
                     document.addEventListener('fullscreenchange', checkFullscreen);
                 <\/script>
@@ -222,7 +225,7 @@ const Launcher = {
                 <button id="refresh-btn" onclick="document.getElementById('content').src = document.getElementById('content').src;" title="Refresh Page">
                     <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
                 </button>
-                <iframe id="content" src="${url}" allowfullscreen></iframe>
+                <iframe id="content" src="${url}" allow="fullscreen; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </body>
             </html>
         `);
@@ -241,7 +244,9 @@ const UI = {
         const query = document.getElementById("searchBar").value.toLowerCase().trim();
         let displayItems = [];
         if (query.includes('.') || query.startsWith('http')) {
-            displayItems.push({ name: "Open Direct Link", url: query, icon: "https://www.google.com/s2/favicons?domain=" + query, isDirect: true });
+            // Using proxy for search bar direct links
+            const proxyIcon = `https://www.google.com/s2/favicons?sz=64&domain=${query}`;
+            displayItems.push({ name: "Open Direct Link", url: query, icon: proxyIcon, isDirect: true });
         }
         const tabItems = DATA.shortcuts[DATA.currentTab] || [];
         tabItems.forEach((item, index) => {
@@ -330,10 +335,14 @@ const UI = {
         if (show && id === 'settingsModal') this.renderPresets();
     },
     renderPresets() {
-        document.getElementById("presetGrid").innerHTML = DATA.presets.map(p => `
+        document.getElementById("presetGrid").innerHTML = DATA.presets.map(p => {
+            // Apply proxy to preset preview icons as well
+            const proxyIcon = `https://www.google.com/s2/favicons?sz=32&domain=${p.icon}`;
+            return `
             <div onclick="Launcher.setPreset('${p.id}')" style="padding:10px; background:var(--glass); border-radius:10px; cursor:pointer; border:1px solid ${Launcher.selectedPreset.id === p.id ? 'var(--accent)' : 'transparent'}">
-                <img src="${p.icon}" style="width:16px;"> ${p.name}
-            </div>`).join('');
+                <img src="${proxyIcon}" style="width:16px;"> ${p.name}
+            </div>`;
+        }).join('');
     }
 };
 
