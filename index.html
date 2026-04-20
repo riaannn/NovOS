@@ -308,13 +308,24 @@ const DATA={
     {id:"canvas",name:"Canvas",title:"Dashboard",icon:"https://wdmcs.instructure.com/favicon.ico"}
   ],
   shortcuts:(()=>{
-    const uc=JSON.parse(localStorage.getItem("userCustomShortcuts"))||{web:[],games:[],apps:[],secrets:[]};
-    return{
-      web:[...DEFAULT_SHORTCUTS.web,...uc.web],
-      games:[...DEFAULT_SHORTCUTS.games,...uc.games],
-      apps:[...DEFAULT_SHORTCUTS.apps,...uc.apps],
-      secrets:[...DEFAULT_SHORTCUTS.secrets,...uc.secrets]
-    };
+    try{
+      const uc=JSON.parse(localStorage.getItem("userCustomShortcuts"))||{};
+      return{
+        web:[...DEFAULT_SHORTCUTS.web,...(uc.web||[])],
+        games:[...DEFAULT_SHORTCUTS.games,...(uc.games||[])],
+        apps:[...DEFAULT_SHORTCUTS.apps,...(uc.apps||[])],
+        secrets:[...DEFAULT_SHORTCUTS.secrets,...(uc.secrets||[])]
+      };
+    }catch(e){
+      console.warn("Failed to load saved shortcuts, resetting.",e);
+      localStorage.removeItem("userCustomShortcuts");
+      return{
+        web:[...DEFAULT_SHORTCUTS.web],
+        games:[...DEFAULT_SHORTCUTS.games],
+        apps:[...DEFAULT_SHORTCUTS.apps],
+        secrets:[...DEFAULT_SHORTCUTS.secrets]
+      };
+    }
   })(),
   editingIndex:null,editingCategory:null,isEditingDefault:false
 };
@@ -325,7 +336,6 @@ const Portal={
     const el=document.getElementById('portal');
     el.style.opacity='1';
     el.classList.add('active','run');
-    // After rings + flash finish (~520ms), open window, then fade portal out
     setTimeout(()=>{cb();},420);
     setTimeout(()=>{
       el.style.transition='opacity 0.3s';
