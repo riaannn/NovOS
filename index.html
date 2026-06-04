@@ -8,584 +8,233 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --os-bg: #0d0e12;
-  --os-surface: rgba(255,255,255,0.055);
-  --os-surface2: rgba(255,255,255,0.08);
-  --os-border: rgba(255,255,255,0.09);
-  --os-border2: rgba(255,255,255,0.15);
-  --os-text: #e2e4ef;
-  --os-muted: #6b6f85;
-  --os-dim: #3a3d50;
-  --os-accent: #7c6dfa;
-  --os-accent-rgb: 124,109,250;
-  --os-accent2: #f47aff;
-  --os-green: #4ade80;
-  --os-red: #f87171;
-  --os-yellow: #fbbf24;
-  --taskbar-h: 48px;
-  --titlebar-h: 36px;
-  --font: 'Geist', system-ui, sans-serif;
-  --mono: 'Geist Mono', monospace;
-  --radius: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 22px;
-  --shadow-window: 0 32px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.06);
+  --os-bg:#0d0e12; --os-surface:rgba(255,255,255,0.055); --os-surface2:rgba(255,255,255,0.08);
+  --os-border:rgba(255,255,255,0.09); --os-border2:rgba(255,255,255,0.15);
+  --os-text:#e2e4ef; --os-muted:#6b6f85; --os-dim:#3a3d50;
+  --os-accent:#7c6dfa; --os-accent-rgb:124,109,250; --os-accent2:#f47aff;
+  --os-green:#4ade80; --os-red:#f87171; --os-yellow:#fbbf24;
+  --taskbar-h:48px; --titlebar-h:36px;
+  --font:'Geist',system-ui,sans-serif; --mono:'Geist Mono',monospace;
+  --radius:10px; --radius-lg:16px; --radius-xl:22px;
+  --shadow-window:0 32px 80px rgba(0,0,0,0.65),0 0 0 1px rgba(255,255,255,0.06);
+  --desk-icon-size:76px;
 }
-
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-size:13px;color:var(--os-text);background:#000;-webkit-font-smoothing:antialiased}
 
-/* ===== DESKTOP ===== */
-#desktop {
-  position:relative; width:100vw; height:calc(100vh - var(--taskbar-h));
-  overflow:hidden; user-select:none;
-  background:#0d0e12;
-}
+/* DESKTOP */
+#desktop{position:relative;width:100vw;height:calc(100vh - var(--taskbar-h));overflow:hidden;user-select:none;background:#0d0e12}
+#wallpaper{position:absolute;inset:0;z-index:0;background:#0d0e12;transition:background 0.6s ease}
+#wallpaper.wp-aurora{background:radial-gradient(ellipse at 20% 50%,#0d1f3c 0%,transparent 55%),radial-gradient(ellipse at 80% 20%,#1a0d3c 0%,transparent 50%),radial-gradient(ellipse at 60% 80%,#0d2a1f 0%,transparent 50%),#080a10}
+#wallpaper.wp-sunset{background:radial-gradient(ellipse at 50% 80%,#2d0a1a 0%,transparent 60%),radial-gradient(ellipse at 20% 30%,#1a0d00 0%,transparent 50%),radial-gradient(ellipse at 80% 60%,#1a0a2d 0%,transparent 50%),#0a0508}
+#wallpaper.wp-ocean{background:radial-gradient(ellipse at 30% 40%,#051530 0%,transparent 60%),radial-gradient(ellipse at 70% 70%,#0a1520 0%,transparent 50%),radial-gradient(ellipse at 50% 10%,#0a1525 0%,transparent 45%),#05080f}
+#wallpaper.wp-forest{background:radial-gradient(ellipse at 40% 60%,#051a0a 0%,transparent 60%),radial-gradient(ellipse at 70% 20%,#0a1f05 0%,transparent 50%),radial-gradient(ellipse at 20% 80%,#0a1a10 0%,transparent 45%),#060d06}
+#wallpaper.wp-void{background:#04040a}
+#wallpaper.wp-custom{background-size:cover;background-position:center;background-repeat:no-repeat}
+#desktop::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px}
 
-#wallpaper {
-  position:absolute; inset:0; z-index:0;
-  background: #0d0e12;
-  transition: background 0.6s ease;
-}
-#wallpaper.wp-aurora {
-  background: radial-gradient(ellipse at 20% 50%, #0d1f3c 0%, transparent 55%),
-              radial-gradient(ellipse at 80% 20%, #1a0d3c 0%, transparent 50%),
-              radial-gradient(ellipse at 60% 80%, #0d2a1f 0%, transparent 50%),
-              #080a10;
-}
-#wallpaper.wp-sunset {
-  background: radial-gradient(ellipse at 50% 80%, #2d0a1a 0%, transparent 60%),
-              radial-gradient(ellipse at 20% 30%, #1a0d00 0%, transparent 50%),
-              radial-gradient(ellipse at 80% 60%, #1a0a2d 0%, transparent 50%),
-              #0a0508;
-}
-#wallpaper.wp-ocean {
-  background: radial-gradient(ellipse at 30% 40%, #051530 0%, transparent 60%),
-              radial-gradient(ellipse at 70% 70%, #0a1520 0%, transparent 50%),
-              radial-gradient(ellipse at 50% 10%, #0a1525 0%, transparent 45%),
-              #05080f;
-}
-#wallpaper.wp-forest {
-  background: radial-gradient(ellipse at 40% 60%, #051a0a 0%, transparent 60%),
-              radial-gradient(ellipse at 70% 20%, #0a1f05 0%, transparent 50%),
-              radial-gradient(ellipse at 20% 80%, #0a1a10 0%, transparent 45%),
-              #060d06;
-}
-#wallpaper.wp-void { background: #04040a; }
-
-#desktop::after {
-  content:''; position:absolute; inset:0; z-index:1; pointer-events:none;
-  opacity:0.03;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size:160px;
-}
-
-/* ===== DESKTOP ICONS ===== */
-#desktopIcons {
-  position:absolute; inset:12px 12px 12px 12px; z-index:5;
-  display:flex; flex-direction:column; flex-wrap:wrap; align-content:flex-start;
-  gap:8px; pointer-events:none;
-}
-.desk-icon {
-  pointer-events:all;
-  display:flex; flex-direction:column; align-items:center; gap:5px;
-  width:76px; padding:8px 4px; border-radius:var(--radius);
-  cursor:pointer; border:1px solid transparent;
-  transition:background 0.15s, border-color 0.15s;
-}
-.desk-icon:hover { background:rgba(255,255,255,0.07); border-color:var(--os-border) }
-.desk-icon.selected { background:rgba(var(--os-accent-rgb),0.18); border-color:rgba(var(--os-accent-rgb),0.4) }
-.desk-icon-img {
-  width:44px; height:44px; border-radius:10px; object-fit:cover;
-  border:1px solid rgba(255,255,255,0.1);
-  background:rgba(255,255,255,0.05);
-}
-.desk-icon-label {
-  font-size:11px; font-weight:400; color:var(--os-text);
-  text-align:center; line-height:1.3; word-break:break-word;
-  text-shadow:0 1px 4px rgba(0,0,0,0.9);
-  max-width:70px;
-}
-
-/* ===== TASKBAR ===== */
-#taskbar {
-  position:fixed; bottom:0; left:0; right:0; z-index:9999;
-  height:var(--taskbar-h);
-  background:rgba(10,11,18,0.88);
-  border-top:1px solid var(--os-border);
-  backdrop-filter:blur(28px) saturate(1.6);
-  display:flex; align-items:center; gap:4px;
-  padding:0 8px;
-  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease;
-}
-#taskbar.taskbar-hidden {
-  transform: translateY(100%);
-  opacity: 0;
-  pointer-events: none;
-}
-#taskbarPeekZone {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: 6px; z-index: 9998;
-  display: none;
-}
-body.taskbar-autohide #taskbarPeekZone { display: block; }
-body.taskbar-autohide #desktop { height: 100vh; }
-
-#startBtn {
-  width:38px; height:38px; border-radius:var(--radius);
-  background:rgba(var(--os-accent-rgb),0.15);
-  border:1px solid rgba(var(--os-accent-rgb),0.25);
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; flex-shrink:0; margin-right:4px;
-  transition:all 0.15s;
-}
-#startBtn:hover { background:rgba(var(--os-accent-rgb),0.28); border-color:rgba(var(--os-accent-rgb),0.5) }
-#startBtn svg { width:18px; height:18px; opacity:0.9 }
-
-.tb-divider { width:1px; height:24px; background:var(--os-border); margin:0 4px; flex-shrink:0 }
-
-#taskbarApps {
-  display:flex; align-items:center; gap:3px; flex:1; overflow:hidden;
-}
-.tb-app {
-  position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  width:42px; height:42px; border-radius:var(--radius);
-  border:1px solid transparent;
-  cursor:pointer; flex-shrink:0;
-  transition:all 0.15s; gap:3px;
-}
-.tb-app:hover { background:var(--os-surface); border-color:var(--os-border) }
-.tb-app.active { background:rgba(var(--os-accent-rgb),0.12); border-color:rgba(var(--os-accent-rgb),0.3) }
-.tb-app.running::after {
-  content:''; position:absolute; bottom:2px; left:50%; transform:translateX(-50%);
-  width:4px; height:4px; border-radius:50%;
-  background:var(--os-accent);
-  box-shadow:0 0 5px rgba(var(--os-accent-rgb),0.7);
-}
-.tb-app-icon { width:24px; height:24px; border-radius:6px; object-fit:cover }
-
-#taskbarRight {
-  display:flex; align-items:center; gap:6px;
-  margin-left:auto; flex-shrink:0;
-}
-#tbClock {
-  font-family:var(--mono); font-size:11.5px; color:var(--os-muted);
-  padding:0 10px; border-left:1px solid var(--os-border);
-  line-height:1.2; text-align:right;
-}
-#tbClock span { display:block; color:var(--os-text); font-size:12px }
-
-.tb-tray-btn {
-  width:32px; height:32px; border-radius:8px;
-  background:transparent; border:1px solid transparent;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; color:var(--os-muted); font-size:14px;
-  transition:all 0.15s;
-}
-.tb-tray-btn:hover { background:var(--os-surface); border-color:var(--os-border); color:var(--os-text) }
-
-/* ===== START MENU ===== */
-#startMenu {
-  position:fixed; bottom:calc(var(--taskbar-h) + 8px); left:8px; z-index:10000;
-  width:340px;
-  background:rgba(13,14,20,0.95);
-  border:1px solid var(--os-border2);
-  border-radius:var(--radius-xl);
-  backdrop-filter:blur(40px) saturate(1.8);
-  box-shadow:0 24px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
-  overflow:hidden;
-  transform:translateY(12px) scale(0.97);
-  opacity:0; pointer-events:none;
-  transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
-  transform-origin:top left;
-}
-#startMenu.open { transform:translateY(0) scale(1); opacity:1; pointer-events:all }
-
-.sm-header { padding:16px 16px 10px; border-bottom:1px solid var(--os-border) }
-.sm-search {
-  width:100%; height:36px; background:var(--os-surface);
-  border:1px solid var(--os-border); border-radius:var(--radius);
-  padding:0 12px 0 34px; color:var(--os-text); font-family:var(--font); font-size:13px;
-  outline:none; transition:border-color 0.15s;
-}
-.sm-search:focus { border-color:rgba(var(--os-accent-rgb),0.5) }
-.sm-search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--os-muted); pointer-events:none }
-.sm-section-label {
-  font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em;
-  color:var(--os-dim); padding:10px 16px 6px;
-}
-.sm-apps-grid {
-  display:grid; grid-template-columns:repeat(4,1fr); gap:4px;
-  padding:0 10px 10px;
-}
-.sm-app-item {
-  display:flex; flex-direction:column; align-items:center; gap:5px;
-  padding:10px 6px; border-radius:var(--radius); cursor:pointer;
-  border:1px solid transparent; transition:all 0.12s;
-}
-.sm-app-item:hover { background:var(--os-surface); border-color:var(--os-border) }
-.sm-app-icon { width:36px; height:36px; border-radius:9px; object-fit:cover }
-.sm-app-label { font-size:10.5px; text-align:center; color:var(--os-text); line-height:1.3; word-break:break-word }
-.sm-footer {
-  padding:10px 16px; border-top:1px solid var(--os-border);
-  display:flex; align-items:center; gap:8px;
-}
-.sm-footer-btn {
-  flex:1; height:32px; background:var(--os-surface); border:1px solid var(--os-border);
-  border-radius:var(--radius); color:var(--os-muted); font-family:var(--font); font-size:12px;
-  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;
-  transition:all 0.15s;
-}
-.sm-footer-btn:hover { background:var(--os-surface2); color:var(--os-text) }
-
-/* ===== WINDOWS ===== */
-#windowLayer { position:absolute; inset:0; z-index:100; pointer-events:none }
-
-.os-window {
-  position:absolute; pointer-events:all;
-  background:rgba(13,15,22,0.96);
-  border:1px solid var(--os-border2);
-  border-radius:var(--radius-lg);
-  box-shadow:var(--shadow-window);
-  backdrop-filter:blur(30px);
-  overflow:hidden;
-  display:flex; flex-direction:column;
-  transform-origin:center;
-  transition:box-shadow 0.2s;
-  min-width:320px; min-height:220px;
-}
-.os-window.minimized { display:none }
-.os-window.maximized {
-  top:0 !important; left:0 !important;
-  width:100% !important; height:100% !important;
-  border-radius:0; border-color:transparent;
-}
-.os-window.focused { box-shadow:0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(var(--os-accent-rgb),0.18) }
-.os-window:not(.focused) { filter:brightness(0.88) }
-
-.wnd-titlebar {
-  height:var(--titlebar-h); flex-shrink:0;
-  display:flex; align-items:center; gap:8px;
-  padding:0 6px 0 12px;
-  background:rgba(255,255,255,0.03);
-  border-bottom:1px solid var(--os-border);
-  cursor:move;
+/* DESKTOP ICONS - now absolutely positioned for drag */
+#desktopIcons{position:absolute;inset:0;z-index:5;pointer-events:none}
+.desk-icon{
+  position:absolute;pointer-events:all;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  width:var(--desk-icon-size);padding:8px 4px;border-radius:var(--radius);
+  cursor:pointer;border:1px solid transparent;
+  transition:background 0.15s,border-color 0.15s;
   user-select:none;
 }
-.wnd-icon { width:16px; height:16px; border-radius:4px; object-fit:cover; flex-shrink:0 }
-.wnd-title {
-  flex:1; font-size:12px; font-weight:500; color:var(--os-text);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.wnd-ctrl-btns {
-  display:flex; align-items:center; gap:1px; flex-shrink:0; margin-left:auto;
-}
-.wnd-ctrl-btn {
-  width:32px; height:var(--titlebar-h);
-  background:transparent; border:none;
-  color:var(--os-muted); font-size:11px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  transition:background 0.12s, color 0.12s;
-  flex-shrink:0;
-}
-.wnd-ctrl-btn:hover { background:var(--os-surface2); color:var(--os-text) }
-.wnd-ctrl-btn.wnd-close:hover { background:var(--os-red); color:#fff }
+.desk-icon:hover{background:rgba(255,255,255,0.07);border-color:var(--os-border)}
+.desk-icon.selected{background:rgba(var(--os-accent-rgb),0.18);border-color:rgba(var(--os-accent-rgb),0.4)}
+.desk-icon.dragging{opacity:0.6;z-index:9999;cursor:grabbing}
+.desk-icon-img{width:calc(var(--desk-icon-size) * 0.58);height:calc(var(--desk-icon-size) * 0.58);border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);pointer-events:none}
+.desk-icon-label{font-size:11px;font-weight:400;color:var(--os-text);text-align:center;line-height:1.3;word-break:break-word;text-shadow:0 1px 4px rgba(0,0,0,0.9);max-width:calc(var(--desk-icon-size) - 8px);pointer-events:none;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.desk-icon-rename{width:calc(var(--desk-icon-size) - 10px);font-size:11px;background:rgba(13,14,20,0.95);border:1px solid rgba(var(--os-accent-rgb),0.5);border-radius:4px;color:var(--os-text);text-align:center;padding:2px 4px;outline:none;font-family:var(--font);display:none}
 
-.os-window.maximized .wnd-titlebar {
-  position:absolute; top:0; left:0; right:0; z-index:20;
-  opacity:0; pointer-events:none;
-  transform:translateY(-100%);
-  transition:opacity 0.18s, transform 0.18s;
-  border-bottom-color:var(--os-border);
-  background:rgba(10,11,18,0.96);
-  backdrop-filter:blur(20px);
-}
-.os-window.maximized .wnd-titlebar.tb-peek {
-  opacity:1; pointer-events:all;
-  transform:translateY(0);
-}
-.wnd-peek-zone {
-  display:none;
-  position:absolute; top:0; left:0; right:0; height:6px; z-index:21;
-  cursor:default;
-}
-.os-window.maximized .wnd-peek-zone { display:block }
-.os-window.maximized .wnd-body { position:absolute; inset:0; }
+/* Folder icon special */
+.desk-icon.folder .desk-icon-img{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.25);display:flex;align-items:center;justify-content:center;font-size:calc(var(--desk-icon-size)*0.32)}
 
-.wnd-body { flex:1; overflow:hidden; position:relative }
-.wnd-iframe {
-  position:absolute; inset:0; width:100%; height:100%;
-  border:none; background:#000;
-}
-.wnd-loader {
-  position:absolute; inset:0; z-index:2;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
-  background:rgba(8,9,14,0.97);
-  transition:opacity 0.3s; pointer-events:none;
-}
-.wnd-loader.hidden { opacity:0 }
-.loader-ring {
-  width:36px; height:36px;
-  border:2px solid rgba(var(--os-accent-rgb),0.15);
-  border-top-color:var(--os-accent);
-  border-radius:50%;
-  animation:spin 0.9s linear infinite;
-}
-@keyframes spin { to { transform:rotate(360deg) } }
-.wnd-loader-txt { font-size:12px; color:var(--os-muted); font-weight:400 }
+/* TASKBAR */
+#taskbar{position:fixed;bottom:0;left:0;right:0;z-index:9999;height:var(--taskbar-h);background:rgba(10,11,18,0.88);border-top:1px solid var(--os-border);backdrop-filter:blur(28px) saturate(1.6);display:flex;align-items:center;gap:4px;padding:0 8px;transition:transform 0.25s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease}
+#taskbar.taskbar-hidden{transform:translateY(100%);opacity:0;pointer-events:none}
+#taskbarPeekZone{position:fixed;bottom:0;left:0;right:0;height:6px;z-index:9998;display:none}
+body.taskbar-autohide #taskbarPeekZone{display:block}
+body.taskbar-autohide #desktop{height:100vh}
+#startBtn{width:38px;height:38px;border-radius:var(--radius);background:rgba(var(--os-accent-rgb),0.15);border:1px solid rgba(var(--os-accent-rgb),0.25);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-right:4px;transition:all 0.15s}
+#startBtn:hover{background:rgba(var(--os-accent-rgb),0.28);border-color:rgba(var(--os-accent-rgb),0.5)}
+#startBtn svg{width:18px;height:18px;opacity:0.9}
+.tb-divider{width:1px;height:24px;background:var(--os-border);margin:0 4px;flex-shrink:0}
+#taskbarApps{display:flex;align-items:center;gap:3px;flex:1;overflow:hidden}
+.tb-app{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:42px;height:42px;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;flex-shrink:0;transition:all 0.15s;gap:3px}
+.tb-app:hover{background:var(--os-surface);border-color:var(--os-border)}
+.tb-app.active{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.3)}
+.tb-app.running::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--os-accent);box-shadow:0 0 5px rgba(var(--os-accent-rgb),0.7)}
+.tb-app-icon{width:24px;height:24px;border-radius:6px;object-fit:cover}
+#taskbarRight{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
+#tbClock{font-family:var(--mono);font-size:11.5px;color:var(--os-muted);padding:0 10px;border-left:1px solid var(--os-border);line-height:1.2;text-align:right}
+#tbClock span{display:block;color:var(--os-text);font-size:12px}
+.tb-tray-btn{width:32px;height:32px;border-radius:8px;background:transparent;border:1px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--os-muted);font-size:14px;transition:all 0.15s}
+.tb-tray-btn:hover{background:var(--os-surface);border-color:var(--os-border);color:var(--os-text)}
 
-.wnd-resize {
-  position:absolute; right:0; bottom:0;
-  width:16px; height:16px; cursor:se-resize; z-index:5;
-}
-.wnd-resize::after {
-  content:''; position:absolute; right:4px; bottom:4px;
-  width:8px; height:8px;
-  border-right:2px solid rgba(255,255,255,0.15);
-  border-bottom:2px solid rgba(255,255,255,0.15);
-  border-radius:1px;
-}
+/* START MENU */
+#startMenu{position:fixed;bottom:calc(var(--taskbar-h) + 8px);left:8px;z-index:10000;width:340px;background:rgba(13,14,20,0.95);border:1px solid var(--os-border2);border-radius:var(--radius-xl);backdrop-filter:blur(40px) saturate(1.8);box-shadow:0 24px 64px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.04);overflow:hidden;transform:translateY(12px) scale(0.97);opacity:0;pointer-events:none;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);transform-origin:top left}
+#startMenu.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
+.sm-header{padding:16px 16px 10px;border-bottom:1px solid var(--os-border)}
+.sm-search{width:100%;height:36px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:var(--radius);padding:0 12px 0 34px;color:var(--os-text);font-family:var(--font);font-size:13px;outline:none;transition:border-color 0.15s}
+.sm-search:focus{border-color:rgba(var(--os-accent-rgb),0.5)}
+.sm-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--os-muted);pointer-events:none}
+.sm-section-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim);padding:10px 16px 6px}
+.sm-apps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:0 10px 10px}
+.sm-app-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px;border-radius:var(--radius);cursor:pointer;border:1px solid transparent;transition:all 0.12s}
+.sm-app-item:hover{background:var(--os-surface);border-color:var(--os-border)}
+.sm-app-icon{width:36px;height:36px;border-radius:9px;object-fit:cover}
+.sm-app-label{font-size:10.5px;text-align:center;color:var(--os-text);line-height:1.3;word-break:break-word}
+.sm-footer{padding:10px 16px;border-top:1px solid var(--os-border);display:flex;align-items:center;gap:8px}
+.sm-footer-btn{flex:1;height:32px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:var(--radius);color:var(--os-muted);font-family:var(--font);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.15s}
+.sm-footer-btn:hover{background:var(--os-surface2);color:var(--os-text)}
 
-/* ===== APP LIBRARY WINDOW ===== */
-.wnd-toolbar {
-  height:40px; flex-shrink:0;
-  display:flex; align-items:center; gap:8px;
-  padding:0 12px;
-  border-bottom:1px solid var(--os-border);
-  background:rgba(255,255,255,0.02);
-}
-.wnd-tabs {
-  display:flex; align-items:center; gap:2px; flex:1;
-}
-.wnd-tab {
-  padding:5px 12px; border-radius:6px; font-size:12px; font-weight:500;
-  color:var(--os-muted); cursor:pointer; border:1px solid transparent;
-  transition:all 0.12s;
-}
-.wnd-tab.active { background:rgba(var(--os-accent-rgb),0.12); border-color:rgba(var(--os-accent-rgb),0.25); color:var(--os-accent) }
-.wnd-tab:hover:not(.active) { background:var(--os-surface); color:var(--os-text) }
+/* WINDOWS */
+#windowLayer{position:absolute;inset:0;z-index:100;pointer-events:none}
+.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(30px);overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px}
+.os-window.minimized{display:none}
+.os-window.maximized{top:0!important;left:0!important;width:100%!important;height:100%!important;border-radius:0;border-color:transparent}
+.os-window.focused{box-shadow:0 40px 100px rgba(0,0,0,0.75),0 0 0 1px rgba(var(--os-accent-rgb),0.18)}
+.os-window:not(.focused){filter:brightness(0.88)}
+.wnd-titlebar{height:var(--titlebar-h);flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 6px 0 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--os-border);cursor:move;user-select:none}
+.wnd-icon{width:16px;height:16px;border-radius:4px;object-fit:cover;flex-shrink:0}
+.wnd-title{flex:1;font-size:12px;font-weight:500;color:var(--os-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wnd-ctrl-btns{display:flex;align-items:center;gap:1px;flex-shrink:0;margin-left:auto}
+.wnd-ctrl-btn{width:32px;height:var(--titlebar-h);background:transparent;border:none;color:var(--os-muted);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.12s,color 0.12s;flex-shrink:0}
+.wnd-ctrl-btn:hover{background:var(--os-surface2);color:var(--os-text)}
+.wnd-ctrl-btn.wnd-close:hover{background:var(--os-red);color:#fff}
+.os-window.maximized .wnd-titlebar{position:absolute;top:0;left:0;right:0;z-index:20;opacity:0;pointer-events:none;transform:translateY(-100%);transition:opacity 0.18s,transform 0.18s;border-bottom-color:var(--os-border);background:rgba(10,11,18,0.96);backdrop-filter:blur(20px)}
+.os-window.maximized .wnd-titlebar.tb-peek{opacity:1;pointer-events:all;transform:translateY(0)}
+.wnd-peek-zone{display:none;position:absolute;top:0;left:0;right:0;height:6px;z-index:21;cursor:default}
+.os-window.maximized .wnd-peek-zone{display:block}
+.os-window.maximized .wnd-body{position:absolute;inset:0}
+.wnd-body{flex:1;overflow:hidden;position:relative}
+.wnd-iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#000}
+.wnd-loader{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(8,9,14,0.97);transition:opacity 0.3s;pointer-events:none}
+.wnd-loader.hidden{opacity:0;pointer-events:none}
+.loader-ring{width:36px;height:36px;border:2px solid rgba(var(--os-accent-rgb),0.15);border-top-color:var(--os-accent);border-radius:50%;animation:spin 0.9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.wnd-loader-txt{font-size:12px;color:var(--os-muted);font-weight:400}
+.wnd-loader-sub{font-size:10px;color:var(--os-dim);font-family:var(--mono);margin-top:-4px}
+.wnd-resize{position:absolute;right:0;bottom:0;width:16px;height:16px;cursor:se-resize;z-index:5}
+.wnd-resize::after{content:'';position:absolute;right:4px;bottom:4px;width:8px;height:8px;border-right:2px solid rgba(255,255,255,0.15);border-bottom:2px solid rgba(255,255,255,0.15);border-radius:1px}
 
-.wnd-search {
-  height:28px; width:180px; background:var(--os-surface);
-  border:1px solid var(--os-border); border-radius:6px;
-  padding:0 10px; color:var(--os-text); font-family:var(--font); font-size:12px;
-  outline:none; transition:border-color 0.15s;
-}
-.wnd-search:focus { border-color:rgba(var(--os-accent-rgb),0.4) }
-.wnd-search::placeholder { color:var(--os-dim) }
+/* APP LIBRARY */
+.wnd-toolbar{height:40px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)}
+.wnd-tabs{display:flex;align-items:center;gap:2px;flex:1}
+.wnd-tab{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;color:var(--os-muted);cursor:pointer;border:1px solid transparent;transition:all 0.12s}
+.wnd-tab.active{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.25);color:var(--os-accent)}
+.wnd-tab:hover:not(.active){background:var(--os-surface);color:var(--os-text)}
+.wnd-search{height:28px;width:180px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:6px;padding:0 10px;color:var(--os-text);font-family:var(--font);font-size:12px;outline:none;transition:border-color 0.15s}
+.wnd-search:focus{border-color:rgba(var(--os-accent-rgb),0.4)}
+.wnd-search::placeholder{color:var(--os-dim)}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;padding:14px;overflow-y:auto;height:100%;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
+.lib-card{background:var(--os-surface);border:1px solid var(--os-border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all 0.18s cubic-bezier(0.34,1.4,0.64,1)}
+.lib-card:hover{transform:translateY(-3px);border-color:rgba(var(--os-accent-rgb),0.35);box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.lib-thumb{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(0.8) saturate(0.85);transition:filter 0.2s}
+.lib-card:hover .lib-thumb{filter:brightness(1) saturate(1)}
+.lib-info{padding:8px 9px 9px}
+.lib-name{font-size:11.5px;font-weight:500;color:var(--os-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
+.lib-launch{width:100%;height:26px;border-radius:6px;font-size:11px;font-weight:500;background:rgba(var(--os-accent-rgb),0.12);border:1px solid rgba(var(--os-accent-rgb),0.25);color:var(--os-accent);cursor:pointer;font-family:var(--font);transition:all 0.13s}
+.lib-launch:hover{background:var(--os-accent);border-color:var(--os-accent);color:#fff}
 
-.lib-grid {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
-  gap:10px; padding:14px; overflow-y:auto; height:100%;
-  scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.07) transparent;
-}
-.lib-card {
-  background:var(--os-surface); border:1px solid var(--os-border);
-  border-radius:var(--radius); overflow:hidden; cursor:pointer;
-  transition:all 0.18s cubic-bezier(0.34,1.4,0.64,1);
-}
-.lib-card:hover {
-  transform:translateY(-3px);
-  border-color:rgba(var(--os-accent-rgb),0.35);
-  box-shadow:0 8px 24px rgba(0,0,0,0.4);
-}
-.lib-thumb {
-  width:100%; height:80px; object-fit:cover; display:block;
-  filter:brightness(0.8) saturate(0.85);
-  transition:filter 0.2s;
-}
-.lib-card:hover .lib-thumb { filter:brightness(1) saturate(1) }
-.lib-info { padding:8px 9px 9px }
-.lib-name {
-  font-size:11.5px; font-weight:500; color:var(--os-text);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  margin-bottom:6px;
-}
-.lib-launch {
-  width:100%; height:26px; border-radius:6px; font-size:11px; font-weight:500;
-  background:rgba(var(--os-accent-rgb),0.12); border:1px solid rgba(var(--os-accent-rgb),0.25);
-  color:var(--os-accent); cursor:pointer; font-family:var(--font);
-  transition:all 0.13s;
-}
-.lib-launch:hover { background:var(--os-accent); border-color:var(--os-accent); color:#fff }
+/* FOLDER WINDOW */
+.folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;padding:14px;overflow-y:auto;height:100%;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
+.folder-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px;border-radius:var(--radius);cursor:pointer;border:1px solid transparent;transition:all 0.12s}
+.folder-item:hover{background:var(--os-surface);border-color:var(--os-border)}
+.folder-item img{width:44px;height:44px;border-radius:9px;object-fit:cover}
+.folder-item-label{font-size:10.5px;text-align:center;color:var(--os-text);line-height:1.3;word-break:break-word;max-width:80px}
+.folder-empty{grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--os-muted);font-size:12px}
 
-/* ===== CONTEXT MENU ===== */
-#ctxMenu {
-  position:fixed; z-index:99999;
-  background:rgba(14,16,24,0.97);
-  border:1px solid var(--os-border2);
-  border-radius:var(--radius);
-  backdrop-filter:blur(30px);
-  box-shadow:0 12px 40px rgba(0,0,0,0.6);
-  padding:5px; min-width:180px;
-  transform:scale(0.95); opacity:0; pointer-events:none;
-  transition:all 0.12s cubic-bezier(0.4,0,0.2,1);
-  transform-origin:top left;
-}
-#ctxMenu.open { transform:scale(1); opacity:1; pointer-events:all }
-.ctx-item {
-  display:flex; align-items:center; gap:9px;
-  padding:7px 11px; border-radius:6px; cursor:pointer; font-size:12.5px;
-  color:var(--os-text); transition:background 0.1s;
-}
-.ctx-item:hover { background:rgba(var(--os-accent-rgb),0.12) }
-.ctx-item.danger:hover { background:rgba(248,113,113,0.12); color:var(--os-red) }
-.ctx-item svg { width:14px; height:14px; opacity:0.7; flex-shrink:0 }
-.ctx-sep { height:1px; background:var(--os-border); margin:4px 2px }
-.ctx-label {
-  font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em;
-  color:var(--os-dim); padding:7px 11px 3px;
-}
+/* CONTEXT MENU */
+#ctxMenu{position:fixed;z-index:99999;background:rgba(14,16,24,0.97);border:1px solid var(--os-border2);border-radius:var(--radius);backdrop-filter:blur(30px);box-shadow:0 12px 40px rgba(0,0,0,0.6);padding:5px;min-width:190px;transform:scale(0.95);opacity:0;pointer-events:none;transition:all 0.12s cubic-bezier(0.4,0,0.2,1);transform-origin:top left}
+#ctxMenu.open{transform:scale(1);opacity:1;pointer-events:all}
+.ctx-item{display:flex;align-items:center;gap:9px;padding:7px 11px;border-radius:6px;cursor:pointer;font-size:12.5px;color:var(--os-text);transition:background 0.1s}
+.ctx-item:hover{background:rgba(var(--os-accent-rgb),0.12)}
+.ctx-item.danger:hover{background:rgba(248,113,113,0.12);color:var(--os-red)}
+.ctx-sep{height:1px;background:var(--os-border);margin:4px 2px}
+.ctx-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim);padding:7px 11px 3px}
 
-/* ===== NOTIFICATIONS ===== */
-#notifArea {
-  position:fixed; top:12px; right:12px; z-index:99998;
-  display:flex; flex-direction:column; gap:8px;
-  pointer-events:none;
-}
-.notif {
-  background:rgba(14,16,24,0.96);
-  border:1px solid var(--os-border2);
-  border-radius:var(--radius);
-  backdrop-filter:blur(20px);
-  padding:12px 14px; max-width:260px;
-  font-size:12.5px; color:var(--os-text);
-  box-shadow:0 8px 24px rgba(0,0,0,0.5);
-  animation:notifIn 0.25s ease;
-  pointer-events:all;
-}
-@keyframes notifIn { from{transform:translateX(20px);opacity:0} to{transform:translateX(0);opacity:1} }
-.notif-title { font-weight:600; font-size:12px; margin-bottom:3px; color:var(--os-text) }
-.notif-body { font-size:11.5px; color:var(--os-muted) }
+/* NOTIFICATIONS */
+#notifArea{position:fixed;top:12px;right:12px;z-index:99998;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.notif{background:rgba(14,16,24,0.96);border:1px solid var(--os-border2);border-radius:var(--radius);backdrop-filter:blur(20px);padding:12px 14px;max-width:260px;font-size:12.5px;color:var(--os-text);box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:notifIn 0.25s ease;pointer-events:all}
+@keyframes notifIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+.notif-title{font-weight:600;font-size:12px;margin-bottom:3px;color:var(--os-text)}
+.notif-body{font-size:11.5px;color:var(--os-muted)}
 
-/* ===== SETTINGS PANEL ===== */
-#settingsPanel {
-  position:fixed; top:0; right:0; bottom:0; z-index:10001;
-  width:300px;
-  background:rgba(10,11,18,0.97);
-  border-left:1px solid var(--os-border2);
-  backdrop-filter:blur(40px);
-  transform:translateX(100%);
-  transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
-  display:flex; flex-direction:column; overflow:hidden;
-}
-#settingsPanel.open { transform:translateX(0) }
-.sp-header {
-  padding:18px 18px 14px; border-bottom:1px solid var(--os-border);
-  display:flex; align-items:center; justify-content:space-between;
-}
-.sp-header h2 { font-size:14px; font-weight:600; color:var(--os-text) }
-.sp-close {
-  width:28px; height:28px; border-radius:6px; background:var(--os-surface);
-  border:1px solid var(--os-border); cursor:pointer; color:var(--os-muted);
-  display:flex; align-items:center; justify-content:center; transition:all 0.12s;
-}
-.sp-close:hover { background:var(--os-surface2); color:var(--os-text) }
-.sp-body { flex:1; overflow-y:auto; padding:16px 18px; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.06) transparent }
-.sp-section { margin-bottom:22px }
-.sp-section-title {
-  font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.09em;
-  color:var(--os-dim); margin-bottom:10px;
-}
-.sp-row {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:9px 10px; background:var(--os-surface); border:1px solid var(--os-border);
-  border-radius:8px; margin-bottom:5px;
-}
-.sp-row-label { font-size:12.5px; color:var(--os-text) }
-.sp-row-sub { font-size:11px; color:var(--os-muted); margin-top:1px }
-.toggle { position:relative; width:36px; height:20px; flex-shrink:0 }
-.toggle input { opacity:0; width:0; height:0 }
-.tog-slider {
-  position:absolute; inset:0; background:rgba(255,255,255,0.1);
-  border:1px solid var(--os-border); border-radius:10px; cursor:pointer; transition:all 0.2s;
-}
-.tog-slider::before {
-  content:''; position:absolute; left:3px; top:3px; width:12px; height:12px;
-  background:var(--os-muted); border-radius:50%; transition:all 0.2s;
-}
-.toggle input:checked + .tog-slider { background:rgba(var(--os-accent-rgb),0.2); border-color:rgba(var(--os-accent-rgb),0.5) }
-.toggle input:checked + .tog-slider::before { transform:translateX(16px); background:var(--os-accent) }
+/* SETTINGS PANEL */
+#settingsPanel{position:fixed;top:0;right:0;bottom:0;z-index:10001;width:310px;background:rgba(10,11,18,0.97);border-left:1px solid var(--os-border2);backdrop-filter:blur(40px);transform:translateX(100%);transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;overflow:hidden}
+#settingsPanel.open{transform:translateX(0)}
+.sp-header{padding:18px 18px 14px;border-bottom:1px solid var(--os-border);display:flex;align-items:center;justify-content:space-between}
+.sp-header h2{font-size:14px;font-weight:600;color:var(--os-text)}
+.sp-close{width:28px;height:28px;border-radius:6px;background:var(--os-surface);border:1px solid var(--os-border);cursor:pointer;color:var(--os-muted);display:flex;align-items:center;justify-content:center;transition:all 0.12s}
+.sp-close:hover{background:var(--os-surface2);color:var(--os-text)}
+.sp-body{flex:1;overflow-y:auto;padding:16px 18px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.06) transparent}
+.sp-section{margin-bottom:22px}
+.sp-section-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:var(--os-dim);margin-bottom:10px}
+.sp-row{display:flex;align-items:center;justify-content:space-between;padding:9px 10px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;margin-bottom:5px}
+.sp-row-label{font-size:12.5px;color:var(--os-text)}
+.sp-row-sub{font-size:11px;color:var(--os-muted);margin-top:1px}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.tog-slider{position:absolute;inset:0;background:rgba(255,255,255,0.1);border:1px solid var(--os-border);border-radius:10px;cursor:pointer;transition:all 0.2s}
+.tog-slider::before{content:'';position:absolute;left:3px;top:3px;width:12px;height:12px;background:var(--os-muted);border-radius:50%;transition:all 0.2s}
+.toggle input:checked+.tog-slider{background:rgba(var(--os-accent-rgb),0.2);border-color:rgba(var(--os-accent-rgb),0.5)}
+.toggle input:checked+.tog-slider::before{transform:translateX(16px);background:var(--os-accent)}
+.wp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.wp-item{height:54px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all 0.15s;position:relative;overflow:hidden}
+.wp-item.active{border-color:var(--os-accent);box-shadow:0 0 0 1px rgba(var(--os-accent-rgb),0.3)}
+.wp-item-aurora{background:radial-gradient(circle at 30% 50%,#0d1f3c,#1a0d3c,#0d2a1f,#080a10)}
+.wp-item-sunset{background:radial-gradient(circle at 50% 80%,#2d0a1a,#1a0d00,#1a0a2d,#0a0508)}
+.wp-item-ocean{background:radial-gradient(circle at 30% 40%,#051530,#0a1525,#05080f)}
+.wp-item-forest{background:radial-gradient(circle at 40% 60%,#051a0a,#0a1f05,#060d06)}
+.wp-item-void{background:#04040a}
+.wp-item-plain{background:#0d0e12}
+.wp-item-custom{background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--os-muted);flex-direction:column;gap:2px}
+.accent-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
+.accent-swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.15s}
+.accent-swatch.active{border-color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,0.3)}
+.sp-btn{width:100%;height:34px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;color:var(--os-muted);font-family:var(--font);font-size:12.5px;cursor:pointer;transition:all 0.15s;margin-top:6px}
+.sp-btn:hover{background:var(--os-surface2);color:var(--os-text)}
+.sp-btn.danger:hover{background:rgba(248,113,113,0.1);border-color:rgba(248,113,113,0.3);color:var(--os-red)}
+.sp-slider-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;margin-bottom:5px}
+.sp-slider-label{font-size:12px;color:var(--os-text);flex:1}
+.sp-slider{flex:1;-webkit-appearance:none;height:3px;background:var(--os-border);border-radius:2px;outline:none;cursor:pointer}
+.sp-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--os-accent);cursor:pointer}
+.sp-val{font-size:11px;color:var(--os-accent);font-family:var(--mono);width:30px;text-align:right;flex-shrink:0}
+.sp-num-input{width:60px;height:28px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:6px;padding:0 8px;color:var(--os-text);font-family:var(--mono);font-size:12px;outline:none;text-align:center;transition:border-color 0.15s}
+.sp-num-input:focus{border-color:rgba(var(--os-accent-rgb),0.45)}
 
-.wp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:6px }
-.wp-item {
-  height:54px; border-radius:8px; cursor:pointer; border:2px solid transparent;
-  transition:all 0.15s; position:relative; overflow:hidden;
-}
-.wp-item.active { border-color:var(--os-accent); box-shadow:0 0 0 1px rgba(var(--os-accent-rgb),0.3) }
-.wp-item-aurora { background:radial-gradient(circle at 30% 50%,#0d1f3c,#1a0d3c,#0d2a1f,#080a10) }
-.wp-item-sunset { background:radial-gradient(circle at 50% 80%,#2d0a1a,#1a0d00,#1a0a2d,#0a0508) }
-.wp-item-ocean  { background:radial-gradient(circle at 30% 40%,#051530,#0a1525,#05080f) }
-.wp-item-forest { background:radial-gradient(circle at 40% 60%,#051a0a,#0a1f05,#060d06) }
-.wp-item-void   { background:#04040a }
-.wp-item-plain  { background:#0d0e12 }
+/* PVZ SETUP */
+#pvzSetup{position:fixed;inset:0;z-index:200000;background:rgba(0,0,0,0.85);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:24px}
+#pvzSetup.hide{display:none}
+.pvz-box{width:100%;max-width:500px;background:rgba(13,14,20,0.98);border:1px solid var(--os-border2);border-radius:var(--radius-xl);box-shadow:var(--shadow-window);overflow:hidden}
+.pvz-header{padding:20px 22px 16px;border-bottom:1px solid var(--os-border);display:flex;gap:12px;align-items:center}
+.pvz-icon{width:40px;height:40px;border-radius:10px;background:var(--os-surface);border:1px solid var(--os-border);display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.pvz-body{padding:18px 22px}
+.pvz-step{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.pvz-num{font-family:var(--mono);font-size:11px;color:var(--os-accent);background:rgba(var(--os-accent-rgb),0.1);border:1px solid rgba(var(--os-accent-rgb),0.25);border-radius:5px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.pvz-step-text{font-size:12.5px;line-height:1.6;color:var(--os-text)}
+.pvz-step-text span{color:var(--os-muted);font-size:11px;display:block}
+.pvz-dl{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;margin:14px 0}
+.pvz-dl-text{flex:1;font-size:12px;color:var(--os-muted)}
+.pvz-dl-link{font-size:12px;font-weight:600;color:var(--os-accent);text-decoration:none;padding:6px 12px;border:1px solid rgba(var(--os-accent-rgb),0.25);background:rgba(var(--os-accent-rgb),0.08);border-radius:6px;transition:all 0.15s}
+.pvz-dl-link:hover{background:var(--os-accent);color:#fff}
+.pvz-warn{display:flex;gap:8px;padding:10px 12px;background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.2);border-radius:8px;margin-top:14px;font-size:11.5px;color:rgba(251,191,36,0.8)}
+.pvz-footer{padding:14px 22px;border-top:1px solid var(--os-border)}
+.pvz-confirm-btn{width:100%;height:42px;background:var(--os-accent);border:none;border-radius:8px;font-family:var(--font);font-size:13px;font-weight:600;color:#fff;cursor:pointer;transition:opacity 0.15s}
+.pvz-confirm-btn:hover{opacity:0.85}
 
-.accent-row { display:flex; gap:7px; flex-wrap:wrap; margin-top:6px }
-.accent-swatch {
-  width:26px; height:26px; border-radius:50%; cursor:pointer;
-  border:2px solid transparent; transition:all 0.15s;
-}
-.accent-swatch.active { border-color:#fff; box-shadow:0 0 0 1px rgba(255,255,255,0.3) }
-
-.sp-btn {
-  width:100%; height:34px; background:var(--os-surface); border:1px solid var(--os-border);
-  border-radius:8px; color:var(--os-muted); font-family:var(--font); font-size:12.5px;
-  cursor:pointer; transition:all 0.15s; margin-top:6px;
-}
-.sp-btn:hover { background:var(--os-surface2); color:var(--os-text) }
-.sp-btn.danger:hover { background:rgba(248,113,113,0.1); border-color:rgba(248,113,113,0.3); color:var(--os-red) }
-
-/* ===== PVZ SETUP ===== */
-#pvzSetup {
-  position:fixed; inset:0; z-index:200000;
-  background:rgba(0,0,0,0.85); backdrop-filter:blur(14px);
-  display:flex; align-items:center; justify-content:center; padding:24px;
-}
-#pvzSetup.hide { display:none }
-.pvz-box {
-  width:100%; max-width:500px;
-  background:rgba(13,14,20,0.98); border:1px solid var(--os-border2);
-  border-radius:var(--radius-xl); box-shadow:var(--shadow-window); overflow:hidden;
-}
-.pvz-header { padding:20px 22px 16px; border-bottom:1px solid var(--os-border); display:flex; gap:12px; align-items:center }
-.pvz-icon { width:40px; height:40px; border-radius:10px; background:var(--os-surface); border:1px solid var(--os-border); display:flex; align-items:center; justify-content:center; font-size:1.2rem }
-.pvz-body { padding:18px 22px }
-.pvz-step { display:flex; gap:10px; margin-bottom:10px; align-items:flex-start }
-.pvz-num { font-family:var(--mono); font-size:11px; color:var(--os-accent); background:rgba(var(--os-accent-rgb),0.1); border:1px solid rgba(var(--os-accent-rgb),0.25); border-radius:5px; width:22px; height:22px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px }
-.pvz-step-text { font-size:12.5px; line-height:1.6; color:var(--os-text) }
-.pvz-step-text span { color:var(--os-muted); font-size:11px; display:block }
-.pvz-dl { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--os-surface); border:1px solid var(--os-border); border-radius:8px; margin:14px 0 }
-.pvz-dl-text { flex:1; font-size:12px; color:var(--os-muted) }
-.pvz-dl-link { font-size:12px; font-weight:600; color:var(--os-accent); text-decoration:none; padding:6px 12px; border:1px solid rgba(var(--os-accent-rgb),0.25); background:rgba(var(--os-accent-rgb),0.08); border-radius:6px; transition:all 0.15s }
-.pvz-dl-link:hover { background:var(--os-accent); color:#fff }
-.pvz-warn { display:flex; gap:8px; padding:10px 12px; background:rgba(251,191,36,0.07); border:1px solid rgba(251,191,36,0.2); border-radius:8px; margin-top:14px; font-size:11.5px; color:rgba(251,191,36,0.8) }
-.pvz-footer { padding:14px 22px; border-top:1px solid var(--os-border) }
-.pvz-confirm-btn { width:100%; height:42px; background:var(--os-accent); border:none; border-radius:8px; font-family:var(--font); font-size:13px; font-weight:600; color:#fff; cursor:pointer; transition:opacity 0.15s }
-.pvz-confirm-btn:hover { opacity:0.85 }
-
-/* ===== BOOT SCREEN ===== */
-#boot {
-  position:fixed; inset:0; z-index:999999;
-  background:#04040a; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:6px;
-  transition:opacity 0.7s ease, visibility 0.7s ease;
-}
-#boot.hide { opacity:0; visibility:hidden; pointer-events:none }
-.boot-logo {
-  display:flex; align-items:center; gap:10px; margin-bottom:32px;
-}
-.boot-logo-icon {
-  width:48px; height:48px; border-radius:14px;
-  background:linear-gradient(135deg,rgba(var(--os-accent-rgb),0.9),rgba(244,122,255,0.7));
-  display:flex; align-items:center; justify-content:center;
-}
-.boot-logo-text { font-size:1.7rem; font-weight:600; letter-spacing:-0.03em; color:var(--os-text) }
-.boot-line {
-  font-family:var(--mono); font-size:11px; color:var(--os-muted);
-  overflow:hidden; width:0; white-space:nowrap;
-  animation:lineReveal 0.25s forwards ease-out;
-}
+/* BOOT */
+#boot{position:fixed;inset:0;z-index:999999;background:#04040a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:opacity 0.7s ease,visibility 0.7s ease}
+#boot.hide{opacity:0;visibility:hidden;pointer-events:none}
+.boot-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px}
+.boot-logo-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(var(--os-accent-rgb),0.9),rgba(244,122,255,0.7));display:flex;align-items:center;justify-content:center}
+.boot-logo-text{font-size:1.7rem;font-weight:600;letter-spacing:-0.03em;color:var(--os-text)}
+.boot-line{font-family:var(--mono);font-size:11px;color:var(--os-muted);overflow:hidden;width:0;white-space:nowrap;animation:lineReveal 0.25s forwards ease-out}
 .boot-line:nth-child(2){animation-delay:0.05s}
 .boot-line:nth-child(3){animation-delay:0.25s}
 .boot-line:nth-child(4){animation-delay:0.45s}
@@ -593,126 +242,53 @@ body.taskbar-autohide #desktop { height: 100vh; }
 .boot-line:nth-child(6){animation-delay:0.78s;color:var(--os-green)}
 @keyframes lineReveal{to{width:360px}}
 
-/* ===== CONFIRM DIALOG ===== */
-#confirmDialog {
-  position:fixed; inset:0; z-index:99998;
-  background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);
-  display:none; align-items:center; justify-content:center;
-}
-#confirmDialog.open { display:flex }
-.confirm-box {
-  background:rgba(13,14,20,0.98); border:1px solid var(--os-border2);
-  border-radius:var(--radius-lg); width:340px;
-  box-shadow:var(--shadow-window); overflow:hidden;
-  animation:wndIn 0.18s ease;
-}
+/* MODALS (confirm, add shortcut, welcome, folder create) */
+.overlay-modal{position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center}
+.overlay-modal.open{display:flex}
+.modal-box{background:rgba(13,14,20,0.98);border:1px solid var(--os-border2);border-radius:var(--radius-lg);width:380px;box-shadow:var(--shadow-window);overflow:hidden;animation:wndIn 0.18s ease}
+.modal-box.narrow{width:340px}
 @keyframes wndIn{from{opacity:0;transform:scale(0.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.confirm-header { padding:16px 18px 12px; border-bottom:1px solid var(--os-border) }
-.confirm-header h3 { font-size:13px; font-weight:600 }
-.confirm-body { padding:16px 18px }
-.confirm-msg { font-size:12.5px; line-height:1.65; color:var(--os-text); margin-bottom:8px }
-.confirm-url-box { font-family:var(--mono); font-size:10.5px; color:var(--os-muted); word-break:break-all; padding:8px 10px; background:var(--os-surface); border:1px solid var(--os-border); border-radius:6px; margin-bottom:16px }
-.confirm-actions { display:flex; gap:7px }
-.conf-btn { flex:1; height:34px; border-radius:7px; font-family:var(--font); font-size:12.5px; font-weight:500; cursor:pointer; border:1px solid var(--os-border); background:var(--os-surface); color:var(--os-muted); transition:all 0.13s }
-.conf-btn:hover { background:var(--os-surface2); color:var(--os-text) }
-.conf-btn.primary { background:rgba(var(--os-accent-rgb),0.1); border-color:rgba(var(--os-accent-rgb),0.3); color:var(--os-accent) }
-.conf-btn.primary:hover { background:var(--os-accent); color:#fff; border-color:var(--os-accent) }
+.modal-header{padding:16px 18px 12px;border-bottom:1px solid var(--os-border);display:flex;align-items:center;justify-content:space-between}
+.modal-header h3{font-size:13px;font-weight:600}
+.modal-close{width:26px;height:26px;border-radius:6px;background:var(--os-surface);border:1px solid var(--os-border);cursor:pointer;color:var(--os-muted);display:flex;align-items:center;justify-content:center;transition:all 0.12s}
+.modal-close:hover{background:var(--os-surface2);color:var(--os-text)}
+.modal-body{padding:16px 18px 18px}
+.f-label{font-size:10.5px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--os-muted);margin-bottom:5px}
+.f-input{width:100%;height:36px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:7px;padding:0 11px;color:var(--os-text);font-family:var(--font);font-size:12.5px;outline:none;margin-bottom:12px;transition:border-color 0.15s}
+.f-input:focus{border-color:rgba(var(--os-accent-rgb),0.45)}
+.f-select{width:100%;height:36px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:7px;padding:0 11px;color:var(--os-text);font-family:var(--font);font-size:12.5px;outline:none;margin-bottom:12px;cursor:pointer;-webkit-appearance:none}
+.f-select option{background:var(--os-bg)}
+.f-check-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:8px 10px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:7px;cursor:pointer}
+.f-check-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--os-accent);cursor:pointer;flex-shrink:0}
+.f-check-row label{font-size:12.5px;color:var(--os-text);cursor:pointer;flex:1}
+.modal-actions{display:flex;gap:7px;margin-top:4px}
+.m-btn{flex:1;height:34px;border-radius:7px;font-family:var(--font);font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-muted);transition:all 0.13s}
+.m-btn:hover{background:var(--os-surface2);color:var(--os-text)}
+.m-btn.primary{background:rgba(var(--os-accent-rgb),0.1);border-color:rgba(var(--os-accent-rgb),0.3);color:var(--os-accent)}
+.m-btn.primary:hover{background:var(--os-accent);color:#fff;border-color:var(--os-accent)}
+.m-btn.danger{background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.2);color:var(--os-red)}
+.m-btn.danger:hover{background:var(--os-red);color:#fff;border-color:var(--os-red)}
 
-/* ===== ADD SHORTCUT MODAL ===== */
-#addShortcutModal {
-  position:fixed; inset:0; z-index:99998;
-  background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);
-  display:none; align-items:center; justify-content:center;
-}
-#addShortcutModal.open { display:flex }
-.modal-box {
-  background:rgba(13,14,20,0.98); border:1px solid var(--os-border2);
-  border-radius:var(--radius-lg); width:380px;
-  box-shadow:var(--shadow-window); overflow:hidden;
-  animation:wndIn 0.18s ease;
-}
-.modal-header { padding:16px 18px 12px; border-bottom:1px solid var(--os-border); display:flex; align-items:center; justify-content:space-between }
-.modal-header h3 { font-size:13px; font-weight:600 }
-.modal-close { width:26px; height:26px; border-radius:6px; background:var(--os-surface); border:1px solid var(--os-border); cursor:pointer; color:var(--os-muted); display:flex; align-items:center; justify-content:center; transition:all 0.12s }
-.modal-close:hover { background:var(--os-surface2); color:var(--os-text) }
-.modal-body { padding:16px 18px 18px }
-.f-label { font-size:10.5px; font-weight:500; text-transform:uppercase; letter-spacing:0.07em; color:var(--os-muted); margin-bottom:5px }
-.f-input {
-  width:100%; height:36px; background:var(--os-surface); border:1px solid var(--os-border);
-  border-radius:7px; padding:0 11px; color:var(--os-text); font-family:var(--font); font-size:12.5px;
-  outline:none; margin-bottom:12px; transition:border-color 0.15s;
-}
-.f-input:focus { border-color:rgba(var(--os-accent-rgb),0.45) }
-.f-select {
-  width:100%; height:36px; background:var(--os-surface); border:1px solid var(--os-border);
-  border-radius:7px; padding:0 11px; color:var(--os-text); font-family:var(--font); font-size:12.5px;
-  outline:none; margin-bottom:12px; cursor:pointer; -webkit-appearance:none;
-}
-.f-select option { background:var(--os-bg) }
-.modal-actions { display:flex; gap:7px; margin-top:4px }
-.m-btn { flex:1; height:34px; border-radius:7px; font-family:var(--font); font-size:12.5px; font-weight:500; cursor:pointer; border:1px solid var(--os-border); background:var(--os-surface); color:var(--os-muted); transition:all 0.13s }
-.m-btn:hover { background:var(--os-surface2); color:var(--os-text) }
-.m-btn.primary { background:rgba(var(--os-accent-rgb),0.1); border-color:rgba(var(--os-accent-rgb),0.3); color:var(--os-accent) }
-.m-btn.primary:hover { background:var(--os-accent); color:#fff; border-color:var(--os-accent) }
-.m-btn.danger { background:rgba(248,113,113,0.08); border-color:rgba(248,113,113,0.2); color:var(--os-red) }
-.m-btn.danger:hover { background:var(--os-red); color:#fff; border-color:var(--os-red) }
-
-/* ===== WELCOME MODAL ===== */
-#welcomeModal {
-  position:fixed; inset:0; z-index:300000;
-  background:rgba(0,0,0,0.75); backdrop-filter:blur(14px);
-  display:none; align-items:center; justify-content:center; padding:24px;
-}
-#welcomeModal.open { display:flex }
-.welcome-box {
-  width:100%; max-width:480px;
-  background:rgba(13,14,20,0.98); border:1px solid var(--os-border2);
-  border-radius:var(--radius-xl); box-shadow:var(--shadow-window); overflow:hidden;
-  animation:wndIn 0.25s ease;
-}
-.welcome-hero {
-  padding:32px 28px 24px; text-align:center;
-  background:linear-gradient(180deg, rgba(var(--os-accent-rgb),0.08) 0%, transparent 100%);
-  border-bottom:1px solid var(--os-border);
-}
-.welcome-logo-wrap {
-  width:60px; height:60px; border-radius:16px;
-  background:linear-gradient(135deg,rgba(var(--os-accent-rgb),0.9),rgba(244,122,255,0.7));
-  display:flex; align-items:center; justify-content:center;
-  margin:0 auto 16px; box-shadow:0 8px 24px rgba(var(--os-accent-rgb),0.3);
-}
-.welcome-title { font-size:20px; font-weight:600; color:var(--os-text); margin-bottom:8px; letter-spacing:-0.02em }
-.welcome-sub { font-size:13px; color:var(--os-muted); line-height:1.6 }
-.welcome-body { padding:20px 28px 24px }
-.welcome-features {
-  display:flex; flex-direction:column; gap:10px; margin-bottom:22px;
-}
-.welcome-feat {
-  display:flex; align-items:center; gap:12px;
-  padding:10px 12px; background:var(--os-surface); border:1px solid var(--os-border);
-  border-radius:8px;
-}
-.welcome-feat-icon {
-  width:30px; height:30px; border-radius:8px;
-  background:rgba(var(--os-accent-rgb),0.1); border:1px solid rgba(var(--os-accent-rgb),0.2);
-  display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
-}
-.welcome-feat-text { font-size:12px; color:var(--os-text); line-height:1.5 }
-.welcome-feat-text strong { display:block; font-weight:600; margin-bottom:1px }
-.welcome-feat-text span { color:var(--os-muted); font-size:11.5px }
-.welcome-actions { display:flex; gap:8px }
-.welcome-btn-primary {
-  flex:1; height:40px; background:var(--os-accent); border:none;
-  border-radius:8px; font-family:var(--font); font-size:13px; font-weight:600;
-  color:#fff; cursor:pointer; transition:opacity 0.15s;
-}
-.welcome-btn-primary:hover { opacity:0.88 }
-.welcome-btn-skip {
-  height:40px; padding:0 16px; background:var(--os-surface); border:1px solid var(--os-border);
-  border-radius:8px; font-family:var(--font); font-size:13px; font-weight:500;
-  color:var(--os-muted); cursor:pointer; transition:all 0.15s; white-space:nowrap;
-}
-.welcome-btn-skip:hover { background:var(--os-surface2); color:var(--os-text) }
+/* WELCOME */
+#welcomeModal{position:fixed;inset:0;z-index:300000;background:rgba(0,0,0,0.75);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:24px}
+#welcomeModal.open{display:flex}
+.welcome-box{width:100%;max-width:480px;background:rgba(13,14,20,0.98);border:1px solid var(--os-border2);border-radius:var(--radius-xl);box-shadow:var(--shadow-window);overflow:hidden;animation:wndIn 0.25s ease}
+.welcome-hero{padding:32px 28px 24px;text-align:center;background:linear-gradient(180deg,rgba(var(--os-accent-rgb),0.08) 0%,transparent 100%);border-bottom:1px solid var(--os-border)}
+.welcome-logo-wrap{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,rgba(var(--os-accent-rgb),0.9),rgba(244,122,255,0.7));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 24px rgba(var(--os-accent-rgb),0.3)}
+.welcome-title{font-size:20px;font-weight:600;color:var(--os-text);margin-bottom:8px;letter-spacing:-0.02em}
+.welcome-sub{font-size:13px;color:var(--os-muted);line-height:1.6}
+.welcome-body{padding:20px 28px 24px}
+.welcome-features{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+.welcome-feat{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px}
+.welcome-feat-icon{width:30px;height:30px;border-radius:8px;background:rgba(var(--os-accent-rgb),0.1);border:1px solid rgba(var(--os-accent-rgb),0.2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.welcome-feat-text{font-size:12px;color:var(--os-text);line-height:1.5}
+.welcome-feat-text strong{display:block;font-weight:600;margin-bottom:1px}
+.welcome-feat-text span{color:var(--os-muted);font-size:11.5px}
+.welcome-actions{display:flex;gap:8px}
+.welcome-btn-primary{flex:1;height:40px;background:var(--os-accent);border:none;border-radius:8px;font-family:var(--font);font-size:13px;font-weight:600;color:#fff;cursor:pointer;transition:opacity 0.15s}
+.welcome-btn-primary:hover{opacity:0.88}
+.welcome-btn-skip{height:40px;padding:0 16px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;font-family:var(--font);font-size:13px;font-weight:500;color:var(--os-muted);cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.welcome-btn-skip:hover{background:var(--os-surface2);color:var(--os-text)}
 
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
@@ -724,9 +300,7 @@ body.taskbar-autohide #desktop { height: 100vh; }
 <div id="boot">
   <div class="boot-logo">
     <div class="boot-logo-icon">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/>
-      </svg>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg>
     </div>
     <div class="boot-logo-text">NovOS</div>
   </div>
@@ -744,26 +318,18 @@ body.taskbar-autohide #desktop { height: 100vh; }
   <div id="windowLayer"></div>
 </div>
 
-<div id="taskbarPeekZone"
-  onmouseenter="TB.peekShow()"
-  onmouseleave="TB.peekHide()"></div>
+<div id="taskbarPeekZone" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()"></div>
 
 <!-- TASKBAR -->
-<div id="taskbar"
-  onmouseenter="TB.peekShow()"
-  onmouseleave="TB.peekHide()">
+<div id="taskbar" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()">
   <div id="startBtn" onclick="OS.toggleStart()" title="Applications">
-    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(var(--os-accent-rgb),0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/>
-    </svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(var(--os-accent-rgb),0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg>
   </div>
   <div class="tb-divider"></div>
   <div id="taskbarApps"></div>
   <div id="taskbarRight">
     <div class="tb-tray-btn" onclick="OS.openSettings()" title="Settings">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-      </svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </div>
     <div id="tbClock">
       <span id="tbTime">00:00</span>
@@ -775,22 +341,14 @@ body.taskbar-autohide #desktop { height: 100vh; }
 <!-- START MENU -->
 <div id="startMenu">
   <div class="sm-header" style="position:relative">
-    <span class="sm-search-icon">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    </span>
+    <span class="sm-search-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
     <input type="text" class="sm-search" id="smSearch" placeholder="Search apps..." oninput="OS.filterStartMenu(this.value)">
   </div>
-  <div class="sp-section-label" id="smLabel" style="padding:10px 16px 6px">All Apps</div>
+  <div class="sp-section-label" id="smLabel" style="padding:10px 16px 6px">Recent Games</div>
   <div class="sm-apps-grid" id="smGrid"></div>
   <div class="sm-footer">
-    <button class="sm-footer-btn" onclick="OS.openAppLibrary()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      All Apps
-    </button>
-    <button class="sm-footer-btn" onclick="OS.addShortcutOpen()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Add App
-    </button>
+    <button class="sm-footer-btn" onclick="OS.openAppLibrary()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>All Apps</button>
+    <button class="sm-footer-btn" onclick="OS.addShortcutOpen()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add App</button>
   </div>
 </div>
 
@@ -798,11 +356,10 @@ body.taskbar-autohide #desktop { height: 100vh; }
 <div id="settingsPanel">
   <div class="sp-header">
     <h2>Settings</h2>
-    <button class="sp-close" onclick="OS.closeSettings()">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
+    <button class="sp-close" onclick="OS.closeSettings()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
   <div class="sp-body">
+
     <div class="sp-section">
       <div class="sp-section-title">Wallpaper</div>
       <div class="wp-grid">
@@ -813,7 +370,17 @@ body.taskbar-autohide #desktop { height: 100vh; }
         <div class="wp-item wp-item-void" id="wp-void" onclick="OS.setWallpaper('void')" title="Void"></div>
         <div class="wp-item wp-item-plain" id="wp-plain" onclick="OS.setWallpaper('plain')" title="Plain"></div>
       </div>
+      <!-- Custom wallpaper upload -->
+      <div style="margin-top:8px">
+        <div id="wpCustomPreview" class="wp-item wp-item-custom" style="width:100%;height:60px;display:none" onclick="OS.setWallpaper('custom')" title="Custom (click to select)">
+          <span style="font-size:16px">🖼</span>
+          <span>Your Image</span>
+        </div>
+        <input type="file" id="wpFileInput" accept="image/*" style="display:none" onchange="OS.loadCustomWallpaper(this)">
+        <button class="sp-btn" onclick="document.getElementById('wpFileInput').click()" style="margin-top:6px">📁 Upload Custom Wallpaper</button>
+      </div>
     </div>
+
     <div class="sp-section">
       <div class="sp-section-title">Accent Color</div>
       <div class="accent-row" id="accentRow">
@@ -825,6 +392,20 @@ body.taskbar-autohide #desktop { height: 100vh; }
         <div class="accent-swatch" data-color="56,189,248" style="background:#38bdf8" onclick="OS.setAccent('38bdf8','56,189,248')"></div>
       </div>
     </div>
+
+    <div class="sp-section">
+      <div class="sp-section-title">Desktop</div>
+      <div class="sp-slider-row">
+        <span class="sp-slider-label">Icon Size</span>
+        <input type="range" class="sp-slider" id="iconSizeSlider" min="60" max="120" value="76" oninput="OS.setIconSize(this.value)">
+        <span class="sp-val" id="iconSizeVal">76</span>
+      </div>
+      <div class="sp-row">
+        <div><div class="sp-row-label">Show Desktop Icons</div><div class="sp-row-sub">Toggle visibility of all icons</div></div>
+        <label class="toggle"><input type="checkbox" id="tog-icons" checked onchange="OS.setIconVisibility(this.checked)"><span class="tog-slider"></span></label>
+      </div>
+    </div>
+
     <div class="sp-section">
       <div class="sp-section-title">Display</div>
       <div class="sp-row">
@@ -832,7 +413,7 @@ body.taskbar-autohide #desktop { height: 100vh; }
         <label class="toggle"><input type="checkbox" id="tog-boot" checked onchange="OS.setSetting('showBoot',this.checked)"><span class="tog-slider"></span></label>
       </div>
       <div class="sp-row" style="margin-top:5px">
-        <div><div class="sp-row-label">Launch Confirm</div><div class="sp-row-sub">Show dialog before opening apps</div></div>
+        <div><div class="sp-row-label">Launch Confirm</div><div class="sp-row-sub">Show "open in window?" dialog</div></div>
         <label class="toggle"><input type="checkbox" id="tog-confirm" checked onchange="OS.setSetting('launchConfirm',this.checked)"><span class="tog-slider"></span></label>
       </div>
       <div class="sp-row" style="margin-top:5px">
@@ -840,10 +421,32 @@ body.taskbar-autohide #desktop { height: 100vh; }
         <label class="toggle"><input type="checkbox" id="tog-taskbarhide" checked onchange="OS.setSetting('hideTaskbarFullscreen',this.checked);TB.updateAutoHide()"><span class="tog-slider"></span></label>
       </div>
     </div>
+
+    <!-- PLACEHOLDER SETTING -->
+    <div class="sp-section">
+      <div class="sp-section-title">SECURLY</div>
+      <div class="sp-row">
+        <div>
+          <div class="sp-row-label">Auto-Refresh on Load</div>
+          <div class="sp-row-sub">Refresh the iframe X times during the loading screen</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="tog-autorefresh" onchange="OS.setSetting('autoRefreshEnabled',this.checked)"><span class="tog-slider"></span></label>
+      </div>
+      <div class="sp-row" style="margin-top:5px;align-items:center">
+        <div>
+          <div class="sp-row-label">Refresh Count (X)</div>
+          <div class="sp-row-sub">Number of auto-refreshes (integers only)</div>
+        </div>
+        <input type="number" class="sp-num-input" id="autoRefreshCount" min="1" max="30" value="3" style="margin-left:8px"
+          oninput="this.value=Math.max(1,Math.min(30,Math.floor(+this.value)||1));OS.setSetting('autoRefreshCount',+this.value)">
+      </div>
+    </div>
+
     <div class="sp-section">
       <div class="sp-section-title">System</div>
       <button class="sp-btn danger" onclick="OS.wipeData()">Wipe All Data</button>
     </div>
+
   </div>
 </div>
 
@@ -854,28 +457,26 @@ body.taskbar-autohide #desktop { height: 100vh; }
 <div id="notifArea"></div>
 
 <!-- CONFIRM DIALOG -->
-<div id="confirmDialog">
-  <div class="confirm-box">
-    <div class="confirm-header"><h3>Open Application</h3></div>
-    <div class="confirm-body">
-      <div class="confirm-msg" id="confirmMsg">Launch this app in a window?</div>
-      <div class="confirm-url-box" id="confirmUrl"></div>
-      <div class="confirm-actions">
-        <button class="conf-btn primary" id="confirmOk">Launch</button>
-        <button class="conf-btn" onclick="OS.closeConfirm()">Cancel</button>
+<div id="confirmDialog" class="overlay-modal">
+  <div class="modal-box narrow">
+    <div class="modal-header"><h3>Open Application</h3></div>
+    <div class="modal-body">
+      <div class="confirm-msg" id="confirmMsg" style="font-size:12.5px;line-height:1.65;color:var(--os-text);margin-bottom:8px">Launch this app in a window?</div>
+      <div id="confirmUrl" style="font-family:var(--mono);font-size:10.5px;color:var(--os-muted);word-break:break-all;padding:8px 10px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:6px;margin-bottom:16px"></div>
+      <div class="modal-actions">
+        <button class="m-btn primary" id="confirmOk">Launch</button>
+        <button class="m-btn" onclick="OS.closeConfirm()">Cancel</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- ADD SHORTCUT MODAL -->
-<div id="addShortcutModal">
+<div id="addShortcutModal" class="overlay-modal">
   <div class="modal-box">
     <div class="modal-header">
       <h3 id="shortcutModalTitle">Add App</h3>
-      <button class="modal-close" onclick="OS.addShortcutClose()">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+      <button class="modal-close" onclick="OS.addShortcutClose()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
       <div class="f-label">Name</div>
@@ -883,17 +484,40 @@ body.taskbar-autohide #desktop { height: 100vh; }
       <div class="f-label">URL</div>
       <input type="text" class="f-input" id="sc-url" placeholder="https://...">
       <div class="f-label">Icon URL (optional)</div>
-      <input type="text" class="f-input" id="sc-icon" placeholder="https://... (auto-detected if blank)">
+      <input type="text" class="f-input" id="sc-icon" placeholder="https://... (auto if blank)">
       <div class="f-label">Category</div>
       <select class="f-select" id="sc-cat">
         <option value="web">Web</option>
         <option value="games" selected>Games</option>
         <option value="apps">Apps</option>
       </select>
+      <!-- Show on Desktop option -->
+      <div class="f-check-row" onclick="document.getElementById('sc-desktop').click()">
+        <input type="checkbox" id="sc-desktop" checked>
+        <label for="sc-desktop">Show on Desktop</label>
+      </div>
       <div class="modal-actions">
         <button class="m-btn primary" onclick="OS.addShortcutSave()">Save</button>
         <button class="m-btn danger" id="scDeleteBtn" onclick="OS.deleteShortcut()" style="display:none">Delete</button>
         <button class="m-btn" onclick="OS.addShortcutClose()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE FOLDER MODAL -->
+<div id="createFolderModal" class="overlay-modal">
+  <div class="modal-box narrow">
+    <div class="modal-header">
+      <h3>New Folder</h3>
+      <button class="modal-close" onclick="document.getElementById('createFolderModal').classList.remove('open')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="f-label">Folder Name</div>
+      <input type="text" class="f-input" id="folder-name" placeholder="My Folder">
+      <div class="modal-actions">
+        <button class="m-btn primary" onclick="OS.createFolder()">Create</button>
+        <button class="m-btn" onclick="document.getElementById('createFolderModal').classList.remove('open')">Cancel</button>
       </div>
     </div>
   </div>
@@ -910,71 +534,30 @@ body.taskbar-autohide #desktop { height: 100vh; }
       </div>
     </div>
     <div class="pvz-body">
-      <div class="pvz-dl">
-        <span>📦</span>
-        <div class="pvz-dl-text">Game Assets Package</div>
-        <a href="https://github.com/popcap-games/PvZ/raw/refs/heads/main/game/Plants%20Vs%20Zombies%20Game%20of%20the%20Year%20Edition.zip" class="pvz-dl-link" target="_blank" rel="noopener">↓ Download</a>
-      </div>
+      <div class="pvz-dl"><span>📦</span><div class="pvz-dl-text">Game Assets Package</div><a href="https://github.com/popcap-games/PvZ/raw/refs/heads/main/game/Plants%20Vs%20Zombies%20Game%20of%20the%20Year%20Edition.zip" class="pvz-dl-link" target="_blank" rel="noopener">↓ Download</a></div>
       <div class="pvz-step"><div class="pvz-num">1</div><div class="pvz-step-text">Download the .zip above<span>Save it somewhere accessible</span></div></div>
       <div class="pvz-step"><div class="pvz-num">2</div><div class="pvz-step-text">Click "Import Resource ZIP" on the game page<span>A button appears after the game loads</span></div></div>
       <div class="pvz-step"><div class="pvz-num">3</div><div class="pvz-step-text">Select the downloaded .zip<span>Game assets will import automatically</span></div></div>
       <div class="pvz-step"><div class="pvz-num">4</div><div class="pvz-step-text">Play!<span>Enjoy Plants vs Zombies GOTY</span></div></div>
       <div class="pvz-warn">⚠ Confirming below will not allow you to revisit this setup screen.</div>
     </div>
-    <div class="pvz-footer">
-      <button class="pvz-confirm-btn" onclick="PVZ.confirmSetup()">I Have Downloaded the Files</button>
-    </div>
+    <div class="pvz-footer"><button class="pvz-confirm-btn" onclick="PVZ.confirmSetup()">I Have Downloaded the Files</button></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     WELCOME MODAL — shown once per new user
-══════════════════════════════════════════════════════ -->
+<!-- WELCOME MODAL -->
 <div id="welcomeModal">
   <div class="welcome-box">
     <div class="welcome-hero">
-      <div class="welcome-logo-wrap">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/>
-        </svg>
-      </div>
-      <!-- ═══════════════════════════════════════════════════════════
-           WELCOME MESSAGE — edit the title and subtitle below.
-           The modal only shows once; returning users never see it.
-      ═══════════════════════════════════════════════════════════ -->
+      <div class="welcome-logo-wrap"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg></div>
       <div class="welcome-title">Welcome to NovOS</div>
-      <div class="welcome-sub">
-        Hello and welcome. To get started, right click on your desktop.<br>
-        Note that if you enter full-screen, you must hover your cursor towards the top of the page to restore the border.
-      </div>
+      <div class="welcome-sub">Hello and welcome. To get started, right-click your desktop.<br>In fullscreen, hover the top of the screen to reveal the titlebar.</div>
     </div>
     <div class="welcome-body">
       <div class="welcome-features">
-        <!-- ═══════════════════════════════════════════════════════
-             FEATURE TILES — edit or add rows as you like.
-             Format: emoji icon, bold label, description text.
-        ═══════════════════════════════════════════════════════ -->
-        <div class="welcome-feat">
-          <div class="welcome-feat-icon">🎮</div>
-          <div class="welcome-feat-text">
-            <strong>Games Library</strong>
-            <span>Open any game in a resizable, draggable window — no new tabs needed.</span>
-          </div>
-        </div>
-        <div class="welcome-feat">
-          <div class="welcome-feat-icon">📌</div>
-          <div class="welcome-feat-text">
-            <strong>Pin & Customize</strong>
-            <span>Right-click any app to pin it to the taskbar or add it to your desktop.</span>
-          </div>
-        </div>
-        <div class="welcome-feat">
-          <div class="welcome-feat-icon">⚙️</div>
-          <div class="welcome-feat-text">
-            <strong>Securly</strong>
-            <span>If Securly has blocked a shortcut, tap the refresh button rhythmically to overload the extension</span>
-          </div>
-        </div>
+        <div class="welcome-feat"><div class="welcome-feat-icon">🎮</div><div class="welcome-feat-text"><strong>Games Library</strong><span>Open any game in a resizable, draggable window.</span></div></div>
+        <div class="welcome-feat"><div class="welcome-feat-icon">📌</div><div class="welcome-feat-text"><strong>Pin & Customize</strong><span>Right-click any app to pin it, add it to your desktop, or put it in a folder.</span></div></div>
+        <div class="welcome-feat"><div class="welcome-feat-icon">⚙️</div><div class="welcome-feat-text"><strong>Securly</strong><span>If Securly blocks a link, tap the window's refresh button rhythmically to bypass it.</span></div></div>
       </div>
       <div class="welcome-actions">
         <button class="welcome-btn-primary" onclick="OS.closeWelcome()">Get Started</button>
@@ -985,45 +568,19 @@ body.taskbar-autohide #desktop { height: 100vh; }
 </div>
 
 <script>
-/* ══════════════════════════════════════════════════════════════════
-   ██████╗ ███████╗███████╗ █████╗ ██╗   ██╗██╗  ████████╗
-   ██╔══██╗██╔════╝██╔════╝██╔══██╗██║   ██║██║  ╚══██╔══╝
-   ██║  ██║█████╗  █████╗  ███████║██║   ██║██║     ██║
-   ██║  ██║██╔══╝  ██╔══╝  ██╔══██║██║   ██║██║     ██║
-   ██████╔╝███████╗██║     ██║  ██║╚██████╔╝███████╗██║
-   ╚═════╝ ╚══════╝╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝
-
-   DEFAULT DESKTOP APPS
-   ════════════════════════════════════════════════════════════════
-   Add any shortcuts you want to appear on EVERY user's desktop
-   right out of the box. These are shown alongside user-created
-   shortcuts and cannot be deleted by users (isDefault:true).
-
-   Each entry is an object with:
-     name     — display label on the desktop icon
-     url      — full URL (or "__PVZ__" for the PVZ special case)
-     icon     — URL to an image, or "" to auto-detect from favicon
-     isDefault — KEEP THIS TRUE so users can't delete system icons
-     isPVZ    — only set true on the PVZ GOTY entry
-
-   EXAMPLE (uncomment to use):
-     { name:"Google", url:"https://google.com", icon:"", isDefault:true },
-═════════════════════════════════════════════════════════════════= */
+/* ═══════════════════════════════════════════════════════════════════
+   DEFAULT DESKTOP APPS — edit these to set icons shown on every user's
+   desktop by default. Users cannot delete entries with isDefault:true.
+═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_DESKTOP_APPS = [
-
-  { name:"Truffled Browser", url:"https://supermath.salavat.ru/search.html",         icon:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwfE4pX9Gdw2cY6nX4VJrph-O4iUqZKpIX_w&s",           isDefault:true },
-  { name:"DuckDuckGo",      url:"https://gas.education/math/hvtrs8%2F-dwcidwcigm.aoo%2F",           icon:"https://upload.wikimedia.org/wikipedia/en/9/90/The_DuckDuckGo_Duck.png",           isDefault:true },
-  { name:"Entertainment",     url:"https://youtube.com",          icon:"https://i.pinimg.com/736x/ea/8d/11/ea8d11f1ffc6355b8a440106ce61d0f3.jpg",           isDefault:true },
-
+  { name:"Truffled Browser", url:"https://supermath.salavat.ru/search.html", icon:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwfE4pX9Gdw2cY6nX4VJrph-O4iUqZKpIX_w&s", isDefault:true },
+  { name:"DuckDuckGo",       url:"https://gas.education/math/hvtrs8%2F-dwcidwcigm.aoo%2F", icon:"https://upload.wikimedia.org/wikipedia/en/9/90/The_DuckDuckGo_Duck.png", isDefault:true },
+  { name:"Entertainment",    url:"https://youtube.com", icon:"https://i.pinimg.com/736x/ea/8d/11/ea8d11f1ffc6355b8a440106ce61d0f3.jpg", isDefault:true },
 ];
-/* ══════════════════════════════════════════════════════════════ */
 
-
-/* ════════════════════════════════════════════════════════════════
-   APP LIBRARY DATA (games / web / apps shown in the library)
-   These are NOT desktop icons; they live in the App Library window
-   and Start Menu. Users can launch them but can't delete defaults.
-════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   APP LIBRARY DATA
+═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_SHORTCUTS = {
   web:[
     {name:"Truffled",url:"https://supermath.salavat.ru",icon:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwfE4pX9Gdw2cY6nX4VJrph-O4iUqZKpIX_w&s",isDefault:true},
@@ -1061,7 +618,7 @@ const DEFAULT_SHORTCUTS = {
     {name:"SlendyTubbies 2D",url:"https://riaannn.github.io/SlendyTubbies2D/",icon:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkuIsZr4XQGeFhof0Hq4SmjldTxFEbZxf8-A&s",isDefault:true},
     {name:"Daily Dadish",url:"https://riaannn.github.io/dailydadish",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/359.png",isDefault:true},
     {name:"Dadish 3D",url:"https://riaannn.github.io/dadish3d",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/358.png",isDefault:true},
-    {name:"Plants vs Zombies Garden Warfare 2D",url:"https://riaannn.github.io/PVZ-GW-2D/",icon:"https://img.itch.zone/aW1nLzIxNzU5MjE1LnBuZw==/315x250%23c/sljD0g.png",isDefault:true},
+    {name:"PVZ Garden Warfare 2D",url:"https://riaannn.github.io/PVZ-GW-2D/",icon:"https://img.itch.zone/aW1nLzIxNzU5MjE1LnBuZw==/315x250%23c/sljD0g.png",isDefault:true},
   ],
   apps:[
     {name:"WatchParty",url:"https://watchparty.me",icon:"https://www.watchparty.me/favicon.ico",isDefault:true},
@@ -1070,13 +627,13 @@ const DEFAULT_SHORTCUTS = {
   ]
 };
 
-const PVZ_URL = 'https://wszqkzqk.github.io/pvz-portable-wasm/pvz-portable.html';
+const PVZ_URL='https://wszqkzqk.github.io/pvz-portable-wasm/pvz-portable.html';
 
 /* ═══════════════════════════════════════════════
    SETTINGS STORE
 ═══════════════════════════════════════════════ */
-const SETTINGS = {
-  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true},
+const SETTINGS={
+  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,autoRefreshEnabled:false,autoRefreshCount:3,customWallpaper:''},
   data:{},
   load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
   save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));},
@@ -1088,482 +645,300 @@ const SETTINGS = {
    SHORTCUT STORE
 ═══════════════════════════════════════════════ */
 function loadShortcuts(){
-  try{
-    const uc=JSON.parse(localStorage.getItem('novos_shortcuts')||'{}');
-    return{
-      web:[...DEFAULT_SHORTCUTS.web,...(uc.web||[])],
-      games:[...DEFAULT_SHORTCUTS.games,...(uc.games||[])],
-      apps:[...DEFAULT_SHORTCUTS.apps,...(uc.apps||[])],
-    };
-  }catch{return{web:[...DEFAULT_SHORTCUTS.web],games:[...DEFAULT_SHORTCUTS.games],apps:[...DEFAULT_SHORTCUTS.apps]};}
+  try{const uc=JSON.parse(localStorage.getItem('novos_shortcuts')||'{}');return{web:[...DEFAULT_SHORTCUTS.web,...(uc.web||[])],games:[...DEFAULT_SHORTCUTS.games,...(uc.games||[])],apps:[...DEFAULT_SHORTCUTS.apps,...(uc.apps||[])]};}
+  catch{return{web:[...DEFAULT_SHORTCUTS.web],games:[...DEFAULT_SHORTCUTS.games],apps:[...DEFAULT_SHORTCUTS.apps]};}
 }
 function saveShortcuts(sc){
-  const c={
-    web:sc.web.filter(i=>!i.isDefault),
-    games:sc.games.filter(i=>!i.isDefault),
-    apps:sc.apps.filter(i=>!i.isDefault),
-  };
+  const c={web:sc.web.filter(i=>!i.isDefault),games:sc.games.filter(i=>!i.isDefault),apps:sc.apps.filter(i=>!i.isDefault)};
   localStorage.setItem('novos_shortcuts',JSON.stringify(c));
-}
-function getUserShortcuts(){
-  try{return JSON.parse(localStorage.getItem('novos_shortcuts')||'{}');}catch{return{};}
 }
 
 /* ═══════════════════════════════════════════════
-   DESKTOP SHORTCUT STORE
-   Manages desktop icons — includes DEFAULT_DESKTOP_APPS
-   (admin-defined) plus user-created ones.
+   DESKTOP ITEM STORE
+   Each item: {id, type:'app'|'folder', name, url, icon, isDefault, x, y, hidden}
+   Folders also have: {items:[...app objects]}
 ═══════════════════════════════════════════════ */
-function loadDesktopShortcuts(){
-  try{
-    const saved = JSON.parse(localStorage.getItem('novos_desktop')||'[]');
-    // Merge: default desktop apps first, then user-added ones
-    return [...DEFAULT_DESKTOP_APPS, ...saved];
-  }catch{
-    return [...DEFAULT_DESKTOP_APPS];
+function genId(){return 'di_'+(Date.now())+'_'+(Math.random()*9999|0)}
+
+function loadDesktopItems(){
+  // Build defaults from DEFAULT_DESKTOP_APPS (no saved positions yet)
+  const saved=JSON.parse(localStorage.getItem('novos_desktop_v2')||'null');
+  if(saved){
+    // Merge: ensure all DEFAULT_DESKTOP_APPS exist
+    const existingUrls=new Set(saved.filter(i=>i.isDefault).map(i=>i.url));
+    const missing=DEFAULT_DESKTOP_APPS.filter(a=>!existingUrls.has(a.url))
+      .map((a,i)=>({id:genId(),type:'app',...a,x:12+Math.floor(i/5)*88,y:12+(i%5)*88}));
+    return [...saved,...missing];
   }
+  // First run: lay out DEFAULT_DESKTOP_APPS in a column
+  return DEFAULT_DESKTOP_APPS.map((a,i)=>({
+    id:genId(),type:'app',...a,
+    x:12, y:12+i*88
+  }));
 }
-function saveDesktopShortcuts(items){
-  // Only persist user-added items (not the built-in DEFAULT_DESKTOP_APPS)
-  const userItems = items.filter(i=>!i.isDefault);
-  localStorage.setItem('novos_desktop', JSON.stringify(userItems));
+
+function saveDesktopItems(items){
+  localStorage.setItem('novos_desktop_v2',JSON.stringify(items));
 }
 
 /* ═══════════════════════════════════════════════
    WINDOW MANAGER
 ═══════════════════════════════════════════════ */
-const WM = {
-  windows:{}, zBase:200,
+const WM={
+  windows:{},zBase:200,
+  newId(){return 'wnd_'+(Date.now())+'_'+(Math.random()*9999|0)},
 
-  newId(){ return 'wnd_'+(Date.now())+'_'+(Math.random()*9999|0) },
+  /* ─── Auto-refresh logic ──────────────────────────────────────
+     After setting the iframe src, while the loader is still showing,
+     we refresh the iframe X times using a small delay between each.
+     The loader stays visible the whole time. When done, it fades.
+  ─────────────────────────────────────────────────────────────── */
+  _doRefreshCycle(id, url){
+    const frm=document.getElementById('frm_'+id);
+    const ldr=document.getElementById('ldr_'+id);
+    const ldrSub=document.getElementById('ldrsub_'+id);
+    const enabled=SETTINGS.get('autoRefreshEnabled');
+    const count=Math.max(1,Math.min(30,SETTINGS.get('autoRefreshCount')||3));
+
+    const finish=()=>{
+      // Final load — hide loader once iframe fires load
+      frm.addEventListener('load',()=>{
+        if(frm.src&&frm.src!=='about:blank')ldr&&ldr.classList.add('hidden');
+      },{once:true});
+      frm.src=url;
+    };
+
+    if(!enabled){finish();return;}
+
+    let i=0;
+    if(ldrSub) ldrSub.textContent='Refreshing 0 / '+count+'…';
+
+    const step=()=>{
+      if(i>=count){finish();return;}
+      frm.src='about:blank';
+      setTimeout(()=>{
+        i++;
+        if(ldrSub) ldrSub.textContent='Refreshing '+i+' / '+count+'…';
+        // brief pause so the refresh registers
+        setTimeout(step, 320);
+      },80);
+    };
+    // Start first load then kick off refreshes
+    frm.src=url;
+    setTimeout(step, 500);
+  },
 
   open(app){
-    const id = this.newId();
-    const el = document.createElement('div');
-    el.className='os-window focused';
-    el.id=id;
+    const id=this.newId();
+    const el=document.createElement('div');
+    el.className='os-window focused';el.id=id;
     const dw=Math.min(window.innerWidth*0.82,1060);
     const dh=Math.min(window.innerHeight*0.8,680);
     const x=Math.max(20,(window.innerWidth-dw)*0.5+(Math.random()*40-20));
     const y=Math.max(10,(window.innerHeight-48-dh)*0.3+(Math.random()*20-10));
     el.style.cssText=`width:${dw}px;height:${dh}px;top:${y}px;left:${x}px;z-index:${this.zBase+Object.keys(this.windows).length*2}`;
-
     const iconSrc=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
     el.innerHTML=`
-      <div class="wnd-peek-zone" id="pz_${id}"
-        onmouseenter="WM.peekTitlebar('${id}',true)"
-        onmouseleave="WM.peekTitlebar('${id}',false)"></div>
-      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)"
-        onmouseenter="WM.peekTitlebar('${id}',true)"
-        onmouseleave="WM.peekTitlebar('${id}',false)">
+      <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
+      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
         <img class="wnd-icon" src="${iconSrc}" onerror="this.style.display='none'">
         <div class="wnd-title">${app.name}</div>
         <div class="wnd-ctrl-btns">
-          <button class="wnd-ctrl-btn" onclick="WM.refreshWindow('${id}')" title="Refresh">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-          </button>
-          <button class="wnd-ctrl-btn" id="fsbtn_${id}" onclick="WM.toggleMaximize('${id}')" title="Fullscreen">
+          <button class="wnd-ctrl-btn" onclick="WM.refreshWindow('${id}')" title="Refresh"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen">
             <svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
             <svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
           </button>
-          <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')" title="Minimize">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </button>
-          <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')" title="Close">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
+          <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')" title="Minimize"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')" title="Close"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
       </div>
       <div class="wnd-body">
         <div class="wnd-loader" id="ldr_${id}">
           <div class="loader-ring"></div>
           <div class="wnd-loader-txt">Loading ${app.name}…</div>
+          <div class="wnd-loader-sub" id="ldrsub_${id}"></div>
         </div>
-        <iframe class="wnd-iframe" id="frm_${id}"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen"
-          allow="fullscreen; autoplay; clipboard-write; pointer-lock"
-          allowfullscreen></iframe>
+        <iframe class="wnd-iframe" id="frm_${id}" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen" allow="fullscreen; autoplay; clipboard-write; pointer-lock" allowfullscreen></iframe>
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
-
     document.getElementById('windowLayer').appendChild(el);
 
-    const frm=document.getElementById('frm_'+id);
-    frm.addEventListener('load',()=>{
-      const ldr=document.getElementById('ldr_'+id);
-      if(ldr&&frm.src&&frm.src!=='about:blank')ldr.classList.add('hidden');
-    });
-    setTimeout(()=>{ frm.src=app.url===('__PVZ__')?PVZ_URL:app.url; },30);
+    const realUrl=app.url==='__PVZ__'?PVZ_URL:app.url;
+    setTimeout(()=>this._doRefreshCycle(id,realUrl),30);
 
     this.windows[id]={app,minimized:false,maximized:false,prevRect:null};
-    this.focus(id);
-    TB.addWindow(id,app);
-    this.makeDraggable(id);
+    this.focus(id);TB.addWindow(id,app);this.makeDraggable(id);
     return id;
   },
 
   focus(id){
-    Object.keys(this.windows).forEach(wid=>{
-      const el=document.getElementById(wid);
-      if(el)el.classList.remove('focused');
-    });
+    Object.keys(this.windows).forEach(wid=>{const el=document.getElementById(wid);if(el)el.classList.remove('focused')});
     const el=document.getElementById(id);
-    if(el){
-      el.classList.add('focused');
-      const maxZ=Math.max(...Object.values(this.windows).map((_,i)=>this.zBase+i*2),this.zBase);
-      el.style.zIndex=maxZ+2;
-    }
+    if(el){el.classList.add('focused');const maxZ=Math.max(...Object.values(this.windows).map((_,i)=>this.zBase+i*2),this.zBase);el.style.zIndex=maxZ+2;}
     TB.setActive(id);
   },
 
   closeWindow(id){
     const el=document.getElementById(id);
-    if(el){
-      const frm=document.getElementById('frm_'+id);
-      if(frm)frm.src='';
-      el.style.transform='scale(0.95)';el.style.opacity='0';el.style.transition='all 0.15s ease';
-      setTimeout(()=>el.remove(),150);
-    }
-    delete this.windows[id];
-    TB.removeWindow(id);
-    TB.updateAutoHide();
+    if(el){const frm=document.getElementById('frm_'+id);if(frm)frm.src='';el.style.transform='scale(0.95)';el.style.opacity='0';el.style.transition='all 0.15s ease';setTimeout(()=>el.remove(),150);}
+    delete this.windows[id];TB.removeWindow(id);TB.updateAutoHide();
   },
 
-  minimize(id){
-    const el=document.getElementById(id);
-    if(!el)return;
-    this.windows[id].minimized=true;
-    el.classList.add('minimized');
-    TB.setActive(null);
-    TB.updateAutoHide();
-  },
+  minimize(id){const el=document.getElementById(id);if(!el)return;this.windows[id].minimized=true;el.classList.add('minimized');TB.setActive(null);TB.updateAutoHide();},
+  restore(id){const el=document.getElementById(id);if(!el)return;this.windows[id].minimized=false;el.classList.remove('minimized');this.focus(id);TB.updateAutoHide();},
+  toggleWindow(id){if(!this.windows[id])return;if(this.windows[id].minimized)this.restore(id);else this.minimize(id);},
 
-  restore(id){
-    const el=document.getElementById(id);
-    if(!el)return;
-    this.windows[id].minimized=false;
-    el.classList.remove('minimized');
-    this.focus(id);
-    TB.updateAutoHide();
-  },
-
-  toggleWindow(id){
-    if(!this.windows[id])return;
-    if(this.windows[id].minimized)this.restore(id);
-    else this.minimize(id);
-  },
-
-  maximize(id){
-    const el=document.getElementById(id);
-    if(!el)return;
-    this.windows[id].maximized=true;
-    this.windows[id].prevRect={top:el.style.top,left:el.style.left,width:el.style.width,height:el.style.height};
-    el.classList.add('maximized');
-    TB.updateAutoHide();
-  },
-
-  restoreMax(id){
-    const el=document.getElementById(id);
-    if(!el)return;
-    this.windows[id].maximized=false;
-    el.classList.remove('maximized');
-    const p=this.windows[id].prevRect;
-    if(p){el.style.top=p.top;el.style.left=p.left;el.style.width=p.width;el.style.height=p.height;}
-    TB.updateAutoHide();
-  },
-
+  maximize(id){const el=document.getElementById(id);if(!el)return;this.windows[id].maximized=true;this.windows[id].prevRect={top:el.style.top,left:el.style.left,width:el.style.width,height:el.style.height};el.classList.add('maximized');TB.updateAutoHide();},
+  restoreMax(id){const el=document.getElementById(id);if(!el)return;this.windows[id].maximized=false;el.classList.remove('maximized');const p=this.windows[id].prevRect;if(p){el.style.top=p.top;el.style.left=p.left;el.style.width=p.width;el.style.height=p.height;}TB.updateAutoHide();},
   toggleMaximize(id){
-    if(this.windows[id]&&this.windows[id].maximized)this.restoreMax(id);
-    else this.maximize(id);
-    const exp=document.getElementById('fsexp_'+id);
-    const cmp=document.getElementById('fscmp_'+id);
-    if(exp&&cmp){
-      const isMax=this.windows[id]&&this.windows[id].maximized;
-      exp.style.display=isMax?'none':'';
-      cmp.style.display=isMax?'':'none';
-    }
+    if(this.windows[id]&&this.windows[id].maximized)this.restoreMax(id);else this.maximize(id);
+    const exp=document.getElementById('fsexp_'+id),cmp=document.getElementById('fscmp_'+id);
+    if(exp&&cmp){const isMax=this.windows[id]&&this.windows[id].maximized;exp.style.display=isMax?'none':'';cmp.style.display=isMax?'':'none';}
   },
 
-  peekTitlebar(id, show){
-    const tb=document.getElementById('tb_'+id);
-    if(!tb)return;
-    if(this.windows[id]&&this.windows[id].maximized){
-      tb.classList.toggle('tb-peek',show);
-    }
-  },
+  peekTitlebar(id,show){const tb=document.getElementById('tb_'+id);if(!tb)return;if(this.windows[id]&&this.windows[id].maximized)tb.classList.toggle('tb-peek',show);},
 
   refreshWindow(id){
-    const frm=document.getElementById('frm_'+id);
-    const ldr=document.getElementById('ldr_'+id);
+    const frm=document.getElementById('frm_'+id);const ldr=document.getElementById('ldr_'+id);
     if(!frm||!frm.src||frm.src==='about:blank')return;
     ldr&&ldr.classList.remove('hidden');
-    const src=frm.src; frm.src=''; setTimeout(()=>frm.src=src,30);
+    const src=frm.src;frm.src='';setTimeout(()=>frm.src=src,30);
   },
 
   startDrag(id,e){
     if(e.target.tagName==='BUTTON'||e.target.tagName==='IMG')return;
     if(this.windows[id]&&this.windows[id].maximized)return;
-    this.focus(id);
-    const el=document.getElementById(id);
-    const startX=e.clientX-el.offsetLeft,startY=e.clientY-el.offsetTop;
-    const move=ev=>{
-      el.style.left=Math.max(0,Math.min(window.innerWidth-el.offsetWidth,ev.clientX-startX))+'px';
-      el.style.top=Math.max(0,Math.min(window.innerHeight-48-40,ev.clientY-startY))+'px';
-    };
+    this.focus(id);const el=document.getElementById(id);
+    const sx=e.clientX-el.offsetLeft,sy=e.clientY-el.offsetTop;
+    const move=ev=>{el.style.left=Math.max(0,Math.min(window.innerWidth-el.offsetWidth,ev.clientX-sx))+'px';el.style.top=Math.max(0,Math.min(window.innerHeight-48-40,ev.clientY-sy))+'px';};
     const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up)};
-    document.addEventListener('mousemove',move);
-    document.addEventListener('mouseup',up);
-    e.preventDefault();
+    document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);e.preventDefault();
   },
 
   startResize(id,e){
     if(this.windows[id]&&this.windows[id].maximized)return;
-    const el=document.getElementById(id);
-    const startX=e.clientX,startY=e.clientY,startW=el.offsetWidth,startH=el.offsetHeight;
-    const move=ev=>{
-      el.style.width=Math.max(320,startW+ev.clientX-startX)+'px';
-      el.style.height=Math.max(220,startH+ev.clientY-startY)+'px';
-    };
+    const el=document.getElementById(id);const sx=e.clientX,sy=e.clientY,sw=el.offsetWidth,sh=el.offsetHeight;
+    const move=ev=>{el.style.width=Math.max(320,sw+ev.clientX-sx)+'px';el.style.height=Math.max(220,sh+ev.clientY-sy)+'px';};
     const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up)};
-    document.addEventListener('mousemove',move);
-    document.addEventListener('mouseup',up);
-    e.preventDefault();
+    document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);e.preventDefault();
   },
 
-  makeDraggable(id){
-    const el=document.getElementById(id);
-    if(el)el.addEventListener('mousedown',()=>this.focus(id));
-  },
-
-  hasMaximizedWindow(){
-    return Object.values(this.windows).some(w=>w.maximized&&!w.minimized);
-  }
+  makeDraggable(id){const el=document.getElementById(id);if(el)el.addEventListener('mousedown',()=>this.focus(id));},
+  hasMaximizedWindow(){return Object.values(this.windows).some(w=>w.maximized&&!w.minimized);}
 };
 
 /* ═══════════════════════════════════════════════
    TASKBAR
 ═══════════════════════════════════════════════ */
-const TB = {
-  pinned:[], running:{}, _peekTimeout:null, _hidden:false,
-
-  init(){
-    try{this.pinned=JSON.parse(localStorage.getItem('novos_pinned')||'[]');}catch{this.pinned=[];}
-    this.render();
-  },
-
+const TB={
+  pinned:[],running:{},_peekTimeout:null,_hidden:false,
+  init(){try{this.pinned=JSON.parse(localStorage.getItem('novos_pinned')||'[]');}catch{this.pinned=[];}this.render();},
   savePinned(){localStorage.setItem('novos_pinned',JSON.stringify(this.pinned));},
-
-  pin(app){
-    if(!this.pinned.find(p=>p.url===app.url)){
-      this.pinned.push({name:app.name,url:app.url,icon:app.icon});
-      this.savePinned(); this.render();
-      OS.notify('Pinned',''+app.name+' pinned to taskbar');
-    }
-  },
-
-  unpin(url){
-    this.pinned=this.pinned.filter(p=>p.url!==url);
-    this.savePinned(); this.render();
-  },
-
+  pin(app){if(!this.pinned.find(p=>p.url===app.url)){this.pinned.push({name:app.name,url:app.url,icon:app.icon});this.savePinned();this.render();OS.notify('Pinned',app.name+' pinned to taskbar');}},
+  unpin(url){this.pinned=this.pinned.filter(p=>p.url!==url);this.savePinned();this.render();},
   updateAutoHide(){
-    const setting = SETTINGS.get('hideTaskbarFullscreen');
-    const hasMax = WM.hasMaximizedWindow();
-    const taskbar = document.getElementById('taskbar');
-    const body = document.body;
-
-    if(setting && hasMax){
-      body.classList.add('taskbar-autohide');
-      taskbar.classList.add('taskbar-hidden');
-      this._hidden = true;
-    } else {
-      body.classList.remove('taskbar-autohide');
-      taskbar.classList.remove('taskbar-hidden');
-      this._hidden = false;
-    }
+    const setting=SETTINGS.get('hideTaskbarFullscreen'),hasMax=WM.hasMaximizedWindow();
+    const taskbar=document.getElementById('taskbar');
+    if(setting&&hasMax){document.body.classList.add('taskbar-autohide');taskbar.classList.add('taskbar-hidden');this._hidden=true;}
+    else{document.body.classList.remove('taskbar-autohide');taskbar.classList.remove('taskbar-hidden');this._hidden=false;}
   },
-
-  peekShow(){
-    if(!this._hidden)return;
-    clearTimeout(this._peekTimeout);
-    document.getElementById('taskbar').classList.remove('taskbar-hidden');
-  },
-
-  peekHide(){
-    if(!this._hidden)return;
-    clearTimeout(this._peekTimeout);
-    this._peekTimeout = setTimeout(()=>{
-      if(this._hidden) document.getElementById('taskbar').classList.add('taskbar-hidden');
-    }, 400);
-  },
-
+  peekShow(){if(!this._hidden)return;clearTimeout(this._peekTimeout);document.getElementById('taskbar').classList.remove('taskbar-hidden');},
+  peekHide(){if(!this._hidden)return;clearTimeout(this._peekTimeout);this._peekTimeout=setTimeout(()=>{if(this._hidden)document.getElementById('taskbar').classList.add('taskbar-hidden');},400);},
   render(){
-    const cont=document.getElementById('taskbarApps');
-    cont.innerHTML='';
-
+    const cont=document.getElementById('taskbarApps');cont.innerHTML='';
     this.pinned.forEach(app=>{
-      const btn=document.createElement('div');
-      btn.className='tb-app';
+      const btn=document.createElement('div');btn.className='tb-app';
       const runId=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
       if(runId)btn.classList.add('running');
       const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
       btn.innerHTML=`<img class="tb-app-icon" src="${icon}" onerror="this.style.display='none'" alt="">`;
       btn.title=app.name;
-      btn.onclick=()=>{
-        const wid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
-        if(wid)WM.toggleWindow(wid);
-        else OS.launch(app);
-      };
-      btn.addEventListener('contextmenu',ev=>{
-        ev.preventDefault();
-        CTX.show(ev.clientX,ev.clientY,[
-          {label:'Open',icon:'▶',fn:()=>OS.launch(app)},
-          {label:'Unpin from Taskbar',icon:'−',fn:()=>this.unpin(app.url)},
-        ]);
-      });
+      btn.onclick=()=>{const wid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);if(wid)WM.toggleWindow(wid);else OS.launch(app);};
+      btn.addEventListener('contextmenu',ev=>{ev.preventDefault();CTX.show(ev.clientX,ev.clientY,[{label:'Open',icon:'▶',fn:()=>OS.launch(app)},{label:'Unpin from Taskbar',icon:'−',fn:()=>this.unpin(app.url)}]);});
       cont.appendChild(btn);
     });
-
     Object.entries(this.running).forEach(([id,{app,btnId}])=>{
       if(!this.pinned.find(p=>p.url===app.url)){
         let btn=document.getElementById(btnId);
         if(!btn){
-          btn=document.createElement('div');
-          btn.id=btnId; btn.className='tb-app running';
+          btn=document.createElement('div');btn.id=btnId;btn.className='tb-app running';
           const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
           btn.innerHTML=`<img class="tb-app-icon" src="${icon}" onerror="this.style.display='none'" alt="">`;
-          btn.title=app.name;
-          btn.onclick=()=>WM.toggleWindow(id);
-          btn.addEventListener('contextmenu',ev=>{
-            ev.preventDefault();
-            CTX.show(ev.clientX,ev.clientY,[
-              {label:'Pin to Taskbar',icon:'+',fn:()=>this.pin(app)},
-              {label:'Close',icon:'×',fn:()=>WM.closeWindow(id),danger:true},
-            ]);
-          });
+          btn.title=app.name;btn.onclick=()=>WM.toggleWindow(id);
+          btn.addEventListener('contextmenu',ev=>{ev.preventDefault();CTX.show(ev.clientX,ev.clientY,[{label:'Pin to Taskbar',icon:'+',fn:()=>this.pin(app)},{label:'Close',icon:'×',fn:()=>WM.closeWindow(id),danger:true}]);});
           cont.appendChild(btn);
         }
       }
     });
   },
-
-  addWindow(id,app){
-    const btnId='tbw_'+id;
-    this.running[id]={app,btnId};
-    this.render();
-    this.updateAutoHide();
-  },
-
-  removeWindow(id){
-    delete this.running[id];
-    this.render();
-  },
-
+  addWindow(id,app){this.running[id]={app,btnId:'tbw_'+id};this.render();this.updateAutoHide();},
+  removeWindow(id){delete this.running[id];this.render();},
   setActive(id){
     document.querySelectorAll('.tb-app').forEach(b=>b.classList.remove('active'));
-    if(id){
-      const winfo=this.running[id];
-      if(winfo){
-        const btn=document.getElementById(winfo.btnId);
-        if(btn)btn.classList.add('active');
-      }
-      const app=WM.windows[id]&&WM.windows[id].app;
-      if(app){
-        const pinBtn=document.querySelector(`.tb-app[title="${app.name}"]`);
-        if(pinBtn)pinBtn.classList.add('active');
-      }
-    }
+    if(id){const wi=this.running[id];if(wi){const b=document.getElementById(wi.btnId);if(b)b.classList.add('active');}
+    const app=WM.windows[id]&&WM.windows[id].app;if(app){const pb=document.querySelector(`.tb-app[title="${app.name}"]`);if(pb)pb.classList.add('active');}}
   }
 };
 
 /* ═══════════════════════════════════════════════
    CONTEXT MENU
 ═══════════════════════════════════════════════ */
-const CTX = {
-  el:null,
-  init(){ this.el=document.getElementById('ctxMenu'); },
+const CTX={
+  el:null,init(){this.el=document.getElementById('ctxMenu');},
   show(x,y,items){
     const el=this.el;
-    el.innerHTML=items.map(item=>
-      item.sep?`<div class="ctx-sep"></div>`:
-      item.label&&!item.fn?`<div class="ctx-label">${item.label}</div>`:
-      `<div class="ctx-item${item.danger?' danger':''}" data-action="${item.label}">
-        <span style="font-size:13px;opacity:0.7;width:16px">${item.icon||'○'}</span>
-        ${item.label}
-      </div>`
-    ).join('');
+    el.innerHTML=items.map(item=>item.sep?`<div class="ctx-sep"></div>`:item.label&&!item.fn?`<div class="ctx-label">${item.label}</div>`:`<div class="ctx-item${item.danger?' danger':''}" ><span style="font-size:13px;opacity:0.7;width:16px">${item.icon||'○'}</span>${item.label}</div>`).join('');
     let ci=0;
-    items.forEach(item=>{
-      if(item.sep||!item.fn)return;
-      const div=el.querySelectorAll('.ctx-item')[ci++];
-      if(div)div.addEventListener('click',()=>{this.hide();item.fn();});
-    });
-    const mw=180,mh=el.scrollHeight||200;
-    el.style.left=Math.min(x,window.innerWidth-mw-10)+'px';
-    el.style.top=Math.min(y,window.innerHeight-mh-10)+'px';
+    items.forEach(item=>{if(item.sep||!item.fn)return;const div=el.querySelectorAll('.ctx-item')[ci++];if(div)div.addEventListener('click',()=>{this.hide();item.fn();});});
+    const mw=190,mh=el.scrollHeight||200;
+    el.style.left=Math.min(x,window.innerWidth-mw-10)+'px';el.style.top=Math.min(y,window.innerHeight-mh-10)+'px';
     el.classList.add('open');
   },
-  hide(){ this.el.classList.remove('open'); }
+  hide(){this.el.classList.remove('open');}
 };
 
 /* ═══════════════════════════════════════════════
    PVZ
 ═══════════════════════════════════════════════ */
-const PVZ = {
-  tryLaunch(name){
-    if(localStorage.getItem('novos_pvz')==='1')OS.launch({name,url:PVZ_URL,icon:'https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png'});
-    else document.getElementById('pvzSetup').classList.remove('hide');
-  },
-  confirmSetup(){
-    localStorage.setItem('novos_pvz','1');
-    document.getElementById('pvzSetup').classList.add('hide');
-    OS.launch({name:'PVZ GOTY Edition',url:PVZ_URL,icon:'https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png'});
-  }
+const PVZ={
+  tryLaunch(name){if(localStorage.getItem('novos_pvz')==='1')OS.launch({name,url:PVZ_URL,icon:'https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png'});else document.getElementById('pvzSetup').classList.remove('hide');},
+  confirmSetup(){localStorage.setItem('novos_pvz','1');document.getElementById('pvzSetup').classList.add('hide');OS.launch({name:'PVZ GOTY Edition',url:PVZ_URL,icon:'https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png'});}
 };
 
 /* ═══════════════════════════════════════════════
    MAIN OS CONTROLLER
 ═══════════════════════════════════════════════ */
-const OS = {
+const OS={
   shortcuts:null,
   editingApp:null,
-  desktopItems:[],  // in-memory list of current desktop icons
+  desktopItems:[],    // full item list (apps + folders)
+  _dragItem:null,     // item being dragged
+  _dragOffX:0,_dragOffY:0,
 
   init(){
     SETTINGS.load();
     this.shortcuts=loadShortcuts();
-    this.desktopItems=loadDesktopShortcuts();
-    CTX.init();
-    TB.init();
+    this.desktopItems=loadDesktopItems();
+    CTX.init();TB.init();
     this.applySettings();
     this.renderDesktop();
-    this.renderClock();
-    setInterval(()=>this.renderClock(),1000);
+    this.renderClock();setInterval(()=>this.renderClock(),1000);
     this.setupContextMenu();
-
-    if(SETTINGS.get('showBoot')){
-      setTimeout(()=>document.getElementById('boot').classList.add('hide'),2400);
-    }else{
-      document.getElementById('boot').style.display='none';
-    }
-
+    if(SETTINGS.get('showBoot')){setTimeout(()=>document.getElementById('boot').classList.add('hide'),2400);}
+    else{document.getElementById('boot').style.display='none';}
     document.getElementById('tog-boot').checked=SETTINGS.get('showBoot');
     document.getElementById('tog-confirm').checked=SETTINGS.get('launchConfirm');
     document.getElementById('tog-taskbarhide').checked=SETTINGS.get('hideTaskbarFullscreen');
-
-    // Show welcome modal for first-time visitors only
-    if(!localStorage.getItem('novos_welcomed')){
-      // Delay slightly so boot screen is visible first
-      setTimeout(()=>{
-        document.getElementById('welcomeModal').classList.add('open');
-      }, SETTINGS.get('showBoot') ? 2800 : 300);
-    }
+    document.getElementById('tog-icons').checked=SETTINGS.get('showIcons');
+    document.getElementById('tog-autorefresh').checked=SETTINGS.get('autoRefreshEnabled');
+    document.getElementById('autoRefreshCount').value=SETTINGS.get('autoRefreshCount');
+    const sz=SETTINGS.get('iconSize');document.getElementById('iconSizeSlider').value=sz;document.getElementById('iconSizeVal').textContent=sz;
+    this.applyIconSize(sz);
+    if(!localStorage.getItem('novos_welcomed')){setTimeout(()=>document.getElementById('welcomeModal').classList.add('open'),SETTINGS.get('showBoot')?2800:300);}
   },
 
-  closeWelcome(){
-    localStorage.setItem('novos_welcomed','1');
-    document.getElementById('welcomeModal').classList.remove('open');
-  },
+  closeWelcome(){localStorage.setItem('novos_welcomed','1');document.getElementById('welcomeModal').classList.remove('open');},
 
   applySettings(){
     const a=SETTINGS.get('accent'),ar=SETTINGS.get('accentRgb')||'124,109,250';
@@ -1571,164 +946,238 @@ const OS = {
     document.documentElement.style.setProperty('--os-accent-rgb',ar);
     const wp=SETTINGS.get('wallpaper')||'aurora';
     const wEl=document.getElementById('wallpaper');
-    wEl.className=''; wEl.classList.add('wp-'+wp);
+    wEl.className='';wEl.classList.add('wp-'+wp);
+    if(wp==='custom'){
+      const cw=SETTINGS.get('customWallpaper');
+      if(cw){wEl.style.backgroundImage=`url(${cw})`;wEl.style.backgroundSize='cover';wEl.style.backgroundPosition='center';}
+    }else{wEl.style.backgroundImage='';}
     document.querySelectorAll('.wp-item').forEach(el=>el.classList.remove('active'));
-    const wpBtn=document.getElementById('wp-'+wp);
-    if(wpBtn)wpBtn.classList.add('active');
+    const wpBtn=document.getElementById('wp-'+wp);if(wpBtn)wpBtn.classList.add('active');
+    // Update custom preview
+    const cw=SETTINGS.get('customWallpaper');
+    const prev=document.getElementById('wpCustomPreview');
+    if(cw){prev.style.display='';prev.style.backgroundImage=`url(${cw})`;prev.style.backgroundSize='cover';prev.style.backgroundPosition='center';if(wp==='custom')prev.classList.add('active');else prev.classList.remove('active');}
+    else{prev.style.display='none';}
   },
 
-  setWallpaper(name){
-    SETTINGS.set('wallpaper',name);
-    this.applySettings();
+  setWallpaper(name){SETTINGS.set('wallpaper',name);this.applySettings();},
+
+  loadCustomWallpaper(input){
+    const file=input.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const dataUrl=e.target.result;
+      // Store as base64 — warn if too large (>3MB)
+      if(dataUrl.length>3*1024*1024){OS.notify('Warning','Image is very large and may exceed localStorage limits. Try a smaller image.');return;}
+      SETTINGS.set('customWallpaper',dataUrl);
+      SETTINGS.set('wallpaper','custom');
+      this.applySettings();
+      OS.notify('Wallpaper','Custom wallpaper applied.');
+    };
+    reader.readAsDataURL(file);
   },
 
   setAccent(hex,rgb){
-    SETTINGS.set('accent',hex);
-    SETTINGS.set('accentRgb',rgb);
-    this.applySettings();
-    document.querySelectorAll('.accent-swatch').forEach(s=>{
-      s.classList.toggle('active',s.style.background==='#'+hex||s.getAttribute('data-color')===rgb);
-    });
+    SETTINGS.set('accent',hex);SETTINGS.set('accentRgb',rgb);this.applySettings();
+    document.querySelectorAll('.accent-swatch').forEach(s=>s.classList.toggle('active',s.getAttribute('data-color')===rgb));
   },
 
-  setSetting(k,v){ SETTINGS.set(k,v); },
+  setSetting(k,v){SETTINGS.set(k,v);},
+
+  setIconSize(v){
+    v=+v;SETTINGS.set('iconSize',v);this.applyIconSize(v);
+    document.getElementById('iconSizeVal').textContent=v;
+  },
+  applyIconSize(v){document.documentElement.style.setProperty('--desk-icon-size',v+'px');},
+
+  setIconVisibility(show){
+    SETTINGS.set('showIcons',show);
+    document.getElementById('desktopIcons').style.visibility=show?'':'hidden';
+  },
 
   renderClock(){
     const n=new Date();
-    const h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0');
-    document.getElementById('tbTime').textContent=h+':'+m;
-    const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('tbTime').textContent=[n.getHours(),n.getMinutes()].map(v=>String(v).padStart(2,'0')).join(':');
+    const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     document.getElementById('tbDate').textContent=days[n.getDay()]+', '+months[n.getMonth()]+' '+n.getDate();
   },
 
-  /* ── renderDesktop ──────────────────────────────────────────────
-     Renders ALL desktop items: DEFAULT_DESKTOP_APPS + user-created.
-     Right-click → edit/remove only available on non-default items.
-  ──────────────────────────────────────────────────────────────── */
+  /* ─── Desktop rendering ─────────────────────────────────────── */
   renderDesktop(){
     const cont=document.getElementById('desktopIcons');
-    if(!this.desktopItems.length){
-      cont.innerHTML='';
-      return;
-    }
-    cont.innerHTML=this.desktopItems.map((app,i)=>{
-      const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
-      const launchFn=app.isPVZ
-        ?`PVZ.tryLaunch('${app.name.replace(/'/g,"&#39;")}')`
-        :`OS.launch(${JSON.stringify(app).replace(/"/g,'&quot;')})`;
-      return `<div class="desk-icon" ondblclick="${launchFn}"
-        oncontextmenu="OS.deskCtx(event,${i})" id="dsk_${i}">
-        <img class="desk-icon-img" src="${icon}" loading="lazy"
-          onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${app.url}'" alt="">
-        <div class="desk-icon-label">${app.name}</div>
-      </div>`;
-    }).join('');
+    cont.innerHTML='';
+    cont.style.visibility=SETTINGS.get('showIcons')?'':'hidden';
+    this.desktopItems.forEach((item,idx)=>{
+      if(item.hidden)return;
+      const el=document.createElement('div');
+      el.className='desk-icon'+(item.type==='folder'?' folder':'');
+      el.id='desk_'+item.id;
+      el.style.left=item.x+'px';el.style.top=item.y+'px';
+
+      if(item.type==='folder'){
+        el.innerHTML=`<div class="desk-icon-img">📁</div><div class="desk-icon-label">${item.name}</div>`;
+        el.addEventListener('dblclick',()=>this.openFolder(item));
+      }else{
+        const icon=item.icon||`https://www.google.com/s2/favicons?sz=64&domain=${item.url}`;
+        el.innerHTML=`<img class="desk-icon-img" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${item.url}'" alt=""><div class="desk-icon-label">${item.name}</div>`;
+        el.addEventListener('dblclick',()=>{
+          if(item.isPVZ)PVZ.tryLaunch(item.name);else this.launch(item);
+        });
+      }
+
+      el.addEventListener('contextmenu',e=>{e.preventDefault();this.deskCtx(e,item);});
+      this._attachDrag(el,item);
+      cont.appendChild(el);
+    });
   },
 
-  deskCtx(e,i){
-    e.preventDefault();
-    const app=this.desktopItems[i];
-    if(!app)return;
-    const items=[
-      {label:'Open',icon:'▶',fn:()=>this.launch(app)},
-      {label:'Pin to Taskbar',icon:'📌',fn:()=>TB.pin(app)},
-    ];
-    if(!app.isDefault){
-      items.push({sep:true});
-      items.push({label:'Edit',icon:'✏',fn:()=>this.addShortcutOpen(app)});
-      items.push({label:'Remove from Desktop',icon:'✕',fn:()=>this.removeDesktopIcon(i),danger:true});
+  /* ─── Icon drag-and-drop ────────────────────────────────────── */
+  _attachDrag(el,item){
+    el.addEventListener('mousedown',e=>{
+      if(e.button!==0||e.target.tagName==='INPUT')return;
+      const rect=el.getBoundingClientRect();
+      this._dragItem=item;
+      this._dragOffX=e.clientX-rect.left;
+      this._dragOffY=e.clientY-rect.top;
+      el.classList.add('dragging');
+      e.preventDefault();
+    });
+  },
+
+  _initDragHandlers(){
+    document.addEventListener('mousemove',e=>{
+      if(!this._dragItem)return;
+      const cont=document.getElementById('desktopIcons');
+      const cr=cont.getBoundingClientRect();
+      let nx=e.clientX-cr.left-this._dragOffX;
+      let ny=e.clientY-cr.top-this._dragOffY;
+      nx=Math.max(0,Math.min(cr.width-80,nx));
+      ny=Math.max(0,Math.min(cr.height-90,ny));
+      this._dragItem.x=Math.round(nx);this._dragItem.y=Math.round(ny);
+      const el=document.getElementById('desk_'+this._dragItem.id);
+      if(el){el.style.left=nx+'px';el.style.top=ny+'px';}
+    });
+    document.addEventListener('mouseup',()=>{
+      if(!this._dragItem)return;
+      document.querySelectorAll('.desk-icon.dragging').forEach(e=>e.classList.remove('dragging'));
+      saveDesktopItems(this.desktopItems);
+      this._dragItem=null;
+    });
+  },
+
+  deskCtx(e,item){
+    const items=[{label:'Open',icon:'▶',fn:()=>item.type==='folder'?this.openFolder(item):this.launch(item)}];
+    if(item.type!=='folder') items.push({label:'Pin to Taskbar',icon:'📌',fn:()=>TB.pin(item)});
+    items.push({sep:true});
+    items.push({label:'Rename',icon:'✏️',fn:()=>this.renameDesktopItem(item)});
+    items.push({label:item.hidden?'Show':'Hide',icon:'👁',fn:()=>{item.hidden=!item.hidden;saveDesktopItems(this.desktopItems);this.renderDesktop();}});
+    if(!item.isDefault){
+      items.push({label:'Remove from Desktop',icon:'✕',fn:()=>this.removeDesktopItem(item),danger:true});
     }
     CTX.show(e.clientX,e.clientY,items);
   },
 
-  /* ── addToDesktop ───────────────────────────────────────────────
-     FIX: actually saves the app to desktopItems + localStorage
-     before re-rendering. Previously this was never saved.
-  ──────────────────────────────────────────────────────────────── */
+  renameDesktopItem(item){
+    const el=document.getElementById('desk_'+item.id);
+    if(!el)return;
+    const labelEl=el.querySelector('.desk-icon-label');
+    labelEl.style.display='none';
+    const inp=document.createElement('input');
+    inp.type='text';inp.className='desk-icon-rename';inp.value=item.name;inp.style.display='block';
+    el.appendChild(inp);inp.focus();inp.select();
+    const done=()=>{
+      const v=inp.value.trim();
+      if(v){item.name=v;saveDesktopItems(this.desktopItems);}
+      this.renderDesktop();
+    };
+    inp.addEventListener('blur',done);
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape'){inp.value=item.name;inp.blur();}e.stopPropagation();});
+  },
+
+  removeDesktopItem(item){
+    this.desktopItems=this.desktopItems.filter(d=>d.id!==item.id);
+    saveDesktopItems(this.desktopItems);this.renderDesktop();
+    OS.notify('Removed',item.name+' removed from desktop.');
+  },
+
   addToDesktop(app){
-    // Prevent duplicates
-    const alreadyThere = this.desktopItems.some(d=>d.url===app.url);
-    if(alreadyThere){
-      this.notify('Already on Desktop', app.name+' is already on the desktop.');
-      return;
-    }
-    // Add as user item (not isDefault, so it can be removed later)
-    const item = {name:app.name, url:app.url, icon:app.icon||''};
-    this.desktopItems.push(item);
-    saveDesktopShortcuts(this.desktopItems);
-    this.renderDesktop();
-    this.notify('Added to Desktop', app.name+' added to desktop.');
+    if(this.desktopItems.some(d=>d.url===app.url&&d.type==='app')){OS.notify('Already on Desktop',app.name+' is already on the desktop.');return;}
+    const item={id:genId(),type:'app',name:app.name,url:app.url,icon:app.icon||'',x:12+(this.desktopItems.length%5)*88,y:12+Math.floor(this.desktopItems.length/5)*88};
+    this.desktopItems.push(item);saveDesktopItems(this.desktopItems);this.renderDesktop();
+    OS.notify('Added to Desktop',app.name+' added to desktop.');
   },
 
-  removeDesktopIcon(index){
-    const app = this.desktopItems[index];
-    if(!app || app.isDefault) return; // never remove built-in icons
-    this.desktopItems.splice(index, 1);
-    saveDesktopShortcuts(this.desktopItems);
-    this.renderDesktop();
-    this.notify('Removed', app.name+' removed from desktop.');
+  createFolder(){
+    const name=document.getElementById('folder-name').value.trim()||'New Folder';
+    const item={id:genId(),type:'folder',name,items:[],x:12+(this.desktopItems.length%5)*88,y:12+Math.floor(this.desktopItems.length/5)*88};
+    this.desktopItems.push(item);saveDesktopItems(this.desktopItems);this.renderDesktop();
+    document.getElementById('createFolderModal').classList.remove('open');
+    document.getElementById('folder-name').value='';
   },
 
+  openFolder(folderItem){
+    const id=WM.newId();const el=document.createElement('div');
+    el.className='os-window focused';el.id=id;
+    const dw=420,dh=360;
+    const x=(window.innerWidth-dw)/2,y=(window.innerHeight-48-dh)/2;
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${y}px;left:${x}px;z-index:${WM.zBase+Object.keys(WM.windows).length*2+1}`;
+    el.innerHTML=`
+      <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
+      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
+        <span style="font-size:14px">📁</span>
+        <div class="wnd-title">${folderItem.name}</div>
+        <div class="wnd-ctrl-btns">
+          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="wnd-body">
+        <div class="folder-grid" id="fgrid_${id}"></div>
+      </div>
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
+    document.getElementById('windowLayer').appendChild(el);
+    WM.windows[id]={app:{name:folderItem.name,url:'__folder__',icon:''},minimized:false,maximized:false,prevRect:null};
+    WM.focus(id);TB.addWindow(id,{name:folderItem.name,url:'__folder__',icon:''});WM.makeDraggable(id);
+    // Render folder contents
+    const grid=document.getElementById('fgrid_'+id);
+    if(!folderItem.items||!folderItem.items.length){grid.innerHTML='<div class="folder-empty">This folder is empty.<br><small>Drag apps here from the App Library.</small></div>';return;}
+    grid.innerHTML=folderItem.items.map(app=>{
+      const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
+      const esc=JSON.stringify(app).replace(/"/g,'&quot;');
+      return `<div class="folder-item" onclick="OS.launch(${esc})"><img src="${icon}" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${app.url}'" alt=""><div class="folder-item-label">${app.name}</div></div>`;
+    }).join('');
+  },
+
+  /* ─── Launch flow ───────────────────────────────────────────── */
   launch(app){
-    if(SETTINGS.get('launchConfirm')){
-      this.showConfirm(app);
-    }else{
-      this._doLaunch(app);
-    }
+    if(SETTINGS.get('launchConfirm')){this.showConfirm(app);}else{this._doLaunch(app);}
   },
-
   showConfirm(app){
     document.getElementById('confirmMsg').textContent='Open '+app.name+' in a window?';
     document.getElementById('confirmUrl').textContent=app.url==='__PVZ__'?PVZ_URL:app.url;
-    document.getElementById('confirmOk').onclick=()=>{
-      this.closeConfirm();
-      this._doLaunch(app);
-    };
+    document.getElementById('confirmOk').onclick=()=>{this.closeConfirm();this._doLaunch(app);};
     document.getElementById('confirmDialog').classList.add('open');
   },
+  closeConfirm(){document.getElementById('confirmDialog').classList.remove('open');},
+  _doLaunch(app){if(app.isPVZ){PVZ.tryLaunch(app.name);return;}WM.open(app);},
 
-  closeConfirm(){ document.getElementById('confirmDialog').classList.remove('open'); },
-
-  _doLaunch(app){
-    if(app.isPVZ){ PVZ.tryLaunch(app.name); return; }
-    WM.open(app);
-  },
-
+  /* ─── App Library ───────────────────────────────────────────── */
   openAppLibrary(){
     this.closeStart();
-    const libApp={name:'App Library',url:'__library__',icon:''};
-    const id=WM.newId();
-    const el=document.createElement('div');
-    el.className='os-window focused';
-    el.id=id;
-    const dw=Math.min(window.innerWidth*0.8,900);
-    const dh=Math.min(window.innerHeight*0.75,600);
-    const x=(window.innerWidth-dw)/2;
-    const y=(window.innerHeight-48-dh)/2;
-    el.style.cssText=`width:${dw}px;height:${dh}px;top:${y}px;left:${x}px;z-index:${WM.zBase+Object.keys(WM.windows).length*2+1}`;
+    const id=WM.newId();const el=document.createElement('div');
+    el.className='os-window focused';el.id=id;
+    const dw=Math.min(window.innerWidth*0.8,900),dh=Math.min(window.innerHeight*0.75,600);
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${WM.zBase+Object.keys(WM.windows).length*2+1}`;
     el.innerHTML=`
-      <div class="wnd-peek-zone" id="pz_${id}"
-        onmouseenter="WM.peekTitlebar('${id}',true)"
-        onmouseleave="WM.peekTitlebar('${id}',false)"></div>
-      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)"
-        onmouseenter="WM.peekTitlebar('${id}',true)"
-        onmouseleave="WM.peekTitlebar('${id}',false)">
+      <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
+      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
         <div class="wnd-title">App Library</div>
         <div class="wnd-ctrl-btns">
-          <button class="wnd-ctrl-btn" onclick="OS.addShortcutOpen()" title="Add App">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </button>
-          <button class="wnd-ctrl-btn" id="fsbtn_${id}" onclick="WM.toggleMaximize('${id}')" title="Fullscreen">
-            <svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-            <svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
-          </button>
-          <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')" title="Minimize">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </button>
-          <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')" title="Close">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
+          <button class="wnd-ctrl-btn" onclick="OS.addShortcutOpen()" title="Add App"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
       </div>
       <div class="wnd-toolbar">
@@ -1739,57 +1188,34 @@ const OS = {
         </div>
         <input type="text" class="wnd-search" id="libsearch_${id}" placeholder="Search…" oninput="OS.libSearch('${id}')">
       </div>
-      <div class="wnd-body" style="overflow:hidden">
-        <div class="lib-grid" id="libgrid_${id}"></div>
-      </div>
+      <div class="wnd-body" style="overflow:hidden"><div class="lib-grid" id="libgrid_${id}"></div></div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
-    WM.windows[id]={app:libApp,minimized:false,maximized:false,prevRect:null,libTab:'games'};
-    WM.focus(id);
-    TB.addWindow(id,libApp);
-    WM.makeDraggable(id);
+    WM.windows[id]={app:{name:'App Library',url:'__library__',icon:''},minimized:false,maximized:false,prevRect:null,libTab:'games'};
+    WM.focus(id);TB.addWindow(id,{name:'App Library',url:'__library__',icon:''});WM.makeDraggable(id);
     this.libTab('games',id);
   },
 
   libTab(tab,wid){
-    ['games','web','apps'].forEach(t=>{
-      const el=document.getElementById('libtab-'+t);
-      if(el)el.classList.toggle('active',t===tab);
-    });
-    if(WM.windows[wid])WM.windows[wid].libTab=tab;
-    this.libRender(tab,wid,'');
+    ['games','web','apps'].forEach(t=>{const el=document.getElementById('libtab-'+t);if(el)el.classList.toggle('active',t===tab);});
+    if(WM.windows[wid])WM.windows[wid].libTab=tab;this.libRender(tab,wid,'');
   },
-
-  libSearch(wid){
-    const tab=WM.windows[wid]&&WM.windows[wid].libTab||'games';
-    const q=document.getElementById('libsearch_'+wid)&&document.getElementById('libsearch_'+wid).value||'';
-    this.libRender(tab,wid,q);
-  },
-
+  libSearch(wid){const tab=WM.windows[wid]&&WM.windows[wid].libTab||'games';const q=document.getElementById('libsearch_'+wid)?.value||'';this.libRender(tab,wid,q);},
   libRender(tab,wid,q){
-    const grid=document.getElementById('libgrid_'+wid);
-    if(!grid)return;
+    const grid=document.getElementById('libgrid_'+wid);if(!grid)return;
     const items=this.shortcuts[tab]||[];
     const filtered=q?items.filter(i=>i.name.toLowerCase().includes(q.toLowerCase())):items;
     grid.innerHTML=filtered.map(app=>{
       const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
       const esc=JSON.stringify(app).replace(/"/g,'&quot;');
-      return `<div class="lib-card" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})">
-        <img class="lib-thumb" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${app.url}'" alt="">
-        <div class="lib-info">
-          <div class="lib-name" title="${app.name}">${app.name}</div>
-          <button class="lib-launch" onclick="OS.launch(${esc})">Launch</button>
-        </div>
-      </div>`;
+      return `<div class="lib-card" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})"><img class="lib-thumb" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${app.url}'" alt=""><div class="lib-info"><div class="lib-name" title="${app.name}">${app.name}</div><button class="lib-launch" onclick="OS.launch(${esc})">Launch</button></div></div>`;
     }).join('');
     if(!filtered.length)grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--os-muted);font-size:13px">No apps found.</div>';
   },
-
   libCtx(e,app){
     CTX.show(e.clientX,e.clientY,[
       {label:'Open',icon:'▶',fn:()=>this.launch(app)},
       {label:'Pin to Taskbar',icon:'📌',fn:()=>TB.pin(app)},
-      /* FIX: now calls addToDesktop() which actually saves the shortcut */
       {label:'Add to Desktop',icon:'🖥',fn:()=>this.addToDesktop(app)},
       {sep:true},
       {label:'Edit Shortcut',icon:'✏',fn:()=>this.addShortcutOpen(app)},
@@ -1798,49 +1224,30 @@ const OS = {
   },
 
   removeShortcut(app){
-    ['web','games','apps'].forEach(cat=>{
-      this.shortcuts[cat]=this.shortcuts[cat].filter(s=>s.url!==app.url||s.isDefault);
-    });
+    ['web','games','apps'].forEach(cat=>{this.shortcuts[cat]=this.shortcuts[cat].filter(s=>s.url!==app.url||s.isDefault);});
     saveShortcuts(this.shortcuts);
-    // Also remove from desktop if present
     this.desktopItems=this.desktopItems.filter(d=>d.url!==app.url||d.isDefault);
-    saveDesktopShortcuts(this.desktopItems);
-    this.renderDesktop();
+    saveDesktopItems(this.desktopItems);this.renderDesktop();
     this.notify('Removed',app.name+' removed');
   },
 
   filterStartMenu(q){
-    const grid=document.getElementById('smGrid');
-    const label=document.getElementById('smLabel');
+    const grid=document.getElementById('smGrid'),label=document.getElementById('smLabel');
     const all=[...this.shortcuts.games,...this.shortcuts.web,...this.shortcuts.apps];
-    const items=q?all.filter(a=>a.name.toLowerCase().includes(q.toLowerCase())):
-      this.shortcuts.games.slice(0,12);
+    const items=q?all.filter(a=>a.name.toLowerCase().includes(q.toLowerCase())):this.shortcuts.games.slice(0,12);
     label.textContent=q?'Search results':'Recent Games';
     grid.innerHTML=items.slice(0,12).map(app=>{
       const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
       const esc=JSON.stringify(app).replace(/"/g,'&quot;');
-      return `<div class="sm-app-item" onclick="OS.launch(${esc});OS.closeStart()">
-        <img class="sm-app-icon" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${app.url}'" alt="">
-        <div class="sm-app-label">${app.name}</div>
-      </div>`;
+      return `<div class="sm-app-item" onclick="OS.launch(${esc});OS.closeStart()"><img class="sm-app-icon" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${app.url}'" alt=""><div class="sm-app-label">${app.name}</div></div>`;
     }).join('');
     if(!items.length)grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--os-muted);font-size:12px">No results.</div>';
   },
 
-  toggleStart(){
-    const sm=document.getElementById('startMenu');
-    const isOpen=sm.classList.contains('open');
-    sm.classList.toggle('open',!isOpen);
-    if(!isOpen){
-      this.filterStartMenu('');
-      setTimeout(()=>document.getElementById('smSearch').focus(),100);
-    }
-  },
-
-  closeStart(){ document.getElementById('startMenu').classList.remove('open'); },
-
-  openSettings(){ document.getElementById('settingsPanel').classList.add('open'); },
-  closeSettings(){ document.getElementById('settingsPanel').classList.remove('open'); },
+  toggleStart(){const sm=document.getElementById('startMenu');const isOpen=sm.classList.contains('open');sm.classList.toggle('open',!isOpen);if(!isOpen){this.filterStartMenu('');setTimeout(()=>document.getElementById('smSearch').focus(),100);}},
+  closeStart(){document.getElementById('startMenu').classList.remove('open');},
+  openSettings(){document.getElementById('settingsPanel').classList.add('open');},
+  closeSettings(){document.getElementById('settingsPanel').classList.remove('open');},
 
   addShortcutOpen(app){
     this.editingApp=app||null;
@@ -1849,9 +1256,9 @@ const OS = {
     document.getElementById('sc-url').value=app?app.url:'';
     document.getElementById('sc-icon').value=app?app.icon||'':'';
     document.getElementById('sc-cat').value='games';
+    document.getElementById('sc-desktop').checked=!app; // default checked for new apps
     document.getElementById('scDeleteBtn').style.display=app&&!app.isDefault?'block':'none';
-    document.getElementById('addShortcutModal').classList.add('open');
-    this.closeStart();
+    document.getElementById('addShortcutModal').classList.add('open');this.closeStart();
   },
 
   addShortcutSave(){
@@ -1859,46 +1266,37 @@ const OS = {
     const url=document.getElementById('sc-url').value.trim();
     const icon=document.getElementById('sc-icon').value.trim();
     const cat=document.getElementById('sc-cat').value;
+    const showOnDesktop=document.getElementById('sc-desktop').checked;
     if(!name||!url){alert('Name and URL required.');return;}
     if(this.editingApp&&!this.editingApp.isDefault){
       ['web','games','apps'].forEach(c=>this.shortcuts[c]=this.shortcuts[c].filter(s=>s!==this.editingApp));
     }
-    this.shortcuts[cat].push({name,url,icon});
+    const newApp={name,url,icon};
+    this.shortcuts[cat].push(newApp);
     saveShortcuts(this.shortcuts);
-    this.renderDesktop();
-    this.addShortcutClose();
-    this.notify('Saved',name+' added to '+cat);
+    if(showOnDesktop)this.addToDesktop(newApp);
+    this.addShortcutClose();this.notify('Saved',name+' added to '+cat);
   },
 
   deleteShortcut(){
     if(this.editingApp&&!this.editingApp.isDefault){
       ['web','games','apps'].forEach(c=>this.shortcuts[c]=this.shortcuts[c].filter(s=>s!==this.editingApp));
-      saveShortcuts(this.shortcuts);
-      this.renderDesktop();
+      saveShortcuts(this.shortcuts);this.renderDesktop();
     }
     this.addShortcutClose();
   },
 
-  addShortcutClose(){
-    document.getElementById('addShortcutModal').classList.remove('open');
-    this.editingApp=null;
-  },
+  addShortcutClose(){document.getElementById('addShortcutModal').classList.remove('open');this.editingApp=null;},
 
   notify(title,body){
     const area=document.getElementById('notifArea');
-    const n=document.createElement('div');
-    n.className='notif';
+    const n=document.createElement('div');n.className='notif';
     n.innerHTML=`<div class="notif-title">${title}</div><div class="notif-body">${body}</div>`;
-    area.appendChild(n);
-    n.addEventListener('click',()=>n.remove());
+    area.appendChild(n);n.addEventListener('click',()=>n.remove());
     setTimeout(()=>{n.style.opacity='0';n.style.transition='opacity 0.3s';setTimeout(()=>n.remove(),300);},3500);
   },
 
-  wipeData(){
-    if(confirm('Wipe all data including settings, shortcuts, and pinned apps?')){
-      localStorage.clear(); location.reload();
-    }
-  },
+  wipeData(){if(confirm('Wipe all data?')){localStorage.clear();location.reload();}},
 
   setupContextMenu(){
     document.getElementById('desktop').addEventListener('contextmenu',e=>{
@@ -1907,6 +1305,7 @@ const OS = {
         CTX.show(e.clientX,e.clientY,[
           {label:'Desktop',icon:''},
           {label:'Open App Library',icon:'⊞',fn:()=>this.openAppLibrary()},
+          {label:'New Folder',icon:'📁',fn:()=>document.getElementById('createFolderModal').classList.add('open')},
           {label:'Add Shortcut',icon:'+',fn:()=>this.addShortcutOpen()},
           {sep:true},
           {label:'Change Wallpaper',icon:'🖼',fn:()=>this.openSettings()},
@@ -1914,23 +1313,15 @@ const OS = {
         ]);
       }
     });
-
     document.addEventListener('click',e=>{
       CTX.hide();
-      if(!document.getElementById('startMenu').contains(e.target)&&
-         !document.getElementById('startBtn').contains(e.target)){
-        this.closeStart();
-      }
+      if(!document.getElementById('startMenu').contains(e.target)&&!document.getElementById('startBtn').contains(e.target))this.closeStart();
     });
-
     document.addEventListener('keydown',e=>{
-      if(e.key==='Escape'){
-        CTX.hide(); this.closeStart();
-        this.closeConfirm();
-        this.addShortcutClose();
-        // Don't close welcome on Escape — user should click "Get Started"
-      }
+      if(e.key==='Escape'){CTX.hide();this.closeStart();this.closeConfirm();this.addShortcutClose();document.getElementById('createFolderModal').classList.remove('open');}
     });
+    // Init drag
+    this._initDragHandlers();
   }
 };
 
