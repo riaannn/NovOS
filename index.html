@@ -72,9 +72,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
               radial-gradient(ellipse at 20% 80%, #0a1a10 0%, transparent 45%),
               #060d06;
 }
-#wallpaper.wp-void {
-  background: #04040a;
-}
+#wallpaper.wp-void { background: #04040a; }
 
 /* Noise overlay */
 #desktop::after {
@@ -120,7 +118,22 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
   backdrop-filter:blur(28px) saturate(1.6);
   display:flex; align-items:center; gap:4px;
   padding:0 8px;
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease;
 }
+#taskbar.taskbar-hidden {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+/* Peek zone at bottom of screen when taskbar is hidden */
+#taskbarPeekZone {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 6px; z-index: 9998;
+  display: none;
+}
+body.taskbar-autohide #taskbarPeekZone { display: block; }
+body.taskbar-autohide #desktop { height: 100vh; }
 
 /* Start button */
 #startBtn {
@@ -157,11 +170,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
   box-shadow:0 0 5px rgba(var(--os-accent-rgb),0.7);
 }
 .tb-app-icon { width:24px; height:24px; border-radius:6px; object-fit:cover }
-.tb-app-svg {
-  width:22px; height:22px; border-radius:6px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:13px; font-weight:600; color:#fff;
-}
 
 /* Taskbar right section */
 #taskbarRight {
@@ -197,6 +205,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
   transform:translateY(12px) scale(0.97);
   opacity:0; pointer-events:none;
   transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
+  transform-origin:top left;
 }
 #startMenu.open { transform:translateY(0) scale(1); opacity:1; pointer-events:all }
 
@@ -271,14 +280,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
   border-bottom:1px solid var(--os-border);
   cursor:move;
   user-select:none;
-  transition:opacity 0.2s, transform 0.2s;
 }
 .wnd-icon { width:16px; height:16px; border-radius:4px; object-fit:cover; flex-shrink:0 }
 .wnd-title {
   flex:1; font-size:12px; font-weight:500; color:var(--os-text);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-/* Right-side window control buttons */
 .wnd-ctrl-btns {
   display:flex; align-items:center; gap:1px; flex-shrink:0; margin-left:auto;
 }
@@ -293,7 +300,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 .wnd-ctrl-btn:hover { background:var(--os-surface2); color:var(--os-text) }
 .wnd-ctrl-btn.wnd-close:hover { background:var(--os-red); color:#fff }
 
-/* Fullscreen: auto-hide titlebar, reveal on hover zone */
+/* Fullscreen: auto-hide titlebar */
 .os-window.maximized .wnd-titlebar {
   position:absolute; top:0; left:0; right:0; z-index:20;
   opacity:0; pointer-events:none;
@@ -307,7 +314,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
   opacity:1; pointer-events:all;
   transform:translateY(0);
 }
-/* hover trigger strip at top of maximized window */
 .wnd-peek-zone {
   display:none;
   position:absolute; top:0; left:0; right:0; height:6px; z-index:21;
@@ -352,7 +358,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
   border-radius:1px;
 }
 
-/* ===== APP BROWSER WINDOW (library) ===== */
+/* ===== APP LIBRARY WINDOW ===== */
 .wnd-toolbar {
   height:40px; flex-shrink:0;
   display:flex; align-items:center; gap:8px;
@@ -443,7 +449,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
   color:var(--os-dim); padding:7px 11px 3px;
 }
 
-/* ===== NOTIFICATION / TOOLTIP ===== */
+/* ===== NOTIFICATIONS ===== */
 #notifArea {
   position:fixed; top:12px; right:12px; z-index:99998;
   display:flex; flex-direction:column; gap:8px;
@@ -526,7 +532,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 .wp-item-forest { background:radial-gradient(circle at 40% 60%,#051a0a,#0a1f05,#060d06) }
 .wp-item-void   { background:#04040a }
 .wp-item-plain  { background:#0d0e12 }
-.wp-label { font-size:10px; color:var(--os-muted); text-align:center; padding:4px 0; position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.5) }
 
 /* Accent color picker */
 .accent-row { display:flex; gap:7px; flex-wrap:wrap; margin-top:6px }
@@ -536,7 +541,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 }
 .accent-swatch.active { border-color:#fff; box-shadow:0 0 0 1px rgba(255,255,255,0.3) }
 
-/* Resets */
 .sp-btn {
   width:100%; height:34px; background:var(--os-surface); border:1px solid var(--os-border);
   border-radius:8px; color:var(--os-muted); font-family:var(--font); font-size:12.5px;
@@ -697,8 +701,15 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
   <div id="windowLayer"></div>
 </div>
 
+<!-- TASKBAR PEEK ZONE (for auto-hide) -->
+<div id="taskbarPeekZone"
+  onmouseenter="TB.peekShow()"
+  onmouseleave="TB.peekHide()"></div>
+
 <!-- TASKBAR -->
-<div id="taskbar">
+<div id="taskbar"
+  onmouseenter="TB.peekShow()"
+  onmouseleave="TB.peekHide()">
   <div id="startBtn" onclick="OS.toggleStart()" title="Applications">
     <svg viewBox="0 0 24 24" fill="none" stroke="rgba(var(--os-accent-rgb),0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/>
@@ -729,7 +740,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
     </span>
     <input type="text" class="sm-search" id="smSearch" placeholder="Search apps..." oninput="OS.filterStartMenu(this.value)">
   </div>
-  <div class="sp-section-title" id="smLabel" style="padding:10px 16px 6px">All Apps</div>
+  <div class="sp-section-label" id="smLabel" style="padding:10px 16px 6px">All Apps</div>
   <div class="sm-apps-grid" id="smGrid"></div>
   <div class="sm-footer">
     <button class="sm-footer-btn" onclick="OS.openAppLibrary()">
@@ -785,6 +796,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
       <div class="sp-row" style="margin-top:5px">
         <div><div class="sp-row-label">Launch Confirm</div><div class="sp-row-sub">Show dialog before opening apps</div></div>
         <label class="toggle"><input type="checkbox" id="tog-confirm" checked onchange="OS.setSetting('launchConfirm',this.checked)"><span class="tog-slider"></span></label>
+      </div>
+      <div class="sp-row" style="margin-top:5px">
+        <div><div class="sp-row-label">Hide Taskbar in Fullscreen</div><div class="sp-row-sub">Auto-hide when a window is maximized</div></div>
+        <label class="toggle"><input type="checkbox" id="tog-taskbarhide" checked onchange="OS.setSetting('hideTaskbarFullscreen',this.checked);TB.updateAutoHide()"><span class="tog-slider"></span></label>
       </div>
     </div>
 
@@ -911,9 +926,7 @@ const DEFAULT_SHORTCUTS = {
     {name:"Dadish",url:"https://riaannn.github.io/dadish/",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/357.png",isDefault:true},
     {name:"Dadish 2",url:"https://riaannn.github.io/dadish2",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/355.png",isDefault:true},
     {name:"Dadish 3",url:"https://riaannn.github.io/dadish3",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/356.png",isDefault:true},
-    {name:"Stardew Valley",url:"https://riaannn.github.io/Stardew-Valley1/",icon:"https://assets.nintendo.eu/image/upload/f_auto,c_limit,w_992,q_auto:low/MNS/NOE/70010000001802/SQ_NSwitchDS_StardewValley",isDefault:true},
     {name:"Apes vs Helium",url:"https://riaannn.github.io/Apez-vz-Helium/",icon:"https://cdn2.steamgriddb.com/icon/96ede18295a1258ffbe1dca74eed34d0.png",isDefault:true},
-    {name:"Vampire Survivors",url:"https://riaannn.github.io/Vampire-Survivors/",icon:"https://play-lh.googleusercontent.com/R1dShZj1HNBQzrHhsAD9_F8BRc2FU-nlDMU7OIAIwnMge04QWvNZR-clnXnEd_v30Qo",isDefault:true},
     {name:"Five Nights at Frickbears 3",url:"https://riaannn.github.io/Five-Nights-at-Frickbears-3/",icon:"https://i.imgur.com/dIIAThP.png",isDefault:true},
     {name:"SlendyTubbies 2D",url:"https://riaannn.github.io/SlendyTubbies2D/",icon:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkuIsZr4XQGeFhof0Hq4SmjldTxFEbZxf8-A&s",isDefault:true},
     {name:"Daily Dadish",url:"https://riaannn.github.io/dailydadish",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/359.png",isDefault:true},
@@ -932,7 +945,7 @@ const PVZ_URL = 'https://wszqkzqk.github.io/pvz-portable-wasm/pvz-portable.html'
    SETTINGS STORE
 ═══════════════════════════════════════════════ */
 const SETTINGS = {
-  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250'},
+  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true},
   data:{},
   load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
   save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));},
@@ -961,12 +974,15 @@ function saveShortcuts(sc){
   };
   localStorage.setItem('novos_shortcuts',JSON.stringify(c));
 }
+function getUserShortcuts(){
+  try{return JSON.parse(localStorage.getItem('novos_shortcuts')||'{}');}catch{return{};}
+}
 
 /* ═══════════════════════════════════════════════
    WINDOW MANAGER
 ═══════════════════════════════════════════════ */
 const WM = {
-  windows:{}, zBase:200, editingShortcut:null,
+  windows:{}, zBase:200,
 
   newId(){ return 'wnd_'+(Date.now())+'_'+(Math.random()*9999|0) },
 
@@ -1038,7 +1054,7 @@ const WM = {
   focus(id){
     Object.keys(this.windows).forEach(wid=>{
       const el=document.getElementById(wid);
-      if(el){el.classList.remove('focused');}
+      if(el)el.classList.remove('focused');
     });
     const el=document.getElementById(id);
     if(el){
@@ -1059,6 +1075,7 @@ const WM = {
     }
     delete this.windows[id];
     TB.removeWindow(id);
+    TB.updateAutoHide();
   },
 
   minimize(id){
@@ -1067,6 +1084,7 @@ const WM = {
     this.windows[id].minimized=true;
     el.classList.add('minimized');
     TB.setActive(null);
+    TB.updateAutoHide();
   },
 
   restore(id){
@@ -1075,6 +1093,7 @@ const WM = {
     this.windows[id].minimized=false;
     el.classList.remove('minimized');
     this.focus(id);
+    TB.updateAutoHide();
   },
 
   toggleWindow(id){
@@ -1089,6 +1108,7 @@ const WM = {
     this.windows[id].maximized=true;
     this.windows[id].prevRect={top:el.style.top,left:el.style.left,width:el.style.width,height:el.style.height};
     el.classList.add('maximized');
+    TB.updateAutoHide();
   },
 
   restoreMax(id){
@@ -1098,12 +1118,12 @@ const WM = {
     el.classList.remove('maximized');
     const p=this.windows[id].prevRect;
     if(p){el.style.top=p.top;el.style.left=p.left;el.style.width=p.width;el.style.height=p.height;}
+    TB.updateAutoHide();
   },
 
   toggleMaximize(id){
     if(this.windows[id]&&this.windows[id].maximized)this.restoreMax(id);
     else this.maximize(id);
-    // swap icon
     const exp=document.getElementById('fsexp_'+id);
     const cmp=document.getElementById('fscmp_'+id);
     if(exp&&cmp){
@@ -1162,6 +1182,10 @@ const WM = {
   makeDraggable(id){
     const el=document.getElementById(id);
     if(el)el.addEventListener('mousedown',()=>this.focus(id));
+  },
+
+  hasMaximizedWindow(){
+    return Object.values(this.windows).some(w=>w.maximized&&!w.minimized);
   }
 };
 
@@ -1169,8 +1193,7 @@ const WM = {
    TASKBAR
 ═══════════════════════════════════════════════ */
 const TB = {
-  pinned:[], // {app}
-  running:{}, // id -> {app, btnId}
+  pinned:[], running:{}, _peekTimeout:null, _hidden:false,
 
   init(){
     try{this.pinned=JSON.parse(localStorage.getItem('novos_pinned')||'[]');}catch{this.pinned=[];}
@@ -1190,6 +1213,37 @@ const TB = {
   unpin(url){
     this.pinned=this.pinned.filter(p=>p.url!==url);
     this.savePinned(); this.render();
+  },
+
+  updateAutoHide(){
+    const setting = SETTINGS.get('hideTaskbarFullscreen');
+    const hasMax = WM.hasMaximizedWindow();
+    const taskbar = document.getElementById('taskbar');
+    const body = document.body;
+
+    if(setting && hasMax){
+      body.classList.add('taskbar-autohide');
+      taskbar.classList.add('taskbar-hidden');
+      this._hidden = true;
+    } else {
+      body.classList.remove('taskbar-autohide');
+      taskbar.classList.remove('taskbar-hidden');
+      this._hidden = false;
+    }
+  },
+
+  peekShow(){
+    if(!this._hidden)return;
+    clearTimeout(this._peekTimeout);
+    document.getElementById('taskbar').classList.remove('taskbar-hidden');
+  },
+
+  peekHide(){
+    if(!this._hidden)return;
+    clearTimeout(this._peekTimeout);
+    this._peekTimeout = setTimeout(()=>{
+      if(this._hidden) document.getElementById('taskbar').classList.add('taskbar-hidden');
+    }, 400);
   },
 
   render(){
@@ -1219,7 +1273,6 @@ const TB = {
       cont.appendChild(btn);
     });
 
-    // running non-pinned
     Object.entries(this.running).forEach(([id,{app,btnId}])=>{
       if(!this.pinned.find(p=>p.url===app.url)){
         let btn=document.getElementById(btnId);
@@ -1247,6 +1300,7 @@ const TB = {
     const btnId='tbw_'+id;
     this.running[id]={app,btnId};
     this.render();
+    this.updateAutoHide();
   },
 
   removeWindow(id){
@@ -1275,7 +1329,7 @@ const TB = {
    CONTEXT MENU
 ═══════════════════════════════════════════════ */
 const CTX = {
-  el:null, pendingFn:null,
+  el:null,
   init(){ this.el=document.getElementById('ctxMenu'); },
   show(x,y,items){
     const el=this.el;
@@ -1287,11 +1341,6 @@ const CTX = {
         ${item.label}
       </div>`
     ).join('');
-    el.querySelectorAll('.ctx-item').forEach((div,i)=>{
-      const real=items.filter(it=>!it.sep&&it.fn)[i]||items.find(it=>!it.sep&&it.fn&&it.label===div.dataset.action);
-      // find matching
-    });
-    // attach events cleanly
     let ci=0;
     items.forEach(item=>{
       if(item.sep||!item.fn)return;
@@ -1326,8 +1375,7 @@ const PVZ = {
 ═══════════════════════════════════════════════ */
 const OS = {
   shortcuts:null,
-  editingIdx:null,
-  editingCat:null,
+  editingApp:null,
 
   init(){
     SETTINGS.load();
@@ -1346,9 +1394,9 @@ const OS = {
       document.getElementById('boot').style.display='none';
     }
 
-    // Settings UI sync
     document.getElementById('tog-boot').checked=SETTINGS.get('showBoot');
     document.getElementById('tog-confirm').checked=SETTINGS.get('launchConfirm');
+    document.getElementById('tog-taskbarhide').checked=SETTINGS.get('hideTaskbarFullscreen');
   },
 
   applySettings(){
@@ -1388,10 +1436,18 @@ const OS = {
     document.getElementById('tbDate').textContent=days[n.getDay()]+', '+months[n.getMonth()]+' '+n.getDate();
   },
 
+  /* Only show user-created shortcuts on desktop */
   renderDesktop(){
     const cont=document.getElementById('desktopIcons');
-    const all=[...this.shortcuts.games.slice(0,6),...this.shortcuts.web.slice(0,4),...this.shortcuts.apps.slice(0,3)];
-    cont.innerHTML=all.map((app,i)=>{
+    const uc=getUserShortcuts();
+    const userItems=[...(uc.web||[]),...(uc.games||[]),...(uc.apps||[])];
+
+    if(!userItems.length){
+      cont.innerHTML='';
+      return;
+    }
+
+    cont.innerHTML=userItems.map((app,i)=>{
       const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
       const launchFn=app.isPVZ?`PVZ.tryLaunch('${app.name.replace(/'/g,"&#39;")}')`:
         `OS.launch(${JSON.stringify(app).replace(/"/g,'&quot;')})`;
@@ -1405,13 +1461,16 @@ const OS = {
 
   deskCtx(e,i){
     e.preventDefault();
-    const all=[...this.shortcuts.games.slice(0,6),...this.shortcuts.web.slice(0,4),...this.shortcuts.apps.slice(0,3)];
-    const app=all[i];
+    const uc=getUserShortcuts();
+    const userItems=[...(uc.web||[]),...(uc.games||[]),...(uc.apps||[])];
+    const app=userItems[i];
+    if(!app)return;
     CTX.show(e.clientX,e.clientY,[
       {label:'Open',icon:'▶',fn:()=>this.launch(app)},
       {label:'Pin to Taskbar',icon:'📌',fn:()=>TB.pin(app)},
       {sep:true},
-      {label:'Desktop Options',icon:''},
+      {label:'Edit',icon:'✏',fn:()=>this.addShortcutOpen(app)},
+      {label:'Remove from Desktop',icon:'✕',fn:()=>this.removeShortcut(app),danger:true},
     ]);
   },
 
@@ -1584,14 +1643,13 @@ const OS = {
   closeSettings(){ document.getElementById('settingsPanel').classList.remove('open'); },
 
   addShortcutOpen(app){
-    this.editingIdx=null; this.editingCat=null;
+    this.editingApp=app||null;
     document.getElementById('shortcutModalTitle').textContent=app?'Edit App':'Add App';
     document.getElementById('sc-name').value=app?app.name:'';
     document.getElementById('sc-url').value=app?app.url:'';
     document.getElementById('sc-icon').value=app?app.icon||'':'';
     document.getElementById('sc-cat').value='games';
     document.getElementById('scDeleteBtn').style.display=app&&!app.isDefault?'block':'none';
-    if(app){this.editingApp=app;}else{this.editingApp=null;}
     document.getElementById('addShortcutModal').classList.add('open');
     this.closeStart();
   },
@@ -1675,9 +1733,6 @@ const OS = {
   }
 };
 
-/* ═══════════════════════════════════════════════
-   BOOT
-═══════════════════════════════════════════════ */
 window.addEventListener('load',()=>OS.init());
 window.addEventListener('beforeunload',e=>{e.preventDefault();e.returnValue='';});
 </script>
