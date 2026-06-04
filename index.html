@@ -42,7 +42,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
   background:#0d0e12;
 }
 
-/* Wallpaper */
 #wallpaper {
   position:absolute; inset:0; z-index:0;
   background: #0d0e12;
@@ -74,7 +73,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 }
 #wallpaper.wp-void { background: #04040a; }
 
-/* Noise overlay */
 #desktop::after {
   content:''; position:absolute; inset:0; z-index:1; pointer-events:none;
   opacity:0.03;
@@ -125,7 +123,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
   opacity: 0;
   pointer-events: none;
 }
-/* Peek zone at bottom of screen when taskbar is hidden */
 #taskbarPeekZone {
   position: fixed;
   bottom: 0; left: 0; right: 0;
@@ -135,7 +132,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 body.taskbar-autohide #taskbarPeekZone { display: block; }
 body.taskbar-autohide #desktop { height: 100vh; }
 
-/* Start button */
 #startBtn {
   width:38px; height:38px; border-radius:var(--radius);
   background:rgba(var(--os-accent-rgb),0.15);
@@ -147,10 +143,8 @@ body.taskbar-autohide #desktop { height: 100vh; }
 #startBtn:hover { background:rgba(var(--os-accent-rgb),0.28); border-color:rgba(var(--os-accent-rgb),0.5) }
 #startBtn svg { width:18px; height:18px; opacity:0.9 }
 
-/* Divider */
 .tb-divider { width:1px; height:24px; background:var(--os-border); margin:0 4px; flex-shrink:0 }
 
-/* Taskbar pinned / running apps */
 #taskbarApps {
   display:flex; align-items:center; gap:3px; flex:1; overflow:hidden;
 }
@@ -171,7 +165,6 @@ body.taskbar-autohide #desktop { height: 100vh; }
 }
 .tb-app-icon { width:24px; height:24px; border-radius:6px; object-fit:cover }
 
-/* Taskbar right section */
 #taskbarRight {
   display:flex; align-items:center; gap:6px;
   margin-left:auto; flex-shrink:0;
@@ -271,7 +264,6 @@ body.taskbar-autohide #desktop { height: 100vh; }
 .os-window.focused { box-shadow:0 40px 100px rgba(0,0,0,0.75), 0 0 0 1px rgba(var(--os-accent-rgb),0.18) }
 .os-window:not(.focused) { filter:brightness(0.88) }
 
-/* Title bar */
 .wnd-titlebar {
   height:var(--titlebar-h); flex-shrink:0;
   display:flex; align-items:center; gap:8px;
@@ -300,7 +292,6 @@ body.taskbar-autohide #desktop { height: 100vh; }
 .wnd-ctrl-btn:hover { background:var(--os-surface2); color:var(--os-text) }
 .wnd-ctrl-btn.wnd-close:hover { background:var(--os-red); color:#fff }
 
-/* Fullscreen: auto-hide titlebar */
 .os-window.maximized .wnd-titlebar {
   position:absolute; top:0; left:0; right:0; z-index:20;
   opacity:0; pointer-events:none;
@@ -322,7 +313,6 @@ body.taskbar-autohide #desktop { height: 100vh; }
 .os-window.maximized .wnd-peek-zone { display:block }
 .os-window.maximized .wnd-body { position:absolute; inset:0; }
 
-/* Window body */
 .wnd-body { flex:1; overflow:hidden; position:relative }
 .wnd-iframe {
   position:absolute; inset:0; width:100%; height:100%;
@@ -345,7 +335,6 @@ body.taskbar-autohide #desktop { height: 100vh; }
 @keyframes spin { to { transform:rotate(360deg) } }
 .wnd-loader-txt { font-size:12px; color:var(--os-muted); font-weight:400 }
 
-/* Resize handle */
 .wnd-resize {
   position:absolute; right:0; bottom:0;
   width:16px; height:16px; cursor:se-resize; z-index:5;
@@ -519,7 +508,6 @@ body.taskbar-autohide #desktop { height: 100vh; }
 .toggle input:checked + .tog-slider { background:rgba(var(--os-accent-rgb),0.2); border-color:rgba(var(--os-accent-rgb),0.5) }
 .toggle input:checked + .tog-slider::before { transform:translateX(16px); background:var(--os-accent) }
 
-/* Wallpaper picker */
 .wp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:6px }
 .wp-item {
   height:54px; border-radius:8px; cursor:pointer; border:2px solid transparent;
@@ -533,7 +521,6 @@ body.taskbar-autohide #desktop { height: 100vh; }
 .wp-item-void   { background:#04040a }
 .wp-item-plain  { background:#0d0e12 }
 
-/* Accent color picker */
 .accent-row { display:flex; gap:7px; flex-wrap:wrap; margin-top:6px }
 .accent-swatch {
   width:26px; height:26px; border-radius:50%; cursor:pointer;
@@ -631,7 +618,7 @@ body.taskbar-autohide #desktop { height: 100vh; }
 .conf-btn.primary { background:rgba(var(--os-accent-rgb),0.1); border-color:rgba(var(--os-accent-rgb),0.3); color:var(--os-accent) }
 .conf-btn.primary:hover { background:var(--os-accent); color:#fff; border-color:var(--os-accent) }
 
-/* Add shortcut modal */
+/* ===== ADD SHORTCUT MODAL ===== */
 #addShortcutModal {
   position:fixed; inset:0; z-index:99998;
   background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);
@@ -670,7 +657,63 @@ body.taskbar-autohide #desktop { height: 100vh; }
 .m-btn.danger { background:rgba(248,113,113,0.08); border-color:rgba(248,113,113,0.2); color:var(--os-red) }
 .m-btn.danger:hover { background:var(--os-red); color:#fff; border-color:var(--os-red) }
 
-/* Scrollbar */
+/* ===== WELCOME MODAL ===== */
+#welcomeModal {
+  position:fixed; inset:0; z-index:300000;
+  background:rgba(0,0,0,0.75); backdrop-filter:blur(14px);
+  display:none; align-items:center; justify-content:center; padding:24px;
+}
+#welcomeModal.open { display:flex }
+.welcome-box {
+  width:100%; max-width:480px;
+  background:rgba(13,14,20,0.98); border:1px solid var(--os-border2);
+  border-radius:var(--radius-xl); box-shadow:var(--shadow-window); overflow:hidden;
+  animation:wndIn 0.25s ease;
+}
+.welcome-hero {
+  padding:32px 28px 24px; text-align:center;
+  background:linear-gradient(180deg, rgba(var(--os-accent-rgb),0.08) 0%, transparent 100%);
+  border-bottom:1px solid var(--os-border);
+}
+.welcome-logo-wrap {
+  width:60px; height:60px; border-radius:16px;
+  background:linear-gradient(135deg,rgba(var(--os-accent-rgb),0.9),rgba(244,122,255,0.7));
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 16px; box-shadow:0 8px 24px rgba(var(--os-accent-rgb),0.3);
+}
+.welcome-title { font-size:20px; font-weight:600; color:var(--os-text); margin-bottom:8px; letter-spacing:-0.02em }
+.welcome-sub { font-size:13px; color:var(--os-muted); line-height:1.6 }
+.welcome-body { padding:20px 28px 24px }
+.welcome-features {
+  display:flex; flex-direction:column; gap:10px; margin-bottom:22px;
+}
+.welcome-feat {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 12px; background:var(--os-surface); border:1px solid var(--os-border);
+  border-radius:8px;
+}
+.welcome-feat-icon {
+  width:30px; height:30px; border-radius:8px;
+  background:rgba(var(--os-accent-rgb),0.1); border:1px solid rgba(var(--os-accent-rgb),0.2);
+  display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
+}
+.welcome-feat-text { font-size:12px; color:var(--os-text); line-height:1.5 }
+.welcome-feat-text strong { display:block; font-weight:600; margin-bottom:1px }
+.welcome-feat-text span { color:var(--os-muted); font-size:11.5px }
+.welcome-actions { display:flex; gap:8px }
+.welcome-btn-primary {
+  flex:1; height:40px; background:var(--os-accent); border:none;
+  border-radius:8px; font-family:var(--font); font-size:13px; font-weight:600;
+  color:#fff; cursor:pointer; transition:opacity 0.15s;
+}
+.welcome-btn-primary:hover { opacity:0.88 }
+.welcome-btn-skip {
+  height:40px; padding:0 16px; background:var(--os-surface); border:1px solid var(--os-border);
+  border-radius:8px; font-family:var(--font); font-size:13px; font-weight:500;
+  color:var(--os-muted); cursor:pointer; transition:all 0.15s; white-space:nowrap;
+}
+.welcome-btn-skip:hover { background:var(--os-surface2); color:var(--os-text) }
+
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
 </style>
@@ -701,7 +744,6 @@ body.taskbar-autohide #desktop { height: 100vh; }
   <div id="windowLayer"></div>
 </div>
 
-<!-- TASKBAR PEEK ZONE (for auto-hide) -->
 <div id="taskbarPeekZone"
   onmouseenter="TB.peekShow()"
   onmouseleave="TB.peekHide()"></div>
@@ -715,10 +757,8 @@ body.taskbar-autohide #desktop { height: 100vh; }
       <circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/>
     </svg>
   </div>
-
   <div class="tb-divider"></div>
   <div id="taskbarApps"></div>
-
   <div id="taskbarRight">
     <div class="tb-tray-btn" onclick="OS.openSettings()" title="Settings">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -774,7 +814,6 @@ body.taskbar-autohide #desktop { height: 100vh; }
         <div class="wp-item wp-item-plain" id="wp-plain" onclick="OS.setWallpaper('plain')" title="Plain"></div>
       </div>
     </div>
-
     <div class="sp-section">
       <div class="sp-section-title">Accent Color</div>
       <div class="accent-row" id="accentRow">
@@ -786,7 +825,6 @@ body.taskbar-autohide #desktop { height: 100vh; }
         <div class="accent-swatch" data-color="56,189,248" style="background:#38bdf8" onclick="OS.setAccent('38bdf8','56,189,248')"></div>
       </div>
     </div>
-
     <div class="sp-section">
       <div class="sp-section-title">Display</div>
       <div class="sp-row">
@@ -802,7 +840,6 @@ body.taskbar-autohide #desktop { height: 100vh; }
         <label class="toggle"><input type="checkbox" id="tog-taskbarhide" checked onchange="OS.setSetting('hideTaskbarFullscreen',this.checked);TB.updateAutoHide()"><span class="tog-slider"></span></label>
       </div>
     </div>
-
     <div class="sp-section">
       <div class="sp-section-title">System</div>
       <button class="sp-btn danger" onclick="OS.wipeData()">Wipe All Data</button>
@@ -890,10 +927,105 @@ body.taskbar-autohide #desktop { height: 100vh; }
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════════
+     WELCOME MODAL — shown once per new user
+══════════════════════════════════════════════════════ -->
+<div id="welcomeModal">
+  <div class="welcome-box">
+    <div class="welcome-hero">
+      <div class="welcome-logo-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/>
+        </svg>
+      </div>
+      <!-- ═══════════════════════════════════════════════════════════
+           WELCOME MESSAGE — edit the title and subtitle below.
+           The modal only shows once; returning users never see it.
+      ═══════════════════════════════════════════════════════════ -->
+      <div class="welcome-title">Welcome to NovOS</div>
+      <div class="welcome-sub">
+        [PLACEHOLDER — replace this with your own welcome message.<br>
+        Tell users what NovOS is, who made it, or any tips you want them to know.]
+      </div>
+    </div>
+    <div class="welcome-body">
+      <div class="welcome-features">
+        <!-- ═══════════════════════════════════════════════════════
+             FEATURE TILES — edit or add rows as you like.
+             Format: emoji icon, bold label, description text.
+        ═══════════════════════════════════════════════════════ -->
+        <div class="welcome-feat">
+          <div class="welcome-feat-icon">🎮</div>
+          <div class="welcome-feat-text">
+            <strong>Games Library</strong>
+            <span>Open any game in a resizable, draggable window — no new tabs needed.</span>
+          </div>
+        </div>
+        <div class="welcome-feat">
+          <div class="welcome-feat-icon">📌</div>
+          <div class="welcome-feat-text">
+            <strong>Pin & Customize</strong>
+            <span>Right-click any app to pin it to the taskbar or add it to your desktop.</span>
+          </div>
+        </div>
+        <div class="welcome-feat">
+          <div class="welcome-feat-icon">⚙️</div>
+          <div class="welcome-feat-text">
+            <strong>[PLACEHOLDER TIP]</strong>
+            <span>Add a third tip here — hotkeys, how to add your own apps, etc.</span>
+          </div>
+        </div>
+      </div>
+      <div class="welcome-actions">
+        <button class="welcome-btn-primary" onclick="OS.closeWelcome()">Get Started</button>
+        <button class="welcome-btn-skip" onclick="OS.closeWelcome()">Skip</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-/* ═══════════════════════════════════════════════
-   DATA
-═══════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════
+   ██████╗ ███████╗███████╗ █████╗ ██╗   ██╗██╗  ████████╗
+   ██╔══██╗██╔════╝██╔════╝██╔══██╗██║   ██║██║  ╚══██╔══╝
+   ██║  ██║█████╗  █████╗  ███████║██║   ██║██║     ██║
+   ██║  ██║██╔══╝  ██╔══╝  ██╔══██║██║   ██║██║     ██║
+   ██████╔╝███████╗██║     ██║  ██║╚██████╔╝███████╗██║
+   ╚═════╝ ╚══════╝╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝
+
+   DEFAULT DESKTOP APPS
+   ════════════════════════════════════════════════════════════════
+   Add any shortcuts you want to appear on EVERY user's desktop
+   right out of the box. These are shown alongside user-created
+   shortcuts and cannot be deleted by users (isDefault:true).
+
+   Each entry is an object with:
+     name     — display label on the desktop icon
+     url      — full URL (or "__PVZ__" for the PVZ special case)
+     icon     — URL to an image, or "" to auto-detect from favicon
+     isDefault — KEEP THIS TRUE so users can't delete system icons
+     isPVZ    — only set true on the PVZ GOTY entry
+
+   EXAMPLE (uncomment to use):
+     { name:"Google", url:"https://google.com", icon:"", isDefault:true },
+═════════════════════════════════════════════════════════════════= */
+const DEFAULT_DESKTOP_APPS = [
+  /* ── ADD YOUR DEFAULT DESKTOP SHORTCUTS BELOW ─────────────────
+
+  { name:"Example App", url:"https://example.com",         icon:"",           isDefault:true },
+  { name:"Google",      url:"https://google.com",           icon:"",           isDefault:true },
+  { name:"YouTube",     url:"https://youtube.com",          icon:"",           isDefault:true },
+
+  ── END DEFAULT DESKTOP SHORTCUTS ─────────────────────────── */
+];
+/* ══════════════════════════════════════════════════════════════ */
+
+
+/* ════════════════════════════════════════════════════════════════
+   APP LIBRARY DATA (games / web / apps shown in the library)
+   These are NOT desktop icons; they live in the App Library window
+   and Start Menu. Users can launch them but can't delete defaults.
+════════════════════════════════════════════════════════════════ */
 const DEFAULT_SHORTCUTS = {
   web:[
     {name:"Truffled",url:"https://supermath.salavat.ru",icon:"https://truffled.lol/png/logo.png",isDefault:true},
@@ -976,6 +1108,26 @@ function saveShortcuts(sc){
 }
 function getUserShortcuts(){
   try{return JSON.parse(localStorage.getItem('novos_shortcuts')||'{}');}catch{return{};}
+}
+
+/* ═══════════════════════════════════════════════
+   DESKTOP SHORTCUT STORE
+   Manages desktop icons — includes DEFAULT_DESKTOP_APPS
+   (admin-defined) plus user-created ones.
+═══════════════════════════════════════════════ */
+function loadDesktopShortcuts(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('novos_desktop')||'[]');
+    // Merge: default desktop apps first, then user-added ones
+    return [...DEFAULT_DESKTOP_APPS, ...saved];
+  }catch{
+    return [...DEFAULT_DESKTOP_APPS];
+  }
+}
+function saveDesktopShortcuts(items){
+  // Only persist user-added items (not the built-in DEFAULT_DESKTOP_APPS)
+  const userItems = items.filter(i=>!i.isDefault);
+  localStorage.setItem('novos_desktop', JSON.stringify(userItems));
 }
 
 /* ═══════════════════════════════════════════════
@@ -1376,10 +1528,12 @@ const PVZ = {
 const OS = {
   shortcuts:null,
   editingApp:null,
+  desktopItems:[],  // in-memory list of current desktop icons
 
   init(){
     SETTINGS.load();
     this.shortcuts=loadShortcuts();
+    this.desktopItems=loadDesktopShortcuts();
     CTX.init();
     TB.init();
     this.applySettings();
@@ -1397,6 +1551,19 @@ const OS = {
     document.getElementById('tog-boot').checked=SETTINGS.get('showBoot');
     document.getElementById('tog-confirm').checked=SETTINGS.get('launchConfirm');
     document.getElementById('tog-taskbarhide').checked=SETTINGS.get('hideTaskbarFullscreen');
+
+    // Show welcome modal for first-time visitors only
+    if(!localStorage.getItem('novos_welcomed')){
+      // Delay slightly so boot screen is visible first
+      setTimeout(()=>{
+        document.getElementById('welcomeModal').classList.add('open');
+      }, SETTINGS.get('showBoot') ? 2800 : 300);
+    }
+  },
+
+  closeWelcome(){
+    localStorage.setItem('novos_welcomed','1');
+    document.getElementById('welcomeModal').classList.remove('open');
   },
 
   applySettings(){
@@ -1436,24 +1603,25 @@ const OS = {
     document.getElementById('tbDate').textContent=days[n.getDay()]+', '+months[n.getMonth()]+' '+n.getDate();
   },
 
-  /* Only show user-created shortcuts on desktop */
+  /* ── renderDesktop ──────────────────────────────────────────────
+     Renders ALL desktop items: DEFAULT_DESKTOP_APPS + user-created.
+     Right-click → edit/remove only available on non-default items.
+  ──────────────────────────────────────────────────────────────── */
   renderDesktop(){
     const cont=document.getElementById('desktopIcons');
-    const uc=getUserShortcuts();
-    const userItems=[...(uc.web||[]),...(uc.games||[]),...(uc.apps||[])];
-
-    if(!userItems.length){
+    if(!this.desktopItems.length){
       cont.innerHTML='';
       return;
     }
-
-    cont.innerHTML=userItems.map((app,i)=>{
+    cont.innerHTML=this.desktopItems.map((app,i)=>{
       const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
-      const launchFn=app.isPVZ?`PVZ.tryLaunch('${app.name.replace(/'/g,"&#39;")}')`:
-        `OS.launch(${JSON.stringify(app).replace(/"/g,'&quot;')})`;
+      const launchFn=app.isPVZ
+        ?`PVZ.tryLaunch('${app.name.replace(/'/g,"&#39;")}')`
+        :`OS.launch(${JSON.stringify(app).replace(/"/g,'&quot;')})`;
       return `<div class="desk-icon" ondblclick="${launchFn}"
         oncontextmenu="OS.deskCtx(event,${i})" id="dsk_${i}">
-        <img class="desk-icon-img" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${app.url}'" alt="">
+        <img class="desk-icon-img" src="${icon}" loading="lazy"
+          onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${app.url}'" alt="">
         <div class="desk-icon-label">${app.name}</div>
       </div>`;
     }).join('');
@@ -1461,17 +1629,46 @@ const OS = {
 
   deskCtx(e,i){
     e.preventDefault();
-    const uc=getUserShortcuts();
-    const userItems=[...(uc.web||[]),...(uc.games||[]),...(uc.apps||[])];
-    const app=userItems[i];
+    const app=this.desktopItems[i];
     if(!app)return;
-    CTX.show(e.clientX,e.clientY,[
+    const items=[
       {label:'Open',icon:'▶',fn:()=>this.launch(app)},
       {label:'Pin to Taskbar',icon:'📌',fn:()=>TB.pin(app)},
-      {sep:true},
-      {label:'Edit',icon:'✏',fn:()=>this.addShortcutOpen(app)},
-      {label:'Remove from Desktop',icon:'✕',fn:()=>this.removeShortcut(app),danger:true},
-    ]);
+    ];
+    if(!app.isDefault){
+      items.push({sep:true});
+      items.push({label:'Edit',icon:'✏',fn:()=>this.addShortcutOpen(app)});
+      items.push({label:'Remove from Desktop',icon:'✕',fn:()=>this.removeDesktopIcon(i),danger:true});
+    }
+    CTX.show(e.clientX,e.clientY,items);
+  },
+
+  /* ── addToDesktop ───────────────────────────────────────────────
+     FIX: actually saves the app to desktopItems + localStorage
+     before re-rendering. Previously this was never saved.
+  ──────────────────────────────────────────────────────────────── */
+  addToDesktop(app){
+    // Prevent duplicates
+    const alreadyThere = this.desktopItems.some(d=>d.url===app.url);
+    if(alreadyThere){
+      this.notify('Already on Desktop', app.name+' is already on the desktop.');
+      return;
+    }
+    // Add as user item (not isDefault, so it can be removed later)
+    const item = {name:app.name, url:app.url, icon:app.icon||''};
+    this.desktopItems.push(item);
+    saveDesktopShortcuts(this.desktopItems);
+    this.renderDesktop();
+    this.notify('Added to Desktop', app.name+' added to desktop.');
+  },
+
+  removeDesktopIcon(index){
+    const app = this.desktopItems[index];
+    if(!app || app.isDefault) return; // never remove built-in icons
+    this.desktopItems.splice(index, 1);
+    saveDesktopShortcuts(this.desktopItems);
+    this.renderDesktop();
+    this.notify('Removed', app.name+' removed from desktop.');
   },
 
   launch(app){
@@ -1593,7 +1790,8 @@ const OS = {
     CTX.show(e.clientX,e.clientY,[
       {label:'Open',icon:'▶',fn:()=>this.launch(app)},
       {label:'Pin to Taskbar',icon:'📌',fn:()=>TB.pin(app)},
-      {label:'Add to Desktop',icon:'🖥',fn:()=>{this.notify('Added','Shortcut added to desktop');this.renderDesktop();}},
+      /* FIX: now calls addToDesktop() which actually saves the shortcut */
+      {label:'Add to Desktop',icon:'🖥',fn:()=>this.addToDesktop(app)},
       {sep:true},
       {label:'Edit Shortcut',icon:'✏',fn:()=>this.addShortcutOpen(app)},
       app.isDefault?null:{label:'Remove',icon:'✕',fn:()=>this.removeShortcut(app),danger:true},
@@ -1605,6 +1803,9 @@ const OS = {
       this.shortcuts[cat]=this.shortcuts[cat].filter(s=>s.url!==app.url||s.isDefault);
     });
     saveShortcuts(this.shortcuts);
+    // Also remove from desktop if present
+    this.desktopItems=this.desktopItems.filter(d=>d.url!==app.url||d.isDefault);
+    saveDesktopShortcuts(this.desktopItems);
     this.renderDesktop();
     this.notify('Removed',app.name+' removed');
   },
@@ -1728,6 +1929,7 @@ const OS = {
         CTX.hide(); this.closeStart();
         this.closeConfirm();
         this.addShortcutClose();
+        // Don't close welcome on Escape — user should click "Get Started"
       }
     });
   }
