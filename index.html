@@ -944,8 +944,8 @@ body.taskbar-autohide #desktop { height: 100vh; }
       ═══════════════════════════════════════════════════════════ -->
       <div class="welcome-title">Welcome to NovOS</div>
       <div class="welcome-sub">
-        [PLACEHOLDER — replace this with your own welcome message.<br>
-        Tell users what NovOS is, who made it, or any tips you want them to know.]
+        Hello and welcome. To get started, right click on your desktop.<br>
+        Note that if you enter full-screen, you must hover your cursor towards the top of the page to restore the border.
       </div>
     </div>
     <div class="welcome-body">
@@ -971,8 +971,8 @@ body.taskbar-autohide #desktop { height: 100vh; }
         <div class="welcome-feat">
           <div class="welcome-feat-icon">⚙️</div>
           <div class="welcome-feat-text">
-            <strong>[PLACEHOLDER TIP]</strong>
-            <span>Add a third tip here — hotkeys, how to add your own apps, etc.</span>
+            <strong>Securly</strong>
+            <span>If you open a shortcut and notice Securly has blocked it, just refresh the shortcut through the button on the border</span>
           </div>
         </div>
       </div>
@@ -1010,13 +1010,11 @@ body.taskbar-autohide #desktop { height: 100vh; }
      { name:"Google", url:"https://google.com", icon:"", isDefault:true },
 ═════════════════════════════════════════════════════════════════= */
 const DEFAULT_DESKTOP_APPS = [
-  /* ── ADD YOUR DEFAULT DESKTOP SHORTCUTS BELOW ─────────────────
 
-  { name:"Example App", url:"https://example.com",         icon:"",           isDefault:true },
-  { name:"Google",      url:"https://google.com",           icon:"",           isDefault:true },
-  { name:"YouTube",     url:"https://youtube.com",          icon:"",           isDefault:true },
+  { name:"Truffled Browser", url:"https://supermath.salavat.ru/search.html",         icon:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwfE4pX9Gdw2cY6nX4VJrph-O4iUqZKpIX_w&s",           isDefault:true },
+  { name:"DuckDuckGo",      url:"https://gas.education/math/hvtrs8%2F-dwcidwcigm.aoo%2F",           icon:"https://upload.wikimedia.org/wikipedia/en/9/90/The_DuckDuckGo_Duck.png",           isDefault:true },
+  { name:"Entertainment",     url:"https://youtube.com",          icon:"https://i.pinimg.com/736x/ea/8d/11/ea8d11f1ffc6355b8a440106ce61d0f3.jpg",           isDefault:true },
 
-  ── END DEFAULT DESKTOP SHORTCUTS ─────────────────────────── */
 ];
 /* ══════════════════════════════════════════════════════════════ */
 
@@ -1028,7 +1026,7 @@ const DEFAULT_DESKTOP_APPS = [
 ════════════════════════════════════════════════════════════════ */
 const DEFAULT_SHORTCUTS = {
   web:[
-    {name:"Truffled",url:"https://supermath.salavat.ru",icon:"https://truffled.lol/png/logo.png",isDefault:true},
+    {name:"Truffled",url:"https://supermath.salavat.ru",icon:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwfE4pX9Gdw2cY6nX4VJrph-O4iUqZKpIX_w&s",isDefault:true},
     {name:"AnuraOS",url:"https://anura.pro",icon:"https://i.imgur.com/6vvxLxR.jpeg",isDefault:true},
     {name:"gn-math",url:"https://gn-math.dev",icon:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAkFBMVEX7JlL5JlH////+//3/J1T4QGL/4+v9JFH8/////f7+PmP7//36KE/6Jlj/rsD///r4eJH/+Pz6K1X/+ff8OF7/Mlv5e5P75uv/J1r/pbr59fT/7PL2Jlf9KFb3Ik7/RGf2cIv6gJf/8fT5Hkj34/D9Pmn/scT35+r0//r0NWDwKFb9d5L/M1//9v7/ucn98fPUPlMHAAAE8klEQVR4nO1Ya5PaOgz1I8QxYVtiAmk3a6BA98HSy///d1dSngtJDBRm+sFnGHYTK8rBluQjM+bh4eHh4eHh4eHh4eHh4eHh4eHhcQITBJwzZSZqMgA14UpxHijusjOKgV1griZgfzw9Pb08dQBv/rAGCahL7K4kwBURSH9+G8TPlAWMKea2IwKKX0mAp88yHoB8Tg1Tipmx045fTYCh8ThPtNA9EDrJV4YTAZfdGH2yKwmA51WWiIh8nDnVOhJJtoIIgEUYOe1goq4kgLFlV5mOokiI6Ax0T2erJcdwddtZitbLCZiSQJiIuO+XxSIJx0RgOXbZlQTcWVDn/3ar1HaS7hL4aTpq+0zgI5JYaCF0OOYYhHwc4pWIYYAMGkT4/J9dOkF/2wlbQtIEFxA4vLzAZ/87m82+4+f7CY5SnxPQ8nhqVzw9y3/vyeHBovchAq38f4X8fZ0uPqfTxWJ6gl8bCW8UMqsIZBIutdz8OrXEZz8XU3IG9WDOWaCGlqDK/zeJmG3SeaCstSz4AnbIRRcBkR9OLa2BIJmnmxk5fEMCgzFQ5X8G4UtTDLWW8qcGxBE3adZNIEsNPG4aa6gR4MDQEkFCwDgR6J+EKv9DIiyBABi3Y5ejh9IhvLAmQISQMA63s41utPxhBPAhAmX6SYwpfAAWxXBIogqs+kURWDQENN0oZow11jhjioO9xKgtCfABAlX+Z7EU8v09TPkSogIDowDNAIdfBNl1RiDSIZRmmoHKHiIO60Qavr+DwzhbuQjQHATBKMQ1BcYjePxr/fo6Xqfhhfbn456AJ+AJ/GsEFO5WUOt3mqTMLgVloFij+rcTlAl8nkPd0a294H4EWEEgnEncyLOPPWzk8KlVPl6/7D82SAA/gABVT2Xma9IAi89vxT5+gtf/joII3H8JUI2AR0vg5vCmY9wV2hofET/L6IEEaC3gsSVPwwQ3HRKchJhkLrhCAo8IQlJMKApBBQTKjMIERa2oVSlugZp2avEgAgHEIBIIrDHWIgEUHrqS+VWrA9s73IwfUAeIAAe1b2Ey7CiHWY/hTbXOx/WASyQgHkKgRFUP8gSXPGo3Bt19wd0JlPUgP0qQ9TN3X3BvAnU9gIJw1hV09AUPIFDUA4YlIQisqy94DAH4u8RvUnfDfcH9CVT1oLxoBrr7gvsTqOoBNjqGM1dfcHcCVT3AjoRBb+DqC+5GwHU+qCYM9ADoBTr80DvsnLDzyekcIclT7KRarVdTT7rHewn0nfuRONjvPzLs+uUsLE/JUjxHgDtZ8YKm+azqSd/4GS44HyR58ElyYbGG8ICs5GZd1If1HHpD7ONqf1U96RnvITBwPkjiQL8doGFF4JELwy9LJQMKBwVNi0BZT3rGOwgMnw/iFhBFCTatGE6VeMCIoS+6OCUAf/vGOwkMnQ9GAo/DknAEXa7BXZu84f8GT4INFY+ANQTqetI93kFg+HxQ0yYIBCzqhcCUFSow3ECR5HQmrWBuan91PekeP4PrfDCOUB/ofGThZ9iWI4XpqNiS0wsah2U96R0/xYAOKJYAb4oL8vlWuHQA3ZPH3JnPt8KhA4qTv8Xanc+3ExjSAXTDUkq78vmvCLAuHVCe+xX3sfw8iECfDihRprA7n28m0KsDSjXADUkiZz7fjB4dUC/BkkhZZz57eHh4eHh4eHh4eHh4eHh4XIn/ATeCkewbO89XAAAAAElFTkSuQmCC",isDefault:true},
     {name:"Utopia",url:"https://gas.education",icon:"https://gas.education/favicon.ico",isDefault:true},
@@ -1063,6 +1061,7 @@ const DEFAULT_SHORTCUTS = {
     {name:"SlendyTubbies 2D",url:"https://riaannn.github.io/SlendyTubbies2D/",icon:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkuIsZr4XQGeFhof0Hq4SmjldTxFEbZxf8-A&s",isDefault:true},
     {name:"Daily Dadish",url:"https://riaannn.github.io/dailydadish",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/359.png",isDefault:true},
     {name:"Dadish 3D",url:"https://riaannn.github.io/dadish3d",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/358.png",isDefault:true},
+    {name:"Plants vs Zombies Garden Warfare 2D",url:"https://riaannn.github.io/PVZ-GW-2D/",icon:"https://img.itch.zone/aW1nLzIxNzU5MjE1LnBuZw==/315x250%23c/sljD0g.png",isDefault:true},
   ],
   apps:[
     {name:"WatchParty",url:"https://watchparty.me",icon:"https://www.watchparty.me/favicon.ico",isDefault:true},
