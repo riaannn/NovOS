@@ -33,7 +33,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 #wallpaper.wp-custom{background-size:cover;background-position:center;background-repeat:no-repeat}
 #desktop::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px}
 
-/* DESKTOP ICONS - now absolutely positioned for drag */
+/* DESKTOP ICONS */
 #desktopIcons{position:absolute;inset:0;z-index:5;pointer-events:none}
 .desk-icon{
   position:absolute;pointer-events:all;
@@ -46,12 +46,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 .desk-icon:hover{background:rgba(255,255,255,0.07);border-color:var(--os-border)}
 .desk-icon.selected{background:rgba(var(--os-accent-rgb),0.18);border-color:rgba(var(--os-accent-rgb),0.4)}
 .desk-icon.dragging{opacity:0.6;z-index:9999;cursor:grabbing}
-.desk-icon-img{width:calc(var(--desk-icon-size) * 0.58);height:calc(var(--desk-icon-size) * 0.58);border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);pointer-events:none}
+.desk-icon-img{width:calc(var(--desk-icon-size) * 0.58);height:calc(var(--desk-icon-size) * 0.58);border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);pointer-events:none;display:flex;align-items:center;justify-content:center}
+.desk-icon img.desk-icon-img{display:block}
 .desk-icon-label{font-size:11px;font-weight:400;color:var(--os-text);text-align:center;line-height:1.3;word-break:break-word;text-shadow:0 1px 4px rgba(0,0,0,0.9);max-width:calc(var(--desk-icon-size) - 8px);pointer-events:none;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .desk-icon-rename{width:calc(var(--desk-icon-size) - 10px);font-size:11px;background:rgba(13,14,20,0.95);border:1px solid rgba(var(--os-accent-rgb),0.5);border-radius:4px;color:var(--os-text);text-align:center;padding:2px 4px;outline:none;font-family:var(--font);display:none}
-
-/* Folder icon special */
-.desk-icon.folder .desk-icon-img{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.25);display:flex;align-items:center;justify-content:center;font-size:calc(var(--desk-icon-size)*0.32)}
+.desk-icon.folder .desk-icon-img{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.25);font-size:calc(var(--desk-icon-size)*0.32)}
 
 /* TASKBAR */
 #taskbar{position:fixed;bottom:0;left:0;right:0;z-index:9999;height:var(--taskbar-h);background:rgba(10,11,18,0.88);border-top:1px solid var(--os-border);backdrop-filter:blur(28px) saturate(1.6);display:flex;align-items:center;gap:4px;padding:0 8px;transition:transform 0.25s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease}
@@ -205,8 +204,17 @@ body.taskbar-autohide #desktop{height:100vh}
 .sp-slider{flex:1;-webkit-appearance:none;height:3px;background:var(--os-border);border-radius:2px;outline:none;cursor:pointer}
 .sp-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--os-accent);cursor:pointer}
 .sp-val{font-size:11px;color:var(--os-accent);font-family:var(--mono);width:30px;text-align:right;flex-shrink:0}
-.sp-num-input{width:60px;height:28px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:6px;padding:0 8px;color:var(--os-text);font-family:var(--mono);font-size:12px;outline:none;text-align:center;transition:border-color 0.15s}
-.sp-num-input:focus{border-color:rgba(var(--os-accent-rgb),0.45)}
+
+/* ALT+TAB SWITCHER */
+#altTabOverlay{position:fixed;inset:0;z-index:200001;background:rgba(0,0,0,0.65);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+#altTabOverlay.open{display:flex}
+#altTabTitle{font-size:11px;color:var(--os-muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px}
+#altTabList{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:90vw}
+.alt-tab-item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 16px;border-radius:var(--radius-lg);border:2px solid transparent;cursor:pointer;transition:all 0.15s;min-width:90px;max-width:110px}
+.alt-tab-item.selected{background:rgba(var(--os-accent-rgb),0.18);border-color:rgba(var(--os-accent-rgb),0.5)}
+.alt-tab-item:hover{background:rgba(255,255,255,0.07)}
+.alt-tab-icon{width:40px;height:40px;border-radius:10px;object-fit:cover;font-size:22px;display:flex;align-items:center;justify-content:center}
+.alt-tab-label{font-size:11px;color:var(--os-text);text-align:center;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* PVZ SETUP */
 #pvzSetup{position:fixed;inset:0;z-index:200000;background:rgba(0,0,0,0.85);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:24px}
@@ -242,7 +250,7 @@ body.taskbar-autohide #desktop{height:100vh}
 .boot-line:nth-child(6){animation-delay:0.78s;color:var(--os-green)}
 @keyframes lineReveal{to{width:360px}}
 
-/* MODALS (confirm, add shortcut, welcome, folder create) */
+/* MODALS */
 .overlay-modal{position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center}
 .overlay-modal.open{display:flex}
 .modal-box{background:rgba(13,14,20,0.98);border:1px solid var(--os-border2);border-radius:var(--radius-lg);width:380px;box-shadow:var(--shadow-window);overflow:hidden;animation:wndIn 0.18s ease}
@@ -290,6 +298,55 @@ body.taskbar-autohide #desktop{height:100vh}
 .welcome-btn-skip{height:40px;padding:0 16px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;font-family:var(--font);font-size:13px;font-weight:500;color:var(--os-muted);cursor:pointer;transition:all 0.15s;white-space:nowrap}
 .welcome-btn-skip:hover{background:var(--os-surface2);color:var(--os-text)}
 
+/* FILE EXPLORER */
+.fe-layout{display:flex;height:100%;overflow:hidden}
+.fe-sidebar{width:180px;flex-shrink:0;border-right:1px solid var(--os-border);overflow-y:auto;padding:8px;background:rgba(0,0,0,0.15)}
+.fe-sidebar-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--os-muted);transition:all 0.12s;border:1px solid transparent}
+.fe-sidebar-item:hover{background:var(--os-surface);color:var(--os-text)}
+.fe-sidebar-item.active{background:rgba(var(--os-accent-rgb),0.1);border-color:rgba(var(--os-accent-rgb),0.2);color:var(--os-accent)}
+.fe-sidebar-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim);padding:10px 8px 4px}
+.fe-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.fe-toolbar{height:40px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)}
+.fe-path{flex:1;height:26px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:6px;padding:0 10px;color:var(--os-muted);font-family:var(--mono);font-size:11px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.fe-btn{height:28px;padding:0 10px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:6px;color:var(--os-muted);font-family:var(--font);font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.12s;white-space:nowrap;flex-shrink:0}
+.fe-btn:hover{background:var(--os-surface2);color:var(--os-text)}
+.fe-btn.primary{background:rgba(var(--os-accent-rgb),0.1);border-color:rgba(var(--os-accent-rgb),0.25);color:var(--os-accent)}
+.fe-btn.primary:hover{background:var(--os-accent);color:#fff}
+.fe-content{flex:1;overflow-y:auto;padding:10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
+.fe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px}
+.fe-list{display:flex;flex-direction:column;gap:2px}
+.fe-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 6px;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:all 0.12s;position:relative}
+.fe-item:hover{background:var(--os-surface);border-color:var(--os-border)}
+.fe-item.selected{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.3)}
+.fe-item-icon{font-size:28px;line-height:1;margin-bottom:2px}
+.fe-item-img{width:52px;height:52px;border-radius:6px;object-fit:cover;border:1px solid rgba(255,255,255,0.07)}
+.fe-item-name{font-size:10.5px;color:var(--os-text);text-align:center;word-break:break-word;max-width:90px;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.fe-item-list{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:6px;cursor:pointer;border:1px solid transparent;transition:all 0.12s}
+.fe-item-list:hover{background:var(--os-surface)}
+.fe-item-list-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.fe-item-list-name{flex:1;font-size:12px;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fe-item-list-size{font-size:11px;color:var(--os-muted);font-family:var(--mono);flex-shrink:0}
+.fe-item-list-date{font-size:11px;color:var(--os-dim);flex-shrink:0;width:120px;text-align:right}
+.fe-statusbar{height:26px;flex-shrink:0;border-top:1px solid var(--os-border);display:flex;align-items:center;padding:0 12px;gap:12px;background:rgba(0,0,0,0.15)}
+.fe-status-text{font-size:11px;color:var(--os-muted);font-family:var(--mono)}
+.fe-drop-zone{border:2px dashed rgba(var(--os-accent-rgb),0.3);border-radius:8px;padding:24px;text-align:center;color:var(--os-muted);font-size:12px;margin:8px;transition:all 0.15s}
+.fe-drop-zone.drag-over{border-color:var(--os-accent);background:rgba(var(--os-accent-rgb),0.06);color:var(--os-accent)}
+.fe-view-toggle{display:flex;gap:2px}
+.fe-view-btn{width:26px;height:26px;border-radius:5px;background:transparent;border:1px solid transparent;cursor:pointer;color:var(--os-muted);display:flex;align-items:center;justify-content:center;transition:all 0.12s;font-size:12px}
+.fe-view-btn:hover{background:var(--os-surface);color:var(--os-text)}
+.fe-view-btn.active{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.25);color:var(--os-accent)}
+/* image preview in file explorer */
+.fe-preview{position:absolute;inset:0;background:rgba(0,0,0,0.9);z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.fe-preview img{max-width:90%;max-height:80%;border-radius:8px;object-fit:contain}
+.fe-preview-name{font-size:12px;color:var(--os-muted)}
+
+/* Hidden items panel */
+.hidden-items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:6px;padding:10px}
+.hidden-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px;border-radius:8px;cursor:pointer;border:1px solid var(--os-border);background:var(--os-surface);transition:all 0.12s;opacity:0.6}
+.hidden-item:hover{opacity:1;border-color:rgba(var(--os-accent-rgb),0.3)}
+.hidden-item-icon{font-size:20px}
+.hidden-item-name{font-size:10px;color:var(--os-muted);text-align:center;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
 </style>
@@ -322,7 +379,7 @@ body.taskbar-autohide #desktop{height:100vh}
 
 <!-- TASKBAR -->
 <div id="taskbar" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()">
-  <div id="startBtn" onclick="OS.toggleStart()" title="Applications">
+  <div id="startBtn" onclick="OS.toggleStart()" title="Applications (Tab)">
     <svg viewBox="0 0 24 24" fill="none" stroke="rgba(var(--os-accent-rgb),0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg>
   </div>
   <div class="tb-divider"></div>
@@ -359,7 +416,6 @@ body.taskbar-autohide #desktop{height:100vh}
     <button class="sp-close" onclick="OS.closeSettings()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
   <div class="sp-body">
-
     <div class="sp-section">
       <div class="sp-section-title">Wallpaper</div>
       <div class="wp-grid">
@@ -370,17 +426,14 @@ body.taskbar-autohide #desktop{height:100vh}
         <div class="wp-item wp-item-void" id="wp-void" onclick="OS.setWallpaper('void')" title="Void"></div>
         <div class="wp-item wp-item-plain" id="wp-plain" onclick="OS.setWallpaper('plain')" title="Plain"></div>
       </div>
-      <!-- Custom wallpaper upload -->
       <div style="margin-top:8px">
-        <div id="wpCustomPreview" class="wp-item wp-item-custom" style="width:100%;height:60px;display:none" onclick="OS.setWallpaper('custom')" title="Custom (click to select)">
-          <span style="font-size:16px">🖼</span>
-          <span>Your Image</span>
+        <div id="wpCustomPreview" class="wp-item wp-item-custom" style="width:100%;height:60px;display:none" onclick="OS.setWallpaper('custom')" title="Custom">
+          <span style="font-size:16px">🖼</span><span>Your Image</span>
         </div>
         <input type="file" id="wpFileInput" accept="image/*" style="display:none" onchange="OS.loadCustomWallpaper(this)">
         <button class="sp-btn" onclick="document.getElementById('wpFileInput').click()" style="margin-top:6px">📁 Upload Custom Wallpaper</button>
       </div>
     </div>
-
     <div class="sp-section">
       <div class="sp-section-title">Accent Color</div>
       <div class="accent-row" id="accentRow">
@@ -392,7 +445,6 @@ body.taskbar-autohide #desktop{height:100vh}
         <div class="accent-swatch" data-color="56,189,248" style="background:#38bdf8" onclick="OS.setAccent('38bdf8','56,189,248')"></div>
       </div>
     </div>
-
     <div class="sp-section">
       <div class="sp-section-title">Desktop</div>
       <div class="sp-slider-row">
@@ -405,7 +457,6 @@ body.taskbar-autohide #desktop{height:100vh}
         <label class="toggle"><input type="checkbox" id="tog-icons" checked onchange="OS.setIconVisibility(this.checked)"><span class="tog-slider"></span></label>
       </div>
     </div>
-
     <div class="sp-section">
       <div class="sp-section-title">Display</div>
       <div class="sp-row">
@@ -421,33 +472,18 @@ body.taskbar-autohide #desktop{height:100vh}
         <label class="toggle"><input type="checkbox" id="tog-taskbarhide" checked onchange="OS.setSetting('hideTaskbarFullscreen',this.checked);TB.updateAutoHide()"><span class="tog-slider"></span></label>
       </div>
     </div>
-
-    <!-- PLACEHOLDER SETTING -->
-    <div class="sp-section">
-      <div class="sp-section-title">SECURLY</div>
-      <div class="sp-row">
-        <div>
-          <div class="sp-row-label">Auto-Refresh on Load</div>
-          <div class="sp-row-sub">Refresh the iframe X times during the loading screen</div>
-        </div>
-        <label class="toggle"><input type="checkbox" id="tog-autorefresh" onchange="OS.setSetting('autoRefreshEnabled',this.checked)"><span class="tog-slider"></span></label>
-      </div>
-      <div class="sp-row" style="margin-top:5px;align-items:center">
-        <div>
-          <div class="sp-row-label">Refresh Count (X)</div>
-          <div class="sp-row-sub">Number of auto-refreshes (integers only)</div>
-        </div>
-        <input type="number" class="sp-num-input" id="autoRefreshCount" min="1" max="30" value="3" style="margin-left:8px"
-          oninput="this.value=Math.max(1,Math.min(30,Math.floor(+this.value)||1));OS.setSetting('autoRefreshCount',+this.value)">
-      </div>
-    </div>
-
     <div class="sp-section">
       <div class="sp-section-title">System</div>
+      <button class="sp-btn" onclick="OS.openHiddenManager()" style="margin-bottom:6px">👁 Manage Hidden Icons</button>
       <button class="sp-btn danger" onclick="OS.wipeData()">Wipe All Data</button>
     </div>
-
   </div>
+</div>
+
+<!-- ALT+TAB OVERLAY -->
+<div id="altTabOverlay">
+  <div id="altTabTitle">SHIFT + TAB — Window Switcher</div>
+  <div id="altTabList"></div>
 </div>
 
 <!-- CONTEXT MENU -->
@@ -491,7 +527,6 @@ body.taskbar-autohide #desktop{height:100vh}
         <option value="games" selected>Games</option>
         <option value="apps">Apps</option>
       </select>
-      <!-- Show on Desktop option -->
       <div class="f-check-row" onclick="document.getElementById('sc-desktop').click()">
         <input type="checkbox" id="sc-desktop" checked>
         <label for="sc-desktop">Show on Desktop</label>
@@ -519,6 +554,38 @@ body.taskbar-autohide #desktop{height:100vh}
         <button class="m-btn primary" onclick="OS.createFolder()">Create</button>
         <button class="m-btn" onclick="document.getElementById('createFolderModal').classList.remove('open')">Cancel</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TO FOLDER MODAL -->
+<div id="addToFolderModal" class="overlay-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="atfTitle">Add to Folder</h3>
+      <button class="modal-close" onclick="document.getElementById('addToFolderModal').classList.remove('open')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="f-label">Select Folder</div>
+      <select class="f-select" id="atfSelect" style="margin-bottom:16px"></select>
+      <div class="modal-actions">
+        <button class="m-btn primary" onclick="OS.confirmAddToFolder()">Add</button>
+        <button class="m-btn" onclick="document.getElementById('addToFolderModal').classList.remove('open')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HIDDEN ITEMS MANAGER -->
+<div id="hiddenManagerModal" class="overlay-modal">
+  <div class="modal-box" style="width:420px">
+    <div class="modal-header">
+      <h3>Hidden Desktop Icons</h3>
+      <button class="modal-close" onclick="document.getElementById('hiddenManagerModal').classList.remove('open')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" style="padding-top:10px">
+      <div id="hiddenManagerGrid" class="hidden-items-grid"></div>
+      <div id="hiddenManagerEmpty" style="text-align:center;padding:24px;color:var(--os-muted);font-size:12px;display:none">No hidden icons.</div>
     </div>
   </div>
 </div>
@@ -557,7 +624,7 @@ body.taskbar-autohide #desktop{height:100vh}
       <div class="welcome-features">
         <div class="welcome-feat"><div class="welcome-feat-icon">🎮</div><div class="welcome-feat-text"><strong>Games Library</strong><span>Open any game in a resizable, draggable window.</span></div></div>
         <div class="welcome-feat"><div class="welcome-feat-icon">📌</div><div class="welcome-feat-text"><strong>Pin & Customize</strong><span>Right-click any app to pin it, add it to your desktop, or put it in a folder.</span></div></div>
-        <div class="welcome-feat"><div class="welcome-feat-icon">⚙️</div><div class="welcome-feat-text"><strong>Securly</strong><span>If Securly blocks a link, tap the window's refresh button rhythmically to bypass it.</span></div></div>
+        <div class="welcome-feat"><div class="welcome-feat-icon">⌨️</div><div class="welcome-feat-text"><strong>Shortcuts</strong><span>Tab = Start Menu · Shift+Tab = Window Switcher</span></div></div>
       </div>
       <div class="welcome-actions">
         <button class="welcome-btn-primary" onclick="OS.closeWelcome()">Get Started</button>
@@ -569,13 +636,21 @@ body.taskbar-autohide #desktop{height:100vh}
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   DEFAULT DESKTOP APPS — edit these to set icons shown on every user's
-   desktop by default. Users cannot delete entries with isDefault:true.
+   DEFAULT DESKTOP APPS — keyed by URL so cache busting works
 ═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_DESKTOP_APPS = [
-  { name:"Truffled Browser", url:"https://supermath.salavat.ru/search.html", icon:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwfE4pX9Gdw2cY6nX4VJrph-O4iUqZKpIX_w&s", isDefault:true },
-  { name:"DuckDuckGo",       url:"https://gas.education/math/hvtrs8%2F-dwcidwcigm.aoo%2F", icon:"https://upload.wikimedia.org/wikipedia/en/9/90/The_DuckDuckGo_Duck.png", isDefault:true },
-  { name:"Entertainment",    url:"https://youtube.com", icon:"https://i.pinimg.com/736x/ea/8d/11/ea8d11f1ffc6355b8a440106ce61d0f3.jpg", isDefault:true },
+{ 
+  name: "Truffled Browser", 
+  url: "https://supermath.salavat.ru/search.html", 
+  icon: "https://i.imgur.com/o875p3J.png", 
+  isDefault: true, 
+  isSystem: true 
+},
+  { name:"File Explorer",    url:"__explorer__", icon:"", isDefault:true, isSystem:true, systemAction:"openFileExplorer" },
+  { name:"Settings",         url:"__settings__", icon:"", isDefault:true, isSystem:true, systemAction:"openSettingsWindow" },
+  { name:"App Library",      url:"__library__",  icon:"", isDefault:true, isSystem:true, systemAction:"openAppLibrary" },
+  { name:"PLACEHOLDER",       url:"", icon:"", isDefault:true },
+
 ];
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -633,7 +708,7 @@ const PVZ_URL='https://wszqkzqk.github.io/pvz-portable-wasm/pvz-portable.html';
    SETTINGS STORE
 ═══════════════════════════════════════════════ */
 const SETTINGS={
-  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,autoRefreshEnabled:false,autoRefreshCount:3,customWallpaper:''},
+  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:''},
   data:{},
   load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
   save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));},
@@ -645,32 +720,58 @@ const SETTINGS={
    SHORTCUT STORE
 ═══════════════════════════════════════════════ */
 function loadShortcuts(){
-  try{const uc=JSON.parse(localStorage.getItem('novos_shortcuts')||'{}');return{web:[...DEFAULT_SHORTCUTS.web,...(uc.web||[])],games:[...DEFAULT_SHORTCUTS.games,...(uc.games||[])],apps:[...DEFAULT_SHORTCUTS.apps,...(uc.apps||[])]};}
-  catch{return{web:[...DEFAULT_SHORTCUTS.web],games:[...DEFAULT_SHORTCUTS.games],apps:[...DEFAULT_SHORTCUTS.apps]};}
+  try{
+    const uc=JSON.parse(localStorage.getItem('novos_shortcuts')||'{}');
+    return{
+      web:[...DEFAULT_SHORTCUTS.web,...(uc.web||[])],
+      games:[...DEFAULT_SHORTCUTS.games,...(uc.games||[])],
+      apps:[...DEFAULT_SHORTCUTS.apps,...(uc.apps||[])]
+    };
+  }catch{
+    return{web:[...DEFAULT_SHORTCUTS.web],games:[...DEFAULT_SHORTCUTS.games],apps:[...DEFAULT_SHORTCUTS.apps]};
+  }
 }
 function saveShortcuts(sc){
-  const c={web:sc.web.filter(i=>!i.isDefault),games:sc.games.filter(i=>!i.isDefault),apps:sc.apps.filter(i=>!i.isDefault)};
+  const c={
+    web:sc.web.filter(i=>!i.isDefault),
+    games:sc.games.filter(i=>!i.isDefault),
+    apps:sc.apps.filter(i=>!i.isDefault)
+  };
   localStorage.setItem('novos_shortcuts',JSON.stringify(c));
 }
 
 /* ═══════════════════════════════════════════════
    DESKTOP ITEM STORE
-   Each item: {id, type:'app'|'folder', name, url, icon, isDefault, x, y, hidden}
-   Folders also have: {items:[...app objects]}
+   Always merges DEFAULT_DESKTOP_APPS by URL to reflect changes
 ═══════════════════════════════════════════════ */
 function genId(){return 'di_'+(Date.now())+'_'+(Math.random()*9999|0)}
 
+function openTruffledBrowser(){WM.open({name: 'Truffled Browser', url: 'https://supermath.salavat.ru/search.html', icon: '🌐'})}
+
 function loadDesktopItems(){
-  // Build defaults from DEFAULT_DESKTOP_APPS (no saved positions yet)
   const saved=JSON.parse(localStorage.getItem('novos_desktop_v2')||'null');
+
   if(saved){
-    // Merge: ensure all DEFAULT_DESKTOP_APPS exist
-    const existingUrls=new Set(saved.filter(i=>i.isDefault).map(i=>i.url));
-    const missing=DEFAULT_DESKTOP_APPS.filter(a=>!existingUrls.has(a.url))
-      .map((a,i)=>({id:genId(),type:'app',...a,x:12+Math.floor(i/5)*88,y:12+(i%5)*88}));
-    return [...saved,...missing];
+    // Build a map of existing items by URL (for default apps) and by id (for user items)
+    const byUrl=new Map(saved.filter(i=>i.isDefault&&i.url).map(i=>[i.url,i]));
+
+    // Rebuild defaults — keep saved positions but update name/icon from DEFAULT_DESKTOP_APPS
+    const merged=DEFAULT_DESKTOP_APPS.map((a,i)=>{
+      const existing=byUrl.get(a.url);
+      if(existing){
+        // Update mutable fields from defaults but keep position, hidden state
+        return {...existing, name:a.name, icon:a.icon, isSystem:a.isSystem, systemAction:a.systemAction};
+      }
+      return {id:genId(),type:'app',...a, x:12, y:12+i*88};
+    });
+
+    // Append non-default (user) saved items that aren't duplicates
+    const defaultUrls=new Set(DEFAULT_DESKTOP_APPS.map(a=>a.url));
+    const userItems=saved.filter(i=>!i.isDefault||!defaultUrls.has(i.url));
+    return [...merged,...userItems];
   }
-  // First run: lay out DEFAULT_DESKTOP_APPS in a column
+
+  // First run
   return DEFAULT_DESKTOP_APPS.map((a,i)=>({
     id:genId(),type:'app',...a,
     x:12, y:12+i*88
@@ -682,51 +783,35 @@ function saveDesktopItems(items){
 }
 
 /* ═══════════════════════════════════════════════
+   FILE EXPLORER STORE
+═══════════════════════════════════════════════ */
+const FE={
+  // files stored as {id, name, size, type, dataUrl, dateAdded}
+  load(){try{return JSON.parse(localStorage.getItem('novos_files')||'[]');}catch{return[];}},
+  save(files){
+    // Don't store dataUrls in localStorage if they're too large — warn user
+    try{localStorage.setItem('novos_files',JSON.stringify(files));}
+    catch(e){
+      // Storage quota — remove large files gracefully
+      const slim=files.map(f=>({...f,dataUrl:f.dataUrl&&f.dataUrl.length<500000?f.dataUrl:'__too_large__'}));
+      try{localStorage.setItem('novos_files',JSON.stringify(slim));}catch{console.warn('Storage full');}
+    }
+  },
+  formatSize(bytes){
+    if(bytes<1024)return bytes+'B';
+    if(bytes<1024*1024)return(bytes/1024).toFixed(1)+'KB';
+    return(bytes/1024/1024).toFixed(1)+'MB';
+  }
+};
+
+/* ═══════════════════════════════════════════════
    WINDOW MANAGER
 ═══════════════════════════════════════════════ */
 const WM={
-  windows:{},zBase:200,
+  windows:{},
+  _zCounter:200,
+
   newId(){return 'wnd_'+(Date.now())+'_'+(Math.random()*9999|0)},
-
-  /* ─── Auto-refresh logic ──────────────────────────────────────
-     After setting the iframe src, while the loader is still showing,
-     we refresh the iframe X times using a small delay between each.
-     The loader stays visible the whole time. When done, it fades.
-  ─────────────────────────────────────────────────────────────── */
-  _doRefreshCycle(id, url){
-    const frm=document.getElementById('frm_'+id);
-    const ldr=document.getElementById('ldr_'+id);
-    const ldrSub=document.getElementById('ldrsub_'+id);
-    const enabled=SETTINGS.get('autoRefreshEnabled');
-    const count=Math.max(1,Math.min(30,SETTINGS.get('autoRefreshCount')||3));
-
-    const finish=()=>{
-      // Final load — hide loader once iframe fires load
-      frm.addEventListener('load',()=>{
-        if(frm.src&&frm.src!=='about:blank')ldr&&ldr.classList.add('hidden');
-      },{once:true});
-      frm.src=url;
-    };
-
-    if(!enabled){finish();return;}
-
-    let i=0;
-    if(ldrSub) ldrSub.textContent='Refreshing 0 / '+count+'…';
-
-    const step=()=>{
-      if(i>=count){finish();return;}
-      frm.src='about:blank';
-      setTimeout(()=>{
-        i++;
-        if(ldrSub) ldrSub.textContent='Refreshing '+i+' / '+count+'…';
-        // brief pause so the refresh registers
-        setTimeout(step, 320);
-      },80);
-    };
-    // Start first load then kick off refreshes
-    frm.src=url;
-    setTimeout(step, 500);
-  },
 
   open(app){
     const id=this.newId();
@@ -736,7 +821,7 @@ const WM={
     const dh=Math.min(window.innerHeight*0.8,680);
     const x=Math.max(20,(window.innerWidth-dw)*0.5+(Math.random()*40-20));
     const y=Math.max(10,(window.innerHeight-48-dh)*0.3+(Math.random()*20-10));
-    el.style.cssText=`width:${dw}px;height:${dh}px;top:${y}px;left:${x}px;z-index:${this.zBase+Object.keys(this.windows).length*2}`;
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${y}px;left:${x}px;z-index:${++this._zCounter}`;
     const iconSrc=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
@@ -765,55 +850,128 @@ const WM={
     document.getElementById('windowLayer').appendChild(el);
 
     const realUrl=app.url==='__PVZ__'?PVZ_URL:app.url;
-    setTimeout(()=>this._doRefreshCycle(id,realUrl),30);
+    const frm=document.getElementById('frm_'+id);
+    const ldr=document.getElementById('ldr_'+id);
 
-    this.windows[id]={app,minimized:false,maximized:false,prevRect:null};
+    // FIX: track whether the initial load has completed
+    const state={loaded:false};
+    frm.addEventListener('load',()=>{
+      // Only hide loader when src is actually the real URL (not about:blank)
+      if(frm.src && frm.src!=='about:blank'){
+        state.loaded=true;
+        ldr&&ldr.classList.add('hidden');
+      }
+    });
+    setTimeout(()=>{frm.src=realUrl;},30);
+
+    this.windows[id]={app,minimized:false,maximized:false,prevRect:null,iframeLoaded:state};
     this.focus(id);TB.addWindow(id,app);this.makeDraggable(id);
     return id;
   },
 
+  // FIX: proper z-index focusing — each focus gets a new top z
   focus(id){
-    Object.keys(this.windows).forEach(wid=>{const el=document.getElementById(wid);if(el)el.classList.remove('focused')});
+    Object.keys(this.windows).forEach(wid=>{
+      const el=document.getElementById(wid);
+      if(el)el.classList.remove('focused');
+    });
     const el=document.getElementById(id);
-    if(el){el.classList.add('focused');const maxZ=Math.max(...Object.values(this.windows).map((_,i)=>this.zBase+i*2),this.zBase);el.style.zIndex=maxZ+2;}
+    if(el){
+      el.classList.add('focused');
+      el.style.zIndex=++this._zCounter;
+    }
     TB.setActive(id);
   },
 
   closeWindow(id){
     const el=document.getElementById(id);
-    if(el){const frm=document.getElementById('frm_'+id);if(frm)frm.src='';el.style.transform='scale(0.95)';el.style.opacity='0';el.style.transition='all 0.15s ease';setTimeout(()=>el.remove(),150);}
+    if(el){
+      const frm=document.getElementById('frm_'+id);
+      if(frm)frm.src='';
+      el.style.transform='scale(0.95)';el.style.opacity='0';
+      el.style.transition='all 0.15s ease';
+      setTimeout(()=>el.remove(),150);
+    }
     delete this.windows[id];TB.removeWindow(id);TB.updateAutoHide();
   },
 
-  minimize(id){const el=document.getElementById(id);if(!el)return;this.windows[id].minimized=true;el.classList.add('minimized');TB.setActive(null);TB.updateAutoHide();},
-  restore(id){const el=document.getElementById(id);if(!el)return;this.windows[id].minimized=false;el.classList.remove('minimized');this.focus(id);TB.updateAutoHide();},
+  minimize(id){
+    const el=document.getElementById(id);if(!el)return;
+    this.windows[id].minimized=true;
+    el.classList.add('minimized');TB.setActive(null);TB.updateAutoHide();
+  },
+  restore(id){
+    const el=document.getElementById(id);if(!el)return;
+    this.windows[id].minimized=false;
+    el.classList.remove('minimized');
+    this.focus(id);TB.updateAutoHide();
+  },
   toggleWindow(id){if(!this.windows[id])return;if(this.windows[id].minimized)this.restore(id);else this.minimize(id);},
 
-  maximize(id){const el=document.getElementById(id);if(!el)return;this.windows[id].maximized=true;this.windows[id].prevRect={top:el.style.top,left:el.style.left,width:el.style.width,height:el.style.height};el.classList.add('maximized');TB.updateAutoHide();},
-  restoreMax(id){const el=document.getElementById(id);if(!el)return;this.windows[id].maximized=false;el.classList.remove('maximized');const p=this.windows[id].prevRect;if(p){el.style.top=p.top;el.style.left=p.left;el.style.width=p.width;el.style.height=p.height;}TB.updateAutoHide();},
+  maximize(id){
+    const el=document.getElementById(id);if(!el)return;
+    this.windows[id].maximized=true;
+    this.windows[id].prevRect={top:el.style.top,left:el.style.left,width:el.style.width,height:el.style.height};
+    el.classList.add('maximized');TB.updateAutoHide();
+  },
+  restoreMax(id){
+    const el=document.getElementById(id);if(!el)return;
+    this.windows[id].maximized=false;
+    el.classList.remove('maximized');
+    const p=this.windows[id].prevRect;
+    if(p){el.style.top=p.top;el.style.left=p.left;el.style.width=p.width;el.style.height=p.height;}
+    TB.updateAutoHide();
+  },
   toggleMaximize(id){
     if(this.windows[id]&&this.windows[id].maximized)this.restoreMax(id);else this.maximize(id);
     const exp=document.getElementById('fsexp_'+id),cmp=document.getElementById('fscmp_'+id);
     if(exp&&cmp){const isMax=this.windows[id]&&this.windows[id].maximized;exp.style.display=isMax?'none':'';cmp.style.display=isMax?'':'none';}
   },
 
-  peekTitlebar(id,show){const tb=document.getElementById('tb_'+id);if(!tb)return;if(this.windows[id]&&this.windows[id].maximized)tb.classList.toggle('tb-peek',show);},
+  peekTitlebar(id,show){
+    const tb=document.getElementById('tb_'+id);if(!tb)return;
+    if(this.windows[id]&&this.windows[id].maximized)tb.classList.toggle('tb-peek',show);
+  },
 
+  // FIX: refresh now properly shows loader, waits for real load, then hides
   refreshWindow(id){
-    const frm=document.getElementById('frm_'+id);const ldr=document.getElementById('ldr_'+id);
-    if(!frm||!frm.src||frm.src==='about:blank')return;
-    ldr&&ldr.classList.remove('hidden');
-    const src=frm.src;frm.src='';setTimeout(()=>frm.src=src,30);
+    const frm=document.getElementById('frm_'+id);
+    const ldr=document.getElementById('ldr_'+id);
+    if(!frm)return;
+    const currentSrc=frm.src;
+    if(!currentSrc||currentSrc==='about:blank')return;
+
+    // Show loader
+    if(ldr)ldr.classList.remove('hidden');
+
+    // Set to blank first, then reload
+    frm.src='about:blank';
+
+    const onLoad=()=>{
+      // Only hide when actually loaded the real URL
+      if(frm.src&&frm.src!=='about:blank'){
+        if(ldr)ldr.classList.add('hidden');
+        frm.removeEventListener('load',onLoad);
+      }
+    };
+    frm.addEventListener('load',onLoad);
+
+    setTimeout(()=>{frm.src=currentSrc;},60);
   },
 
   startDrag(id,e){
-    if(e.target.tagName==='BUTTON'||e.target.tagName==='IMG')return;
+    if(e.target.tagName==='BUTTON'||e.target.closest('.wnd-ctrl-btns'))return;
     if(this.windows[id]&&this.windows[id].maximized)return;
-    this.focus(id);const el=document.getElementById(id);
+    this.focus(id);
+    const el=document.getElementById(id);
     const sx=e.clientX-el.offsetLeft,sy=e.clientY-el.offsetTop;
-    const move=ev=>{el.style.left=Math.max(0,Math.min(window.innerWidth-el.offsetWidth,ev.clientX-sx))+'px';el.style.top=Math.max(0,Math.min(window.innerHeight-48-40,ev.clientY-sy))+'px';};
+    const move=ev=>{
+      el.style.left=Math.max(0,Math.min(window.innerWidth-el.offsetWidth,ev.clientX-sx))+'px';
+      el.style.top=Math.max(0,Math.min(window.innerHeight-48-40,ev.clientY-sy))+'px';
+    };
     const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up)};
-    document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);e.preventDefault();
+    document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);
+    e.preventDefault();
   },
 
   startResize(id,e){
@@ -821,10 +979,15 @@ const WM={
     const el=document.getElementById(id);const sx=e.clientX,sy=e.clientY,sw=el.offsetWidth,sh=el.offsetHeight;
     const move=ev=>{el.style.width=Math.max(320,sw+ev.clientX-sx)+'px';el.style.height=Math.max(220,sh+ev.clientY-sy)+'px';};
     const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up)};
-    document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);e.preventDefault();
+    document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);
+    e.preventDefault();
   },
 
-  makeDraggable(id){const el=document.getElementById(id);if(el)el.addEventListener('mousedown',()=>this.focus(id));},
+  makeDraggable(id){
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('mousedown',()=>this.focus(id));
+  },
+
   hasMaximizedWindow(){return Object.values(this.windows).some(w=>w.maximized&&!w.minimized);}
 };
 
@@ -833,9 +996,17 @@ const WM={
 ═══════════════════════════════════════════════ */
 const TB={
   pinned:[],running:{},_peekTimeout:null,_hidden:false,
-  init(){try{this.pinned=JSON.parse(localStorage.getItem('novos_pinned')||'[]');}catch{this.pinned=[];}this.render();},
+  init(){
+    try{this.pinned=JSON.parse(localStorage.getItem('novos_pinned')||'[]');}catch{this.pinned=[];}
+    this.render();
+  },
   savePinned(){localStorage.setItem('novos_pinned',JSON.stringify(this.pinned));},
-  pin(app){if(!this.pinned.find(p=>p.url===app.url)){this.pinned.push({name:app.name,url:app.url,icon:app.icon});this.savePinned();this.render();OS.notify('Pinned',app.name+' pinned to taskbar');}},
+  pin(app){
+    if(!this.pinned.find(p=>p.url===app.url)){
+      this.pinned.push({name:app.name,url:app.url,icon:app.icon});
+      this.savePinned();this.render();OS.notify('Pinned',app.name+' pinned to taskbar');
+    }
+  },
   unpin(url){this.pinned=this.pinned.filter(p=>p.url!==url);this.savePinned();this.render();},
   updateAutoHide(){
     const setting=SETTINGS.get('hideTaskbarFullscreen'),hasMax=WM.hasMaximizedWindow();
@@ -876,8 +1047,83 @@ const TB={
   removeWindow(id){delete this.running[id];this.render();},
   setActive(id){
     document.querySelectorAll('.tb-app').forEach(b=>b.classList.remove('active'));
-    if(id){const wi=this.running[id];if(wi){const b=document.getElementById(wi.btnId);if(b)b.classList.add('active');}
-    const app=WM.windows[id]&&WM.windows[id].app;if(app){const pb=document.querySelector(`.tb-app[title="${app.name}"]`);if(pb)pb.classList.add('active');}}
+    if(id){
+      const wi=this.running[id];
+      if(wi){const b=document.getElementById(wi.btnId);if(b)b.classList.add('active');}
+      const app=WM.windows[id]&&WM.windows[id].app;
+      if(app){const pb=document.querySelector(`.tb-app[title="${app.name}"]`);if(pb)pb.classList.add('active');}
+    }
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   ALT+TAB WINDOW SWITCHER (Shift+Tab)
+═══════════════════════════════════════════════ */
+const ALT_TAB={
+  open:false,
+  _idx:0,
+  _ids:[],
+
+  getWindowList(){
+    return Object.entries(WM.windows)
+      .filter(([,w])=>!w.minimized)
+      .map(([id,w])=>({id,app:w.app}));
+  },
+
+  show(){
+    const wins=this.getWindowList();
+    if(wins.length===0)return;
+    this._ids=wins.map(w=>w.id);
+    // Start from the currently focused window, then cycle to next
+    const focusedEl=document.querySelector('.os-window.focused');
+    const currentIdx=focusedEl?this._ids.indexOf(focusedEl.id):-1;
+    this._idx=currentIdx===-1?0:(currentIdx+1)%this._ids.length;
+
+    this.render();
+    document.getElementById('altTabOverlay').classList.add('open');
+    this.open=true;
+  },
+
+  render(){
+    const wins=this.getWindowList();
+    const list=document.getElementById('altTabList');
+    list.innerHTML=wins.map((w,i)=>{
+      const icon=w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`;
+      const sel=this._ids[this._idx]===w.id?'selected':'';
+      const isImg=icon&&icon!='';
+      return `<div class="alt-tab-item ${sel}" data-id="${w.id}" onclick="ALT_TAB.selectById('${w.id}')">
+        ${isImg?`<img class="alt-tab-icon" src="${icon}" onerror="this.outerHTML='<div class=alt-tab-icon>🖥</div>'" alt="">`:`<div class="alt-tab-icon">🖥</div>`}
+        <div class="alt-tab-label">${w.app.name}</div>
+      </div>`;
+    }).join('');
+  },
+
+  next(){
+    if(!this.open){this.show();return;}
+    this._idx=(this._idx+1)%this._ids.length;
+    this.render();
+  },
+
+  selectById(id){
+    const idx=this._ids.indexOf(id);
+    if(idx!==-1)this._idx=idx;
+    this.confirm();
+  },
+
+  confirm(){
+    if(!this.open)return;
+    document.getElementById('altTabOverlay').classList.remove('open');
+    this.open=false;
+    const id=this._ids[this._idx];
+    if(id&&WM.windows[id]){
+      if(WM.windows[id].minimized)WM.restore(id);
+      else WM.focus(id);
+    }
+  },
+
+  cancel(){
+    document.getElementById('altTabOverlay').classList.remove('open');
+    this.open=false;
   }
 };
 
@@ -885,25 +1131,44 @@ const TB={
    CONTEXT MENU
 ═══════════════════════════════════════════════ */
 const CTX={
-  el:null,init(){this.el=document.getElementById('ctxMenu');},
+  el:null,
+  init(){this.el=document.getElementById('ctxMenu');},
   show(x,y,items){
     const el=this.el;
-    el.innerHTML=items.map(item=>item.sep?`<div class="ctx-sep"></div>`:item.label&&!item.fn?`<div class="ctx-label">${item.label}</div>`:`<div class="ctx-item${item.danger?' danger':''}" ><span style="font-size:13px;opacity:0.7;width:16px">${item.icon||'○'}</span>${item.label}</div>`).join('');
+    el.innerHTML=items.map(item=>
+      item.sep?`<div class="ctx-sep"></div>`:
+      item.label&&!item.fn?`<div class="ctx-label">${item.label}</div>`:
+      `<div class="ctx-item${item.danger?' danger':''}"><span style="font-size:13px;opacity:0.7;width:16px">${item.icon||'○'}</span>${item.label}</div>`
+    ).join('');
     let ci=0;
-    items.forEach(item=>{if(item.sep||!item.fn)return;const div=el.querySelectorAll('.ctx-item')[ci++];if(div)div.addEventListener('click',()=>{this.hide();item.fn();});});
+    items.forEach(item=>{
+      if(item.sep||!item.fn)return;
+      const div=el.querySelectorAll('.ctx-item')[ci++];
+      if(div)div.addEventListener('click',()=>{this.hide();item.fn();});
+    });
     const mw=190,mh=el.scrollHeight||200;
-    el.style.left=Math.min(x,window.innerWidth-mw-10)+'px';el.style.top=Math.min(y,window.innerHeight-mh-10)+'px';
+    el.style.left=Math.min(x,window.innerWidth-mw-10)+'px';
+    el.style.top=Math.min(y,window.innerHeight-mh-10)+'px';
     el.classList.add('open');
   },
-  hide(){this.el.classList.remove('open');}
+  hide(){this.el&&this.el.classList.remove('open');}
 };
 
 /* ═══════════════════════════════════════════════
    PVZ
 ═══════════════════════════════════════════════ */
 const PVZ={
-  tryLaunch(name){if(localStorage.getItem('novos_pvz')==='1')OS.launch({name,url:PVZ_URL,icon:'https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png'});else document.getElementById('pvzSetup').classList.remove('hide');},
-  confirmSetup(){localStorage.setItem('novos_pvz','1');document.getElementById('pvzSetup').classList.add('hide');OS.launch({name:'PVZ GOTY Edition',url:PVZ_URL,icon:'https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png'});}
+  tryLaunch(name){
+    if(localStorage.getItem('novos_pvz')==='1')
+      OS.launch({name,url:PVZ_URL,icon:'https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png'});
+    else
+      document.getElementById('pvzSetup').classList.remove('hide');
+  },
+  confirmSetup(){
+    localStorage.setItem('novos_pvz','1');
+    document.getElementById('pvzSetup').classList.add('hide');
+    OS.launch({name:'PVZ GOTY Edition',url:PVZ_URL,icon:'https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png'});
+  }
 };
 
 /* ═══════════════════════════════════════════════
@@ -912,9 +1177,10 @@ const PVZ={
 const OS={
   shortcuts:null,
   editingApp:null,
-  desktopItems:[],    // full item list (apps + folders)
-  _dragItem:null,     // item being dragged
+  desktopItems:[],
+  _dragItem:null,
   _dragOffX:0,_dragOffY:0,
+  _atfPendingApp:null,
 
   init(){
     SETTINGS.load();
@@ -925,17 +1191,27 @@ const OS={
     this.renderDesktop();
     this.renderClock();setInterval(()=>this.renderClock(),1000);
     this.setupContextMenu();
-    if(SETTINGS.get('showBoot')){setTimeout(()=>document.getElementById('boot').classList.add('hide'),2400);}
-    else{document.getElementById('boot').style.display='none';}
+    this.setupKeyboard();
+
+    if(SETTINGS.get('showBoot')){
+      setTimeout(()=>document.getElementById('boot').classList.add('hide'),2400);
+    }else{
+      document.getElementById('boot').style.display='none';
+    }
+
     document.getElementById('tog-boot').checked=SETTINGS.get('showBoot');
     document.getElementById('tog-confirm').checked=SETTINGS.get('launchConfirm');
     document.getElementById('tog-taskbarhide').checked=SETTINGS.get('hideTaskbarFullscreen');
     document.getElementById('tog-icons').checked=SETTINGS.get('showIcons');
-    document.getElementById('tog-autorefresh').checked=SETTINGS.get('autoRefreshEnabled');
-    document.getElementById('autoRefreshCount').value=SETTINGS.get('autoRefreshCount');
-    const sz=SETTINGS.get('iconSize');document.getElementById('iconSizeSlider').value=sz;document.getElementById('iconSizeVal').textContent=sz;
+
+    const sz=SETTINGS.get('iconSize');
+    document.getElementById('iconSizeSlider').value=sz;
+    document.getElementById('iconSizeVal').textContent=sz;
     this.applyIconSize(sz);
-    if(!localStorage.getItem('novos_welcomed')){setTimeout(()=>document.getElementById('welcomeModal').classList.add('open'),SETTINGS.get('showBoot')?2800:300);}
+
+    if(!localStorage.getItem('novos_welcomed')){
+      setTimeout(()=>document.getElementById('welcomeModal').classList.add('open'),SETTINGS.get('showBoot')?2800:300);
+    }
   },
 
   closeWelcome(){localStorage.setItem('novos_welcomed','1');document.getElementById('welcomeModal').classList.remove('open');},
@@ -953,11 +1229,11 @@ const OS={
     }else{wEl.style.backgroundImage='';}
     document.querySelectorAll('.wp-item').forEach(el=>el.classList.remove('active'));
     const wpBtn=document.getElementById('wp-'+wp);if(wpBtn)wpBtn.classList.add('active');
-    // Update custom preview
     const cw=SETTINGS.get('customWallpaper');
     const prev=document.getElementById('wpCustomPreview');
     if(cw){prev.style.display='';prev.style.backgroundImage=`url(${cw})`;prev.style.backgroundSize='cover';prev.style.backgroundPosition='center';if(wp==='custom')prev.classList.add('active');else prev.classList.remove('active');}
     else{prev.style.display='none';}
+    document.querySelectorAll('.accent-swatch').forEach(s=>s.classList.toggle('active',s.getAttribute('data-color')===(SETTINGS.get('accentRgb')||'124,109,250')));
   },
 
   setWallpaper(name){SETTINGS.set('wallpaper',name);this.applySettings();},
@@ -967,8 +1243,7 @@ const OS={
     const reader=new FileReader();
     reader.onload=e=>{
       const dataUrl=e.target.result;
-      // Store as base64 — warn if too large (>3MB)
-      if(dataUrl.length>3*1024*1024){OS.notify('Warning','Image is very large and may exceed localStorage limits. Try a smaller image.');return;}
+      if(dataUrl.length>3*1024*1024){OS.notify('Warning','Image too large. Try a smaller image.');return;}
       SETTINGS.set('customWallpaper',dataUrl);
       SETTINGS.set('wallpaper','custom');
       this.applySettings();
@@ -979,7 +1254,6 @@ const OS={
 
   setAccent(hex,rgb){
     SETTINGS.set('accent',hex);SETTINGS.set('accentRgb',rgb);this.applySettings();
-    document.querySelectorAll('.accent-swatch').forEach(s=>s.classList.toggle('active',s.getAttribute('data-color')===rgb));
   },
 
   setSetting(k,v){SETTINGS.set(k,v);},
@@ -1007,19 +1281,36 @@ const OS={
     const cont=document.getElementById('desktopIcons');
     cont.innerHTML='';
     cont.style.visibility=SETTINGS.get('showIcons')?'':'hidden';
-    this.desktopItems.forEach((item,idx)=>{
+
+    // System icon definitions
+    const systemIcons={
+      '__library__':{emoji:'⊞',label:'App Library'},
+      '__explorer__':{emoji:'📁',label:'File Explorer'},
+      '__settings__':{emoji:'⚙️',label:'Settings'},
+      '__browser__':{emoji:'🌐',label:'Truffled Browser'},
+    };
+
+    this.desktopItems.forEach((item)=>{
       if(item.hidden)return;
       const el=document.createElement('div');
-      el.className='desk-icon'+(item.type==='folder'?' folder':'');
-      el.id='desk_'+item.id;
-      el.style.left=item.x+'px';el.style.top=item.y+'px';
+      const isFolder=item.type==='folder';
+      const isSystem=item.isSystem;
 
-      if(item.type==='folder'){
-        el.innerHTML=`<div class="desk-icon-img">📁</div><div class="desk-icon-label">${item.name}</div>`;
+      el.className='desk-icon'+(isFolder?' folder':'');
+      el.id='desk_'+item.id;
+      el.style.left=(item.x||12)+'px';
+      el.style.top=(item.y||12)+'px';
+
+      if(isFolder){
+        el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;font-size:26px">📁</div><div class="desk-icon-label">${item.name}</div>`;
         el.addEventListener('dblclick',()=>this.openFolder(item));
+      }else if(isSystem&&systemIcons[item.url]){
+        const si=systemIcons[item.url];
+        el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;font-size:26px">${si.emoji}</div><div class="desk-icon-label">${item.name}</div>`;
+        el.addEventListener('dblclick',()=>this[item.systemAction]&&this[item.systemAction]());
       }else{
         const icon=item.icon||`https://www.google.com/s2/favicons?sz=64&domain=${item.url}`;
-        el.innerHTML=`<img class="desk-icon-img" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${item.url}'" alt=""><div class="desk-icon-label">${item.name}</div>`;
+        el.innerHTML=`<img class="desk-icon-img" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(item.url||'')}';" alt=""><div class="desk-icon-label">${item.name}</div>`;
         el.addEventListener('dblclick',()=>{
           if(item.isPVZ)PVZ.tryLaunch(item.name);else this.launch(item);
         });
@@ -1033,20 +1324,25 @@ const OS={
 
   /* ─── Icon drag-and-drop ────────────────────────────────────── */
   _attachDrag(el,item){
+    let hasDragged=false;
     el.addEventListener('mousedown',e=>{
       if(e.button!==0||e.target.tagName==='INPUT')return;
+      hasDragged=false;
       const rect=el.getBoundingClientRect();
       this._dragItem=item;
       this._dragOffX=e.clientX-rect.left;
       this._dragOffY=e.clientY-rect.top;
-      el.classList.add('dragging');
       e.preventDefault();
     });
   },
 
   _initDragHandlers(){
+    let hasMoved=false;
     document.addEventListener('mousemove',e=>{
       if(!this._dragItem)return;
+      hasMoved=true;
+      const el=document.getElementById('desk_'+this._dragItem.id);
+      if(el&&!el.classList.contains('dragging'))el.classList.add('dragging');
       const cont=document.getElementById('desktopIcons');
       const cr=cont.getBoundingClientRect();
       let nx=e.clientX-cr.left-this._dragOffX;
@@ -1054,27 +1350,62 @@ const OS={
       nx=Math.max(0,Math.min(cr.width-80,nx));
       ny=Math.max(0,Math.min(cr.height-90,ny));
       this._dragItem.x=Math.round(nx);this._dragItem.y=Math.round(ny);
-      const el=document.getElementById('desk_'+this._dragItem.id);
       if(el){el.style.left=nx+'px';el.style.top=ny+'px';}
     });
     document.addEventListener('mouseup',()=>{
       if(!this._dragItem)return;
       document.querySelectorAll('.desk-icon.dragging').forEach(e=>e.classList.remove('dragging'));
-      saveDesktopItems(this.desktopItems);
+      if(hasMoved)saveDesktopItems(this.desktopItems);
+      hasMoved=false;
       this._dragItem=null;
     });
   },
 
   deskCtx(e,item){
-    const items=[{label:'Open',icon:'▶',fn:()=>item.type==='folder'?this.openFolder(item):this.launch(item)}];
-    if(item.type!=='folder') items.push({label:'Pin to Taskbar',icon:'📌',fn:()=>TB.pin(item)});
+    const isSystem=item.isSystem;
+    const items=[];
+    if(item.type==='folder'){
+      items.push({label:'Open',icon:'▶',fn:()=>this.openFolder(item)});
+    }else if(isSystem){
+      items.push({label:'Open',icon:'▶',fn:()=>this[item.systemAction]&&this[item.systemAction]()});
+    }else{
+      items.push({label:'Open',icon:'▶',fn:()=>item.isPVZ?PVZ.tryLaunch(item.name):this.launch(item)});
+      items.push({label:'Pin to Taskbar',icon:'📌',fn:()=>TB.pin(item)});
+    }
     items.push({sep:true});
     items.push({label:'Rename',icon:'✏️',fn:()=>this.renameDesktopItem(item)});
-    items.push({label:item.hidden?'Show':'Hide',icon:'👁',fn:()=>{item.hidden=!item.hidden;saveDesktopItems(this.desktopItems);this.renderDesktop();}});
-    if(!item.isDefault){
+    // FIX: Hide now works — hidden items are accessible via Settings > Manage Hidden Icons
+    items.push({label:'Hide',icon:'👁',fn:()=>{item.hidden=true;saveDesktopItems(this.desktopItems);this.renderDesktop();this.notify('Hidden',item.name+' hidden. Manage via Settings → Manage Hidden Icons.');}});
+    if(!item.isDefault&&!isSystem){
       items.push({label:'Remove from Desktop',icon:'✕',fn:()=>this.removeDesktopItem(item),danger:true});
     }
     CTX.show(e.clientX,e.clientY,items);
+  },
+
+  openHiddenManager(){
+    const hidden=this.desktopItems.filter(i=>i.hidden);
+    const grid=document.getElementById('hiddenManagerGrid');
+    const empty=document.getElementById('hiddenManagerEmpty');
+
+    if(!hidden.length){
+      grid.innerHTML='';empty.style.display='block';
+    }else{
+      empty.style.display='none';
+      grid.innerHTML=hidden.map(item=>{
+        const icon=item.type==='folder'?'📁':(item.isSystem?'⚙️':(item.icon?`<img src="${item.icon}" style="width:28px;height:28px;border-radius:6px" onerror="this.outerHTML='📄'">`:'📄'));
+        return `<div class="hidden-item" onclick="OS.unhideItem('${item.id}')">
+          <div class="hidden-item-icon">${typeof icon==='string'&&icon.startsWith('<img')?icon:icon}</div>
+          <div class="hidden-item-name">${item.name}</div>
+          <div style="font-size:9px;color:var(--os-accent);margin-top:2px">Click to show</div>
+        </div>`;
+      }).join('');
+    }
+    document.getElementById('hiddenManagerModal').classList.add('open');
+  },
+
+  unhideItem(id){
+    const item=this.desktopItems.find(i=>i.id===id);
+    if(item){item.hidden=false;saveDesktopItems(this.desktopItems);this.renderDesktop();this.openHiddenManager();}
   },
 
   renameDesktopItem(item){
@@ -1101,30 +1432,36 @@ const OS={
   },
 
   addToDesktop(app){
-    if(this.desktopItems.some(d=>d.url===app.url&&d.type==='app')){OS.notify('Already on Desktop',app.name+' is already on the desktop.');return;}
-    const item={id:genId(),type:'app',name:app.name,url:app.url,icon:app.icon||'',x:12+(this.desktopItems.length%5)*88,y:12+Math.floor(this.desktopItems.length/5)*88};
+    if(this.desktopItems.some(d=>d.url===app.url&&d.type==='app')){
+      OS.notify('Already on Desktop',app.name+' is already on the desktop.');return;
+    }
+    const item={id:genId(),type:'app',name:app.name,url:app.url,icon:app.icon||'',
+      x:12+(this.desktopItems.length%5)*88,y:12+Math.floor(this.desktopItems.length/5)*88};
     this.desktopItems.push(item);saveDesktopItems(this.desktopItems);this.renderDesktop();
     OS.notify('Added to Desktop',app.name+' added to desktop.');
   },
 
   createFolder(){
     const name=document.getElementById('folder-name').value.trim()||'New Folder';
-    const item={id:genId(),type:'folder',name,items:[],x:12+(this.desktopItems.length%5)*88,y:12+Math.floor(this.desktopItems.length/5)*88};
+    const item={id:genId(),type:'folder',name,items:[],
+      x:12+(this.desktopItems.length%5)*88,y:12+Math.floor(this.desktopItems.length/5)*88};
     this.desktopItems.push(item);saveDesktopItems(this.desktopItems);this.renderDesktop();
     document.getElementById('createFolderModal').classList.remove('open');
     document.getElementById('folder-name').value='';
+    OS.notify('Created','Folder "'+name+'" created. Right-click apps in the library to add them.');
   },
 
+  // FIX: folders now work — openFolder shows a proper grid with drag-in support
   openFolder(folderItem){
     const id=WM.newId();const el=document.createElement('div');
     el.className='os-window focused';el.id=id;
-    const dw=420,dh=360;
+    const dw=480,dh=400;
     const x=(window.innerWidth-dw)/2,y=(window.innerHeight-48-dh)/2;
-    el.style.cssText=`width:${dw}px;height:${dh}px;top:${y}px;left:${x}px;z-index:${WM.zBase+Object.keys(WM.windows).length*2+1}`;
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${y}px;left:${x}px;z-index:${++WM._zCounter}`;
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
-        <span style="font-size:14px">📁</span>
+        <span style="font-size:14px;margin-right:2px">📁</span>
         <div class="wnd-title">${folderItem.name}</div>
         <div class="wnd-ctrl-btns">
           <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
@@ -1132,26 +1469,98 @@ const OS={
           <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
       </div>
-      <div class="wnd-body">
-        <div class="folder-grid" id="fgrid_${id}"></div>
+      <div class="wnd-body" style="display:flex;flex-direction:column;">
+        <div style="padding:8px 12px;border-bottom:1px solid var(--os-border);font-size:11px;color:var(--os-muted);display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.02)">
+          <span>${(folderItem.items||[]).length} items</span>
+          <span style="flex:1"></span>
+          <button class="fe-btn" onclick="OS.openAddToFolderModal(${JSON.stringify(folderItem).replace(/"/g,'&quot;')})">＋ Add App</button>
+        </div>
+        <div class="folder-grid" id="fgrid_${id}" style="flex:1;overflow-y:auto"></div>
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
     WM.windows[id]={app:{name:folderItem.name,url:'__folder__',icon:''},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,{name:folderItem.name,url:'__folder__',icon:''});WM.makeDraggable(id);
-    // Render folder contents
-    const grid=document.getElementById('fgrid_'+id);
-    if(!folderItem.items||!folderItem.items.length){grid.innerHTML='<div class="folder-empty">This folder is empty.<br><small>Drag apps here from the App Library.</small></div>';return;}
-    grid.innerHTML=folderItem.items.map(app=>{
+    this._renderFolderContents(id,folderItem);
+  },
+
+  _renderFolderContents(wndId,folderItem){
+    const grid=document.getElementById('fgrid_'+wndId);
+    if(!grid)return;
+    const items=folderItem.items||[];
+    if(!items.length){
+      grid.innerHTML=`<div class="folder-empty">This folder is empty.<br><small>Click "＋ Add App" to add apps here.</small></div>`;
+      return;
+    }
+    grid.innerHTML=items.map(app=>{
       const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
       const esc=JSON.stringify(app).replace(/"/g,'&quot;');
-      return `<div class="folder-item" onclick="OS.launch(${esc})"><img src="${icon}" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${app.url}'" alt=""><div class="folder-item-label">${app.name}</div></div>`;
+      const fidx=JSON.stringify({folderId:folderItem.id,appUrl:app.url}).replace(/"/g,'&quot;');
+      return `<div class="folder-item" ondblclick="OS.launch(${esc})" oncontextmenu="event.preventDefault();OS._folderItemCtx(event,${esc},${fidx})">
+        <img src="${icon}" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(app.url||'')}'" alt="">
+        <div class="folder-item-label">${app.name}</div>
+      </div>`;
     }).join('');
+  },
+
+  _folderItemCtx(e,app,ref){
+    CTX.show(e.clientX,e.clientY,[
+      {label:'Open',icon:'▶',fn:()=>this.launch(app)},
+      {label:'Remove from Folder',icon:'✕',fn:()=>{
+        const folder=this.desktopItems.find(d=>d.id===ref.folderId);
+        if(folder){folder.items=folder.items.filter(i=>i.url!==ref.appUrl);saveDesktopItems(this.desktopItems);}
+        // Re-render any open folder windows
+        document.querySelectorAll('[id^="fgrid_"]').forEach(g=>{
+          const wid=g.id.replace('fgrid_','');
+          if(WM.windows[wid])this._renderFolderContents(wid,folder);
+        });
+      },danger:true}
+    ]);
+  },
+
+  // Show modal to pick a folder, then add app to it
+  openAddToFolderModal(folderItem){
+    // If we have a specific folder already, show the app picker from shortcuts
+    const modal=document.getElementById('addToFolderModal');
+    document.getElementById('atfTitle').textContent='Add App to "'+folderItem.name+'"';
+    const sel=document.getElementById('atfSelect');
+
+    const all=[...this.shortcuts.games,...this.shortcuts.web,...this.shortcuts.apps];
+    const existing=new Set((folderItem.items||[]).map(i=>i.url));
+    const available=all.filter(a=>!existing.has(a.url));
+
+    sel.innerHTML=available.map((a,i)=>`<option value="${i}">${a.name}</option>`).join('');
+    sel._apps=available;
+    sel._folder=folderItem;
+    modal.classList.add('open');
+  },
+
+  confirmAddToFolder(){
+    const sel=document.getElementById('atfSelect');
+    const app=sel._apps&&sel._apps[+sel.value];
+    const folderRef=sel._folder;
+    if(!app||!folderRef)return;
+
+    const folder=this.desktopItems.find(d=>d.id===folderRef.id);
+    if(!folder)return;
+    if(!folder.items)folder.items=[];
+    folder.items.push({name:app.name,url:app.url,icon:app.icon||''});
+    saveDesktopItems(this.desktopItems);
+
+    // Re-render any open folder window
+    document.querySelectorAll('[id^="fgrid_"]').forEach(g=>{
+      const wid=g.id.replace('fgrid_','');
+      if(WM.windows[wid])this._renderFolderContents(wid,folder);
+    });
+
+    document.getElementById('addToFolderModal').classList.remove('open');
+    OS.notify('Added',app.name+' added to '+folder.name);
   },
 
   /* ─── Launch flow ───────────────────────────────────────────── */
   launch(app){
-    if(SETTINGS.get('launchConfirm')){this.showConfirm(app);}else{this._doLaunch(app);}
+    if(SETTINGS.get('launchConfirm'))this.showConfirm(app);
+    else this._doLaunch(app);
   },
   showConfirm(app){
     document.getElementById('confirmMsg').textContent='Open '+app.name+' in a window?';
@@ -1162,13 +1571,16 @@ const OS={
   closeConfirm(){document.getElementById('confirmDialog').classList.remove('open');},
   _doLaunch(app){if(app.isPVZ){PVZ.tryLaunch(app.name);return;}WM.open(app);},
 
+  /* ─── System app launchers ──────────────────────────────────── */
+  openSettingsWindow(){this.openSettings();},
+
   /* ─── App Library ───────────────────────────────────────────── */
   openAppLibrary(){
     this.closeStart();
     const id=WM.newId();const el=document.createElement('div');
     el.className='os-window focused';el.id=id;
     const dw=Math.min(window.innerWidth*0.8,900),dh=Math.min(window.innerHeight*0.75,600);
-    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${WM.zBase+Object.keys(WM.windows).length*2+1}`;
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
@@ -1198,29 +1610,51 @@ const OS={
 
   libTab(tab,wid){
     ['games','web','apps'].forEach(t=>{const el=document.getElementById('libtab-'+t);if(el)el.classList.toggle('active',t===tab);});
-    if(WM.windows[wid])WM.windows[wid].libTab=tab;this.libRender(tab,wid,'');
+    if(WM.windows[wid])WM.windows[wid].libTab=tab;
+    this.libRender(tab,wid,'');
   },
   libSearch(wid){const tab=WM.windows[wid]&&WM.windows[wid].libTab||'games';const q=document.getElementById('libsearch_'+wid)?.value||'';this.libRender(tab,wid,q);},
   libRender(tab,wid,q){
     const grid=document.getElementById('libgrid_'+wid);if(!grid)return;
     const items=this.shortcuts[tab]||[];
     const filtered=q?items.filter(i=>i.name.toLowerCase().includes(q.toLowerCase())):items;
+    // Get folder list for context menu
+    const folders=this.desktopItems.filter(d=>d.type==='folder');
     grid.innerHTML=filtered.map(app=>{
       const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
       const esc=JSON.stringify(app).replace(/"/g,'&quot;');
-      return `<div class="lib-card" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})"><img class="lib-thumb" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${app.url}'" alt=""><div class="lib-info"><div class="lib-name" title="${app.name}">${app.name}</div><button class="lib-launch" onclick="OS.launch(${esc})">Launch</button></div></div>`;
+      return `<div class="lib-card" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})"><img class="lib-thumb" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(app.url||'')}'" alt=""><div class="lib-info"><div class="lib-name" title="${app.name}">${app.name}</div><button class="lib-launch" onclick="OS.launch(${esc})">Launch</button></div></div>`;
     }).join('');
     if(!filtered.length)grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--os-muted);font-size:13px">No apps found.</div>';
   },
   libCtx(e,app){
-    CTX.show(e.clientX,e.clientY,[
+    const folders=this.desktopItems.filter(d=>d.type==='folder');
+    const folderItems=folders.map(f=>({
+      label:'Add to "'+f.name+'"',icon:'📁',
+      fn:()=>{
+        if(!f.items)f.items=[];
+        if(f.items.find(i=>i.url===app.url)){OS.notify('Already in folder',app.name+' is already in that folder.');return;}
+        f.items.push({name:app.name,url:app.url,icon:app.icon||''});
+        saveDesktopItems(this.desktopItems);
+        // Re-render open folder windows
+        document.querySelectorAll('[id^="fgrid_"]').forEach(g=>{
+          const wid=g.id.replace('fgrid_','');
+          if(WM.windows[wid])this._renderFolderContents(wid,f);
+        });
+        OS.notify('Added',app.name+' added to '+f.name);
+      }
+    }));
+
+    const items=[
       {label:'Open',icon:'▶',fn:()=>this.launch(app)},
       {label:'Pin to Taskbar',icon:'📌',fn:()=>TB.pin(app)},
       {label:'Add to Desktop',icon:'🖥',fn:()=>this.addToDesktop(app)},
-      {sep:true},
-      {label:'Edit Shortcut',icon:'✏',fn:()=>this.addShortcutOpen(app)},
-      app.isDefault?null:{label:'Remove',icon:'✕',fn:()=>this.removeShortcut(app),danger:true},
-    ].filter(Boolean));
+    ];
+    if(folderItems.length){items.push({sep:true});items.push(...folderItems);}
+    items.push({sep:true});
+    items.push({label:'Edit Shortcut',icon:'✏',fn:()=>this.addShortcutOpen(app)});
+    if(!app.isDefault){items.push({label:'Remove',icon:'✕',fn:()=>this.removeShortcut(app),danger:true});}
+    CTX.show(e.clientX,e.clientY,items);
   },
 
   removeShortcut(app){
@@ -1239,12 +1673,17 @@ const OS={
     grid.innerHTML=items.slice(0,12).map(app=>{
       const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
       const esc=JSON.stringify(app).replace(/"/g,'&quot;');
-      return `<div class="sm-app-item" onclick="OS.launch(${esc});OS.closeStart()"><img class="sm-app-icon" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${app.url}'" alt=""><div class="sm-app-label">${app.name}</div></div>`;
+      return `<div class="sm-app-item" onclick="OS.launch(${esc});OS.closeStart()"><img class="sm-app-icon" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(app.url||'')}'" alt=""><div class="sm-app-label">${app.name}</div></div>`;
     }).join('');
     if(!items.length)grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--os-muted);font-size:12px">No results.</div>';
   },
 
-  toggleStart(){const sm=document.getElementById('startMenu');const isOpen=sm.classList.contains('open');sm.classList.toggle('open',!isOpen);if(!isOpen){this.filterStartMenu('');setTimeout(()=>document.getElementById('smSearch').focus(),100);}},
+  toggleStart(){
+    const sm=document.getElementById('startMenu');
+    const isOpen=sm.classList.contains('open');
+    sm.classList.toggle('open',!isOpen);
+    if(!isOpen){this.filterStartMenu('');setTimeout(()=>document.getElementById('smSearch').focus(),100);}
+  },
   closeStart(){document.getElementById('startMenu').classList.remove('open');},
   openSettings(){document.getElementById('settingsPanel').classList.add('open');},
   closeSettings(){document.getElementById('settingsPanel').classList.remove('open');},
@@ -1256,7 +1695,7 @@ const OS={
     document.getElementById('sc-url').value=app?app.url:'';
     document.getElementById('sc-icon').value=app?app.icon||'':'';
     document.getElementById('sc-cat').value='games';
-    document.getElementById('sc-desktop').checked=!app; // default checked for new apps
+    document.getElementById('sc-desktop').checked=!app;
     document.getElementById('scDeleteBtn').style.display=app&&!app.isDefault?'block':'none';
     document.getElementById('addShortcutModal').classList.add('open');this.closeStart();
   },
@@ -1288,6 +1727,63 @@ const OS={
 
   addShortcutClose(){document.getElementById('addShortcutModal').classList.remove('open');this.editingApp=null;},
 
+  /* ═══════════════════════════════════════════════
+     FILE EXPLORER
+  ═══════════════════════════════════════════════ */
+  openFileExplorer(){
+    const id=WM.newId();const el=document.createElement('div');
+    el.className='os-window focused';el.id=id;
+    const dw=Math.min(window.innerWidth*0.78,860),dh=Math.min(window.innerHeight*0.75,580);
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
+    el.innerHTML=`
+      <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
+      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
+        <span style="font-size:14px;margin-right:2px">📁</span>
+        <div class="wnd-title">File Explorer</div>
+        <div class="wnd-ctrl-btns">
+          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="wnd-body" style="overflow:hidden">
+        <div class="fe-layout">
+          <div class="fe-sidebar">
+            <div class="fe-sidebar-label">NovOS</div>
+            <div class="fe-sidebar-item active" id="feNav_all" onclick="FEW.nav('${id}','all')">📄 All Files</div>
+            <div class="fe-sidebar-item" id="feNav_images" onclick="FEW.nav('${id}','images')">🖼 Images</div>
+            <div class="fe-sidebar-item" id="feNav_docs" onclick="FEW.nav('${id}','docs')">📃 Documents</div>
+            <div class="fe-sidebar-item" id="feNav_other" onclick="FEW.nav('${id}','other')">📦 Other</div>
+            <div class="fe-sidebar-label" style="margin-top:8px">Actions</div>
+            <div class="fe-sidebar-item" onclick="FEW.triggerUpload('${id}')">⬆ Upload File</div>
+            <input type="file" id="feUpload_${id}" multiple style="display:none" onchange="FEW.handleUpload('${id}',this)">
+          </div>
+          <div class="fe-main">
+            <div class="fe-toolbar">
+              <div class="fe-path" id="fePath_${id}">/ All Files</div>
+              <div class="fe-view-toggle">
+                <button class="fe-view-btn active" id="feViewGrid_${id}" onclick="FEW.setView('${id}','grid')" title="Grid">⊞</button>
+                <button class="fe-view-btn" id="feViewList_${id}" onclick="FEW.setView('${id}','list')" title="List">≡</button>
+              </div>
+              <button class="fe-btn primary" onclick="FEW.triggerUpload('${id}')">⬆ Upload</button>
+            </div>
+            <div id="feDropZone_${id}" class="fe-drop-zone" style="margin:8px;display:none">
+              Drop files here to upload
+            </div>
+            <div class="fe-content" id="feContent_${id}"></div>
+            <div class="fe-statusbar">
+              <span class="fe-status-text" id="feStatus_${id}">0 items</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
+    document.getElementById('windowLayer').appendChild(el);
+    WM.windows[id]={app:{name:'File Explorer',url:'__explorer__',icon:''},minimized:false,maximized:false,prevRect:null};
+    WM.focus(id);TB.addWindow(id,{name:'File Explorer',url:'__explorer__',icon:''});WM.makeDraggable(id);
+    FEW.init(id);
+  },
+
   notify(title,body){
     const area=document.getElementById('notifArea');
     const n=document.createElement('div');n.className='notif';
@@ -1305,7 +1801,8 @@ const OS={
         CTX.show(e.clientX,e.clientY,[
           {label:'Desktop',icon:''},
           {label:'Open App Library',icon:'⊞',fn:()=>this.openAppLibrary()},
-          {label:'New Folder',icon:'📁',fn:()=>document.getElementById('createFolderModal').classList.add('open')},
+          {label:'Open File Explorer',icon:'📁',fn:()=>this.openFileExplorer()},
+          {label:'New Folder',icon:'📂',fn:()=>document.getElementById('createFolderModal').classList.add('open')},
           {label:'Add Shortcut',icon:'+',fn:()=>this.addShortcutOpen()},
           {sep:true},
           {label:'Change Wallpaper',icon:'🖼',fn:()=>this.openSettings()},
@@ -1318,10 +1815,226 @@ const OS={
       if(!document.getElementById('startMenu').contains(e.target)&&!document.getElementById('startBtn').contains(e.target))this.closeStart();
     });
     document.addEventListener('keydown',e=>{
-      if(e.key==='Escape'){CTX.hide();this.closeStart();this.closeConfirm();this.addShortcutClose();document.getElementById('createFolderModal').classList.remove('open');}
+      if(e.key==='Escape'){
+        CTX.hide();this.closeStart();this.closeConfirm();this.addShortcutClose();
+        document.getElementById('createFolderModal').classList.remove('open');
+        document.getElementById('addToFolderModal').classList.remove('open');
+        document.getElementById('hiddenManagerModal').classList.remove('open');
+        ALT_TAB.cancel();
+      }
     });
-    // Init drag
     this._initDragHandlers();
+  },
+
+  // FIX: keyboard shortcuts — Tab = start menu, Shift+Tab = window switcher
+  setupKeyboard(){
+    document.addEventListener('keydown',e=>{
+      // Don't intercept if typing in an input
+      const tag=document.activeElement&&document.activeElement.tagName;
+      if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
+
+      if(e.key==='Tab'){
+        e.preventDefault();
+        if(e.shiftKey){
+          // Shift+Tab = alt-tab window switcher
+          ALT_TAB.next();
+        }else{
+          // Tab = start menu
+          this.toggleStart();
+        }
+      }
+    });
+
+    // When alt-tab overlay is open, Shift+Tab keeps cycling, Enter/Space selects
+    document.addEventListener('keydown',e=>{
+      if(ALT_TAB.open){
+        if(e.key==='Tab'&&e.shiftKey){e.preventDefault();ALT_TAB.next();}
+        if(e.key==='Enter'||e.key===' '){e.preventDefault();ALT_TAB.confirm();}
+      }
+    });
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   FILE EXPLORER WINDOW CONTROLLER
+═══════════════════════════════════════════════ */
+const FEW={
+  _state:{}, // wid -> {filter, view, files}
+
+  init(wid){
+    this._state[wid]={filter:'all',view:'grid',files:FE.load()};
+    this._setupDrop(wid);
+    this.render(wid);
+  },
+
+  _setupDrop(wid){
+    const body=document.getElementById('feContent_'+wid)?.closest('.fe-main');
+    if(!body)return;
+    const dz=document.getElementById('feDropZone_'+wid);
+
+    body.addEventListener('dragover',e=>{e.preventDefault();dz.style.display='block';dz.classList.add('drag-over');});
+    body.addEventListener('dragleave',e=>{if(!body.contains(e.relatedTarget)){dz.style.display='none';dz.classList.remove('drag-over');}});
+    body.addEventListener('drop',e=>{
+      e.preventDefault();dz.style.display='none';dz.classList.remove('drag-over');
+      this._processFiles(wid,[...e.dataTransfer.files]);
+    });
+  },
+
+  triggerUpload(wid){document.getElementById('feUpload_'+wid)?.click();},
+
+  handleUpload(wid,input){
+    if(!input.files.length)return;
+    this._processFiles(wid,[...input.files]);
+    input.value='';
+  },
+
+  _processFiles(wid,fileList){
+    const state=this._state[wid];if(!state)return;
+    let loaded=0;
+    fileList.forEach(file=>{
+      const reader=new FileReader();
+      reader.onload=e=>{
+        const entry={
+          id:genId(),name:file.name,size:file.size,
+          type:file.type||'application/octet-stream',
+          dataUrl:e.target.result,
+          dateAdded:new Date().toISOString()
+        };
+        state.files.push(entry);
+        loaded++;
+        if(loaded===fileList.length){
+          FE.save(state.files);
+          this.render(wid);
+          OS.notify('Uploaded',fileList.length+' file'+(fileList.length>1?'s':'')+' added.');
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  },
+
+  nav(wid,filter){
+    const state=this._state[wid];if(!state)return;
+    state.filter=filter;
+    // Update sidebar
+    ['all','images','docs','other'].forEach(f=>{
+      const el=document.getElementById('feNav_'+f);
+      if(el)el.classList.toggle('active',f===filter);
+    });
+    const pathMap={all:'/ All Files',images:'/ Images',docs:'/ Documents',other:'/ Other'};
+    const path=document.getElementById('fePath_'+wid);
+    if(path)path.textContent=pathMap[filter]||'/';
+    this.render(wid);
+  },
+
+  setView(wid,view){
+    const state=this._state[wid];if(!state)return;
+    state.view=view;
+    document.getElementById('feViewGrid_'+wid)?.classList.toggle('active',view==='grid');
+    document.getElementById('feViewList_'+wid)?.classList.toggle('active',view==='list');
+    this.render(wid);
+  },
+
+  _filterFiles(files,filter){
+    if(filter==='all')return files;
+    if(filter==='images')return files.filter(f=>f.type.startsWith('image/'));
+    if(filter==='docs')return files.filter(f=>f.type.includes('text')||f.type.includes('pdf')||f.type.includes('document')||f.type.includes('spreadsheet')||f.type.includes('presentation'));
+    return files.filter(f=>!f.type.startsWith('image/')&&!f.type.includes('text')&&!f.type.includes('pdf')&&!f.type.includes('document'));
+  },
+
+  _fileIcon(file){
+    const t=file.type||'';
+    if(t.startsWith('image/'))return'🖼';
+    if(t.includes('pdf'))return'📕';
+    if(t.includes('text'))return'📄';
+    if(t.includes('spreadsheet')||file.name.endsWith('.xlsx')||file.name.endsWith('.csv'))return'📊';
+    if(t.includes('video'))return'🎬';
+    if(t.includes('audio'))return'🎵';
+    if(t.includes('zip')||t.includes('compressed'))return'📦';
+    if(t.includes('javascript')||t.includes('html'))return'💻';
+    return'📄';
+  },
+
+  render(wid){
+    const state=this._state[wid];if(!state)return;
+    // Refresh files from storage in case another explorer window updated them
+    state.files=FE.load();
+    const files=this._filterFiles(state.files,state.filter);
+    const cont=document.getElementById('feContent_'+wid);if(!cont)return;
+    const status=document.getElementById('feStatus_'+wid);
+    if(status)status.textContent=files.length+' item'+(files.length!==1?'s':'')+' · '+FE.formatSize(files.reduce((a,f)=>a+f.size,0));
+
+    if(!files.length){
+      cont.innerHTML=`<div style="text-align:center;padding:60px 20px;color:var(--os-muted);font-size:13px">
+        <div style="font-size:36px;margin-bottom:12px">📂</div>
+        <div>No files here yet.</div>
+        <div style="font-size:11px;margin-top:6px;color:var(--os-dim)">Upload files using the button above or drag & drop them here.</div>
+      </div>`;return;
+    }
+
+    if(state.view==='grid'){
+      cont.innerHTML=`<div class="fe-grid">${files.map(f=>this._fileCard(f)).join('')}</div>`;
+    }else{
+      cont.innerHTML=`<div style="padding:4px 0">
+        <div style="display:flex;align-items:center;gap:10px;padding:4px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--os-dim);border-bottom:1px solid var(--os-border);margin-bottom:4px">
+          <span style="width:24px"></span><span style="flex:1">Name</span><span style="width:80px">Size</span><span style="width:130px;text-align:right">Date Added</span>
+        </div>
+        ${files.map(f=>this._fileRow(f)).join('')}
+      </div>`;
+    }
+
+    // Bind events
+    cont.querySelectorAll('[data-feid]').forEach(el=>{
+      const fid=el.getAttribute('data-feid');
+      el.addEventListener('contextmenu',e=>{e.preventDefault();this._fileCtx(e,fid,wid);});
+    });
+  },
+
+  _fileCard(file){
+    const icon=this._fileIcon(file);
+    const isImg=file.type.startsWith('image/')&&file.dataUrl&&file.dataUrl!=='__too_large__';
+    const thumb=isImg?`<img class="fe-item-img" src="${file.dataUrl}" alt="">`:`<div class="fe-item-icon">${icon}</div>`;
+    return `<div class="fe-item" data-feid="${file.id}">${thumb}<div class="fe-item-name" title="${file.name}">${file.name}</div></div>`;
+  },
+
+  _fileRow(file){
+    const icon=this._fileIcon(file);
+    const date=new Date(file.dateAdded).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    return `<div class="fe-item-list" data-feid="${file.id}">
+      <div class="fe-item-list-icon">${icon}</div>
+      <div class="fe-item-list-name" title="${file.name}">${file.name}</div>
+      <div class="fe-item-list-size">${FE.formatSize(file.size)}</div>
+      <div class="fe-item-list-date">${date}</div>
+    </div>`;
+  },
+
+  _fileCtx(e,fid,wid){
+    const state=this._state[wid];if(!state)return;
+    const file=state.files.find(f=>f.id===fid);if(!file)return;
+    const items=[
+      {label:file.name,icon:''},
+      {sep:true},
+    ];
+    if(file.dataUrl&&file.dataUrl!=='__too_large__'){
+      items.push({label:'Download',icon:'⬇',fn:()=>this._download(file)});
+      if(file.type.startsWith('image/')){
+        items.push({label:'Set as Wallpaper',icon:'🖼',fn:()=>{SETTINGS.set('customWallpaper',file.dataUrl);SETTINGS.set('wallpaper','custom');OS.applySettings();OS.notify('Wallpaper','Set from file explorer.');}});
+      }
+    }
+    items.push({sep:true});
+    items.push({label:'Delete',icon:'🗑',fn:()=>{
+      state.files=state.files.filter(f=>f.id!==fid);
+      FE.save(state.files);
+      this.render(wid);
+      OS.notify('Deleted',file.name+' deleted.');
+    },danger:true});
+    CTX.show(e.clientX,e.clientY,items);
+  },
+
+  _download(file){
+    const a=document.createElement('a');
+    a.href=file.dataUrl;
+    a.download=file.name;
+    a.click();
   }
 };
 
