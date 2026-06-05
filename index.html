@@ -43,7 +43,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
   transition:background 0.15s,border-color 0.15s;
   user-select:none;
 }
-.desk-icon:hover{background:rgba(255,255,255,0.07);border-color:var(--os-border)}
+.desk-icon:hover{background:rgba(255,255,255,0.07);border-color:var(--os-border);transform:translateY(-2px) scale(1.05)}
+.desk-icon:active{transform:scale(0.97)}
 .desk-icon.selected{background:rgba(var(--os-accent-rgb),0.18);border-color:rgba(var(--os-accent-rgb),0.4)}
 .desk-icon.dragging{opacity:0.6;z-index:9999;cursor:grabbing}
 .desk-icon-img{width:calc(var(--desk-icon-size) * 0.58);height:calc(var(--desk-icon-size) * 0.58);border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);pointer-events:none;display:flex;align-items:center;justify-content:center}
@@ -59,12 +60,14 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 body.taskbar-autohide #taskbarPeekZone{display:block}
 body.taskbar-autohide #desktop{height:100vh}
 #startBtn{width:38px;height:38px;border-radius:var(--radius);background:rgba(var(--os-accent-rgb),0.15);border:1px solid rgba(var(--os-accent-rgb),0.25);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-right:4px;transition:all 0.15s}
-#startBtn:hover{background:rgba(var(--os-accent-rgb),0.28);border-color:rgba(var(--os-accent-rgb),0.5)}
+#startBtn:hover{background:rgba(var(--os-accent-rgb),0.28);border-color:rgba(var(--os-accent-rgb),0.5);transform:scale(1.08)}
+#startBtn:active{transform:scale(0.94)}
 #startBtn svg{width:18px;height:18px;opacity:0.9}
 .tb-divider{width:1px;height:24px;background:var(--os-border);margin:0 4px;flex-shrink:0}
 #taskbarApps{display:flex;align-items:center;gap:3px;flex:1;overflow:hidden}
 .tb-app{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:42px;height:42px;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;flex-shrink:0;transition:all 0.15s;gap:3px}
-.tb-app:hover{background:var(--os-surface);border-color:var(--os-border)}
+.tb-app:hover{background:var(--os-surface);border-color:var(--os-border);transform:scale(1.12) translateY(-2px)}
+.tb-app:active{transform:scale(0.94)}
 .tb-app.active{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.3)}
 .tb-app.running::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--os-accent);box-shadow:0 0 5px rgba(var(--os-accent-rgb),0.7)}
 .tb-app-icon{width:24px;height:24px;border-radius:6px;object-fit:cover}
@@ -75,7 +78,7 @@ body.taskbar-autohide #desktop{height:100vh}
 .tb-tray-btn:hover{background:var(--os-surface);border-color:var(--os-border);color:var(--os-text)}
 
 /* START MENU */
-#startMenu{position:fixed;bottom:calc(var(--taskbar-h) + 8px);left:8px;z-index:10000;width:340px;background:rgba(13,14,20,0.95);border:1px solid var(--os-border2);border-radius:var(--radius-xl);backdrop-filter:blur(40px) saturate(1.8);box-shadow:0 24px 64px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.04);overflow:hidden;transform:translateY(12px) scale(0.97);opacity:0;pointer-events:none;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);transform-origin:top left}
+#startMenu{position:fixed;bottom:calc(var(--taskbar-h) + 8px);left:8px;z-index:10000;width:340px;background:rgba(13,14,20,0.95);border:1px solid var(--os-border2);border-radius:var(--radius-xl);backdrop-filter:blur(40px) saturate(1.8);box-shadow:0 24px 64px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.04);overflow:hidden;transform:translateY(14px) scale(0.95);opacity:0;pointer-events:none;transition:all 0.22s cubic-bezier(0.34,1.3,0.64,1);transform-origin:bottom left}
 #startMenu.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
 .sm-header{padding:16px 16px 10px;border-bottom:1px solid var(--os-border)}
 .sm-search{width:100%;height:36px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:var(--radius);padding:0 12px 0 34px;color:var(--os-text);font-family:var(--font);font-size:13px;outline:none;transition:border-color 0.15s}
@@ -93,7 +96,15 @@ body.taskbar-autohide #desktop{height:100vh}
 
 /* WINDOWS */
 #windowLayer{position:absolute;inset:0;z-index:100;pointer-events:none}
-.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(30px);overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px}
+@keyframes wndOpen{from{opacity:0;transform:scale(0.93) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes wndClose{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(0.9)}}
+@keyframes wndMinimize{from{opacity:1;transform:scale(1) translateY(0)}to{opacity:0;transform:scale(0.75) translateY(48px)}}
+@keyframes wndRestore{from{opacity:0;transform:scale(0.75) translateY(48px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes notifSlideIn{from{transform:translateX(24px) scale(0.96);opacity:0}to{transform:translateX(0) scale(1);opacity:1}}
+@keyframes notifSlideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(24px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms!important}
+.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(30px);overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both}
 .os-window.minimized{display:none}
 .os-window.maximized{top:0!important;left:0!important;width:100%!important;height:100%!important;border-radius:0;border-color:transparent}
 .os-window.focused{box-shadow:0 40px 100px rgba(0,0,0,0.75),0 0 0 1px rgba(var(--os-accent-rgb),0.18)}
@@ -149,8 +160,10 @@ body.taskbar-autohide #desktop{height:100vh}
 .folder-empty{grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--os-muted);font-size:12px}
 
 /* CONTEXT MENU */
-#ctxMenu{position:fixed;z-index:99999;background:rgba(14,16,24,0.97);border:1px solid var(--os-border2);border-radius:var(--radius);backdrop-filter:blur(30px);box-shadow:0 12px 40px rgba(0,0,0,0.6);padding:5px;min-width:190px;transform:scale(0.95);opacity:0;pointer-events:none;transition:all 0.12s cubic-bezier(0.4,0,0.2,1);transform-origin:top left}
-#ctxMenu.open{transform:scale(1);opacity:1;pointer-events:all}
+#ctxMenu{position:fixed;z-index:99999;background:rgba(14,16,24,0.97);border:1px solid var(--os-border2);border-radius:var(--radius);backdrop-filter:blur(30px);box-shadow:0 12px 40px rgba(0,0,0,0.6);padding:5px;min-width:190px;transform:scale(0.92) translateY(-4px);opacity:0;pointer-events:none;transition:all 0.15s cubic-bezier(0.34,1.3,0.64,1);transform-origin:top left}
+#ctxMenu.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all}
+.ctx-item{display:flex;align-items:center;gap:9px;padding:7px 11px;border-radius:6px;cursor:pointer;font-size:12.5px;color:var(--os-text);transition:background 0.1s,transform 0.1s}
+.ctx-item:hover{background:rgba(var(--os-accent-rgb),0.12);transform:translateX(2px)}
 .ctx-item{display:flex;align-items:center;gap:9px;padding:7px 11px;border-radius:6px;cursor:pointer;font-size:12.5px;color:var(--os-text);transition:background 0.1s}
 .ctx-item:hover{background:rgba(var(--os-accent-rgb),0.12)}
 .ctx-item.danger:hover{background:rgba(248,113,113,0.12);color:var(--os-red)}
@@ -385,6 +398,9 @@ body.taskbar-autohide #desktop{height:100vh}
   <div class="tb-divider"></div>
   <div id="taskbarApps"></div>
   <div id="taskbarRight">
+    <div class="tb-tray-btn" onclick="TM.open()" title="Task Manager">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="6" height="6" rx="1"/><rect x="9" y="3" width="6" height="6" rx="1"/><rect x="16" y="3" width="6" height="6" rx="1"/><rect x="2" y="10" width="6" height="11" rx="1"/><rect x="9" y="10" width="6" height="5" rx="1"/><rect x="16" y="10" width="6" height="8" rx="1"/></svg>
+    </div>
     <div class="tb-tray-btn" onclick="OS.openSettings()" title="Settings">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </div>
@@ -430,8 +446,7 @@ body.taskbar-autohide #desktop{height:100vh}
         <div id="wpCustomPreview" class="wp-item wp-item-custom" style="width:100%;height:60px;display:none" onclick="OS.setWallpaper('custom')" title="Custom">
           <span style="font-size:16px">🖼</span><span>Your Image</span>
         </div>
-        <input type="file" id="wpFileInput" accept="image/*" style="display:none" onchange="OS.loadCustomWallpaper(this)">
-        <button class="sp-btn" onclick="document.getElementById('wpFileInput').click()" style="margin-top:6px">📁 Upload Custom Wallpaper</button>
+        <button class="sp-btn" onclick="OS.openWallpaperPicker()" style="margin-top:6px">📁 Upload via File Explorer</button>
       </div>
     </div>
     <div class="sp-section">
@@ -460,12 +475,20 @@ body.taskbar-autohide #desktop{height:100vh}
     <div class="sp-section">
       <div class="sp-section-title">Display</div>
       <div class="sp-row">
+        <div><div class="sp-row-label">Animations</div><div class="sp-row-sub">Window open, close, minimize effects</div></div>
+        <label class="toggle"><input type="checkbox" id="tog-anims" checked onchange="OS.setAnimations(this.checked)"><span class="tog-slider"></span></label>
+      </div>
+      <div class="sp-row" style="margin-top:5px">
         <div><div class="sp-row-label">Boot Intro</div><div class="sp-row-sub">Show boot sequence on load</div></div>
         <label class="toggle"><input type="checkbox" id="tog-boot" checked onchange="OS.setSetting('showBoot',this.checked)"><span class="tog-slider"></span></label>
       </div>
       <div class="sp-row" style="margin-top:5px">
         <div><div class="sp-row-label">Launch Confirm</div><div class="sp-row-sub">Show "open in window?" dialog</div></div>
         <label class="toggle"><input type="checkbox" id="tog-confirm" checked onchange="OS.setSetting('launchConfirm',this.checked)"><span class="tog-slider"></span></label>
+      </div>
+      <div class="sp-row" style="margin-top:5px">
+        <div><div class="sp-row-label">Lag Mode for Slow Apps</div><div class="sp-row-sub">Adds delay before loading links (helps some games)</div></div>
+        <label class="toggle"><input type="checkbox" id="tog-lag" onchange="OS.setSetting('lagMode',this.checked)"><span class="tog-slider"></span></label>
       </div>
       <div class="sp-row" style="margin-top:5px">
         <div><div class="sp-row-label">Hide Taskbar in Fullscreen</div><div class="sp-row-sub">Auto-hide when a window is maximized</div></div>
@@ -519,8 +542,13 @@ body.taskbar-autohide #desktop{height:100vh}
       <input type="text" class="f-input" id="sc-name" placeholder="My App">
       <div class="f-label">URL</div>
       <input type="text" class="f-input" id="sc-url" placeholder="https://...">
-      <div class="f-label">Icon URL (optional)</div>
-      <input type="text" class="f-input" id="sc-icon" placeholder="https://... (auto if blank)">
+      <div class="f-label">Icon — URL or Emoji</div>
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <input type="text" class="f-input" id="sc-icon" placeholder="https://... or paste an emoji 🎮" style="margin-bottom:0;flex:1">
+        <button type="button" style="height:36px;padding:0 10px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:7px;cursor:pointer;font-size:18px" onclick="OS._toggleEmojiRow()" title="Pick emoji">😀</button>
+      </div>
+      <div id="sc-emoji-row" style="display:none;flex-wrap:wrap;gap:4px;margin-bottom:12px;max-height:100px;overflow-y:auto">
+      </div>
       <div class="f-label">Category</div>
       <select class="f-select" id="sc-cat">
         <option value="web">Web</option>
@@ -624,7 +652,7 @@ body.taskbar-autohide #desktop{height:100vh}
       <div class="welcome-features">
         <div class="welcome-feat"><div class="welcome-feat-icon">🎮</div><div class="welcome-feat-text"><strong>Games Library</strong><span>Open any game in a resizable, draggable window.</span></div></div>
         <div class="welcome-feat"><div class="welcome-feat-icon">📌</div><div class="welcome-feat-text"><strong>Pin & Customize</strong><span>Right-click any app to pin it, add it to your desktop, or put it in a folder.</span></div></div>
-        <div class="welcome-feat"><div class="welcome-feat-icon">⌨️</div><div class="welcome-feat-text"><strong>Shortcuts</strong><span>Tab = Start Menu · Shift+Tab = Window Switcher</span></div></div>
+        <div class="welcome-feat"><div class="welcome-feat-icon">⌨️</div><div class="welcome-feat-text"><strong>Shortcuts</strong><span>Tab = Start Menu · Shift+Tab = Window Switcher · Refresh window if Securly blocked shortcut</span></div></div>
       </div>
       <div class="welcome-actions">
         <button class="welcome-btn-primary" onclick="OS.closeWelcome()">Get Started</button>
@@ -639,17 +667,11 @@ body.taskbar-autohide #desktop{height:100vh}
    DEFAULT DESKTOP APPS — keyed by URL so cache busting works
 ═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_DESKTOP_APPS = [
-{ 
-  name: "Truffled Browser", 
-  url: "https://supermath.salavat.ru/search.html", 
-  icon: "https://i.imgur.com/o875p3J.png", 
-  isDefault: true, 
-  isSystem: true 
-},
+  { name:"Truffled Browser", url:"__browser__", icon:"", isDefault:true, isSystem:true, systemAction:"openBrowser"},
   { name:"File Explorer",    url:"__explorer__", icon:"", isDefault:true, isSystem:true, systemAction:"openFileExplorer" },
   { name:"Settings",         url:"__settings__", icon:"", isDefault:true, isSystem:true, systemAction:"openSettingsWindow" },
   { name:"App Library",      url:"__library__",  icon:"", isDefault:true, isSystem:true, systemAction:"openAppLibrary" },
-  { name:"PLACEHOLDER",       url:"", icon:"", isDefault:true },
+  //{ name:"TikTok",       url:"https://supermath.salavat.ru/scram/service/u7qzxbu4/m8pfhfua/https%3A%2F%2Fwww.tiktok.com%2F", icon:"https://static.vecteezy.com/system/resources/thumbnails/016/716/450/small/tiktok-icon-free-png.png", isDefault:true },
 
 ];
 
@@ -662,7 +684,7 @@ const DEFAULT_SHORTCUTS = {
     {name:"AnuraOS",url:"https://anura.pro",icon:"https://i.imgur.com/6vvxLxR.jpeg",isDefault:true},
     {name:"gn-math",url:"https://gn-math.dev",icon:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAkFBMVEX7JlL5JlH////+//3/J1T4QGL/4+v9JFH8/////f7+PmP7//36KE/6Jlj/rsD///r4eJH/+Pz6K1X/+ff8OF7/Mlv5e5P75uv/J1r/pbr59fT/7PL2Jlf9KFb3Ik7/RGf2cIv6gJf/8fT5Hkj34/D9Pmn/scT35+r0//r0NWDwKFb9d5L/M1//9v7/ucn98fPUPlMHAAAE8klEQVR4nO1Ya5PaOgz1I8QxYVtiAmk3a6BA98HSy///d1dSngtJDBRm+sFnGHYTK8rBluQjM+bh4eHh4eHh4eHh4eHh4eHh4eHhcQITBJwzZSZqMgA14UpxHijusjOKgV1griZgfzw9Pb08dQBv/rAGCahL7K4kwBURSH9+G8TPlAWMKea2IwKKX0mAp88yHoB8Tg1Tipmx045fTYCh8ThPtNA9EDrJV4YTAZfdGH2yKwmA51WWiIh8nDnVOhJJtoIIgEUYOe1goq4kgLFlV5mOokiI6Ax0T2erJcdwddtZitbLCZiSQJiIuO+XxSIJx0RgOXbZlQTcWVDn/3ar1HaS7hL4aTpq+0zgI5JYaCF0OOYYhHwc4pWIYYAMGkT4/J9dOkF/2wlbQtIEFxA4vLzAZ/87m82+4+f7CY5SnxPQ8nhqVzw9y3/vyeHBovchAq38f4X8fZ0uPqfTxWJ6gl8bCW8UMqsIZBIutdz8OrXEZz8XU3IG9WDOWaCGlqDK/zeJmG3SeaCstSz4AnbIRRcBkR9OLa2BIJmnmxk5fEMCgzFQ5X8G4UtTDLWW8qcGxBE3adZNIEsNPG4aa6gR4MDQEkFCwDgR6J+EKv9DIiyBABi3Y5ejh9IhvLAmQISQMA63s41utPxhBPAhAmX6SYwpfAAWxXBIogqs+kURWDQENN0oZow11jhjioO9xKgtCfABAlX+Z7EU8v09TPkSogIDowDNAIdfBNl1RiDSIZRmmoHKHiIO60Qavr+DwzhbuQjQHATBKMQ1BcYjePxr/fo6Xqfhhfbn456AJ+AJ/GsEFO5WUOt3mqTMLgVloFij+rcTlAl8nkPd0a294H4EWEEgnEncyLOPPWzk8KlVPl6/7D82SAA/gABVT2Xma9IAi89vxT5+gtf/joII3H8JUI2AR0vg5vCmY9wV2hofET/L6IEEaC3gsSVPwwQ3HRKchJhkLrhCAo8IQlJMKApBBQTKjMIERa2oVSlugZp2avEgAgHEIBIIrDHWIgEUHrqS+VWrA9s73IwfUAeIAAe1b2Ey7CiHWY/hTbXOx/WASyQgHkKgRFUP8gSXPGo3Bt19wd0JlPUgP0qQ9TN3X3BvAnU9gIJw1hV09AUPIFDUA4YlIQisqy94DAH4u8RvUnfDfcH9CVT1oLxoBrr7gvsTqOoBNjqGM1dfcHcCVT3AjoRBb+DqC+5GwHU+qCYM9ADoBTr80DvsnLDzyekcIclT7KRarVdTT7rHewn0nfuRONjvPzLs+uUsLE/JUjxHgDtZ8YKm+azqSd/4GS44HyR58ElyYbGG8ICs5GZd1If1HHpD7ONqf1U96RnvITBwPkjiQL8doGFF4JELwy9LJQMKBwVNi0BZT3rGOwgMnw/iFhBFCTatGE6VeMCIoS+6OCUAf/vGOwkMnQ9GAo/DknAEXa7BXZu84f8GT4INFY+ANQTqetI93kFg+HxQ0yYIBCzqhcCUFSow3ECR5HQmrWBuan91PekeP4PrfDCOUB/ofGThZ9iWI4XpqNiS0wsah2U96R0/xYAOKJYAb4oL8vlWuHQA3ZPH3JnPt8KhA4qTv8Xanc+3ExjSAXTDUkq78vmvCLAuHVCe+xX3sfw8iECfDihRprA7n28m0KsDSjXADUkiZz7fjB4dUC/BkkhZZz57eHh4eHh4eHh4eHh4eHh4XIn/ATeCkewbO89XAAAAAElFTkSuQmCC",isDefault:true},
     {name:"Utopia",url:"https://gas.education",icon:"https://gas.education/favicon.ico",isDefault:true},
-    {name:"Xylara",url:"https://xylara.hyghj.eu.org/",icon:"https://cdn.discordapp.com/icons/1357471797217333328/fdeea29d47c5d94eb28fe0e150102c9d.webp?size=64",isDefault:true},
+    {name:"0k",url:"https://cdn.jsdelivr.net/gh/abndnce/b0k@main/jsdelivr/index.svg",icon:"https://avatars.githubusercontent.com/u/6191378?v=4",isDefault:true},
   ],
   games:[
     {name:"Angry Birds Epic",url:"https://abwebports.vercel.app/Epic",icon:"https://i.imgur.com/ql7Gz9e.jpeg",isDefault:true},
@@ -708,7 +730,7 @@ const PVZ_URL='https://wszqkzqk.github.io/pvz-portable-wasm/pvz-portable.html';
    SETTINGS STORE
 ═══════════════════════════════════════════════ */
 const SETTINGS={
-  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:''},
+  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',lagMode:false,animations:true},
   data:{},
   load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
   save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));},
@@ -745,8 +767,6 @@ function saveShortcuts(sc){
    Always merges DEFAULT_DESKTOP_APPS by URL to reflect changes
 ═══════════════════════════════════════════════ */
 function genId(){return 'di_'+(Date.now())+'_'+(Math.random()*9999|0)}
-
-function openTruffledBrowser(){WM.open({name: 'Truffled Browser', url: 'https://supermath.salavat.ru/search.html', icon: '🌐'})}
 
 function loadDesktopItems(){
   const saved=JSON.parse(localStorage.getItem('novos_desktop_v2')||'null');
@@ -822,11 +842,14 @@ const WM={
     const x=Math.max(20,(window.innerWidth-dw)*0.5+(Math.random()*40-20));
     const y=Math.max(10,(window.innerHeight-48-dh)*0.3+(Math.random()*20-10));
     el.style.cssText=`width:${dw}px;height:${dh}px;top:${y}px;left:${x}px;z-index:${++this._zCounter}`;
-    const iconSrc=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
+    const _isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
+    const _iconHtml=_isEmoji
+      ?`<span style="font-size:14px;line-height:1;flex-shrink:0;width:16px;text-align:center">${app.icon}</span>`
+      :`<img class="wnd-icon" src="${app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`}" onerror="this.style.display='none'">`;
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
-        <img class="wnd-icon" src="${iconSrc}" onerror="this.style.display='none'">
+        ${_iconHtml}
         <div class="wnd-title">${app.name}</div>
         <div class="wnd-ctrl-btns">
           <button class="wnd-ctrl-btn" onclick="WM.refreshWindow('${id}')" title="Refresh"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
@@ -854,17 +877,17 @@ const WM={
     const ldr=document.getElementById('ldr_'+id);
 
     // FIX: track whether the initial load has completed
-    const state={loaded:false};
     frm.addEventListener('load',()=>{
-      // Only hide loader when src is actually the real URL (not about:blank)
       if(frm.src && frm.src!=='about:blank'){
-        state.loaded=true;
-        ldr&&ldr.classList.add('hidden');
+        setTimeout(()=>ldr&&ldr.classList.add('hidden'),200);
       }
     });
-    setTimeout(()=>{frm.src=realUrl;},30);
+    // Fallback: force-hide loader after 12s for games that block load events
+    setTimeout(()=>ldr&&ldr.classList.add('hidden'),12000);
+    const _lagDelay=SETTINGS.get('lagMode')?900:30;
+    setTimeout(()=>{frm.src=realUrl;},_lagDelay);
 
-    this.windows[id]={app,minimized:false,maximized:false,prevRect:null,iframeLoaded:state};
+    this.windows[id]={app,minimized:false,maximized:false,prevRect:null};
     this.focus(id);TB.addWindow(id,app);this.makeDraggable(id);
     return id;
   },
@@ -886,11 +909,12 @@ const WM={
   closeWindow(id){
     const el=document.getElementById(id);
     if(el){
-      const frm=document.getElementById('frm_'+id);
-      if(frm)frm.src='';
-      el.style.transform='scale(0.95)';el.style.opacity='0';
-      el.style.transition='all 0.15s ease';
-      setTimeout(()=>el.remove(),150);
+      el.style.animation='wndClose 0.18s ease forwards';
+      el.style.pointerEvents='none';
+      setTimeout(()=>{
+        const frm=document.getElementById('frm_'+id);if(frm)frm.src='about:blank';
+        el.remove();
+      },180);
     }
     delete this.windows[id];TB.removeWindow(id);TB.updateAutoHide();
   },
@@ -898,12 +922,17 @@ const WM={
   minimize(id){
     const el=document.getElementById(id);if(!el)return;
     this.windows[id].minimized=true;
-    el.classList.add('minimized');TB.setActive(null);TB.updateAutoHide();
+    el.style.animation='wndMinimize 0.22s cubic-bezier(0.4,0,1,1) forwards';
+    el.style.pointerEvents='none';
+    setTimeout(()=>{el.classList.add('minimized');el.style.animation='';el.style.pointerEvents='';},220);
+    TB.setActive(null);TB.updateAutoHide();
   },
   restore(id){
     const el=document.getElementById(id);if(!el)return;
     this.windows[id].minimized=false;
     el.classList.remove('minimized');
+    el.style.animation='wndRestore 0.22s cubic-bezier(0.34,1.3,0.64,1) both';
+    setTimeout(()=>{el.style.animation='';},220);
     this.focus(id);TB.updateAutoHide();
   },
   toggleWindow(id){if(!this.windows[id])return;if(this.windows[id].minimized)this.restore(id);else this.minimize(id);},
@@ -924,8 +953,13 @@ const WM={
   },
   toggleMaximize(id){
     if(this.windows[id]&&this.windows[id].maximized)this.restoreMax(id);else this.maximize(id);
+    const isMax=this.windows[id]&&this.windows[id].maximized;
     const exp=document.getElementById('fsexp_'+id),cmp=document.getElementById('fscmp_'+id);
-    if(exp&&cmp){const isMax=this.windows[id]&&this.windows[id].maximized;exp.style.display=isMax?'none':'';cmp.style.display=isMax?'':'none';}
+    if(exp)exp.style.display=isMax?'none':'';
+    if(cmp)cmp.style.display=isMax?'':'none';
+    // Update titlebar title for maximized system windows that lack compress icon
+    const tb=document.getElementById('tb_'+id);
+    if(tb){const btn=tb.querySelector('.wnd-ctrl-btn[onclick*="toggleMaximize"]');if(btn&&!cmp){btn.title=isMax?'Restore':'Fullscreen';}}
   },
 
   peekTitlebar(id,show){
@@ -1022,8 +1056,10 @@ const TB={
       const btn=document.createElement('div');btn.className='tb-app';
       const runId=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
       if(runId)btn.classList.add('running');
-      const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
-      btn.innerHTML=`<img class="tb-app-icon" src="${icon}" onerror="this.style.display='none'" alt="">`;
+      const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
+      btn.innerHTML=isEmoji
+        ?`<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:18px">${app.icon}</div>`
+        :`<img class="tb-app-icon" src="${app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`}" onerror="this.style.display='none'" alt="">`;
       btn.title=app.name;
       btn.onclick=()=>{const wid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);if(wid)WM.toggleWindow(wid);else OS.launch(app);};
       btn.addEventListener('contextmenu',ev=>{ev.preventDefault();CTX.show(ev.clientX,ev.clientY,[{label:'Open',icon:'▶',fn:()=>OS.launch(app)},{label:'Unpin from Taskbar',icon:'−',fn:()=>this.unpin(app.url)}]);});
@@ -1034,8 +1070,10 @@ const TB={
         let btn=document.getElementById(btnId);
         if(!btn){
           btn=document.createElement('div');btn.id=btnId;btn.className='tb-app running';
-          const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
-          btn.innerHTML=`<img class="tb-app-icon" src="${icon}" onerror="this.style.display='none'" alt="">`;
+          const isEmojiR=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
+          btn.innerHTML=isEmojiR
+            ?`<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:18px">${app.icon}</div>`
+            :`<img class="tb-app-icon" src="${app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`}" onerror="this.style.display='none'" alt="">`;
           btn.title=app.name;btn.onclick=()=>WM.toggleWindow(id);
           btn.addEventListener('contextmenu',ev=>{ev.preventDefault();CTX.show(ev.clientX,ev.clientY,[{label:'Pin to Taskbar',icon:'+',fn:()=>this.pin(app)},{label:'Close',icon:'×',fn:()=>WM.closeWindow(id),danger:true}]);});
           cont.appendChild(btn);
@@ -1065,9 +1103,10 @@ const ALT_TAB={
   _ids:[],
 
   getWindowList(){
+    // Show ALL windows including minimized — filter nulls defensively
     return Object.entries(WM.windows)
-      .filter(([,w])=>!w.minimized)
-      .map(([id,w])=>({id,app:w.app}));
+      .filter(([id,w])=>w&&w.app&&document.getElementById(id))
+      .map(([id,w])=>({id,app:w.app,minimized:w.minimized}));
   },
 
   show(){
@@ -1087,13 +1126,17 @@ const ALT_TAB={
   render(){
     const wins=this.getWindowList();
     const list=document.getElementById('altTabList');
-    list.innerHTML=wins.map((w,i)=>{
+    list.innerHTML=wins.map((w)=>{
       const icon=w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`;
       const sel=this._ids[this._idx]===w.id?'selected':'';
-      const isImg=icon&&icon!='';
-      return `<div class="alt-tab-item ${sel}" data-id="${w.id}" onclick="ALT_TAB.selectById('${w.id}')">
-        ${isImg?`<img class="alt-tab-icon" src="${icon}" onerror="this.outerHTML='<div class=alt-tab-icon>🖥</div>'" alt="">`:`<div class="alt-tab-icon">🖥</div>`}
+      const isEmoji=icon&&[...icon].length<=2&&!icon.startsWith('http')&&!icon.startsWith('data:');
+      const iconEl=isEmoji
+        ?`<div class="alt-tab-icon" style="font-size:24px;display:flex;align-items:center;justify-content:center">${icon}</div>`
+        :`<img class="alt-tab-icon" src="${icon}" onerror="this.outerHTML='<div class=alt-tab-icon style=font-size:22px>🖥</div>'" alt="">`;
+      return `<div class="alt-tab-item ${sel}" onclick="ALT_TAB.selectById('${w.id}')">
+        ${iconEl}
         <div class="alt-tab-label">${w.app.name}</div>
+        ${w.minimized?'<div style="font-size:9px;color:var(--os-muted);background:rgba(255,255,255,0.07);border-radius:4px;padding:1px 5px">minimized</div>':''}
       </div>`;
     }).join('');
   },
@@ -1199,10 +1242,15 @@ const OS={
       document.getElementById('boot').style.display='none';
     }
 
+    const animEl=document.getElementById('tog-anims');
+    const animsOn=SETTINGS.get('animations')!==false;
+    if(animEl)animEl.checked=animsOn;
+    if(!animsOn)document.body.classList.add('no-anims');
     document.getElementById('tog-boot').checked=SETTINGS.get('showBoot');
     document.getElementById('tog-confirm').checked=SETTINGS.get('launchConfirm');
     document.getElementById('tog-taskbarhide').checked=SETTINGS.get('hideTaskbarFullscreen');
     document.getElementById('tog-icons').checked=SETTINGS.get('showIcons');
+    const lagEl=document.getElementById('tog-lag');if(lagEl)lagEl.checked=SETTINGS.get('lagMode')||false;
 
     const sz=SETTINGS.get('iconSize');
     document.getElementById('iconSizeSlider').value=sz;
@@ -1238,18 +1286,10 @@ const OS={
 
   setWallpaper(name){SETTINGS.set('wallpaper',name);this.applySettings();},
 
-  loadCustomWallpaper(input){
-    const file=input.files[0];if(!file)return;
-    const reader=new FileReader();
-    reader.onload=e=>{
-      const dataUrl=e.target.result;
-      if(dataUrl.length>3*1024*1024){OS.notify('Warning','Image too large. Try a smaller image.');return;}
-      SETTINGS.set('customWallpaper',dataUrl);
-      SETTINGS.set('wallpaper','custom');
-      this.applySettings();
-      OS.notify('Wallpaper','Custom wallpaper applied.');
-    };
-    reader.readAsDataURL(file);
+  openWallpaperPicker(){
+    this.closeSettings();
+    this.openFileExplorer();
+    OS.notify('Wallpaper Picker','Upload an image in File Explorer, then right-click it → Set as Wallpaper.');
   },
 
   setAccent(hex,rgb){
@@ -1257,6 +1297,10 @@ const OS={
   },
 
   setSetting(k,v){SETTINGS.set(k,v);},
+  setAnimations(on){
+    SETTINGS.set('animations',on);
+    document.body.classList.toggle('no-anims',!on);
+  },
 
   setIconSize(v){
     v=+v;SETTINGS.set('iconSize',v);this.applyIconSize(v);
@@ -1284,7 +1328,7 @@ const OS={
 
     // System icon definitions
     const systemIcons={
-      '__library__':{emoji:'⊞',label:'App Library'},
+      '__library__':{emoji:'📚',label:'App Library'},
       '__explorer__':{emoji:'📁',label:'File Explorer'},
       '__settings__':{emoji:'⚙️',label:'Settings'},
       '__browser__':{emoji:'🌐',label:'Truffled Browser'},
@@ -1309,8 +1353,13 @@ const OS={
         el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;font-size:26px">${si.emoji}</div><div class="desk-icon-label">${item.name}</div>`;
         el.addEventListener('dblclick',()=>this[item.systemAction]&&this[item.systemAction]());
       }else{
-        const icon=item.icon||`https://www.google.com/s2/favicons?sz=64&domain=${item.url}`;
-        el.innerHTML=`<img class="desk-icon-img" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(item.url||'')}';" alt=""><div class="desk-icon-label">${item.name}</div>`;
+        const isEmoji=item.icon&&[...item.icon].length<=2&&!item.icon.startsWith('http')&&!item.icon.startsWith('data:');
+        if(isEmoji){
+          el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;font-size:28px">${item.icon}</div><div class="desk-icon-label">${item.name}</div>`;
+        }else{
+          const icon=item.icon||`https://www.google.com/s2/favicons?sz=64&domain=${item.url}`;
+          el.innerHTML=`<img class="desk-icon-img" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(item.url||'')}';" alt=""><div class="desk-icon-label">${item.name}</div>`;
+        }
         el.addEventListener('dblclick',()=>{
           if(item.isPVZ)PVZ.tryLaunch(item.name);else this.launch(item);
         });
@@ -1464,7 +1513,7 @@ const OS={
         <span style="font-size:14px;margin-right:2px">📁</span>
         <div class="wnd-title">${folderItem.name}</div>
         <div class="wnd-ctrl-btns">
-          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
           <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
           <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
@@ -1572,6 +1621,15 @@ const OS={
   _doLaunch(app){if(app.isPVZ){PVZ.tryLaunch(app.name);return;}WM.open(app);},
 
   /* ─── System app launchers ──────────────────────────────────── */
+  openBrowser(){WM.open({name:'Truffled Browser',url:'https://supermath.salavat.ru/search.html',icon:'🌐'});},
+
+  // Shared helper: builds the maximize button HTML with both expand/compress icons
+  _maxBtn(id){
+    return `<button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen">
+      <svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+      <svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
+    </button>`;
+  },
   openSettingsWindow(){this.openSettings();},
 
   /* ─── App Library ───────────────────────────────────────────── */
@@ -1587,7 +1645,7 @@ const OS={
         <div class="wnd-title">App Library</div>
         <div class="wnd-ctrl-btns">
           <button class="wnd-ctrl-btn" onclick="OS.addShortcutOpen()" title="Add App"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
           <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
           <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
@@ -1688,6 +1746,16 @@ const OS={
   openSettings(){document.getElementById('settingsPanel').classList.add('open');},
   closeSettings(){document.getElementById('settingsPanel').classList.remove('open');},
 
+  _emojiList:['🎮','🕹','🎯','🎲','🎪','🎨','🎬','🎵','🎸','📱','💻','🖥','🌐','🔥','⚡','✨','🚀','🌈','🦄','🐉','🍀','🌟','💎','🏆','🎭','🗺','📦','🔮','🧩','🎃','🦊','🐱','🐶','🦁','🐸','🦋','🌺','🌙','☀️','❄️','🎄','🏔','🌊','🎆','💡','🔑','🎁','🎉','🍕','🍔'],
+  _toggleEmojiRow(){
+    const row=document.getElementById('sc-emoji-row');
+    if(row.style.display==='none'){
+      if(!row.children.length){
+        row.innerHTML=this._emojiList.map(e=>`<span onclick="document.getElementById('sc-icon').value='${e}';OS._toggleEmojiRow()" style="font-size:20px;cursor:pointer;padding:3px;border-radius:5px;transition:background 0.1s" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background=''">${e}</span>`).join('');
+      }
+      row.style.display='flex';
+    }else{row.style.display='none';}
+  },
   addShortcutOpen(app){
     this.editingApp=app||null;
     document.getElementById('shortcutModalTitle').textContent=app?'Edit App':'Add App';
@@ -1741,7 +1809,7 @@ const OS={
         <span style="font-size:14px;margin-right:2px">📁</span>
         <div class="wnd-title">File Explorer</div>
         <div class="wnd-ctrl-btns">
-          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
           <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
           <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
@@ -1752,11 +1820,16 @@ const OS={
             <div class="fe-sidebar-label">NovOS</div>
             <div class="fe-sidebar-item active" id="feNav_all" onclick="FEW.nav('${id}','all')">📄 All Files</div>
             <div class="fe-sidebar-item" id="feNav_images" onclick="FEW.nav('${id}','images')">🖼 Images</div>
+            <div class="fe-sidebar-item" id="feNav_videos" onclick="FEW.nav('${id}','videos')">🎬 Videos</div>
+            <div class="fe-sidebar-item" id="feNav_audio" onclick="FEW.nav('${id}','audio')">🎵 Audio</div>
+            <div class="fe-sidebar-item" id="feNav_html" onclick="FEW.nav('${id}','html')">🌐 HTML</div>
             <div class="fe-sidebar-item" id="feNav_docs" onclick="FEW.nav('${id}','docs')">📃 Documents</div>
             <div class="fe-sidebar-item" id="feNav_other" onclick="FEW.nav('${id}','other')">📦 Other</div>
             <div class="fe-sidebar-label" style="margin-top:8px">Actions</div>
-            <div class="fe-sidebar-item" onclick="FEW.triggerUpload('${id}')">⬆ Upload File</div>
+            <div class="fe-sidebar-item" onclick="FEW.triggerUpload('${id}',false)">⬆ Upload Files</div>
+            <div class="fe-sidebar-item" onclick="FEW.triggerUpload('${id}',true)">📂 Upload Folder</div>
             <input type="file" id="feUpload_${id}" multiple style="display:none" onchange="FEW.handleUpload('${id}',this)">
+            <input type="file" id="feUploadDir_${id}" multiple webkitdirectory style="display:none" onchange="FEW.handleUpload('${id}',this)">
           </div>
           <div class="fe-main">
             <div class="fe-toolbar">
@@ -1787,9 +1860,12 @@ const OS={
   notify(title,body){
     const area=document.getElementById('notifArea');
     const n=document.createElement('div');n.className='notif';
+    n.style.animation='notifSlideIn 0.25s cubic-bezier(0.34,1.3,0.64,1) both';
     n.innerHTML=`<div class="notif-title">${title}</div><div class="notif-body">${body}</div>`;
-    area.appendChild(n);n.addEventListener('click',()=>n.remove());
-    setTimeout(()=>{n.style.opacity='0';n.style.transition='opacity 0.3s';setTimeout(()=>n.remove(),300);},3500);
+    area.appendChild(n);
+    const dismiss=()=>{n.style.animation='notifSlideOut 0.2s ease forwards';setTimeout(()=>n.remove(),200);};
+    n.addEventListener('click',dismiss);
+    setTimeout(dismiss,3500);
   },
 
   wipeData(){if(confirm('Wipe all data?')){localStorage.clear();location.reload();}},
@@ -1800,7 +1876,7 @@ const OS={
         e.preventDefault();
         CTX.show(e.clientX,e.clientY,[
           {label:'Desktop',icon:''},
-          {label:'Open App Library',icon:'⊞',fn:()=>this.openAppLibrary()},
+          {label:'Open App Library',icon:'📚',fn:()=>this.openAppLibrary()},
           {label:'Open File Explorer',icon:'📁',fn:()=>this.openFileExplorer()},
           {label:'New Folder',icon:'📂',fn:()=>document.getElementById('createFolderModal').classList.add('open')},
           {label:'Add Shortcut',icon:'+',fn:()=>this.addShortcutOpen()},
@@ -1880,7 +1956,10 @@ const FEW={
     });
   },
 
-  triggerUpload(wid){document.getElementById('feUpload_'+wid)?.click();},
+  triggerUpload(wid,folder){
+    if(folder)document.getElementById('feUploadDir_'+wid)?.click();
+    else document.getElementById('feUpload_'+wid)?.click();
+  },
 
   handleUpload(wid,input){
     if(!input.files.length)return;
@@ -1915,12 +1994,11 @@ const FEW={
   nav(wid,filter){
     const state=this._state[wid];if(!state)return;
     state.filter=filter;
-    // Update sidebar
-    ['all','images','docs','other'].forEach(f=>{
+    ['all','images','videos','audio','html','docs','other'].forEach(f=>{
       const el=document.getElementById('feNav_'+f);
       if(el)el.classList.toggle('active',f===filter);
     });
-    const pathMap={all:'/ All Files',images:'/ Images',docs:'/ Documents',other:'/ Other'};
+    const pathMap={all:'/ All Files',images:'/ Images',videos:'/ Videos',audio:'/ Audio',html:'/ HTML Files',docs:'/ Documents',other:'/ Other'};
     const path=document.getElementById('fePath_'+wid);
     if(path)path.textContent=pathMap[filter]||'/';
     this.render(wid);
@@ -1937,20 +2015,23 @@ const FEW={
   _filterFiles(files,filter){
     if(filter==='all')return files;
     if(filter==='images')return files.filter(f=>f.type.startsWith('image/'));
-    if(filter==='docs')return files.filter(f=>f.type.includes('text')||f.type.includes('pdf')||f.type.includes('document')||f.type.includes('spreadsheet')||f.type.includes('presentation'));
-    return files.filter(f=>!f.type.startsWith('image/')&&!f.type.includes('text')&&!f.type.includes('pdf')&&!f.type.includes('document'));
+    if(filter==='videos')return files.filter(f=>f.type.startsWith('video/'));
+    if(filter==='audio')return files.filter(f=>f.type.startsWith('audio/'));
+    if(filter==='html')return files.filter(f=>f.type.includes('html')||f.name.endsWith('.html')||f.name.endsWith('.htm'));
+    if(filter==='docs')return files.filter(f=>(f.type.includes('text')&&!f.type.includes('html'))||f.type.includes('pdf')||f.type.includes('document')||f.name.endsWith('.txt')||f.name.endsWith('.md'));
+    return files.filter(f=>!f.type.startsWith('image/')&&!f.type.startsWith('video/')&&!f.type.startsWith('audio/')&&!f.type.includes('html')&&!f.name.endsWith('.html')&&!f.type.includes('text')&&!f.type.includes('pdf')&&!f.type.includes('document'));
   },
 
   _fileIcon(file){
-    const t=file.type||'';
+    const t=file.type||'';const n=file.name||'';
     if(t.startsWith('image/'))return'🖼';
+    if(t.startsWith('video/'))return'🎬';
+    if(t.startsWith('audio/'))return'🎵';
     if(t.includes('pdf'))return'📕';
-    if(t.includes('text'))return'📄';
-    if(t.includes('spreadsheet')||file.name.endsWith('.xlsx')||file.name.endsWith('.csv'))return'📊';
-    if(t.includes('video'))return'🎬';
-    if(t.includes('audio'))return'🎵';
+    if(t.includes('html')||n.endsWith('.html')||n.endsWith('.htm'))return'🌐';
+    if(t.includes('text')||n.endsWith('.txt')||n.endsWith('.md'))return'📄';
+    if(t.includes('spreadsheet')||n.endsWith('.xlsx')||n.endsWith('.csv'))return'📊';
     if(t.includes('zip')||t.includes('compressed'))return'📦';
-    if(t.includes('javascript')||t.includes('html'))return'💻';
     return'📄';
   },
 
@@ -1986,6 +2067,16 @@ const FEW={
     cont.querySelectorAll('[data-feid]').forEach(el=>{
       const fid=el.getAttribute('data-feid');
       el.addEventListener('contextmenu',e=>{e.preventDefault();this._fileCtx(e,fid,wid);});
+      el.addEventListener('dblclick',()=>{
+        const state2=this._state[wid];if(!state2)return;
+        const f=state2.files.find(x=>x.id===fid);if(!f)return;
+        const t=f.type||'';const n=f.name||'';
+        if(t.startsWith('image/'))VIEWERS.openPhoto(f);
+        else if(t.startsWith('video/'))VIEWERS.openVideo(f);
+        else if(t.startsWith('audio/'))VIEWERS.openAudio(f);
+        else if(t.includes('html')||n.endsWith('.html')||n.endsWith('.htm'))VIEWERS.openHTML(f);
+        else if(f.dataUrl&&f.dataUrl!=='__too_large__')this._download(f);
+      });
     });
   },
 
@@ -2017,7 +2108,17 @@ const FEW={
     if(file.dataUrl&&file.dataUrl!=='__too_large__'){
       items.push({label:'Download',icon:'⬇',fn:()=>this._download(file)});
       if(file.type.startsWith('image/')){
-        items.push({label:'Set as Wallpaper',icon:'🖼',fn:()=>{SETTINGS.set('customWallpaper',file.dataUrl);SETTINGS.set('wallpaper','custom');OS.applySettings();OS.notify('Wallpaper','Set from file explorer.');}});
+        items.push({label:'View in Photo Viewer',icon:'🖼',fn:()=>VIEWERS.openPhoto(file)});
+        items.push({label:'Set as Wallpaper',icon:'🌅',fn:()=>{SETTINGS.set('customWallpaper',file.dataUrl);SETTINGS.set('wallpaper','custom');OS.applySettings();OS.notify('Wallpaper','Set from file explorer.');}});
+      }
+      if(file.type.startsWith('video/')){
+        items.push({label:'Open in Video Player',icon:'🎬',fn:()=>VIEWERS.openVideo(file)});
+      }
+      if(file.type.startsWith('audio/')){
+        items.push({label:'Open in Audio Player',icon:'🎵',fn:()=>VIEWERS.openAudio(file)});
+      }
+      if(file.type.includes('html')||file.name.endsWith('.html')||file.name.endsWith('.htm')){
+        items.push({label:'Open in HTML Viewer',icon:'🌐',fn:()=>VIEWERS.openHTML(file)});
       }
     }
     items.push({sep:true});
@@ -2036,6 +2137,228 @@ const FEW={
     a.download=file.name;
     a.click();
   }
+};
+
+/* ═══════════════════════════════════════════════
+   MEDIA VIEWERS
+═══════════════════════════════════════════════ */
+const VIEWERS={
+  _pvState:{},
+
+  openPhoto(file){
+    const id=WM.newId();const el=document.createElement('div');
+    el.className='os-window focused';el.id=id;
+    const dw=Math.min(window.innerWidth*0.7,820),dh=Math.min(window.innerHeight*0.75,620);
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
+    el.innerHTML=`
+      <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
+      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)">
+        <span style="font-size:14px;flex-shrink:0">🖼</span>
+        <div class="wnd-title">${file.name}</div>
+        <div class="wnd-ctrl-btns">
+          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="wnd-body" style="display:flex;flex-direction:column;overflow:hidden;background:#08090d">
+        <div style="height:38px;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 10px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)">
+          <button class="fe-btn" id="pvZO_${id}" onclick="VIEWERS._zoom('${id}',-0.2)">🔍−</button>
+          <button class="fe-btn" id="pvZI_${id}" onclick="VIEWERS._zoom('${id}',0.2)">🔍+</button>
+          <button class="fe-btn" onclick="VIEWERS._resetZoom('${id}')">↺ Reset</button>
+          <div style="width:1px;height:18px;background:var(--os-border);margin:0 2px"></div>
+          <button class="fe-btn" onclick="VIEWERS._rotate('${id}')">⟳ Rotate</button>
+          <div style="flex:1"></div>
+          <button class="fe-btn" onclick="VIEWERS._wallpaper('${id}')">🌅 Wallpaper</button>
+          <button class="fe-btn" onclick="VIEWERS._dlPhoto('${id}')">⬇ Download</button>
+        </div>
+        <div id="pvCanvas_${id}" style="flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:grab">
+          <img id="pvImg_${id}" src="${file.dataUrl||''}" draggable="false" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:4px;transition:transform 0.2s;user-select:none;pointer-events:none" alt="${file.name}">
+        </div>
+        <div style="height:24px;flex-shrink:0;border-top:1px solid var(--os-border);display:flex;align-items:center;padding:0 12px;gap:10px;background:rgba(0,0,0,0.2);font-size:11px;font-family:var(--mono);color:var(--os-muted)">
+          <span id="pvZoomLbl_${id}">100%</span><span>·</span><span id="pvDims_${id}">…</span><span>·</span><span>${FE.formatSize(file.size)}</span>
+        </div>
+      </div>
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
+    document.getElementById('windowLayer').appendChild(el);
+    WM.windows[id]={app:{name:file.name,url:'__photo__',icon:'🖼'},minimized:false,maximized:false,prevRect:null};
+    WM.focus(id);TB.addWindow(id,{name:file.name,url:'__photo__',icon:'🖼'});WM.makeDraggable(id);
+    this._pvState[id]={zoom:1,rotate:0,file};
+    const img=document.getElementById('pvImg_'+id);
+    if(img)img.onload=()=>{const d=document.getElementById('pvDims_'+id);if(d)d.textContent=img.naturalWidth+'×'+img.naturalHeight;};
+  },
+
+  _zoom(id,delta){
+    const s=this._pvState[id];if(!s)return;
+    s.zoom=Math.max(0.1,Math.min(8,s.zoom+delta));
+    this._applyTransform(id);
+  },
+  _resetZoom(id){const s=this._pvState[id];if(!s)return;s.zoom=1;s.rotate=0;this._applyTransform(id);},
+  _rotate(id){const s=this._pvState[id];if(!s)return;s.rotate=(s.rotate+90)%360;this._applyTransform(id);},
+  _applyTransform(id){
+    const s=this._pvState[id];if(!s)return;
+    const img=document.getElementById('pvImg_'+id);if(!img)return;
+    img.style.transform=`scale(${s.zoom}) rotate(${s.rotate}deg)`;
+    const lbl=document.getElementById('pvZoomLbl_'+id);if(lbl)lbl.textContent=Math.round(s.zoom*100)+'%';
+  },
+  _wallpaper(id){
+    const s=this._pvState[id];if(!s||!s.file.dataUrl||s.file.dataUrl==='__too_large__')return;
+    SETTINGS.set('customWallpaper',s.file.dataUrl);SETTINGS.set('wallpaper','custom');OS.applySettings();OS.notify('Wallpaper','Set as wallpaper.');
+  },
+  _dlPhoto(id){
+    const s=this._pvState[id];if(!s||!s.file.dataUrl||s.file.dataUrl==='__too_large__')return;
+    const a=document.createElement('a');a.href=s.file.dataUrl;a.download=s.file.name;a.click();
+  },
+
+  openHTML(file){
+    const id=WM.newId();const el=document.createElement('div');
+    el.className='os-window focused';el.id=id;
+    const dw=Math.min(window.innerWidth*0.8,900),dh=Math.min(window.innerHeight*0.8,640);
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
+    let htmlContent='';
+    try{if(file.dataUrl&&file.dataUrl.startsWith('data:'))htmlContent=atob(file.dataUrl.split(',')[1]);}catch(e){}
+    el.innerHTML=`
+      <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
+      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)">
+        <span style="font-size:14px;flex-shrink:0">🌐</span>
+        <div class="wnd-title">${file.name}</div>
+        <div class="wnd-ctrl-btns">
+          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="wnd-body" style="display:flex;flex-direction:column;overflow:hidden">
+        <div style="height:38px;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 10px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)">
+          <span style="font-size:11px;color:var(--os-muted)">🌐 HTML Viewer — ${file.name}</span>
+          <div style="flex:1"></div>
+          <button class="fe-btn" onclick="document.getElementById('hvFrm_${id}').contentDocument&&document.getElementById('hvFrm_${id}').contentDocument.location.reload()">↺ Reload</button>
+        </div>
+        <div style="flex:1;overflow:hidden;background:#fff;position:relative">
+          ${htmlContent
+            ?`<iframe id="hvFrm_${id}" sandbox="allow-scripts allow-same-origin" style="position:absolute;inset:0;width:100%;height:100%;border:none" srcdoc="${htmlContent.replace(/"/g,'&quot;')}"></iframe>`
+            :`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;color:#666;font-size:13px"><div style="font-size:36px">🌐</div><div>Cannot display this file</div></div>`}
+        </div>
+      </div>
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
+    document.getElementById('windowLayer').appendChild(el);
+    WM.windows[id]={app:{name:file.name,url:'__html__',icon:'🌐'},minimized:false,maximized:false,prevRect:null};
+    WM.focus(id);TB.addWindow(id,{name:file.name,url:'__html__',icon:'🌐'});WM.makeDraggable(id);
+  },
+
+  openVideo(file){
+    const id=WM.newId();const el=document.createElement('div');
+    el.className='os-window focused';el.id=id;
+    const dw=Math.min(window.innerWidth*0.7,800),dh=Math.min(window.innerHeight*0.72,560);
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
+    el.innerHTML=`
+      <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
+      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)">
+        <span style="font-size:14px;flex-shrink:0">🎬</span>
+        <div class="wnd-title">${file.name}</div>
+        <div class="wnd-ctrl-btns">
+          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="wnd-body" style="display:flex;align-items:center;justify-content:center;background:#08090d;overflow:hidden">
+        ${file.dataUrl&&file.dataUrl!=='__too_large__'
+          ?`<video controls autoplay style="max-width:100%;max-height:100%;border-radius:4px;outline:none"><source src="${file.dataUrl}" type="${file.type}">Your browser does not support this video format.</video>`
+          :`<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--os-muted);font-size:13px"><div style="font-size:40px">🎬</div><div>File too large to preview.</div><div style="font-size:11px;color:var(--os-dim)">${file.name}</div></div>`}
+      </div>
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
+    document.getElementById('windowLayer').appendChild(el);
+    WM.windows[id]={app:{name:file.name,url:'__video__',icon:'🎬'},minimized:false,maximized:false,prevRect:null};
+    WM.focus(id);TB.addWindow(id,{name:file.name,url:'__video__',icon:'🎬'});WM.makeDraggable(id);
+  },
+
+  openAudio(file){
+    const id=WM.newId();const el=document.createElement('div');
+    el.className='os-window focused';el.id=id;
+    const dw=320,dh=320;
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
+    el.innerHTML=`
+      <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
+      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)">
+        <span style="font-size:14px;flex-shrink:0">🎵</span>
+        <div class="wnd-title">${file.name}</div>
+        <div class="wnd-ctrl-btns">
+          <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="wnd-body" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;background:var(--os-bg)">
+        <div style="width:90px;height:90px;border-radius:50%;background:rgba(var(--os-accent-rgb),0.12);border:2px solid rgba(var(--os-accent-rgb),0.3);display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 0 24px rgba(var(--os-accent-rgb),0.2)">🎵</div>
+        <div style="font-size:13px;font-weight:600;color:var(--os-text);text-align:center;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${file.name.replace(/\.[^.]+$/,'')}</div>
+        ${file.dataUrl&&file.dataUrl!=='__too_large__'
+          ?`<audio id="aud_${id}" controls autoplay style="width:100%;max-width:260px;outline:none"><source src="${file.dataUrl}" type="${file.type}">Your browser does not support audio.</audio>`
+          :`<div style="color:var(--os-muted);font-size:12px">File too large to preview.</div>`}
+        <div style="font-size:11px;color:var(--os-dim);font-family:var(--mono)">${FE.formatSize(file.size)}</div>
+      </div>
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
+    document.getElementById('windowLayer').appendChild(el);
+    WM.windows[id]={app:{name:file.name,url:'__audio__',icon:'🎵'},minimized:false,maximized:false,prevRect:null};
+    WM.focus(id);TB.addWindow(id,{name:file.name,url:'__audio__',icon:'🎵'});WM.makeDraggable(id);
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   TASK MANAGER
+═══════════════════════════════════════════════ */
+const TM={
+  open(){
+    const id=WM.newId();const el=document.createElement('div');
+    el.className='os-window focused';el.id=id;
+    const dw=460,dh=360;
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
+    el.innerHTML=`
+      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)">
+        <span style="font-size:14px;flex-shrink:0">📊</span>
+        <div class="wnd-title">Task Manager</div>
+        <div class="wnd-ctrl-btns">
+          <button class="wnd-ctrl-btn" onclick="TM.refresh('${id}')" title="Refresh"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="wnd-body" style="display:flex;flex-direction:column;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 12px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--os-dim)">
+          <span style="width:22px"></span><span style="flex:1">Name</span><span style="width:70px">Status</span><span style="width:72px;text-align:right">Action</span>
+        </div>
+        <div id="tmList_${id}" style="flex:1;overflow-y:auto;padding:6px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent"></div>
+        <div style="padding:6px 12px;border-top:1px solid var(--os-border);display:flex;align-items:center;gap:8px">
+          <span id="tmStat_${id}" style="font-size:11px;color:var(--os-muted);font-family:var(--mono)"></span>
+        </div>
+      </div>
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
+    document.getElementById('windowLayer').appendChild(el);
+    WM.windows[id]={app:{name:'Task Manager',url:'__tm__',icon:'📊'},minimized:false,maximized:false,prevRect:null};
+    WM.focus(id);TB.addWindow(id,{name:'Task Manager',url:'__tm__',icon:'📊'});WM.makeDraggable(id);
+    this._render(id);
+  },
+  _render(tmId){
+    const list=document.getElementById('tmList_'+tmId);
+    const stat=document.getElementById('tmStat_'+tmId);
+    if(!list)return;
+    const wins=Object.entries(WM.windows).filter(([wid,w])=>wid!==tmId&&w&&w.app);
+    if(!wins.length){list.innerHTML=`<div style="text-align:center;padding:40px;color:var(--os-muted);font-size:12px">No running processes.</div>`;if(stat)stat.textContent='0 processes';return;}
+    if(stat)stat.textContent=wins.length+' process'+(wins.length!==1?'es':'');
+    list.innerHTML=wins.map(([wid,w])=>{
+      const isEmoji=w.app.icon&&[...w.app.icon].length<=2&&!w.app.icon.startsWith('http');
+      const iconEl=isEmoji?`<div style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${w.app.icon}</div>`:`<img src="${w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`}" style="width:22px;height:22px;border-radius:5px;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'" alt="">`;
+      const status=w.minimized?'Minimized':'Running';
+      const statusColor=w.minimized?'var(--os-dim)':'var(--os-green)';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:8px;border:1px solid transparent;transition:all 0.12s;margin-bottom:2px" onmouseover="this.style.background='var(--os-surface)';this.style.borderColor='var(--os-border)'" onmouseout="this.style.background='';this.style.borderColor='transparent'">
+        ${iconEl}
+        <div style="flex:1;font-size:12px;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${w.app.url}">${w.app.name}</div>
+        <div style="font-size:10px;color:${statusColor};font-family:var(--mono);width:70px">${status}</div>
+        <button onclick="TM._kill('${wid}','${tmId}')" style="height:24px;padding:0 8px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:5px;color:var(--os-red);font-size:11px;cursor:pointer;font-family:var(--font);transition:all 0.15s" onmouseover="this.style.background='var(--os-red)';this.style.color='#fff'" onmouseout="this.style.background='rgba(248,113,113,0.08)';this.style.color='var(--os-red)'">Force Quit</button>
+      </div>`;
+    }).join('');
+  },
+  refresh(tmId){this._render(tmId);OS.notify('Refreshed','Task list updated.');},
+  _kill(targetId,tmId){WM.closeWindow(targetId);setTimeout(()=>this._render(tmId),250);OS.notify('Closed','Process terminated.');}
 };
 
 window.addEventListener('load',()=>OS.init());
