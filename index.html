@@ -32,6 +32,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 #wallpaper.wp-void{background:#04040a}
 #wallpaper.wp-custom{background-size:cover;background-position:center;background-repeat:no-repeat}
 #desktop::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px}
+body.has-maximized #desktop::after{display:none}
+body.has-maximized #desktopIcons{pointer-events:none;visibility:hidden}
+body.has-maximized #wallpaper{pointer-events:none}
+body.has-maximized #windowLayer>.os-window:not(.maximized){pointer-events:none}
 
 /* DESKTOP ICONS */
 #desktopIcons{position:absolute;inset:0;z-index:5;pointer-events:none}
@@ -65,7 +69,23 @@ body.taskbar-autohide #desktop{height:100vh}
 #startBtn svg{width:18px;height:18px;opacity:0.9}
 .tb-divider{width:1px;height:24px;background:var(--os-border);margin:0 4px;flex-shrink:0}
 #taskbarApps{display:flex;align-items:center;gap:3px;flex:1;overflow:hidden}
-.tb-app{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:42px;height:42px;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;flex-shrink:0;transition:all 0.15s;gap:3px}
+.tb-app{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:42px;height:42px;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;flex-shrink:0;transition:all 0.15s;gap:3px;contain:layout}
+.tb-exit-fs{position:absolute;top:-28px;left:50%;transform:translateX(-50%);background:rgba(var(--os-accent-rgb),0.9);color:#fff;font-size:11px;border-radius:5px;padding:2px 7px;white-space:nowrap;pointer-events:all;cursor:pointer;border:1px solid rgba(var(--os-accent-rgb),0.5);backdrop-filter:blur(8px);transition:opacity 0.12s;z-index:10010}
+.tb-exit-fs:hover{background:var(--os-accent)}
+#tbPreview{position:fixed;z-index:10020;background:rgba(13,14,20,0.97);border:1px solid var(--os-border2);border-radius:10px;backdrop-filter:blur(20px);box-shadow:0 12px 40px rgba(0,0,0,0.6);pointer-events:none;overflow:hidden;width:220px;transition:opacity 0.15s,transform 0.15s;opacity:0;transform:translateY(6px);bottom:calc(var(--taskbar-h) + 10px)}
+#tbPreview.visible{opacity:1;transform:translateY(0)}
+.tbprev-header{display:flex;align-items:center;gap:7px;padding:8px 10px 6px;border-bottom:1px solid var(--os-border)}
+.tbprev-icon{width:18px;height:18px;border-radius:4px;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tbprev-icon img{width:18px;height:18px;border-radius:4px;object-fit:cover}
+.tbprev-title{font-size:11px;font-weight:500;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.tbprev-status{font-size:9px;color:var(--os-muted);padding:0 4px 1px;border-radius:3px;background:rgba(255,255,255,0.06);flex-shrink:0}
+.tbprev-canvas{width:100%;height:120px;background:#06070c;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.tbprev-canvas iframe{position:absolute;inset:0;width:400%;height:400%;transform:scale(0.25);transform-origin:top left;border:none;pointer-events:none}
+.tbprev-canvas .tbprev-placeholder{font-size:32px;opacity:0.3}
+.tbprev-actions{display:flex;gap:4px;padding:6px 8px;pointer-events:all}
+.tbprev-btn{flex:1;height:24px;border-radius:5px;font-size:10.5px;font-weight:500;cursor:pointer;border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-muted);font-family:var(--font);transition:all 0.12s}
+.tbprev-btn:hover{background:var(--os-surface2);color:var(--os-text)}
+.tbprev-btn.danger:hover{background:rgba(248,113,113,0.15);border-color:rgba(248,113,113,0.3);color:var(--os-red)}
 .tb-app:hover{background:var(--os-surface);border-color:var(--os-border);transform:scale(1.12) translateY(-2px)}
 .tb-app:active{transform:scale(0.94)}
 .tb-app.active{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.3)}
@@ -104,11 +124,12 @@ body.taskbar-autohide #desktop{height:100vh}
 @keyframes notifSlideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(24px)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms!important}
-.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(30px);overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both}
+.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(30px);overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both;will-change:transform;transform:translateZ(0);contain:layout style}
 .os-window.minimized{display:none}
-.os-window.maximized{top:0!important;left:0!important;width:100%!important;height:100%!important;border-radius:0;border-color:transparent}
+.os-window.maximized{top:0!important;left:0!important;width:100%!important;height:100%!important;border-radius:0;border-color:transparent;backdrop-filter:none!important;box-shadow:none!important}
 .os-window.focused{box-shadow:0 40px 100px rgba(0,0,0,0.75),0 0 0 1px rgba(var(--os-accent-rgb),0.18)}
 .os-window:not(.focused){filter:brightness(0.88)}
+.os-window.maximized:not(.focused){filter:none!important}
 .wnd-titlebar{height:var(--titlebar-h);flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 6px 0 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--os-border);cursor:move;user-select:none}
 .wnd-icon{width:16px;height:16px;border-radius:4px;object-fit:cover;flex-shrink:0}
 .wnd-title{flex:1;font-size:12px;font-weight:500;color:var(--os-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -118,11 +139,11 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .wnd-ctrl-btn.wnd-close:hover{background:var(--os-red);color:#fff}
 .os-window.maximized .wnd-titlebar{position:absolute;top:0;left:0;right:0;z-index:20;opacity:0;pointer-events:none;transform:translateY(-100%);transition:opacity 0.18s,transform 0.18s;border-bottom-color:var(--os-border);background:rgba(10,11,18,0.96);backdrop-filter:blur(20px)}
 .os-window.maximized .wnd-titlebar.tb-peek{opacity:1;pointer-events:all;transform:translateY(0)}
-.wnd-peek-zone{display:none;position:absolute;top:0;left:0;right:0;height:6px;z-index:21;cursor:default}
+.wnd-peek-zone{display:none;position:absolute;top:0;left:0;right:0;height:18px;z-index:21;cursor:default}
 .os-window.maximized .wnd-peek-zone{display:block}
 .os-window.maximized .wnd-body{position:absolute;inset:0}
 .wnd-body{flex:1;overflow:hidden;position:relative}
-.wnd-iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#000}
+.wnd-iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#000;will-change:transform;transform:translateZ(0)}
 .wnd-loader{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(8,9,14,0.97);transition:opacity 0.3s;pointer-events:none}
 .wnd-loader.hidden{opacity:0;pointer-events:none}
 .loader-ring{width:36px;height:36px;border:2px solid rgba(var(--os-accent-rgb),0.15);border-top-color:var(--os-accent);border-radius:50%;animation:spin 0.9s linear infinite}
@@ -131,6 +152,14 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .wnd-loader-sub{font-size:10px;color:var(--os-dim);font-family:var(--mono);margin-top:-4px}
 .wnd-resize{position:absolute;right:0;bottom:0;width:16px;height:16px;cursor:se-resize;z-index:5}
 .wnd-resize::after{content:'';position:absolute;right:4px;bottom:4px;width:8px;height:8px;border-right:2px solid rgba(255,255,255,0.15);border-bottom:2px solid rgba(255,255,255,0.15);border-radius:1px}
+.wnd-edge{position:absolute;z-index:4;}
+.wnd-edge-n{top:0;left:8px;right:8px;height:5px;cursor:n-resize;}
+.wnd-edge-s{bottom:0;left:8px;right:16px;height:5px;cursor:s-resize;}
+.wnd-edge-w{left:0;top:8px;bottom:8px;width:5px;cursor:w-resize;}
+.wnd-edge-e{right:0;top:8px;bottom:16px;width:5px;cursor:e-resize;}
+.wnd-edge-nw{top:0;left:0;width:10px;height:10px;cursor:nw-resize;}
+.wnd-edge-ne{top:0;right:0;width:10px;height:10px;cursor:ne-resize;}
+.wnd-edge-sw{bottom:0;left:0;width:10px;height:10px;cursor:sw-resize;}
 
 /* APP LIBRARY */
 .wnd-toolbar{height:40px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)}
@@ -869,7 +898,14 @@ const WM={
         </div>
         <iframe class="wnd-iframe" id="frm_${id}" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen" allow="fullscreen; autoplay; clipboard-write; pointer-lock" allowfullscreen></iframe>
       </div>
-      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event,'se')"></div>
+      <div class="wnd-edge wnd-edge-n" onmousedown="WM.startResize('${id}',event,'n')"></div>
+      <div class="wnd-edge wnd-edge-s" onmousedown="WM.startResize('${id}',event,'s')"></div>
+      <div class="wnd-edge wnd-edge-w" onmousedown="WM.startResize('${id}',event,'w')"></div>
+      <div class="wnd-edge wnd-edge-e" onmousedown="WM.startResize('${id}',event,'e')"></div>
+      <div class="wnd-edge wnd-edge-nw" onmousedown="WM.startResize('${id}',event,'nw')"></div>
+      <div class="wnd-edge wnd-edge-ne" onmousedown="WM.startResize('${id}',event,'ne')"></div>
+      <div class="wnd-edge wnd-edge-sw" onmousedown="WM.startResize('${id}',event,'sw')"></div>`;
     document.getElementById('windowLayer').appendChild(el);
 
     const realUrl=app.url==='__PVZ__'?PVZ_URL:app.url;
@@ -880,6 +916,7 @@ const WM={
     frm.addEventListener('load',()=>{
       if(frm.src && frm.src!=='about:blank'){
         setTimeout(()=>ldr&&ldr.classList.add('hidden'),200);
+        if(WM._onIframeLoad)WM._onIframeLoad(frm);
       }
     });
     // Fallback: force-hide loader after 12s for games that block load events
@@ -1008,10 +1045,17 @@ const WM={
     e.preventDefault();
   },
 
-  startResize(id,e){
+  startResize(id,e,edge){
     if(this.windows[id]&&this.windows[id].maximized)return;
-    const el=document.getElementById(id);const sx=e.clientX,sy=e.clientY,sw=el.offsetWidth,sh=el.offsetHeight;
-    const move=ev=>{el.style.width=Math.max(320,sw+ev.clientX-sx)+'px';el.style.height=Math.max(220,sh+ev.clientY-sy)+'px';};
+    const el=document.getElementById(id);
+    const sx=e.clientX,sy=e.clientY,sw=el.offsetWidth,sh=el.offsetHeight,sl=el.offsetLeft,st=el.offsetTop;
+    const move=ev=>{
+      const dx=ev.clientX-sx,dy=ev.clientY-sy;
+      if(edge==='se'||edge==='e'||edge==='ne'){el.style.width=Math.max(320,sw+dx)+'px';}
+      if(edge==='sw'||edge==='w'||edge==='nw'){const nw=Math.max(320,sw-dx);el.style.width=nw+'px';el.style.left=(sl+sw-nw)+'px';}
+      if(edge==='se'||edge==='s'||edge==='sw'){el.style.height=Math.max(220,sh+dy)+'px';}
+      if(edge==='ne'||edge==='n'||edge==='nw'){const nh=Math.max(220,sh-dy);el.style.height=nh+'px';el.style.top=(st+sh-nh)+'px';}
+    };
     const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up)};
     document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);
     e.preventDefault();
@@ -1045,23 +1089,39 @@ const TB={
   updateAutoHide(){
     const setting=SETTINGS.get('hideTaskbarFullscreen'),hasMax=WM.hasMaximizedWindow();
     const taskbar=document.getElementById('taskbar');
+    document.body.classList.toggle('has-maximized',hasMax);
     if(setting&&hasMax){document.body.classList.add('taskbar-autohide');taskbar.classList.add('taskbar-hidden');this._hidden=true;}
     else{document.body.classList.remove('taskbar-autohide');taskbar.classList.remove('taskbar-hidden');this._hidden=false;}
   },
   peekShow(){if(!this._hidden)return;clearTimeout(this._peekTimeout);document.getElementById('taskbar').classList.remove('taskbar-hidden');},
   peekHide(){if(!this._hidden)return;clearTimeout(this._peekTimeout);this._peekTimeout=setTimeout(()=>{if(this._hidden)document.getElementById('taskbar').classList.add('taskbar-hidden');},400);},
+  _tbIconHtml(app){
+    // System apps with no icon get their emoji
+    const systemEmojis={'__browser__':'🌐','__explorer__':'📁','__settings__':'⚙️','__library__':'📚','__folder__':'📁','__photo__':'🖼','__video__':'🎬','__audio__':'🎵','__html__':'🌐','__tm__':'📊'};
+    if(systemEmojis[app.url]){
+      return `<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:17px">${systemEmojis[app.url]}</div>`;
+    }
+    const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
+    if(isEmoji)return `<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:17px">${app.icon}</div>`;
+    const iconSrc=app.icon||(app.url&&!app.url.startsWith('__')?`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`:'');
+    return iconSrc?`<img class="tb-app-icon" src="${iconSrc}" onerror="this.style.display='none'" alt="">`:`<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:17px">🖥</div>`;
+  },
   render(){
     const cont=document.getElementById('taskbarApps');cont.innerHTML='';
     this.pinned.forEach(app=>{
       const btn=document.createElement('div');btn.className='tb-app';
       const runId=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
       if(runId)btn.classList.add('running');
-      const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
-      btn.innerHTML=isEmoji
-        ?`<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:18px">${app.icon}</div>`
-        :`<img class="tb-app-icon" src="${app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`}" onerror="this.style.display='none'" alt="">`;
+      btn.innerHTML=this._tbIconHtml(app);
       btn.title=app.name;
       btn.onclick=()=>{const wid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);if(wid)WM.toggleWindow(wid);else OS.launch(app);};
+      btn.addEventListener('mouseenter',()=>{
+        const wid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
+        if(wid&&WM.windows[wid]&&WM.windows[wid].maximized&&!WM.windows[wid].minimized){let x=btn.querySelector('.tb-exit-fs');if(!x){x=document.createElement('div');x.className='tb-exit-fs';x.title='Exit Fullscreen';x.textContent='⊠';x.onclick=(e)=>{e.stopPropagation();WM.restoreMax(wid);};btn.appendChild(x);}}
+        else{const x=btn.querySelector('.tb-exit-fs');if(x)x.remove();}
+        if(wid)TBP.show(btn,wid);
+      });
+      btn.addEventListener('mouseleave',()=>{setTimeout(()=>{const x=btn.querySelector('.tb-exit-fs');if(x)x.remove();},200);TBP.hide();});
       btn.addEventListener('contextmenu',ev=>{ev.preventDefault();CTX.show(ev.clientX,ev.clientY,[{label:'Open',icon:'▶',fn:()=>OS.launch(app)},{label:'Unpin from Taskbar',icon:'−',fn:()=>this.unpin(app.url)}]);});
       cont.appendChild(btn);
     });
@@ -1070,11 +1130,14 @@ const TB={
         let btn=document.getElementById(btnId);
         if(!btn){
           btn=document.createElement('div');btn.id=btnId;btn.className='tb-app running';
-          const isEmojiR=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
-          btn.innerHTML=isEmojiR
-            ?`<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:18px">${app.icon}</div>`
-            :`<img class="tb-app-icon" src="${app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`}" onerror="this.style.display='none'" alt="">`;
+          btn.innerHTML=this._tbIconHtml(app);
           btn.title=app.name;btn.onclick=()=>WM.toggleWindow(id);
+          btn.addEventListener('mouseenter',()=>{
+            if(WM.windows[id]&&WM.windows[id].maximized&&!WM.windows[id].minimized){let x=btn.querySelector('.tb-exit-fs');if(!x){x=document.createElement('div');x.className='tb-exit-fs';x.title='Exit Fullscreen';x.textContent='⊠';x.onclick=(e)=>{e.stopPropagation();WM.restoreMax(id);};btn.appendChild(x);}}
+            else{const x=btn.querySelector('.tb-exit-fs');if(x)x.remove();}
+            TBP.show(btn,id);
+          });
+          btn.addEventListener('mouseleave',()=>{setTimeout(()=>{const x=btn.querySelector('.tb-exit-fs');if(x)x.remove();},200);TBP.hide();});
           btn.addEventListener('contextmenu',ev=>{ev.preventDefault();CTX.show(ev.clientX,ev.clientY,[{label:'Pin to Taskbar',icon:'+',fn:()=>this.pin(app)},{label:'Close',icon:'×',fn:()=>WM.closeWindow(id),danger:true}]);});
           cont.appendChild(btn);
         }
@@ -1229,10 +1292,19 @@ const OS={
     SETTINGS.load();
     this.shortcuts=loadShortcuts();
     this.desktopItems=loadDesktopItems();
-    CTX.init();TB.init();
+    CTX.init();TB.init();TBP.init();
     this.applySettings();
     this.renderDesktop();
-    this.renderClock();setInterval(()=>this.renderClock(),1000);
+    this.renderClock();
+    // Use rAF-aligned interval to avoid forcing layout mid-frame
+    let _lastClockMin=-1;
+    const _clockTick=()=>{
+      const n=new Date();
+      const m=n.getHours()*60+n.getMinutes();
+      if(m!==_lastClockMin){_lastClockMin=m;this.renderClock();}
+      setTimeout(()=>requestAnimationFrame(_clockTick),1000);
+    };
+    setTimeout(()=>requestAnimationFrame(_clockTick),1000);
     this.setupContextMenu();
     this.setupKeyboard();
 
@@ -1273,8 +1345,27 @@ const OS={
     wEl.className='';wEl.classList.add('wp-'+wp);
     if(wp==='custom'){
       const cw=SETTINGS.get('customWallpaper');
-      if(cw){wEl.style.backgroundImage=`url(${cw})`;wEl.style.backgroundSize='cover';wEl.style.backgroundPosition='center';}
-    }else{wEl.style.backgroundImage='';}
+      if(cw){
+        // Remove old GIF element if any
+        const oldGif=document.getElementById('wallpaperGif');
+        if(oldGif)oldGif.remove();
+        if(SETTINGS.get('customWallpaperIsGif')){
+          // GIFs don't animate as CSS backgrounds in all browsers — use an <img> overlay
+          wEl.style.backgroundImage='';
+          let gifEl=document.createElement('img');
+          gifEl.id='wallpaperGif';
+          gifEl.src=cw;
+          gifEl.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none';
+          wEl.appendChild(gifEl);
+        } else {
+          wEl.style.backgroundImage=`url(${cw})`;wEl.style.backgroundSize='cover';wEl.style.backgroundPosition='center';
+        }
+      }
+    }else{
+      wEl.style.backgroundImage='';
+      const oldGif=document.getElementById('wallpaperGif');
+      if(oldGif)oldGif.remove();
+    }
     document.querySelectorAll('.wp-item').forEach(el=>el.classList.remove('active'));
     const wpBtn=document.getElementById('wp-'+wp);if(wpBtn)wpBtn.classList.add('active');
     const cw=SETTINGS.get('customWallpaper');
@@ -1289,7 +1380,7 @@ const OS={
   openWallpaperPicker(){
     this.closeSettings();
     this.openFileExplorer();
-    OS.notify('Wallpaper Picker','Upload an image in File Explorer, then right-click it → Set as Wallpaper.');
+    OS.notify('Wallpaper Picker','Upload an image or GIF in File Explorer, then right-click it → Set as Wallpaper.');
   },
 
   setAccent(hex,rgb){
@@ -1904,30 +1995,37 @@ const OS={
 
   // FIX: keyboard shortcuts — Tab = start menu, Shift+Tab = window switcher
   setupKeyboard(){
-    document.addEventListener('keydown',e=>{
-      // Don't intercept if typing in an input
+    const _handleKey=e=>{
       const tag=document.activeElement&&document.activeElement.tagName;
       if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
-
       if(e.key==='Tab'){
         e.preventDefault();
-        if(e.shiftKey){
-          // Shift+Tab = alt-tab window switcher
-          ALT_TAB.next();
-        }else{
-          // Tab = start menu
-          this.toggleStart();
-        }
+        if(e.shiftKey){ALT_TAB.next();}
+        else{this.toggleStart();}
       }
-    });
-
-    // When alt-tab overlay is open, Shift+Tab keeps cycling, Enter/Space selects
-    document.addEventListener('keydown',e=>{
       if(ALT_TAB.open){
-        if(e.key==='Tab'&&e.shiftKey){e.preventDefault();ALT_TAB.next();}
         if(e.key==='Enter'||e.key===' '){e.preventDefault();ALT_TAB.confirm();}
       }
+    };
+    document.addEventListener('keydown',_handleKey);
+
+    // Intercept keydown from iframes by listening on the window level
+    // Each iframe's contentWindow posts a message when Shift+Tab is pressed
+    window.addEventListener('message',e=>{
+      if(e.data==='novos_shifttab')ALT_TAB.next();
+      if(e.data==='novos_tab')this.toggleStart();
     });
+
+    // Inject a tiny keydown relay script into every iframe when it loads
+    WM._onIframeLoad=(frm)=>{
+      try{
+        const doc=frm.contentDocument||frm.contentWindow&&frm.contentWindow.document;
+        if(!doc)return;
+        const s=doc.createElement('script');
+        s.textContent=`document.addEventListener('keydown',function(e){if(e.key==='Tab'){e.preventDefault();window.parent.postMessage(e.shiftKey?'novos_shifttab':'novos_tab','*');}});`;
+        (doc.head||doc.body||doc.documentElement).appendChild(s);
+      }catch(err){/* cross-origin iframe — cannot inject, expected */}
+    };
   }
 };
 
@@ -2109,7 +2207,19 @@ const FEW={
       items.push({label:'Download',icon:'⬇',fn:()=>this._download(file)});
       if(file.type.startsWith('image/')){
         items.push({label:'View in Photo Viewer',icon:'🖼',fn:()=>VIEWERS.openPhoto(file)});
-        items.push({label:'Set as Wallpaper',icon:'🌅',fn:()=>{SETTINGS.set('customWallpaper',file.dataUrl);SETTINGS.set('wallpaper','custom');OS.applySettings();OS.notify('Wallpaper','Set from file explorer.');}});
+        items.push({label:'Set as Wallpaper',icon:'🌅',fn:()=>{
+          if(file.type==='image/gif'){
+            // For GIFs, use a video-like element via CSS background
+            SETTINGS.set('customWallpaper',file.dataUrl);
+            SETTINGS.set('wallpaper','custom');
+            SETTINGS.set('customWallpaperIsGif',true);
+          } else {
+            SETTINGS.set('customWallpaper',file.dataUrl);
+            SETTINGS.set('wallpaper','custom');
+            SETTINGS.set('customWallpaperIsGif',false);
+          }
+          OS.applySettings();OS.notify('Wallpaper','Set from file explorer.');
+        }});
       }
       if(file.type.startsWith('video/')){
         items.push({label:'Open in Video Player',icon:'🎬',fn:()=>VIEWERS.openVideo(file)});
@@ -2363,6 +2473,74 @@ const TM={
 
 window.addEventListener('load',()=>OS.init());
 window.addEventListener('beforeunload',e=>{e.preventDefault();e.returnValue='';});
+
+/* ═══ TASKBAR PREVIEW ═══ */
+const TBP={
+  _el:null,_tid:null,_hid:null,_wid:null,
+  init(){
+    const d=document.createElement('div');d.id='tbPreview';
+    d.innerHTML=`<div class="tbprev-header"><div class="tbprev-icon" id="tbpvIcon"></div><div class="tbprev-title" id="tbpvTitle">App</div><div class="tbprev-status" id="tbpvStatus">Running</div></div><div class="tbprev-canvas" id="tbpvCanvas"><div class="tbprev-placeholder" id="tbpvPlaceholder">🖥</div></div><div class="tbprev-actions"><button class="tbprev-btn" id="tbpvFocus">Focus</button><button class="tbprev-btn" id="tbpvMin">Minimize</button><button class="tbprev-btn danger" id="tbpvClose">Close</button></div>`;
+    document.body.appendChild(d);this._el=d;
+  },
+  show(btn,wid){
+    clearTimeout(this._hid);
+    this._wid=wid;
+    const w=WM.windows[wid];if(!w)return;
+    const el=this._el;
+    // Icon
+    const iconEl=document.getElementById('tbpvIcon');
+    const sysEmoji={'__browser__':'🌐','__explorer__':'📁','__settings__':'⚙️','__library__':'📚','__folder__':'📁','__photo__':'🖼','__video__':'🎬','__audio__':'🎵','__html__':'🌐','__tm__':'📊'};
+    const em=sysEmoji[w.app.url];
+    const isEm=w.app.icon&&[...w.app.icon].length<=2&&!w.app.icon.startsWith('http');
+    if(em||isEm){iconEl.textContent=em||w.app.icon;iconEl.innerHTML=em||w.app.icon;}
+    else{iconEl.innerHTML=`<img src="${w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`}" onerror="this.outerHTML='🖥'" alt="">`;}
+    document.getElementById('tbpvTitle').textContent=w.app.name;
+    document.getElementById('tbpvStatus').textContent=w.minimized?'Minimized':'Running';
+    // Canvas — show live scaled iframe for real windows; placeholder for system windows
+    const canvas=document.getElementById('tbpvCanvas');
+    const ph=document.getElementById('tbpvPlaceholder');
+    // Remove old iframe
+    const old=canvas.querySelector('iframe');if(old)old.remove();
+    const frm=document.getElementById('frm_'+wid);
+    if(frm&&frm.src&&frm.src!=='about:blank'){
+      ph.style.display='none';
+      const clone=document.createElement('iframe');
+      clone.src=frm.src;
+      clone.sandbox='allow-scripts allow-same-origin allow-forms';
+      clone.style.cssText='position:absolute;inset:0;width:400%;height:400%;transform:scale(0.25);transform-origin:top left;border:none;pointer-events:none;opacity:0;transition:opacity 0.3s';
+      canvas.appendChild(clone);
+      clone.addEventListener('load',()=>{clone.style.opacity='1';});
+      // Fallback placeholder after 2s if iframe can't load
+      setTimeout(()=>{if(clone.style.opacity==='0'){clone.remove();ph.style.display='';}},2000);
+    } else {
+      ph.style.display='';
+      const sysIcons={'__browser__':'🌐','__explorer__':'📁','__settings__':'⚙️','__library__':'📚','__folder__':'📁','__photo__':'🖼','__video__':'🎬','__audio__':'🎵','__html__':'🌐','__tm__':'📊'};
+      ph.textContent=sysIcons[w.app.url]||(isEm?w.app.icon:'🖥');
+    }
+    // Buttons
+    document.getElementById('tbpvFocus').onclick=()=>{this.hide();if(w.minimized)WM.restore(wid);else WM.focus(wid);};
+    document.getElementById('tbpvMin').onclick=()=>{this.hide();w.minimized?WM.restore(wid):WM.minimize(wid);};
+    document.getElementById('tbpvClose').onclick=()=>{this.hide();WM.closeWindow(wid);};
+    // Position
+    const br=btn.getBoundingClientRect();
+    const pw=220;
+    let lx=br.left+br.width/2-pw/2;
+    lx=Math.max(8,Math.min(window.innerWidth-pw-8,lx));
+    el.style.left=lx+'px';
+    el.style.pointerEvents='all';
+    clearTimeout(this._tid);
+    this._tid=setTimeout(()=>el.classList.add('visible'),80);
+  },
+  hide(){
+    this._hid=setTimeout(()=>{
+      if(this._el){this._el.classList.remove('visible');this._el.style.pointerEvents='none';}
+      // Remove preview iframe to free resources
+      const canvas=document.getElementById('tbpvCanvas');
+      if(canvas){const old=canvas.querySelector('iframe');if(old)old.remove();}
+      clearTimeout(this._tid);
+    },180);
+  }
+};
 </script>
 </body>
 </html>
