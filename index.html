@@ -13,7 +13,7 @@
   --os-text:#e2e4ef; --os-muted:#6b6f85; --os-dim:#3a3d50;
   --os-accent:#7c6dfa; --os-accent-rgb:124,109,250; --os-accent2:#f47aff;
   --os-green:#4ade80; --os-red:#f87171; --os-yellow:#fbbf24;
-  --taskbar-h:48px; --titlebar-h:36px;
+  --taskbar-h:72px; --titlebar-h:36px;
   --font:'Geist',system-ui,sans-serif; --mono:'Geist Mono',monospace;
   --radius:10px; --radius-lg:16px; --radius-xl:22px;
   --shadow-window:0 32px 80px rgba(0,0,0,0.65),0 0 0 1px rgba(255,255,255,0.06);
@@ -23,7 +23,7 @@
 html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-size:13px;color:var(--os-text);background:#000;-webkit-font-smoothing:antialiased}
 
 /* DESKTOP */
-#desktop{position:relative;width:100vw;height:calc(100vh - var(--taskbar-h));overflow:hidden;user-select:none;background:#0d0e12}
+#desktop{position:relative;width:100vw;height:100vh;overflow:hidden;user-select:none;background:#0d0e12;padding-top:26px}
 #wallpaper{position:absolute;inset:0;z-index:0;background:#0d0e12;transition:background 0.6s ease}
 #wallpaper.wp-aurora{background:radial-gradient(ellipse at 20% 50%,#0d1f3c 0%,transparent 55%),radial-gradient(ellipse at 80% 20%,#1a0d3c 0%,transparent 50%),radial-gradient(ellipse at 60% 80%,#0d2a1f 0%,transparent 50%),#080a10}
 #wallpaper.wp-sunset{background:radial-gradient(ellipse at 50% 80%,#2d0a1a 0%,transparent 60%),radial-gradient(ellipse at 20% 30%,#1a0d00 0%,transparent 50%),radial-gradient(ellipse at 80% 60%,#1a0a2d 0%,transparent 50%),#0a0508}
@@ -57,20 +57,37 @@ body.has-maximized #windowLayer>.os-window:not(.maximized){pointer-events:none}
 .desk-icon-rename{width:calc(var(--desk-icon-size) - 10px);font-size:11px;background:rgba(13,14,20,0.95);border:1px solid rgba(var(--os-accent-rgb),0.5);border-radius:4px;color:var(--os-text);text-align:center;padding:2px 4px;outline:none;font-family:var(--font);display:none}
 .desk-icon.folder .desk-icon-img{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.25);font-size:calc(var(--desk-icon-size)*0.32)}
 
+/* TOP BAR */
+#topBar{position:fixed;top:0;left:0;right:0;z-index:9999;height:28px;background:rgba(18,18,28,0.88);backdrop-filter:blur(24px) saturate(1.8);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-family:var(--font);font-size:12px;color:rgba(255,255,255,0.92);letter-spacing:0.01em;transition:transform 0.3s ease,opacity 0.3s ease}
+#topBar.topbar-hidden{transform:translateY(-100%);opacity:0;pointer-events:none}
+#topBarCenter{position:absolute;left:50%;transform:translateX(-50%);font-weight:500;font-size:12.5px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+#topBarRight{display:flex;align-items:center;gap:8px;font-size:12px}
+.tb-stat{display:flex;align-items:center;gap:3px}
+.tb-batt-wrap{display:flex;align-items:center;gap:4px;font-size:11.5px;color:rgba(255,255,255,0.85)}
+.tb-batt-icon{width:20px;height:10px;border:1.5px solid rgba(255,255,255,0.7);border-radius:2.5px;position:relative;display:flex;align-items:center;padding:1px}
+.tb-batt-icon::after{content:'';position:absolute;right:-3.5px;top:2.5px;width:2px;height:5px;background:rgba(255,255,255,0.7);border-radius:0 1.5px 1.5px 0}
+.tb-batt-fill{height:100%;background:#fff;border-radius:1px;transition:width 0.4s}
+.tb-batt-fill.low{background:var(--os-red)}
+.tb-top-sep{width:1px;height:12px;background:rgba(255,255,255,0.15);margin:0 2px}
+.tb-top-icon{width:16px;height:16px;display:flex;align-items:center;justify-content:center;opacity:0.82;cursor:pointer;border-radius:3px;transition:opacity 0.15s}
+.tb-top-icon:hover{opacity:1}
+.tb-top-icon svg{width:13px;height:13px}
+
 /* TASKBAR */
-#taskbar{position:fixed;bottom:0;left:0;right:0;z-index:9999;height:var(--taskbar-h);background:rgba(10,11,18,0.88);border-top:1px solid var(--os-border);backdrop-filter:blur(28px) saturate(1.6);display:flex;align-items:center;gap:4px;padding:0 8px;transition:transform 0.25s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease}
-#taskbar.taskbar-hidden{transform:translateY(100%);opacity:0;pointer-events:none}
+:root{--taskbar-h:72px}
+#taskbar{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:9999;height:var(--taskbar-h);background:var(--taskbar-bg,rgba(8,9,14,0.86));border:1px solid rgba(255,255,255,0.10);border-radius:18px;backdrop-filter:blur(60px) saturate(2.8) brightness(1.0);-webkit-backdrop-filter:blur(60px) saturate(2.8) brightness(1.0);display:flex;align-items:center;gap:0;padding:0 10px;transition:transform 0.28s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease,background 1.2s ease;box-shadow:0 20px 60px rgba(0,0,0,0.8),0 1px 0 rgba(255,255,255,0.07) inset,inset 0 0 0 0.5px rgba(255,255,255,0.03)}
+#taskbar.taskbar-hidden{transform:translateX(-50%) translateY(120%);opacity:0;pointer-events:none}
 #taskbarPeekZone{position:fixed;bottom:0;left:0;right:0;height:6px;z-index:9998;display:none}
 body.taskbar-autohide #taskbarPeekZone{display:block}
 body.taskbar-autohide #desktop{height:100vh}
-#startBtn{width:38px;height:38px;border-radius:var(--radius);background:rgba(var(--os-accent-rgb),0.15);border:1px solid rgba(var(--os-accent-rgb),0.25);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-right:4px;transition:all 0.15s}
-#startBtn:hover{background:rgba(var(--os-accent-rgb),0.28);border-color:rgba(var(--os-accent-rgb),0.5);transform:scale(1.08)}
-#startBtn:active{transform:scale(0.94)}
-#startBtn svg{width:18px;height:18px;opacity:0.9}
-.tb-divider{width:1px;height:24px;background:var(--os-border);margin:0 4px;flex-shrink:0}
-#taskbarApps{display:flex;align-items:center;gap:3px;flex:1;overflow:hidden}
-.tb-app{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:42px;height:42px;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;flex-shrink:0;transition:all 0.15s;gap:3px;contain:layout}
-.tb-exit-fs{position:absolute;top:-28px;left:50%;transform:translateX(-50%);background:rgba(var(--os-accent-rgb),0.9);color:#fff;font-size:11px;border-radius:5px;padding:2px 7px;white-space:nowrap;pointer-events:all;cursor:pointer;border:1px solid rgba(var(--os-accent-rgb),0.5);backdrop-filter:blur(8px);transition:opacity 0.12s;z-index:10010}
+#startBtn{width:50px;height:58px;border-radius:16px;background:transparent;border:1px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-right:0;transition:all 0.2s cubic-bezier(0.34,1.5,0.64,1);position:relative}
+#startBtn:hover{background:rgba(255,255,255,0.10);border-color:rgba(255,255,255,0.12);transform:scale(1.15) translateY(-3px)}
+#startBtn:active{transform:scale(0.92)}
+#startBtn svg{width:22px;height:22px;opacity:0.75}
+#startBtn:hover svg{opacity:1}
+.tb-divider{width:1px;height:32px;background:rgba(255,255,255,0.12);margin:0 8px;flex-shrink:0}
+#taskbarApps{display:flex;align-items:center;gap:2px;overflow:hidden}
+.tb-exit-fs{position:absolute;top:-32px;left:50%;transform:translateX(-50%);background:rgba(var(--os-accent-rgb),0.9);color:#fff;font-size:11px;border-radius:5px;padding:2px 7px;white-space:nowrap;pointer-events:all;cursor:pointer;border:1px solid rgba(var(--os-accent-rgb),0.5);backdrop-filter:blur(8px);transition:opacity 0.12s;z-index:10010}
 .tb-exit-fs:hover{background:var(--os-accent)}
 #tbPreview{position:fixed;z-index:10020;background:rgba(13,14,20,0.97);border:1px solid var(--os-border2);border-radius:10px;backdrop-filter:blur(20px);box-shadow:0 12px 40px rgba(0,0,0,0.6);pointer-events:none;overflow:hidden;width:220px;transition:opacity 0.15s,transform 0.15s;opacity:0;transform:translateY(6px);bottom:calc(var(--taskbar-h) + 10px)}
 #tbPreview.visible{opacity:1;transform:translateY(0)}
@@ -86,11 +103,47 @@ body.taskbar-autohide #desktop{height:100vh}
 .tbprev-btn{flex:1;height:24px;border-radius:5px;font-size:10.5px;font-weight:500;cursor:pointer;border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-muted);font-family:var(--font);transition:all 0.12s}
 .tbprev-btn:hover{background:var(--os-surface2);color:var(--os-text)}
 .tbprev-btn.danger:hover{background:rgba(248,113,113,0.15);border-color:rgba(248,113,113,0.3);color:var(--os-red)}
-.tb-app:hover{background:var(--os-surface);border-color:var(--os-border);transform:scale(1.12) translateY(-2px)}
-.tb-app:active{transform:scale(0.94)}
-.tb-app.active{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.3)}
-.tb-app.running::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--os-accent);box-shadow:0 0 5px rgba(var(--os-accent-rgb),0.7)}
-.tb-app-icon{width:24px;height:24px;border-radius:6px;object-fit:cover}
+.tb-app{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:52px;height:56px;border-radius:14px;border:1px solid transparent;cursor:pointer;flex-shrink:0;transition:all 0.18s cubic-bezier(0.34,1.5,0.64,1);gap:0;contain:layout}
+.tb-app:hover{background:rgba(255,255,255,0.10);border-color:rgba(255,255,255,0.12);transform:scale(1.20) translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,0.5)}
+.tb-app:active{transform:scale(0.90)}
+.tb-app.active{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.16)}
+.tb-app.running::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.95);box-shadow:0 0 5px rgba(255,255,255,0.7)}
+.tb-app.dragging-tb{opacity:0.5;transform:scale(0.95)!important}
+.tb-app-icon{width:36px;height:36px;border-radius:9px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.5)}
+#appsGridBtn{width:52px;height:58px;border-radius:16px;background:transparent;border:1px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin:0 2px 0 0;transition:all 0.22s cubic-bezier(0.34,1.5,0.64,1);position:relative}
+#appsGridBtn:hover{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.12);transform:scale(1.12) translateY(-3px)}
+#appsGridBtn .novos-globe{width:28px;height:28px;transition:filter 0.2s,opacity 0.2s;opacity:0.8;filter:drop-shadow(0 0 5px rgba(var(--os-accent-rgb),0.3))}
+#appsGridBtn:hover .novos-globe{opacity:1;filter:drop-shadow(0 0 10px rgba(var(--os-accent-rgb),0.6))}
+
+/* LAUNCHER OVERLAY */
+#launcherOverlay{position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,0.55);backdrop-filter:blur(18px);display:none;align-items:flex-end;justify-content:center;padding-bottom:calc(var(--taskbar-h) + 24px)}
+#launcherOverlay.open{display:flex;animation:fadeIn 0.2s ease}
+#launcherPanel{width:680px;max-width:92vw;background:rgba(10,11,18,0.97);border:1px solid rgba(255,255,255,0.13);border-radius:20px;backdrop-filter:blur(40px);box-shadow:0 32px 80px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.04);overflow:hidden;animation:launchPanelIn 0.22s cubic-bezier(0.34,1.2,0.64,1) both}
+@keyframes launchPanelIn{from{opacity:0;transform:translateY(18px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.lp-search-wrap{padding:16px 18px 12px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:10px}
+.lp-search-icon{color:rgba(255,255,255,0.35);flex-shrink:0}
+#lpSearch{flex:1;background:transparent;border:none;outline:none;font-family:var(--font);font-size:15px;color:var(--os-text);caret-color:var(--os-accent)}
+#lpSearch::placeholder{color:rgba(255,255,255,0.25)}
+.lp-section-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:var(--os-dim);padding:10px 18px 6px}
+.lp-pinned-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding:0 12px 10px}
+.lp-app{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:10px;cursor:pointer;border:1px solid transparent;transition:all 0.14s}
+.lp-app:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.1)}
+.lp-app-icon{width:40px;height:40px;border-radius:10px;object-fit:cover;font-size:24px;display:flex;align-items:center;justify-content:center}
+.lp-app-label{font-size:10.5px;color:var(--os-text);text-align:center;line-height:1.3;word-break:break-word;max-width:64px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lp-recents{display:flex;flex-direction:column;gap:2px;padding:0 12px 14px}
+.lp-recent-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background 0.12s}
+.lp-recent-item:hover{background:rgba(255,255,255,0.07)}
+.lp-recent-icon{width:28px;height:28px;border-radius:7px;object-fit:cover;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lp-recent-name{font-size:12.5px;color:var(--os-text);flex:1}
+.lp-recent-cat{font-size:10px;color:var(--os-muted);background:rgba(255,255,255,0.06);border-radius:4px;padding:1px 6px}
+.lp-footer{padding:10px 18px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:8px}
+.lp-footer-btn{flex:1;height:32px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--os-muted);font-family:var(--font);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.14s}
+.lp-footer-btn:hover{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.3);color:var(--os-accent)}
+#quickMenu{position:absolute;bottom:calc(100% + 14px);left:50%;transform:translateX(-50%) translateY(6px) scale(0.95);width:210px;background:rgba(13,15,24,0.97);border:1px solid rgba(255,255,255,0.12);border-radius:16px;backdrop-filter:blur(40px) saturate(1.8);box-shadow:0 20px 60px rgba(0,0,0,0.7),0 1px 0 rgba(255,255,255,0.08) inset;padding:6px;opacity:0;pointer-events:none;transition:all 0.2s cubic-bezier(0.34,1.3,0.64,1)}
+#quickMenu.open{transform:translateX(-50%) translateY(0) scale(1);opacity:1;pointer-events:all}
+.qm-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;cursor:pointer;font-size:12.5px;color:var(--os-text);transition:background 0.12s}
+.qm-item:hover{background:rgba(var(--os-accent-rgb),0.12)}
+.qm-item svg{width:16px;height:16px;flex-shrink:0;color:var(--os-muted)}
 #taskbarRight{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
 #tbClock{font-family:var(--mono);font-size:11.5px;color:var(--os-muted);padding:0 10px;border-left:1px solid var(--os-border);line-height:1.2;text-align:right}
 #tbClock span{display:block;color:var(--os-text);font-size:12px}
@@ -417,25 +470,82 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
   <div id="windowLayer"></div>
 </div>
 
+<div id="topBar">
+  <div id="topBarLeft" style="display:flex;align-items:center;gap:10px;min-width:120px">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg>
+    <span style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.9)">NovOS</span>
+  </div>
+  <div id="topBarCenter">
+    <span id="tbTopDate" style="color:rgba(255,255,255,0.75);font-size:12px"></span>
+    <span style="color:rgba(255,255,255,0.3)">·</span>
+    <span id="tbTopTime" style="font-weight:600;font-size:12.5px"></span>
+  </div>
+  <div id="topBarRight">
+    <div class="tb-batt-wrap" id="tbBatteryWrap" style="display:none">
+      <div class="tb-batt-icon"><div class="tb-batt-fill" id="tbBatteryFill" style="width:100%"></div></div>
+      <span id="tbBatteryPct" style="font-size:11.5px;color:rgba(255,255,255,0.8)">100%</span>
+    </div>
+    <div class="tb-top-sep"></div>
+    <div class="tb-top-icon" title="WiFi">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>
+    </div>
+    <div class="tb-top-icon" title="Volume">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+    </div>
+  </div>
+</div>
+
 <div id="taskbarPeekZone" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()"></div>
+<div id="topBarPeekZone" style="position:fixed;top:0;left:0;right:0;height:4px;z-index:10000;display:none" onmouseenter="document.getElementById('topBar').classList.remove('topbar-hidden')" onmouseleave="document.getElementById('topBar').classList.add('topbar-hidden')"></div>
 
 <!-- TASKBAR -->
 <div id="taskbar" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()">
-  <div id="startBtn" onclick="OS.toggleStart()" title="Applications (Tab)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(var(--os-accent-rgb),0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg>
+  <div id="taskbarLeft" style="display:flex;align-items:center;gap:2px;flex:1;justify-content:flex-start">
+    <div id="taskbarUserApps" style="display:flex;align-items:center;gap:2px"></div>
   </div>
-  <div class="tb-divider"></div>
-  <div id="taskbarApps"></div>
-  <div id="taskbarRight">
-    <div class="tb-tray-btn" onclick="TM.open()" title="Task Manager">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="6" height="6" rx="1"/><rect x="9" y="3" width="6" height="6" rx="1"/><rect x="16" y="3" width="6" height="6" rx="1"/><rect x="2" y="10" width="6" height="11" rx="1"/><rect x="9" y="10" width="6" height="5" rx="1"/><rect x="16" y="10" width="6" height="8" rx="1"/></svg>
+  <div style="display:flex;align-items:center;gap:2px">
+    <div id="appsGridBtn" onclick="LAUNCHER.toggle(event)" title="NovOS Menu" style="display:none">
+      <svg class="novos-globe" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M12 2a10 10 0 0 1 0 20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M2 12h20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <div id="quickMenu">
+        <div class="qm-item" onclick="LAUNCHER.close();OS.openAppLibrary()">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="2" width="7" height="7" rx="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5"/></svg>
+          All Apps
+        </div>
+        <div class="qm-item" onclick="TM.open()">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="8" y="2" width="5" height="5" rx="1"/><rect x="14" y="2" width="4" height="5" rx="1"/><rect x="2" y="9" width="5" height="9" rx="1"/><rect x="8" y="9" width="5" height="5" rx="1"/><rect x="14" y="9" width="4" height="7" rx="1"/></svg>
+          Task Manager
+        </div>
+        <div class="qm-item" onclick="OS.openSettings()">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="10" cy="10" r="2.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42"/></svg>
+          Settings
+        </div>
+        <div class="ctx-sep"></div>
+        <div class="qm-item" onclick="OS.openFileExplorer()">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 5a2 2 0 012-2h3.586a1 1 0 01.707.293L10.414 4.5A1 1 0 0011.121 5H15a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"/></svg>
+          File Explorer
+        </div>
+        <div class="qm-item" onclick="OS.openBrowser()">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="10" cy="10" r="8"/><path d="M10 2a11.5 11.5 0 010 16M10 2a11.5 11.5 0 000 16M2 10h16"/></svg>
+          Aspen Browser
+        </div>
+      </div>
     </div>
-    <div class="tb-tray-btn" onclick="OS.openSettings()" title="Settings">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </div>
-    <div id="tbClock">
-      <span id="tbTime">00:00</span>
-      <span id="tbDate" style="font-size:10px;color:var(--os-muted)">Mon, Jan 1</span>
+    <div class="tb-divider" id="tbSysDivider"></div>
+    <div id="taskbarApps"></div>
+  </div>
+  <div style="flex:1;display:flex;justify-content:flex-end;align-items:center;gap:4px;padding-right:4px">
+    <div id="novosBtn" onclick="LAUNCHER.toggle(event)" title="NovOS" style="width:48px;height:56px;border-radius:14px;background:transparent;border:1px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.18s cubic-bezier(0.34,1.5,0.64,1);flex-shrink:0;color:rgba(255,255,255,0.8)" onmouseover="this.style.background='rgba(255,255,255,0.09)';this.style.borderColor='rgba(255,255,255,0.12)';this.style.transform='scale(1.18) translateY(-4px)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.borderColor='transparent';this.style.transform='';this.style.color='rgba(255,255,255,0.8)'">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="26" height="26" style="filter:drop-shadow(0 0 6px rgba(var(--os-accent-rgb),0.5))">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.7"/>
+        <path d="M12 2a10 10 0 0 1 0 20" stroke="rgba(var(--os-accent-rgb),1)" stroke-width="1.7" stroke-linecap="round"/>
+        <path d="M2 12h20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        <path d="M12 2C9.5 5.5 8 8.6 8 12s1.5 6.5 4 10" stroke="rgba(var(--os-accent-rgb),0.6)" stroke-width="1.1" stroke-linecap="round"/>
+        <path d="M4.5 7.5C6.8 8.7 9.3 9.3 12 9.3s5.2-.6 7.5-1.8M4.5 16.5C6.8 15.3 9.3 14.7 12 14.7s5.2.6 7.5 1.8" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.45"/>
+      </svg>
     </div>
   </div>
 </div>
@@ -451,6 +561,32 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
   <div class="sm-footer">
     <button class="sm-footer-btn" onclick="OS.openAppLibrary()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>All Apps</button>
     <button class="sm-footer-btn" onclick="OS.addShortcutOpen()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add App</button>
+  </div>
+</div>
+
+<!-- LAUNCHER OVERLAY -->
+<div id="launcherOverlay" onclick="LAUNCHER.bgClick(event)">
+  <div id="launcherPanel">
+    <div class="lp-search-wrap">
+      <svg class="lp-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="lpSearch" placeholder="Search apps and games…" oninput="LAUNCHER.search(this.value)" autocomplete="off">
+      <svg onclick="LAUNCHER.close()" style="cursor:pointer;opacity:0.4;flex-shrink:0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+    <div id="lpBody"></div>
+    <div class="lp-footer">
+      <button class="lp-footer-btn" onclick="LAUNCHER.close();OS.openAppLibrary()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        All Apps
+      </button>
+      <button class="lp-footer-btn" onclick="LAUNCHER.close();OS.openSettings()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        Settings
+      </button>
+      <button class="lp-footer-btn" onclick="LAUNCHER.close();OS.openFileExplorer()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg>
+        Files
+      </button>
+    </div>
   </div>
 </div>
 
@@ -980,7 +1116,14 @@ const WM={
     const el=document.getElementById(id);if(!el)return;
     this.windows[id].maximized=true;
     this.windows[id].prevRect={top:el.style.top,left:el.style.left,width:el.style.width,height:el.style.height};
-    el.classList.add('maximized');TB.updateAutoHide();
+    el.classList.add('maximized');
+    // Auto-minimize all other non-minimized windows for performance
+    Object.keys(this.windows).forEach(wid=>{
+      if(wid!==id&&this.windows[wid]&&!this.windows[wid].minimized){
+        this.minimize(wid);
+      }
+    });
+    TB.updateAutoHide();
   },
   restoreMax(id){
     const el=document.getElementById(id);if(!el)return;
@@ -1077,7 +1220,16 @@ const WM={
 const TB={
   pinned:[],running:{},_peekTimeout:null,_hidden:false,
   init(){
-    try{this.pinned=JSON.parse(localStorage.getItem('novos_pinned')||'[]');}catch{this.pinned=[];}
+    try{this.pinned=JSON.parse(localStorage.getItem('novos_pinned')||'null');}catch{this.pinned=null;}
+    if(!this.pinned){
+      // Default pinned apps on first run
+      this.pinned=[
+        {name:'Settings',url:'__settings__',icon:''},
+        {name:'Task Manager',url:'__tm__',icon:''},
+        {name:'App Library',url:'__library__',icon:''},
+      ];
+      this.savePinned();
+    }
     this.render();
   },
   savePinned(){localStorage.setItem('novos_pinned',JSON.stringify(this.pinned));},
@@ -1091,60 +1243,189 @@ const TB={
   updateAutoHide(){
     const setting=SETTINGS.get('hideTaskbarFullscreen'),hasMax=WM.hasMaximizedWindow();
     const taskbar=document.getElementById('taskbar');
+    const topBar=document.getElementById('topBar');
     document.body.classList.toggle('has-maximized',hasMax);
-    if(setting&&hasMax){document.body.classList.add('taskbar-autohide');taskbar.classList.add('taskbar-hidden');this._hidden=true;}
-    else{document.body.classList.remove('taskbar-autohide');taskbar.classList.remove('taskbar-hidden');this._hidden=false;}
+    const topPeek=document.getElementById('topBarPeekZone');
+    if(setting&&hasMax){
+      document.body.classList.add('taskbar-autohide');
+      taskbar.classList.add('taskbar-hidden');
+      this._hidden=true;
+      if(topBar)topBar.classList.add('topbar-hidden');
+      if(topPeek)topPeek.style.display='block';
+    }else{
+      document.body.classList.remove('taskbar-autohide');
+      taskbar.classList.remove('taskbar-hidden');
+      this._hidden=false;
+      if(topBar)topBar.classList.remove('topbar-hidden');
+      if(topPeek)topPeek.style.display='none';
+    }
   },
   peekShow(){if(!this._hidden)return;clearTimeout(this._peekTimeout);document.getElementById('taskbar').classList.remove('taskbar-hidden');},
   peekHide(){if(!this._hidden)return;clearTimeout(this._peekTimeout);this._peekTimeout=setTimeout(()=>{if(this._hidden)document.getElementById('taskbar').classList.add('taskbar-hidden');},400);},
   _tbIconHtml(app){
-    // System apps with no icon get their emoji
-    const systemEmojis={'__browser__':'🌐','__explorer__':'📁','__settings__':'⚙️','__library__':'📚','__folder__':'📁','__photo__':'🖼','__video__':'🎬','__audio__':'🎵','__html__':'🌐','__tm__':'📊'};
-    if(systemEmojis[app.url]){
-      return `<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:17px">${systemEmojis[app.url]}</div>`;
+    // Clean, refined system icons — no emojis, consistent stroke style
+    const systemIcons={
+      '__browser__':{
+        color:'#60a5fa',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <circle cx="12" cy="12" r="9.5" stroke-opacity="0.9"/>
+          <path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/>
+          <path d="M4 7.5h16M4 16.5h16" stroke-opacity="0.5"/>
+        </svg>`
+      },
+      '__explorer__':{
+        color:'#fbbf24',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+          <line x1="3" y1="12" x2="21" y2="12" stroke-opacity="0.45"/>
+        </svg>`
+      },
+      '__settings__':{
+        color:'#94a3b8',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
+          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+        </svg>`
+      },
+      '__library__':{
+        color:'#a78bfa',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+        </svg>`
+      },
+      '__folder__':{
+        color:'#fbbf24',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+        </svg>`
+      },
+      '__photo__':{
+        color:'#34d399',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <rect x="3" y="3" width="18" height="18" rx="2.5"/>
+          <circle cx="8.5" cy="8.5" r="1.8" fill="currentColor" stroke="none" opacity="0.7"/>
+          <path d="M21 15.5l-5.5-5.5L5 21"/>
+        </svg>`
+      },
+      '__video__':{
+        color:'#f87171',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <rect x="2" y="5.5" width="14" height="13" rx="2"/>
+          <path d="M16 9.5l6-3.5v12l-6-3.5V9.5z"/>
+        </svg>`
+      },
+      '__audio__':{
+        color:'#f472b6',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <path d="M9 18V5l12-2v13"/>
+          <circle cx="6" cy="18" r="3"/>
+          <circle cx="18" cy="16" r="3"/>
+        </svg>`
+      },
+      '__html__':{
+        color:'#60a5fa',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <polyline points="16 18 22 12 16 6"/>
+          <polyline points="8 6 2 12 8 18"/>
+        </svg>`
+      },
+      '__tm__':{
+        color:'#4ade80',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <rect x="2" y="3" width="20" height="14" rx="2"/>
+          <path d="M8 21h8M12 17v4"/>
+          <path d="M7 8v4M11 6v6M15 9v3M19 7v5" stroke-opacity="0.9"/>
+        </svg>`
+      },
+    };
+
+    if(systemIcons[app.url]){
+      const {color,svg}=systemIcons[app.url];
+      return `<div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:${color};filter:drop-shadow(0 0 6px ${color}44)">${svg}</div>`;
     }
-    const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
-    if(isEmoji)return `<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:17px">${app.icon}</div>`;
+
+    // For image icons — use a styled rounded square
     const iconSrc=app.icon||(app.url&&!app.url.startsWith('__')?`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`:'');
-    return iconSrc?`<img class="tb-app-icon" src="${iconSrc}" onerror="this.style.display='none'" alt="">`:`<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:17px">🖥</div>`;
+    if(iconSrc){
+      return `<img class="tb-app-icon" src="${iconSrc}" onerror="this.outerHTML='<div style=\\'width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center\\'><svg viewBox=\\'0 0 24 24\\' width=\\'18\\' height=\\'18\\' fill=\\'none\\' stroke=\\'rgba(255,255,255,0.4)\\' stroke-width=\\'1.7\\'><rect x=\\'3\\' y=\\'3\\' width=\\'18\\' height=\\'18\\' rx=\\'2\\'/></svg></div>'" alt="">`;
+    }
+    return `<div style="width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>`;
   },
-  render(){
-    const cont=document.getElementById('taskbarApps');cont.innerHTML='';
-    this.pinned.forEach(app=>{
-      const btn=document.createElement('div');btn.className='tb-app';
-      const runId=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
-      if(runId)btn.classList.add('running');
-      btn.innerHTML=this._tbIconHtml(app);
-      btn.title=app.name;
-      btn.onclick=()=>{const wid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);if(wid)WM.toggleWindow(wid);else OS.launch(app);};
-      btn.addEventListener('mouseenter',()=>{
-        const wid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
-        if(wid&&WM.windows[wid]&&WM.windows[wid].maximized&&!WM.windows[wid].minimized){let x=btn.querySelector('.tb-exit-fs');if(!x){x=document.createElement('div');x.className='tb-exit-fs';x.title='Exit Fullscreen';x.textContent='⊠';x.onclick=(e)=>{e.stopPropagation();WM.restoreMax(wid);};btn.appendChild(x);}}
-        else{const x=btn.querySelector('.tb-exit-fs');if(x)x.remove();}
-        if(wid)TBP.show(btn,wid);
-      });
-      btn.addEventListener('mouseleave',()=>{setTimeout(()=>{const x=btn.querySelector('.tb-exit-fs');if(x)x.remove();},200);TBP.hide();});
-      btn.addEventListener('contextmenu',ev=>{ev.preventDefault();CTX.show(ev.clientX,ev.clientY,[{label:'Open',icon:'▶',fn:()=>OS.launch(app)},{label:'Unpin from Taskbar',icon:'−',fn:()=>this.unpin(app.url)}]);});
-      cont.appendChild(btn);
+  // System URLs that always live on the right side of the taskbar
+  _isSystemUrl(url){
+    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__photo__','__video__','__audio__','__html__'].includes(url);
+  },
+
+  _makeBtn(app,wid,isPinned){
+    const btn=document.createElement('div');
+    btn.className='tb-app';
+    if(wid)btn.classList.add('running');
+    btn.innerHTML=this._tbIconHtml(app);
+    btn.title=app.name;
+    btn.onclick=()=>{
+      const curWid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
+      if(curWid)WM.toggleWindow(curWid);else OS.launchFromTaskbar(app);
+    };
+    btn.addEventListener('mouseenter',()=>{
+      const curWid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
+      if(curWid&&WM.windows[curWid]&&WM.windows[curWid].maximized&&!WM.windows[curWid].minimized){
+        let x=btn.querySelector('.tb-exit-fs');
+        if(!x){x=document.createElement('div');x.className='tb-exit-fs';x.title='Exit Fullscreen';x.textContent='⊠';x.onclick=(e)=>{e.stopPropagation();WM.restoreMax(curWid);};btn.appendChild(x);}
+      }else{const x=btn.querySelector('.tb-exit-fs');if(x)x.remove();}
+      if(curWid)TBP.show(btn,curWid);
     });
+    btn.addEventListener('mouseleave',()=>{setTimeout(()=>{const x=btn.querySelector('.tb-exit-fs');if(x)x.remove();},200);TBP.hide();});
+    if(isPinned){
+      btn.addEventListener('contextmenu',ev=>{ev.preventDefault();CTX.show(ev.clientX,ev.clientY,[{label:'Open',icon:'▶',fn:()=>OS.launch(app)},{label:'Unpin from Taskbar',icon:'−',fn:()=>this.unpin(app.url)}]);});
+    }else{
+      btn.addEventListener('contextmenu',ev=>{ev.preventDefault();CTX.show(ev.clientX,ev.clientY,[{label:'Pin to Taskbar',icon:'+',fn:()=>this.pin(app)},{label:'Close',icon:'×',fn:()=>WM.closeWindow(wid),danger:true}]);});
+    }
+    return btn;
+  },
+
+  render(){
+    const sysRight=document.getElementById('taskbarApps');
+    const userLeft=document.getElementById('taskbarUserApps');
+    const divider=document.getElementById('tbSysDivider');
+    if(!sysRight||!userLeft)return;
+    sysRight.innerHTML='';
+    userLeft.innerHTML='';
+
+    // Pinned apps — split by type
+    this.pinned.forEach(app=>{
+      const runId=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
+      const btn=this._makeBtn(app,runId||null,true);
+      if(this._isSystemUrl(app.url)){
+        sysRight.appendChild(btn);
+      }else{
+        userLeft.appendChild(btn);
+      }
+    });
+
+    // Running but not pinned — user apps go left, system go right
     Object.entries(this.running).forEach(([id,{app,btnId}])=>{
       if(!this.pinned.find(p=>p.url===app.url)){
         let btn=document.getElementById(btnId);
         if(!btn){
-          btn=document.createElement('div');btn.id=btnId;btn.className='tb-app running';
-          btn.innerHTML=this._tbIconHtml(app);
-          btn.title=app.name;btn.onclick=()=>WM.toggleWindow(id);
-          btn.addEventListener('mouseenter',()=>{
-            if(WM.windows[id]&&WM.windows[id].maximized&&!WM.windows[id].minimized){let x=btn.querySelector('.tb-exit-fs');if(!x){x=document.createElement('div');x.className='tb-exit-fs';x.title='Exit Fullscreen';x.textContent='⊠';x.onclick=(e)=>{e.stopPropagation();WM.restoreMax(id);};btn.appendChild(x);}}
-            else{const x=btn.querySelector('.tb-exit-fs');if(x)x.remove();}
-            TBP.show(btn,id);
-          });
-          btn.addEventListener('mouseleave',()=>{setTimeout(()=>{const x=btn.querySelector('.tb-exit-fs');if(x)x.remove();},200);TBP.hide();});
-          btn.addEventListener('contextmenu',ev=>{ev.preventDefault();CTX.show(ev.clientX,ev.clientY,[{label:'Pin to Taskbar',icon:'+',fn:()=>this.pin(app)},{label:'Close',icon:'×',fn:()=>WM.closeWindow(id),danger:true}]);});
-          cont.appendChild(btn);
+          btn=this._makeBtn(app,id,false);
+          btn.id=btnId;
+          btn.classList.add('running');
+        }
+        if(this._isSystemUrl(app.url)){
+          if(!sysRight.contains(btn))sysRight.appendChild(btn);
+        }else{
+          if(!userLeft.contains(btn))userLeft.appendChild(btn);
         }
       }
     });
+
+    // Show/hide the divider between system and user sections
+    const hasSys=sysRight.children.length>0;
+    const hasUser=userLeft.children.length>0;
+    if(divider)divider.style.display=(hasSys&&hasUser)?'':'none';
   },
   addWindow(id,app){this.running[id]={app,btnId:'tbw_'+id};this.render();this.updateAutoHide();},
   removeWindow(id){delete this.running[id];this.render();},
@@ -1408,9 +1689,11 @@ const OS={
 
   renderClock(){
     const n=new Date();
-    document.getElementById('tbTime').textContent=[n.getHours(),n.getMinutes()].map(v=>String(v).padStart(2,'0')).join(':');
     const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    document.getElementById('tbDate').textContent=days[n.getDay()]+', '+months[n.getMonth()]+' '+n.getDate();
+    const timeEl=document.getElementById('tbTopTime');
+    const dateEl=document.getElementById('tbTopDate');
+    if(timeEl){let h=n.getHours(),m=n.getMinutes();const ampm=h>=12?'PM':'AM';h=h%12||12;timeEl.textContent=h+':'+String(m).padStart(2,'0')+' '+ampm;}
+    if(dateEl){dateEl.textContent=days[n.getDay()]+' '+months[n.getMonth()]+' '+n.getDate();}
   },
 
   /* ─── Desktop rendering ─────────────────────────────────────── */
@@ -1419,12 +1702,13 @@ const OS={
     cont.innerHTML='';
     cont.style.visibility=SETTINGS.get('showIcons')?'':'hidden';
 
-    // System icon definitions
-    const systemIcons={
-      '__library__':{emoji:'📚',label:'App Library'},
-      '__explorer__':{emoji:'📁',label:'File Explorer'},
-      '__settings__':{emoji:'⚙️',label:'Settings'},
-      '__browser__':{emoji:'🌐',label:'Aspen Browser'},
+    // System icon SVGs for desktop — GNOME-style flat colored icons
+    const systemSVGs={
+      '__library__':{color:'#a78bfa',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>`},
+      '__explorer__':{color:'#fbbf24',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><line x1="3" y1="12" x2="21" y2="12" opacity="0.4"/></svg>`},
+      '__settings__':{color:'#94a3b8',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>`},
+      '__browser__':{color:'#60a5fa',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/><path d="M4 7.5h16M4 16.5h16" opacity="0.4"/></svg>`},
+      '__folder__':{color:'#fbbf24',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>`},
     };
 
     this.desktopItems.forEach((item)=>{
@@ -1439,16 +1723,18 @@ const OS={
       el.style.top=(item.y||12)+'px';
 
       if(isFolder){
-        el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;font-size:26px">📁</div><div class="desk-icon-label">${item.name}</div>`;
+        const si=systemSVGs['__folder__'];
+        el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;color:${si.color};background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.2)">${si.svg}</div><div class="desk-icon-label">${item.name}</div>`;
         el.addEventListener('dblclick',()=>this.openFolder(item));
-      }else if(isSystem&&systemIcons[item.url]){
-        const si=systemIcons[item.url];
-        el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;font-size:26px">${si.emoji}</div><div class="desk-icon-label">${item.name}</div>`;
+      }else if(isSystem&&systemSVGs[item.url]){
+        const si=systemSVGs[item.url];
+        el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;color:${si.color};background:${si.color}18;border-color:${si.color}30">${si.svg}</div><div class="desk-icon-label">${item.name}</div>`;
         el.addEventListener('dblclick',()=>this[item.systemAction]&&this[item.systemAction]());
       }else{
         const isEmoji=item.icon&&[...item.icon].length<=2&&!item.icon.startsWith('http')&&!item.icon.startsWith('data:');
         if(isEmoji){
-          el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;font-size:28px">${item.icon}</div><div class="desk-icon-label">${item.name}</div>`;
+          // Replace emojis with a generic colored icon
+          el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;background:rgba(var(--os-accent-rgb),0.1);border-color:rgba(var(--os-accent-rgb),0.2);color:rgba(var(--os-accent-rgb),1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="28" height="28" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8M12 8v8" opacity="0.6"/></svg></div><div class="desk-icon-label">${item.name}</div>`;
         }else{
           const icon=item.icon||`https://www.google.com/s2/favicons?sz=64&domain=${item.url}`;
           el.innerHTML=`<img class="desk-icon-img" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(item.url||'')}';" alt=""><div class="desk-icon-label">${item.name}</div>`;
@@ -1713,6 +1999,20 @@ const OS={
   closeConfirm(){document.getElementById('confirmDialog').classList.remove('open');},
   _doLaunch(app){if(app.isPVZ){PVZ.tryLaunch(app.name);return;}WM.open(app);},
 
+  launchFromTaskbar(app){
+    const sysMap={
+      '__settings__':()=>this.openSettings(),
+      '__tm__':()=>TM.open(),
+      '__library__':()=>this.openAppLibrary(),
+      '__explorer__':()=>this.openFileExplorer(),
+      '__browser__':()=>this.openBrowser(),
+    };
+    if(sysMap[app.url]){sysMap[app.url]();return;}
+    if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
+    if(SETTINGS.get('launchConfirm'))this.showConfirm(app);
+    else WM.open(app);
+  },
+
   /* ─── System app launchers ──────────────────────────────────── */
   openBrowser(){WM.open({name:'Aspen Browser',url:'https://riaannn.github.io/site-v2-static/site.html',icon:'🌐'});},
 
@@ -1927,12 +2227,13 @@ const OS={
   },
 
   toggleStart(){
-    const sm=document.getElementById('startMenu');
-    const isOpen=sm.classList.contains('open');
-    sm.classList.toggle('open',!isOpen);
-    if(!isOpen){this.filterStartMenu('');setTimeout(()=>document.getElementById('smSearch').focus(),100);}
+    document.getElementById('quickMenu').classList.toggle('open');
   },
-  closeStart(){document.getElementById('startMenu').classList.remove('open');},
+  toggleQuickMenu(e){
+    e.stopPropagation();
+    document.getElementById('quickMenu').classList.toggle('open');
+  },
+  closeStart(){document.getElementById('startMenu').classList.remove('open');document.getElementById('quickMenu').classList.remove('open');},
   openSettings(){document.getElementById('settingsPanel').classList.add('open');},
   closeSettings(){document.getElementById('settingsPanel').classList.remove('open');},
 
@@ -2079,6 +2380,7 @@ const OS={
     document.addEventListener('click',e=>{
       CTX.hide();
       if(!document.getElementById('startMenu').contains(e.target)&&!document.getElementById('startBtn').contains(e.target))this.closeStart();
+      if(!document.getElementById('appsGridBtn').contains(e.target)&&!document.getElementById('startBtn')?.contains(e.target))document.getElementById('quickMenu').classList.remove('open');
     });
     document.addEventListener('keydown',e=>{
       if(e.key==='Escape'){
@@ -2087,6 +2389,7 @@ const OS={
         document.getElementById('addToFolderModal').classList.remove('open');
         document.getElementById('hiddenManagerModal').classList.remove('open');
         ALT_TAB.cancel();
+        LAUNCHER.close();
       }
     });
     this._initDragHandlers();
@@ -2570,7 +2873,201 @@ const TM={
   _kill(targetId,tmId){WM.closeWindow(targetId);setTimeout(()=>this._render(tmId),250);OS.notify('Closed','Process terminated.');}
 };
 
-window.addEventListener('load',()=>OS.init());
+function initTopBar(){
+  // Clock is handled by OS.renderClock() — just call it once on load
+  OS.renderClock();
+
+  // Real-time battery via Battery API
+  const wrap=document.getElementById('tbBatteryWrap');
+  const pct=document.getElementById('tbBatteryPct');
+  const fill=document.getElementById('tbBatteryFill');
+
+  function updateBatt(batt){
+    const level=Math.round(batt.level*100);
+    if(wrap)wrap.style.display='flex';
+    if(pct){
+      const icon=batt.charging?'⚡ ':'';
+      pct.textContent=icon+level+'%';
+    }
+    if(fill){
+      fill.style.width=level+'%';
+      fill.classList.toggle('low',level<=20&&!batt.charging);
+      fill.style.background=batt.charging?'var(--os-green)':level<=20?'var(--os-red)':'rgba(255,255,255,0.9)';
+    }
+  }
+
+  if(navigator.getBattery){
+    navigator.getBattery().then(batt=>{
+      updateBatt(batt);
+      batt.addEventListener('levelchange',()=>updateBatt(batt));
+      batt.addEventListener('chargingchange',()=>updateBatt(batt));
+    }).catch(()=>{if(wrap)wrap.style.display='none';});
+  } else {
+    // Fallback: hide battery if not supported
+    if(wrap)wrap.style.display='none';
+  }
+}
+/* ═══════════════════════════════════════════════
+   APP LAUNCHER (Windows 11-style)
+═══════════════════════════════════════════════ */
+const LAUNCHER={
+  _open:false,
+
+  toggle(e){
+    e&&e.stopPropagation();
+    this._open?this.close():this.open();
+  },
+
+  open(){
+    this._open=true;
+    const ol=document.getElementById('launcherOverlay');
+    ol.classList.add('open');
+    const inp=document.getElementById('lpSearch');
+    if(inp){inp.value='';inp.focus();}
+    this._render('');
+    // Close quick menu if open
+    document.getElementById('quickMenu')?.classList.remove('open');
+  },
+
+  close(){
+    this._open=false;
+    document.getElementById('launcherOverlay')?.classList.remove('open');
+  },
+
+  bgClick(e){
+    if(e.target===document.getElementById('launcherOverlay'))this.close();
+  },
+
+  search(q){this._render(q);},
+
+  _render(q){
+    const body=document.getElementById('lpBody');if(!body)return;
+    const sc=OS.shortcuts;
+    const all=[...sc.games,...sc.web,...sc.apps];
+
+    if(q){
+      // Search results
+      const results=all.filter(a=>a.name.toLowerCase().includes(q.toLowerCase())).slice(0,18);
+      if(!results.length){
+        body.innerHTML=`<div style="text-align:center;padding:32px 20px;color:var(--os-muted);font-size:13px">No results for "${q}"</div>`;
+        return;
+      }
+      body.innerHTML=`
+        <div class="lp-section-label">Results</div>
+        <div class="lp-pinned-grid">${results.map(a=>this._appCard(a)).join('')}</div>`;
+    } else {
+      // Default: pinned (top 12 games) + recent
+      const pinned=sc.games.slice(0,12);
+      const recent=[...sc.games].reverse().slice(0,5);
+      body.innerHTML=`
+        <div class="lp-section-label">Pinned</div>
+        <div class="lp-pinned-grid">${pinned.map(a=>this._appCard(a)).join('')}</div>
+        <div class="lp-section-label">Recent</div>
+        <div class="lp-recents">${recent.map(a=>this._recentRow(a)).join('')}</div>`;
+    }
+  },
+
+  _appCard(app){
+    const esc=JSON.stringify(app).replace(/"/g,'&quot;');
+    const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
+    const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http');
+    const imgEl=isEmoji
+      ?`<div class="lp-app-icon">${app.icon}</div>`
+      :`<img class="lp-app-icon" src="${icon}" style="border-radius:10px;width:40px;height:40px;object-fit:cover" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(app.url||'')}'" alt="">`;
+    return `<div class="lp-app" onclick="LAUNCHER.launch(${esc})">${imgEl}<div class="lp-app-label">${app.name}</div></div>`;
+  },
+
+  _recentRow(app){
+    const esc=JSON.stringify(app).replace(/"/g,'&quot;');
+    const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
+    const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http');
+    const imgEl=isEmoji
+      ?`<div class="lp-recent-icon">${app.icon}</div>`
+      :`<img class="lp-recent-icon" src="${icon}" style="border-radius:7px;width:28px;height:28px;object-fit:cover" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(app.url||'')}'" alt="">`;
+    return `<div class="lp-recent-item" onclick="LAUNCHER.launch(${esc})">${imgEl}<div class="lp-recent-name">${app.name}</div><div class="lp-recent-cat">Game</div></div>`;
+  },
+
+  launch(app){
+    this.close();
+    OS.launch(app);
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   TASKBAR DRAG-TO-REORDER
+═══════════════════════════════════════════════ */
+const TBDrag={
+  _dragging:null,
+  _startX:0,
+  _origIdx:-1,
+
+  attach(btn,idx){
+    btn.setAttribute('draggable','true');
+    btn.addEventListener('dragstart',e=>{
+      this._dragging=btn;
+      this._origIdx=idx;
+      this._startX=e.clientX;
+      setTimeout(()=>btn.classList.add('dragging-tb'),0);
+      e.dataTransfer.effectAllowed='move';
+    });
+    btn.addEventListener('dragend',()=>{
+      btn.classList.remove('dragging-tb');
+      this._dragging=null;
+      document.querySelectorAll('.tb-app').forEach(b=>b.style.outline='');
+    });
+    btn.addEventListener('dragover',e=>{
+      e.preventDefault();e.dataTransfer.dropEffect='move';
+      if(this._dragging&&this._dragging!==btn)btn.style.outline='2px solid rgba(var(--os-accent-rgb),0.6)';
+    });
+    btn.addEventListener('dragleave',()=>btn.style.outline='');
+    btn.addEventListener('drop',e=>{
+      e.preventDefault();btn.style.outline='';
+      if(!this._dragging||this._dragging===btn)return;
+      const allBtns=[...document.querySelectorAll('#taskbarApps .tb-app')];
+      const fromIdx=allBtns.indexOf(this._dragging);
+      const toIdx=allBtns.indexOf(btn);
+      if(fromIdx===-1||toIdx===-1)return;
+      // Reorder TB.pinned
+      const moved=TB.pinned.splice(fromIdx,1)[0];
+      if(moved){TB.pinned.splice(toIdx,0,moved);TB.savePinned();TB.render();}
+    });
+  }
+};
+
+// Patch TB.render to attach drag handlers after rendering
+const _origTBRender=TB.render.bind(TB);
+TB.render=function(){
+  _origTBRender();
+  const cont=document.getElementById('taskbarApps');
+  if(!cont)return;
+  cont.querySelectorAll('.tb-app').forEach((btn,idx)=>{
+    TBDrag.attach(btn,idx);
+  });
+};
+
+/* ═══════════════════════════════════════════════
+   WALLPAPER-TINTED TASKBAR
+═══════════════════════════════════════════════ */
+const WP_TINTS={
+  aurora:'rgba(12,16,38,0.88)',
+  sunset:'rgba(28,10,20,0.88)',
+  ocean:'rgba(5,12,28,0.88)',
+  forest:'rgba(6,18,8,0.88)',
+  void:'rgba(4,4,12,0.92)',
+  plain:'rgba(10,11,16,0.88)',
+  custom:'rgba(8,9,14,0.88)',
+};
+function applyTaskbarTint(){
+  const wp=SETTINGS.get('wallpaper')||'aurora';
+  const tint=WP_TINTS[wp]||WP_TINTS.aurora;
+  document.getElementById('taskbar').style.setProperty('--taskbar-bg',tint);
+  document.getElementById('taskbar').style.background=tint;
+}
+// Patch OS.setWallpaper to also update tint
+const _origSetWallpaper=OS.setWallpaper.bind(OS);
+OS.setWallpaper=function(name){_origSetWallpaper(name);applyTaskbarTint();};
+
+window.addEventListener('load',()=>{OS.init();initTopBar();applyTaskbarTint();});
 window.addEventListener('beforeunload',e=>{e.preventDefault();e.returnValue='';});
 
 /* ═══ TASKBAR PREVIEW ═══ */
