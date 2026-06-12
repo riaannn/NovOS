@@ -749,10 +749,12 @@ const DEFAULT_SHORTCUTS = {
     {name:"Plants vs Zombies Botanic Warfare",url:"https://riaannn.github.io/Plants-vs-Zombies-Botanical-Warfare/",icon:"https://i.imgur.com/phey2av.jpeg",isDefault:true},
     {name:"Plants vs Zombies Roguelike",url:"https://riaannn.github.io/PVZ-Roguelike/",icon:"https://i.imgur.com/VAYyuwP.png",isDefault:true},
     {name:"Geometry Dash",url:"https://web-dashers.github.io/",icon:"https://images3.alphacoders.com/120/thumb-1920-1202615.jpg",isDefault:true},
-    {name:"Angry Birds 2",url:"https://raw.githack.com/Reeyuki/angry2/refs/heads/main/index.html",icon:"https://cdn2.steamgriddb.com/icon/65c6f9e287ec3396a9f06843e46e26f8/32/512x512.png",isDefault:true},
+    {name:"Angry Birds 2",url:"https://riaannn.github.io/angry-birds-2/",icon:"https://cdn2.steamgriddb.com/icon/65c6f9e287ec3396a9f06843e46e26f8/32/512x512.png",isDefault:true},
     {name:"Worldbox",url:"https://nostaligafun.pages.dev/games/games-accualy/OTHER/WorldBox_Data/index.html",icon:"https://play-lh.googleusercontent.com/XD7-X-5qk_37o2OyLeOPuPjuY1rD0O4COKX-TOh_efoHoVQkmSzk00fSUB6a7FU7a_E",isDefault:true},
     {name:"Smash Karts",url:"https://smashkarts.io",icon:"https://play-lh.googleusercontent.com/cM1CXOuBIy0kjGfoCTOKNa812iuVX6X2DDop8xNH4mNyjuM-oj3wVqZ7wiAOizq_TA",isDefault:true},
     {name:"bonk.io",url:"https://bonk.io",icon:"https://b.thumbs.redditmedia.com/9p8-wn2_KPdgjPTaR9fx-NIVgFhvsgBL0WPdbv5GMkA.png",isDefault:true},
+    {name:"Granny 3",url:"https://wasm.rip/files/granny/granny3.html",icon:"https://play-lh.googleusercontent.com/QvKhAg9SyqVZ24DdjJCkuwPVpO4kz7cdbNO3bUxGALrlaeVTxJLLL9zHyaFq-NJ6eLg7",isDefault:true},
+    
   ],
   apps:[
     {name:"WatchParty",url:"https://watchparty.me",icon:"https://www.watchparty.me/favicon.ico",isDefault:true},
@@ -919,16 +921,8 @@ const WM={
     const realUrl=app.url==='__PVZ__'?PVZ_URL:app.url;
     const frm=document.getElementById('frm_'+id);
     const ldr=document.getElementById('ldr_'+id);
-
-    // FIX: track whether the initial load has completed
-    frm.addEventListener('load',()=>{
-      if(frm.src && frm.src!=='about:blank'){
-        setTimeout(()=>ldr&&ldr.classList.add('hidden'),200);
-        if(WM._onIframeLoad)WM._onIframeLoad(frm);
-      }
-    });
-    // Fallback: force-hide loader after 12s for games that block load events
-    setTimeout(()=>ldr&&ldr.classList.add('hidden'),12000);
+    if(ldr)ldr.style.display='none';
+    frm.addEventListener('load',()=>{if(WM._onIframeLoad)WM._onIframeLoad(frm);});
     const _lagDelay=SETTINGS.get('lagMode')?900:30;
     setTimeout(()=>{frm.src=realUrl;},_lagDelay);
 
@@ -1736,28 +1730,51 @@ const OS={
     this.closeStart();
     const id=WM.newId();const el=document.createElement('div');
     el.className='os-window focused';el.id=id;
-    const dw=Math.min(window.innerWidth*0.8,900),dh=Math.min(window.innerHeight*0.75,600);
+    const dw=Math.min(window.innerWidth*0.82,960),dh=Math.min(window.innerHeight*0.8,660);
     el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
     el.innerHTML=`
+      <style>
+        .lib2-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px;padding:22px;overflow-y:auto;height:100%;align-content:start;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
+        .lib2-card{position:relative;border-radius:14px;overflow:hidden;cursor:pointer;width:100%;height:200px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);transition:transform 0.18s cubic-bezier(0.34,1.4,0.64,1),box-shadow 0.18s ease;transform-style:preserve-3d}
+        .lib2-card:hover{box-shadow:0 12px 36px rgba(0,0,0,0.6);transform:perspective(500px) rotateY(0deg) scale(1.04)}
+        .lib2-card.tilt-left{transform:perspective(500px) rotateY(-8deg) scale(1.04)}
+        .lib2-card.tilt-right{transform:perspective(500px) rotateY(8deg) scale(1.04)}
+        .lib2-img{width:100%;height:100%;object-fit:cover;display:block;transition:filter 0.2s}
+        .lib2-card:hover .lib2-img{filter:brightness(0.38) saturate(0.7)}
+        .lib2-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;transition:opacity 0.2s;padding:10px;pointer-events:none}
+        .lib2-card:hover .lib2-overlay{opacity:1}
+        .lib2-name{font-size:11.5px;font-weight:600;color:#fff;text-align:center;line-height:1.3;text-shadow:0 1px 6px rgba(0,0,0,0.8);word-break:break-word}
+        .lib2-launch-btn{pointer-events:all;padding:5px 14px;background:rgba(var(--os-accent-rgb),0.85);border:none;border-radius:20px;color:#fff;font-size:11px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all 0.13s;backdrop-filter:blur(6px)}
+        .lib2-launch-btn:hover{background:var(--os-accent);transform:scale(1.07)}
+        .lib2-emoji-card{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:42px;background:rgba(var(--os-accent-rgb),0.08)}
+        .lib2-card:hover .lib2-emoji-card{filter:brightness(0.38)}
+      </style>
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
         <div class="wnd-title">App Library</div>
         <div class="wnd-ctrl-btns">
+          <button class="wnd-ctrl-btn" onclick="OS.libRefresh('${id}')" title="Refresh"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
           <button class="wnd-ctrl-btn" onclick="OS.addShortcutOpen()" title="Add App"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
           <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
           <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
           <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
       </div>
-      <div class="wnd-toolbar">
+      <div class="wnd-toolbar" style="background:rgba(0,0,0,0.2);border-bottom:1px solid rgba(255,255,255,0.06)">
         <div class="wnd-tabs">
-          <div class="wnd-tab active" id="libtab-games" onclick="OS.libTab('games','${id}')">Games</div>
-          <div class="wnd-tab" id="libtab-web" onclick="OS.libTab('web','${id}')">Web</div>
-          <div class="wnd-tab" id="libtab-apps" onclick="OS.libTab('apps','${id}')">Apps</div>
+          <div class="wnd-tab active" id="libtab-games" onclick="OS.libTab('games','${id}')">🎮 Games</div>
+          <div class="wnd-tab" id="libtab-web" onclick="OS.libTab('web','${id}')">🌐 Web</div>
+          <div class="wnd-tab" id="libtab-apps" onclick="OS.libTab('apps','${id}')">📦 Apps</div>
         </div>
-        <input type="text" class="wnd-search" id="libsearch_${id}" placeholder="Search…" oninput="OS.libSearch('${id}')">
+        <select class="wnd-search" id="libsort_${id}" style="width:130px;cursor:pointer" onchange="OS.libSearch('${id}')">
+          <option value="default">Default order</option>
+          <option value="alpha">A → Z</option>
+          <option value="alpha_desc">Z → A</option>
+          <option value="category">By Series</option>
+        </select>
+        <input type="text" class="wnd-search" id="libsearch_${id}" placeholder="Search…" oninput="OS.libSearch('${id}')" style="width:140px">
       </div>
-      <div class="wnd-body" style="overflow:hidden"><div class="lib-grid" id="libgrid_${id}"></div></div>
+      <div class="wnd-body" style="overflow:hidden"><div class="lib2-grid" id="libgrid_${id}"></div></div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
     WM.windows[id]={app:{name:'App Library',url:'__library__',icon:''},minimized:false,maximized:false,prevRect:null,libTab:'games'};
@@ -1765,24 +1782,98 @@ const OS={
     this.libTab('games',id);
   },
 
+  libRefresh(wid){const w=WM.windows[wid];if(!w)return;this.libRender(w.libTab||'games',wid,'');OS.notify('Library','App list refreshed.');},
+
   libTab(tab,wid){
     ['games','web','apps'].forEach(t=>{const el=document.getElementById('libtab-'+t);if(el)el.classList.toggle('active',t===tab);});
     if(WM.windows[wid])WM.windows[wid].libTab=tab;
     this.libRender(tab,wid,'');
   },
-  libSearch(wid){const tab=WM.windows[wid]&&WM.windows[wid].libTab||'games';const q=document.getElementById('libsearch_'+wid)?.value||'';this.libRender(tab,wid,q);},
-  libRender(tab,wid,q){
+  libSearch(wid){const tab=WM.windows[wid]&&WM.windows[wid].libTab||'games';const q=document.getElementById('libsearch_'+wid)?.value||'';const sort=document.getElementById('libsort_'+wid)?.value||'default';this.libRender(tab,wid,q,sort);},
+  _libSeriesKey(name){
+    // Groups common game series together by extracting the franchise name
+    const lower=name.toLowerCase();
+    const series=[
+      ['angry birds','Angry Birds'],['bad piggies','Angry Birds'],
+      ['pvz','Plants vs Zombies'],['plants vs zombies','Plants vs Zombies'],['plant','Plants vs Zombies'],
+      ['dadish','Dadish'],['daily dadish','Dadish'],
+      ['granny','Granny'],
+      ['slendytubbies','SlendyTubbies'],
+      ['five nights','FNAF'],['frickbear','FNAF'],
+      ['half life','Valve'],['portal','Valve'],
+      ['celeste','Celeste'],['balatro','Balatro'],
+      ['vampire survivors','Vampire Survivors'],
+      ['geometry dash','Geometry Dash'],
+      ['terraria','Terraria'],['stardew','Stardew'],
+      ['smash karts','Smash Karts'],['bonk','bonk.io'],
+      ['worldbox','Worldbox'],['poly bridge','Poly Bridge'],
+    ];
+    for(const [kw,label] of series){if(lower.includes(kw))return label;}
+    return name; // ungrouped items sort by their own name
+  },
+  libRender(tab,wid,q,sort='default'){
     const grid=document.getElementById('libgrid_'+wid);if(!grid)return;
     const items=this.shortcuts[tab]||[];
-    const filtered=q?items.filter(i=>i.name.toLowerCase().includes(q.toLowerCase())):items;
-    // Get folder list for context menu
-    const folders=this.desktopItems.filter(d=>d.type==='folder');
-    grid.innerHTML=filtered.map(app=>{
-      const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
-      const esc=JSON.stringify(app).replace(/"/g,'&quot;');
-      return `<div class="lib-card" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})"><img class="lib-thumb" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(app.url||'')}'" alt=""><div class="lib-info"><div class="lib-name" title="${app.name}">${app.name}</div><button class="lib-launch" onclick="OS.launch(${esc})">Launch</button></div></div>`;
+    let filtered=q?items.filter(i=>i.name.toLowerCase().includes(q.toLowerCase())):[...items];
+    // Apply sort
+    if(sort==='alpha'){filtered.sort((a,b)=>a.name.localeCompare(b.name));}
+    else if(sort==='alpha_desc'){filtered.sort((a,b)=>b.name.localeCompare(a.name));}
+    else if(sort==='category'){
+      filtered.sort((a,b)=>{
+        const sa=this._libSeriesKey(a.name),sb=this._libSeriesKey(b.name);
+        if(sa!==sb)return sa.localeCompare(sb);
+        return a.name.localeCompare(b.name);
+      });
+    }
+    const esc2=(app)=>JSON.stringify(app).replace(/"/g,'&quot;');
+    // Insert series dividers when sorting by category
+    const showDividers=sort==='category'&&!q;
+    let lastSeries='';
+    const cards=filtered.map(app=>{
+      const icon=app.icon||`https://www.google.com/s2/favicons?sz=128&domain=${app.url}`;
+      const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
+      const imgEl=isEmoji
+        ?`<div class="lib2-emoji-card">${app.icon}</div>`
+        :`<img class="lib2-img" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(app.url||'')}'" alt="">`;
+      const esc=esc2(app);
+      let divider='';
+      if(showDividers){
+        const series=this._libSeriesKey(app.name);
+        if(series!==lastSeries){
+          lastSeries=series;
+          divider=`<div style="grid-column:1/-1;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:var(--os-dim);padding:4px 2px 2px;border-bottom:1px solid var(--os-border);margin-bottom:2px">${series}</div>`;
+        }
+      }
+      return divider+`<div class="lib2-card" ondblclick="OS.launch(${esc})" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})" data-libcard="1">
+        ${imgEl}
+        <div class="lib2-overlay">
+          <div class="lib2-name">${app.name}</div>
+          <button class="lib2-launch-btn" onclick="event.stopPropagation();OS.launch(${esc})">Launch</button>
+        </div>
+      </div>`;
     }).join('');
-    if(!filtered.length)grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--os-muted);font-size:13px">No apps found.</div>';
+    if(!filtered.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--os-muted);font-size:13px;opacity:0.6">No apps found.</div>';return;}
+    grid.innerHTML=cards;
+    // Tilt animation on hover
+    grid.querySelectorAll('.lib2-card').forEach(card=>{
+      let _tiltTimer=null;
+      card.addEventListener('mouseenter',()=>{
+        card.classList.remove('tilt-left','tilt-right');
+        let phase=0;
+        const tick=()=>{
+          if(!card.matches(':hover'))return;
+          card.classList.toggle('tilt-left',phase%2===0);
+          card.classList.toggle('tilt-right',phase%2===1);
+          phase++;
+          _tiltTimer=setTimeout(tick,280);
+        };
+        _tiltTimer=setTimeout(tick,60);
+      });
+      card.addEventListener('mouseleave',()=>{
+        clearTimeout(_tiltTimer);
+        card.classList.remove('tilt-left','tilt-right');
+      });
+    });
   },
   libCtx(e,app){
     const folders=this.desktopItems.filter(d=>d.type==='folder');
@@ -2536,16 +2627,21 @@ const TBP={
     lx=Math.max(8,Math.min(window.innerWidth-pw-8,lx));
     el.style.left=lx+'px';
     el.style.pointerEvents='all';
+    el.style.visibility='visible';
+    clearTimeout(this._hid);
     clearTimeout(this._tid);
     this._tid=setTimeout(()=>el.classList.add('visible'),80);
   },
   hide(){
+    clearTimeout(this._tid);
     this._hid=setTimeout(()=>{
-      if(this._el){this._el.classList.remove('visible');this._el.style.pointerEvents='none';}
-      // Remove preview iframe to free resources
+      if(this._el){
+        this._el.classList.remove('visible');
+        this._el.style.pointerEvents='none';
+        this._el.style.visibility='hidden';
+      }
       const canvas=document.getElementById('tbpvCanvas');
       if(canvas){const old=canvas.querySelector('iframe');if(old)old.remove();}
-      clearTimeout(this._tid);
     },180);
   }
 };
