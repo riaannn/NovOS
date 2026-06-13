@@ -18,7 +18,25 @@
   --radius:10px; --radius-lg:16px; --radius-xl:22px;
   --shadow-window:0 32px 80px rgba(0,0,0,0.65),0 0 0 1px rgba(255,255,255,0.06);
   --desk-icon-size:76px;
+  --taskbar-bg-color:8,9,14;
+  --taskbar-opacity:0.86;
+  --widget-bg-color:13,15,22;
+  --widget-opacity:0.82;
+  --lg-glow:rgba(255,255,255,0.18);
+  --lg-border:rgba(255,255,255,0.22);
+  --lg-tint:rgba(255,255,255,0.06);
 }
+
+/* LIQUID GLASS THEME */
+body.liquid-glass{--os-surface:rgba(255,255,255,0.10);--os-surface2:rgba(255,255,255,0.16);--os-border:rgba(255,255,255,0.16);--os-border2:rgba(255,255,255,0.26)}
+body.liquid-glass #taskbar{border:1px solid var(--lg-border);box-shadow:0 20px 60px rgba(0,0,0,0.55),0 1px 0 var(--lg-glow) inset,inset 0 0 24px rgba(255,255,255,0.06),0 0 0 0.5px rgba(255,255,255,0.10);backdrop-filter:blur(40px) saturate(2.2) brightness(1.15);-webkit-backdrop-filter:blur(40px) saturate(2.2) brightness(1.15)}
+body.liquid-glass .os-window{border:1px solid var(--lg-border);box-shadow:0 32px 80px rgba(0,0,0,0.55),inset 0 1px 0 var(--lg-glow),0 0 0 0.5px rgba(255,255,255,0.08);backdrop-filter:blur(36px) saturate(1.8) brightness(1.08)}
+body.liquid-glass .os-window.focused{box-shadow:0 40px 100px rgba(0,0,0,0.6),inset 0 1px 0 var(--lg-glow),0 0 0 1px rgba(var(--os-accent-rgb),0.35),0 0 30px rgba(var(--os-accent-rgb),0.12)}
+body.liquid-glass .widget-box{border:1px solid var(--lg-border);box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 var(--lg-glow),inset 0 0 20px rgba(255,255,255,0.05);backdrop-filter:blur(32px) saturate(1.8) brightness(1.1)}
+body.liquid-glass #startMenu,body.liquid-glass #launcherPanel,body.liquid-glass #ctxMenu,body.liquid-glass #quickMenu,body.liquid-glass .modal-box,body.liquid-glass #settingsPanel{border:1px solid var(--lg-border);box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 var(--lg-glow);backdrop-filter:blur(40px) saturate(1.9) brightness(1.1)}
+body.liquid-glass #topBar{border-bottom:1px solid var(--lg-border);box-shadow:inset 0 1px 0 var(--lg-glow);backdrop-filter:blur(30px) saturate(2) brightness(1.1)}
+body.liquid-glass .tb-app:hover,body.liquid-glass #startBtn:hover,body.liquid-glass #appsGridBtn:hover{box-shadow:inset 0 1px 0 var(--lg-glow),0 8px 20px rgba(0,0,0,0.35),0 0 16px rgba(255,255,255,0.08)}
+body.liquid-glass .lib-card,body.liquid-glass .sp2-card,body.liquid-glass .widget-music-art{backdrop-filter:blur(20px) saturate(1.6)}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-size:13px;color:var(--os-text);background:#000;-webkit-font-smoothing:antialiased}
 
@@ -75,7 +93,8 @@ body.has-maximized #windowLayer>.os-window:not(.maximized){pointer-events:none}
 
 /* TASKBAR */
 :root{--taskbar-h:72px}
-#taskbar{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:9999;height:var(--taskbar-h);background:var(--taskbar-bg,rgba(8,9,14,0.86));border:1px solid rgba(255,255,255,0.10);border-radius:18px;backdrop-filter:blur(60px) saturate(2.8) brightness(1.0);-webkit-backdrop-filter:blur(60px) saturate(2.8) brightness(1.0);display:flex;align-items:center;gap:0;padding:0 10px;transition:transform 0.28s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease,background 1.2s ease;box-shadow:0 20px 60px rgba(0,0,0,0.8),0 1px 0 rgba(255,255,255,0.07) inset,inset 0 0 0 0.5px rgba(255,255,255,0.03)}
+#taskbar{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:9999;height:var(--taskbar-h);border:1px solid rgba(255,255,255,0.10);border-radius:18px;backdrop-filter:blur(60px) saturate(2.8) brightness(1.0);-webkit-backdrop-filter:blur(60px) saturate(2.8) brightness(1.0);display:flex;align-items:center;gap:0;padding:0 10px;transition:transform 0.28s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease;box-shadow:0 20px 60px rgba(0,0,0,0.8),0 1px 0 rgba(255,255,255,0.07) inset,inset 0 0 0 0.5px rgba(255,255,255,0.03)}
+#taskbar::before{content:'';position:absolute;inset:0;border-radius:inherit;background:rgba(var(--taskbar-bg-color),var(--taskbar-opacity));z-index:-1;transition:background 0.4s ease}
 #taskbar.taskbar-hidden{transform:translateX(-50%) translateY(120%);opacity:0;pointer-events:none}
 #taskbarPeekZone{position:fixed;bottom:0;left:0;right:0;height:6px;z-index:9998;display:none}
 body.taskbar-autohide #taskbarPeekZone{display:block}
@@ -176,6 +195,7 @@ body.taskbar-autohide #desktop{height:100vh}
 @keyframes notifSlideIn{from{transform:translateX(24px) scale(0.96);opacity:0}to{transform:translateX(0) scale(1);opacity:1}}
 @keyframes notifSlideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(24px)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes npEq{0%,100%{height:5px}50%{height:16px}}
 body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms!important}
 .os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(30px);overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both;will-change:transform;transform:translateZ(0);contain:layout style}
 .os-window.minimized{display:none}
@@ -442,6 +462,47 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .hidden-item-icon{font-size:20px}
 .hidden-item-name{font-size:10px;color:var(--os-muted);text-align:center;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* WIDGETS */
+#widgetLayer{position:absolute;inset:0;z-index:4;pointer-events:none}
+.desk-widget{position:absolute;pointer-events:all;user-select:none;cursor:move}
+.desk-widget.widget-dragging{opacity:0.8;z-index:9999}
+.widget-box{background:rgba(var(--widget-bg-color),var(--widget-opacity));backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,0.10);border-radius:18px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);transition:background 0.4s ease}
+.widget-handle{position:absolute;top:6px;right:8px;z-index:2;display:flex;gap:3px;opacity:0;transition:opacity 0.15s}
+.desk-widget:hover .widget-handle{opacity:1}
+.widget-close-btn{width:18px;height:18px;border-radius:50%;background:rgba(248,113,113,0.8);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;padding:0}
+.widget-clock-digital{padding:18px 24px;min-width:180px;text-align:center}
+.widget-clock-time{font-size:42px;font-weight:300;color:var(--os-text);font-family:var(--mono);letter-spacing:-0.02em;line-height:1}
+.widget-clock-date{font-size:11px;color:var(--os-muted);margin-top:4px;letter-spacing:0.05em}
+.widget-clock-analog{width:140px;height:140px;position:relative;padding:12px}
+.analog-face{width:116px;height:116px;border-radius:50%;border:2px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.03);position:relative;margin:0 auto}
+.analog-hand{position:absolute;bottom:50%;left:50%;transform-origin:bottom center;border-radius:4px;transform:translateX(-50%)}
+.widget-calendar{padding:16px;min-width:220px}
+.widget-cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:12px;font-weight:600;color:var(--os-text)}
+.widget-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.widget-cal-day-label{font-size:9px;color:var(--os-dim);padding:2px;font-weight:600;text-transform:uppercase}
+.widget-cal-day{font-size:11px;color:var(--os-muted);padding:4px;border-radius:5px;cursor:default}
+.widget-cal-day.today{background:rgba(var(--os-accent-rgb),0.2);color:var(--os-accent);font-weight:600}
+.widget-cal-day.other-month{opacity:0.3}
+.widget-music{padding:16px;min-width:220px}
+.widget-music-art{width:52px;height:52px;border-radius:10px;background:rgba(var(--os-accent-rgb),0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#f472b6}
+.widget-vocab{padding:16px;max-width:240px}
+.widget-vocab-word{font-size:18px;font-weight:600;color:var(--os-text);margin-bottom:3px;letter-spacing:-0.01em}
+.widget-vocab-type{font-size:10px;color:var(--os-accent);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+.widget-vocab-def{font-size:11.5px;color:var(--os-muted);line-height:1.6}
+
+/* WIDGET PICKER */
+#widgetPicker{position:fixed;inset:0;z-index:50000;background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center}
+#widgetPicker.open{display:flex}
+.wp-picker-box{background:rgba(13,14,20,0.98);border:1px solid var(--os-border2);border-radius:20px;width:420px;box-shadow:0 24px 64px rgba(0,0,0,0.7);overflow:hidden}
+.wp-picker-header{padding:18px 20px 14px;border-bottom:1px solid var(--os-border);display:flex;align-items:center;justify-content:space-between}
+.wp-picker-header h3{font-size:14px;font-weight:600}
+.wp-picker-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:18px}
+.wp-picker-item{background:var(--os-surface);border:1px solid var(--os-border);border-radius:12px;padding:16px 14px;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;gap:8px}
+.wp-picker-item:hover{background:var(--os-surface2);border-color:rgba(var(--os-accent-rgb),0.35);transform:translateY(-2px)}
+.wp-picker-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.wp-picker-name{font-size:12.5px;font-weight:600;color:var(--os-text)}
+.wp-picker-desc{font-size:11px;color:var(--os-muted);line-height:1.4}
+
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
 </style>
@@ -466,8 +527,46 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 <!-- DESKTOP -->
 <div id="desktop">
   <div id="wallpaper" class="wp-aurora"></div>
+  <div id="widgetLayer"></div>
   <div id="desktopIcons"></div>
   <div id="windowLayer"></div>
+</div>
+
+<!-- WIDGET PICKER -->
+<div id="widgetPicker" onclick="if(event.target===this)WIDGETS.closePicker()">
+  <div class="wp-picker-box">
+    <div class="wp-picker-header">
+      <h3>Add Widget</h3>
+      <button class="modal-close" onclick="WIDGETS.closePicker()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="wp-picker-grid">
+      <div class="wp-picker-item" onclick="WIDGETS.add('clock-digital');WIDGETS.closePicker()">
+        <div class="wp-picker-icon" style="background:rgba(var(--os-accent-rgb),0.12);color:var(--os-accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" width="20" height="20"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+        <div class="wp-picker-name">Digital Clock</div>
+        <div class="wp-picker-desc">Live time and date display</div>
+      </div>
+      <div class="wp-picker-item" onclick="WIDGETS.add('clock-analog');WIDGETS.closePicker()">
+        <div class="wp-picker-icon" style="background:rgba(96,165,250,0.12);color:#60a5fa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" width="20" height="20"><circle cx="12" cy="12" r="9"/><path d="M12 7v5"/><path d="M12 12l3 2"/></svg></div>
+        <div class="wp-picker-name">Analog Clock</div>
+        <div class="wp-picker-desc">Classic analog clock face</div>
+      </div>
+      <div class="wp-picker-item" onclick="WIDGETS.add('calendar');WIDGETS.closePicker()">
+        <div class="wp-picker-icon" style="background:rgba(251,191,36,0.12);color:#fbbf24"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div class="wp-picker-name">Calendar</div>
+        <div class="wp-picker-desc">Current month view</div>
+      </div>
+      <div class="wp-picker-item" onclick="WIDGETS.add('music');WIDGETS.closePicker()">
+        <div class="wp-picker-icon" style="background:rgba(244,114,182,0.12);color:#f472b6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" width="20" height="20"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.6"/></svg></div>
+        <div class="wp-picker-name">Now Playing</div>
+        <div class="wp-picker-desc">Monochrome music widget</div>
+      </div>
+      <div class="wp-picker-item" onclick="WIDGETS.add('vocab');WIDGETS.closePicker()">
+        <div class="wp-picker-icon" style="background:rgba(74,222,128,0.12);color:#4ade80"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" width="20" height="20"><path d="M4 6h16M4 10h16M4 14h10"/></svg></div>
+        <div class="wp-picker-name">Word of the Day</div>
+        <div class="wp-picker-desc">Daily vocabulary word</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id="topBar">
@@ -833,6 +932,7 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 ═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_DESKTOP_APPS = [
   { name:"Aspen Browser", url:"__browser__", icon:"", isDefault:true, isSystem:true, systemAction:"openBrowser"},
+  { name:"Monochrome Music", url:"__music__", icon:"", isDefault:true, isSystem:true, systemAction:"openMonochrome"},
   { name:"File Explorer",    url:"__explorer__", icon:"", isDefault:true, isSystem:true, systemAction:"openFileExplorer" },
   { name:"Settings",         url:"__settings__", icon:"", isDefault:true, isSystem:true, systemAction:"openSettingsWindow" },
   { name:"App Library",      url:"__library__",  icon:"", isDefault:true, isSystem:true, systemAction:"openAppLibrary" },
@@ -905,7 +1005,7 @@ const PVZ_URL='https://wszqkzqk.github.io/pvz-portable-wasm/pvz-portable.html';
    SETTINGS STORE
 ═══════════════════════════════════════════════ */
 const SETTINGS={
-  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',lagMode:false,animations:true},
+  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',lagMode:false,animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true},
   data:{},
   load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
   save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));},
@@ -1008,6 +1108,21 @@ const WM={
 
   newId(){return 'wnd_'+(Date.now())+'_'+(Math.random()*9999|0)},
 
+  // Returns a 16px system SVG icon for a titlebar, or null for non-system apps.
+  _sysTitlebarIcon(url){
+    const map={
+      '__browser__':{c:'#60a5fa',s:`<circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/>`},
+      '__music__':{c:'#f472b6',s:`<circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.7"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5" stroke-opacity="0.4"/>`},
+      '__explorer__':{c:'#fbbf24',s:`<path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>`},
+      '__settings__':{c:'#94a3b8',s:`<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>`},
+      '__library__':{c:'#a78bfa',s:`<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>`},
+      '__tm__':{c:'#4ade80',s:`<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M7 8v4M11 6v6M15 9v3M19 7v5"/>`},
+    };
+    const m=map[url];
+    if(!m)return null;
+    return `<div class="wnd-icon" style="display:flex;align-items:center;justify-content:center;color:${m.c}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">${m.s}</svg></div>`;
+  },
+
   open(app){
     const id=this.newId();
     const el=document.createElement('div');
@@ -1017,9 +1132,9 @@ const WM={
     const x=Math.max(20,(window.innerWidth-dw)*0.5+(Math.random()*40-20));
     const y=Math.max(10,(window.innerHeight-48-dh)*0.3+(Math.random()*20-10));
     el.style.cssText=`width:${dw}px;height:${dh}px;top:${y}px;left:${x}px;z-index:${++this._zCounter}`;
-    const _isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
-    const _iconHtml=_isEmoji
-      ?`<span style="font-size:14px;line-height:1;flex-shrink:0;width:16px;text-align:center">${app.icon}</span>`
+    const _sysTitleIcon=WM._sysTitlebarIcon(app.url);
+    const _iconHtml=_sysTitleIcon
+      ?_sysTitleIcon
       :`<img class="wnd-icon" src="${app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`}" onerror="this.style.display='none'">`;
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
@@ -1054,13 +1169,37 @@ const WM={
       <div class="wnd-edge wnd-edge-sw" onmousedown="WM.startResize('${id}',event,'sw')"></div>`;
     document.getElementById('windowLayer').appendChild(el);
 
-    const realUrl=app.url==='__PVZ__'?PVZ_URL:app.url;
+    let realUrl=app.url==='__PVZ__'?PVZ_URL:app.url;
+    // Resolve system app identifiers (browser/music) to their real loadable URL.
+    if(OS._systemRealUrl)realUrl=OS._systemRealUrl(app.url);
     const frm=document.getElementById('frm_'+id);
     const ldr=document.getElementById('ldr_'+id);
     if(ldr)ldr.style.display='none';
-    frm.addEventListener('load',()=>{if(WM._onIframeLoad)WM._onIframeLoad(frm);});
+    frm.addEventListener('load',()=>{
+      if(WM._onIframeLoad)WM._onIframeLoad(frm);
+      // Do NOT inject into the cross-origin music frame — injection trips CF/CDN bot checks.
+      if(app.url==='__music__'){/* clean, no injection */}
+    });
     const _lagDelay=SETTINGS.get('lagMode')?900:30;
-    setTimeout(()=>{frm.src=realUrl;},_lagDelay);
+
+    // Determine whether the target is cross-origin relative to this page.
+    const _isCrossOrigin=(u)=>{
+      try{return new URL(u,location.href).origin!==location.origin;}
+      catch{return true;}
+    };
+
+    setTimeout(()=>{
+      if(_isCrossOrigin(realUrl)){
+        // Load a neutral same-origin srcdoc shell, then self-navigate to the real URL.
+        // Cloudflare/Amazon see a normal top-level navigation inside the frame,
+        // NOT a request originating from about:blank — which is what was failing.
+        const _u=JSON.stringify(realUrl);
+        frm.srcdoc=`<!doctype html><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#08090d;color:#6b6f85;font:12px system-ui,sans-serif;display:flex;align-items:center;justify-content:center}</style><script>try{setTimeout(function(){window.location.replace(${_u});},30);}catch(e){window.location.href=${_u};}<\/script><div>Loading\u2026</div>`;
+      }else{
+        // Same-origin or data URLs are safe to set directly.
+        frm.src=realUrl;
+      }
+    },_lagDelay);
 
     this.windows[id]={app,minimized:false,maximized:false,prevRect:null};
     this.focus(id);TB.addWindow(id,app);this.makeDraggable(id);
@@ -1154,6 +1293,20 @@ const WM={
     const frm=document.getElementById('frm_'+id);
     const ldr=document.getElementById('ldr_'+id);
     if(!frm)return;
+
+    // If this frame uses a srcdoc shell (cross-origin self-navigation), just
+    // reapply the shell so it re-navigates cleanly — reading frm.src is useless here.
+    if(frm.hasAttribute('srcdoc')&&frm.getAttribute('srcdoc')){
+      const shell=frm.getAttribute('srcdoc');
+      if(ldr)ldr.classList.remove('hidden');
+      frm.removeAttribute('srcdoc');
+      frm.src='about:blank';
+      const onLoadS=()=>{if(ldr)ldr.classList.add('hidden');frm.removeEventListener('load',onLoadS);};
+      frm.addEventListener('load',onLoadS);
+      setTimeout(()=>{frm.removeAttribute('src');frm.setAttribute('srcdoc',shell);},60);
+      return;
+    }
+
     const currentSrc=frm.src;
     if(!currentSrc||currentSrc==='about:blank')return;
 
@@ -1227,6 +1380,7 @@ const TB={
         {name:'Settings',url:'__settings__',icon:''},
         {name:'Task Manager',url:'__tm__',icon:''},
         {name:'App Library',url:'__library__',icon:''},
+        {name:'Aspen Browser',url:'__browser__',icon:''},
       ];
       this.savePinned();
     }
@@ -1340,6 +1494,14 @@ const TB={
           <path d="M7 8v4M11 6v6M15 9v3M19 7v5" stroke-opacity="0.9"/>
         </svg>`
       },
+      '__music__':{
+        color:'#f472b6',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <circle cx="12" cy="12" r="9"/>
+          <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.7"/>
+          <path d="M12 3v4M12 17v4M3 12h4M17 12h4" stroke-opacity="0.4"/>
+        </svg>`
+      },
     };
 
     if(systemIcons[app.url]){
@@ -1356,7 +1518,7 @@ const TB={
   },
   // System URLs that always live on the right side of the taskbar
   _isSystemUrl(url){
-    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__photo__','__video__','__audio__','__html__'].includes(url);
+    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__photo__','__video__','__audio__','__html__','__music__'].includes(url);
   },
 
   _makeBtn(app,wid,isPinned){
@@ -1393,6 +1555,13 @@ const TB={
     if(!sysRight||!userLeft)return;
     sysRight.innerHTML='';
     userLeft.innerHTML='';
+    // Prevent native image drag on all taskbar icons
+    setTimeout(()=>{
+      document.querySelectorAll('.tb-app img,.tb-app-icon').forEach(img=>{
+        img.setAttribute('draggable','false');
+        img.style.pointerEvents='none';
+      });
+    },50);
 
     // Pinned apps — split by type
     this.pinned.forEach(app=>{
@@ -1623,6 +1792,12 @@ const OS={
     const a=SETTINGS.get('accent'),ar=SETTINGS.get('accentRgb')||'124,109,250';
     document.documentElement.style.setProperty('--os-accent','#'+a);
     document.documentElement.style.setProperty('--os-accent-rgb',ar);
+    // Theme / taskbar / widget customization
+    document.body.classList.toggle('liquid-glass',!!SETTINGS.get('liquidGlass'));
+    document.documentElement.style.setProperty('--taskbar-bg-color',SETTINGS.get('taskbarColor')||'8,9,14');
+    document.documentElement.style.setProperty('--taskbar-opacity',(SETTINGS.get('taskbarOpacity')??0.86).toString());
+    document.documentElement.style.setProperty('--widget-bg-color',SETTINGS.get('widgetColor')||'13,15,22');
+    document.documentElement.style.setProperty('--widget-opacity',(SETTINGS.get('widgetOpacity')??0.82).toString());
     const wp=SETTINGS.get('wallpaper')||'aurora';
     const wEl=document.getElementById('wallpaper');
     wEl.className='';wEl.classList.add('wp-'+wp);
@@ -1676,6 +1851,37 @@ const OS={
     document.body.classList.toggle('no-anims',!on);
   },
 
+  setLiquidGlass(on){
+    SETTINGS.set('liquidGlass',on);
+    document.body.classList.toggle('liquid-glass',on);
+  },
+
+  setTaskbarColor(rgb){
+    SETTINGS.set('taskbarColor',rgb);
+    document.documentElement.style.setProperty('--taskbar-bg-color',rgb);
+  },
+  setTaskbarColorHex(hex){
+    const rgb=this._hexToRgb(hex);
+    if(rgb)this.setTaskbarColor(rgb);
+  },
+  setWidgetColor(rgb){
+    SETTINGS.set('widgetColor',rgb);
+    document.documentElement.style.setProperty('--widget-bg-color',rgb);
+  },
+  setWidgetColorHex(hex){
+    const rgb=this._hexToRgb(hex);
+    if(rgb)this.setWidgetColor(rgb);
+  },
+  setWidgetOpacity(val){
+    const o=(+val/100).toFixed(2);
+    SETTINGS.set('widgetOpacity',+o);
+    document.documentElement.style.setProperty('--widget-opacity',o);
+  },
+  _hexToRgb(hex){
+    const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return m?`${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)}`:null;
+  },
+
   setIconSize(v){
     v=+v;SETTINGS.set('iconSize',v);this.applyIconSize(v);
     document.getElementById('iconSizeVal').textContent=v;
@@ -1709,6 +1915,7 @@ const OS={
       '__settings__':{color:'#94a3b8',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>`},
       '__browser__':{color:'#60a5fa',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/><path d="M4 7.5h16M4 16.5h16" opacity="0.4"/></svg>`},
       '__folder__':{color:'#fbbf24',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>`},
+      '__music__':{color:'#f472b6',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.7"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5" stroke-opacity="0.4"/></svg>`},
     };
 
     this.desktopItems.forEach((item)=>{
@@ -1889,7 +2096,7 @@ const OS={
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
-        <span style="font-size:14px;margin-right:2px">📁</span>
+        <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#fbbf24;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg></div>
         <div class="wnd-title">${folderItem.name}</div>
         <div class="wnd-ctrl-btns">
           <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
@@ -2006,6 +2213,7 @@ const OS={
       '__library__':()=>this.openAppLibrary(),
       '__explorer__':()=>this.openFileExplorer(),
       '__browser__':()=>this.openBrowser(),
+      '__music__':()=>this.openMonochrome(),
     };
     if(sysMap[app.url]){sysMap[app.url]();return;}
     if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
@@ -2014,7 +2222,26 @@ const OS={
   },
 
   /* ─── System app launchers ──────────────────────────────────── */
-  openBrowser(){WM.open({name:'Aspen Browser',url:'https://riaannn.github.io/site-v2-static/site.html',icon:'🌐'});},
+  // Real system URLs map system identifiers to their actual loadable URLs.
+  // The window/taskbar keeps the system url (__browser__ / __music__) so it gets
+  // the correct system icon and stays on the right side of the taskbar.
+  _systemRealUrl(sysUrl){
+    return {
+      '__browser__':'https://riaannn.github.io/site-v2-static/site.html',
+      '__music__':'https://monochrome.tf'
+    }[sysUrl]||sysUrl;
+  },
+  openBrowser(){
+    const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__browser__');
+    if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
+    WM.open({name:'Aspen Browser',url:'__browser__',icon:''});
+  },
+  openMonochrome(){
+    const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__music__');
+    if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
+    WM.open({name:'Monochrome Music',url:'__music__',icon:''});
+  },
+  openTM(){TM.open();},
 
   // Shared helper: builds the maximize button HTML with both expand/compress icons
   _maxBtn(id){
@@ -2234,8 +2461,324 @@ const OS={
     document.getElementById('quickMenu').classList.toggle('open');
   },
   closeStart(){document.getElementById('startMenu').classList.remove('open');document.getElementById('quickMenu').classList.remove('open');},
-  openSettings(){document.getElementById('settingsPanel').classList.add('open');},
+  openSettings(){this._openSettingsWindow();},
   closeSettings(){document.getElementById('settingsPanel').classList.remove('open');},
+
+  _openSettingsWindow(){
+    // Check if already open
+    const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__settings__');
+    if(existing){WM.focus(existing[0]);return;}
+
+    const id=WM.newId();const el=document.createElement('div');
+    el.className='os-window focused';el.id=id;
+    const dw=Math.min(window.innerWidth*0.78,860),dh=Math.min(window.innerHeight*0.8,620);
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
+
+    const accentSwatches=[
+      {hex:'7c6dfa',rgb:'124,109,250',color:'#7c6dfa'},
+      {hex:'f47aff',rgb:'244,122,255',color:'#f47aff'},
+      {hex:'34d399',rgb:'52,211,153',color:'#34d399'},
+      {hex:'fbbf24',rgb:'251,191,36',color:'#fbbf24'},
+      {hex:'f87171',rgb:'248,113,113',color:'#f87171'},
+      {hex:'38bdf8',rgb:'56,189,248',color:'#38bdf8'},
+    ].map(s=>`<div onclick="OS.setAccent('${s.hex}','${s.rgb}')" style="width:24px;height:24px;border-radius:50%;background:${s.color};cursor:pointer;border:2px solid ${s.color};transition:all 0.15s;box-shadow:0 0 0 0 ${s.color}44" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform=''"></div>`).join('');
+
+    el.innerHTML=`
+      <style>
+        .sp2-layout{display:flex;height:100%;overflow:hidden}
+        .sp2-nav{width:220px;flex-shrink:0;border-right:1px solid var(--os-border);overflow-y:auto;padding:12px 8px;background:rgba(0,0,0,0.18);scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.06) transparent}
+        .sp2-nav-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--os-dim);padding:10px 10px 5px}
+        .sp2-nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--os-muted);transition:all 0.12s;border:1px solid transparent;margin-bottom:1px}
+        .sp2-nav-item:hover{background:var(--os-surface);color:var(--os-text)}
+        .sp2-nav-item.active{background:rgba(var(--os-accent-rgb),0.1);border-color:rgba(var(--os-accent-rgb),0.22);color:var(--os-accent)}
+        .sp2-nav-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+        .sp2-main{flex:1;overflow-y:auto;padding:28px 32px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.06) transparent}
+        .sp2-page{display:none}.sp2-page.active{display:block}
+        .sp2-hero{display:flex;align-items:center;gap:14px;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--os-border)}
+        .sp2-hero-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .sp2-hero-title{font-size:20px;font-weight:600;color:var(--os-text);letter-spacing:-0.02em}
+        .sp2-hero-sub{font-size:12px;color:var(--os-muted);margin-top:3px}
+        .sp2-card{background:var(--os-surface);border:1px solid var(--os-border);border-radius:12px;overflow:hidden;margin-bottom:12px}
+        .sp2-card-header{padding:14px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim);border-bottom:1px solid var(--os-border)}
+        .sp2-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04)}
+        .sp2-row:last-child{border-bottom:none}
+        .sp2-row-label{font-size:13px;font-weight:500;color:var(--os-text)}
+        .sp2-row-sub{font-size:11px;color:var(--os-muted);margin-top:2px}
+        .sp2-slider{width:130px;-webkit-appearance:none;height:3px;background:var(--os-border);border-radius:2px;outline:none;cursor:pointer}
+        .sp2-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--os-accent);cursor:pointer}
+        .sp2-wp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:14px 16px}
+        .sp2-wp{height:56px;border-radius:9px;cursor:pointer;border:2px solid transparent;transition:all 0.15s}
+        .sp2-wp.active{border-color:var(--os-accent)}
+        .sp2-wp-aurora{background:radial-gradient(circle at 30% 50%,#0d1f3c,#1a0d3c,#0d2a1f,#080a10)}
+        .sp2-wp-sunset{background:radial-gradient(circle at 50% 80%,#2d0a1a,#1a0d00,#1a0a2d,#0a0508)}
+        .sp2-wp-ocean{background:radial-gradient(circle at 30% 40%,#051530,#0a1525,#05080f)}
+        .sp2-wp-forest{background:radial-gradient(circle at 40% 60%,#051a0a,#0a1f05,#060d06)}
+        .sp2-wp-void{background:#04040a}
+        .sp2-wp-plain{background:#0d0e12}
+        .sp2-wp-custom{background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--os-muted);cursor:pointer}
+        .sp2-accent-row{display:flex;gap:8px;flex-wrap:wrap;padding:14px 16px}
+        .sp2-danger-btn{width:100%;height:36px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:8px;color:var(--os-red);font-family:var(--font);font-size:13px;cursor:pointer;transition:all 0.15s;margin-top:6px}
+        .sp2-danger-btn:hover{background:var(--os-red);color:#fff}
+        .sp2-action-btn{height:34px;padding:0 16px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;color:var(--os-text);font-family:var(--font);font-size:12.5px;cursor:pointer;transition:all 0.15s}
+        .sp2-action-btn:hover{background:var(--os-surface2)}
+      </style>
+      <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
+      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
+        <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#94a3b8;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+        <div class="wnd-title">Settings</div>
+        <div class="wnd-ctrl-btns">
+          <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="wnd-body" style="overflow:hidden">
+        <div class="sp2-layout">
+          <div class="sp2-nav">
+            <div class="sp2-nav-label">Personalization</div>
+            <div class="sp2-nav-item active" onclick="SP2.nav('wallpaper','${id}')">
+              <div class="sp2-nav-icon" style="background:rgba(var(--os-accent-rgb),0.12);color:var(--os-accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/><path d="M21 15l-5-5L5 21"/></svg></div>
+              Wallpaper
+            </div>
+            <div class="sp2-nav-item" onclick="SP2.nav('accent','${id}')">
+              <div class="sp2-nav-icon" style="background:rgba(var(--os-accent-rgb),0.12);color:var(--os-accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18" opacity="0.4"/></svg></div>
+              Colors
+            </div>
+            <div class="sp2-nav-item" onclick="SP2.nav('taskbar','${id}')">
+              <div class="sp2-nav-icon" style="background:rgba(96,165,250,0.12);color:#60a5fa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="16" width="20" height="6" rx="2"/><rect x="7" y="16" width="10" height="6" rx="2"/></svg></div>
+              Taskbar
+            </div>
+            <div class="sp2-nav-label">Desktop</div>
+            <div class="sp2-nav-item" onclick="SP2.nav('icons','${id}')">
+              <div class="sp2-nav-icon" style="background:rgba(251,191,36,0.12);color:#fbbf24"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></div>
+              Icons & Widgets
+            </div>
+            <div class="sp2-nav-label">System</div>
+            <div class="sp2-nav-item" onclick="SP2.nav('display','${id}')">
+              <div class="sp2-nav-icon" style="background:rgba(74,222,128,0.12);color:#4ade80"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+              Display
+            </div>
+            <div class="sp2-nav-item" onclick="SP2.nav('performance','${id}')">
+              <div class="sp2-nav-icon" style="background:rgba(248,113,113,0.12);color:#f87171"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+              Performance
+            </div>
+            <div class="sp2-nav-item" onclick="SP2.nav('about','${id}')">
+              <div class="sp2-nav-icon" style="background:rgba(167,139,250,0.12);color:#a78bfa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></div>
+              About
+            </div>
+          </div>
+          <div class="sp2-main" id="sp2Main_${id}">
+
+            <!-- WALLPAPER PAGE -->
+            <div class="sp2-page active" id="sp2pg_wallpaper_${id}">
+              <div class="sp2-hero">
+                <div class="sp2-hero-icon" style="background:rgba(var(--os-accent-rgb),0.12);color:var(--os-accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/><path d="M21 15l-5-5L5 21"/></svg></div>
+                <div><div class="sp2-hero-title">Wallpaper</div><div class="sp2-hero-sub">Choose a background for your desktop</div></div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">Presets</div>
+                <div class="sp2-wp-grid" id="sp2WpGrid_${id}">
+                  <div class="sp2-wp sp2-wp-aurora" id="sp2wp_aurora_${id}" onclick="OS.setWallpaper('aurora');SP2.syncWp('${id}')" title="Aurora"></div>
+                  <div class="sp2-wp sp2-wp-sunset" id="sp2wp_sunset_${id}" onclick="OS.setWallpaper('sunset');SP2.syncWp('${id}')" title="Sunset"></div>
+                  <div class="sp2-wp sp2-wp-ocean" id="sp2wp_ocean_${id}" onclick="OS.setWallpaper('ocean');SP2.syncWp('${id}')" title="Ocean"></div>
+                  <div class="sp2-wp sp2-wp-forest" id="sp2wp_forest_${id}" onclick="OS.setWallpaper('forest');SP2.syncWp('${id}')" title="Forest"></div>
+                  <div class="sp2-wp sp2-wp-void" id="sp2wp_void_${id}" onclick="OS.setWallpaper('void');SP2.syncWp('${id}')" title="Void"></div>
+                  <div class="sp2-wp sp2-wp-plain" id="sp2wp_plain_${id}" onclick="OS.setWallpaper('plain');SP2.syncWp('${id}')" title="Plain"></div>
+                  <div class="sp2-wp sp2-wp-custom" id="sp2wp_custom_${id}" onclick="OS.setWallpaper('custom');SP2.syncWp('${id}')" title="Custom Image" style="${SETTINGS.get('customWallpaper')?'background-image:url('+SETTINGS.get('customWallpaper')+');background-size:cover':''}">
+                    ${SETTINGS.get('customWallpaper')?'':'Upload'}
+                  </div>
+                </div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Upload Custom Image or GIF</div><div class="sp2-row-sub">Opens File Explorer where you can set any image as wallpaper</div></div>
+                  <button class="sp2-action-btn" onclick="OS.openWallpaperPicker()">Open Files</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- COLORS PAGE -->
+            <div class="sp2-page" id="sp2pg_accent_${id}">
+              <div class="sp2-hero">
+                <div class="sp2-hero-icon" style="background:rgba(var(--os-accent-rgb),0.12);color:var(--os-accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.5"/></svg></div>
+                <div><div class="sp2-hero-title">Colors</div><div class="sp2-hero-sub">Accent color for buttons, highlights and icons</div></div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">Accent Color</div>
+                <div class="sp2-accent-row">${accentSwatches}</div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">Theme Style</div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Liquid Glass</div><div class="sp2-row-sub">Translucent frosted-glass surfaces with glow and depth</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-liquid_${id}" ${SETTINGS.get('liquidGlass')?'checked':''} onchange="OS.setLiquidGlass(this.checked)"><span class="tog-slider"></span></label>
+                </div>
+              </div>
+            </div>
+
+            <!-- TASKBAR PAGE -->
+            <div class="sp2-page" id="sp2pg_taskbar_${id}">
+              <div class="sp2-hero">
+                <div class="sp2-hero-icon" style="background:rgba(96,165,250,0.12);color:#60a5fa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><rect x="2" y="16" width="20" height="6" rx="2"/></svg></div>
+                <div><div class="sp2-hero-title">Taskbar</div><div class="sp2-hero-sub">Customize the taskbar appearance and behavior</div></div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">Behavior</div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Auto-hide in Fullscreen</div><div class="sp2-row-sub">Hides taskbar and top bar when a window is maximized</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-taskbarhide_${id}" ${SETTINGS.get('hideTaskbarFullscreen')?'checked':''} onchange="SETTINGS.set('hideTaskbarFullscreen',this.checked);TB.updateAutoHide()"><span class="tog-slider"></span></label>
+                </div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">Background</div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Background Opacity</div><div class="sp2-row-sub">Affects only the taskbar background, not icons or text</div></div>
+                  <input type="range" class="sp2-slider" min="20" max="100" value="${Math.round((SETTINGS.get('taskbarOpacity')||0.86)*100)}" oninput="SP2.setTaskbarOpacity(this.value)" style="width:130px">
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Background Color</div><div class="sp2-row-sub">Tint color of the taskbar surface</div></div>
+                  <div class="sp2-accent-row" style="padding:0;gap:7px">
+                    <div onclick="OS.setTaskbarColor('8,9,14')" style="width:22px;height:22px;border-radius:50%;background:#08090e;cursor:pointer;border:2px solid #fff3" title="Charcoal"></div>
+                    <div onclick="OS.setTaskbarColor('12,16,38')" style="width:22px;height:22px;border-radius:50%;background:#0c1026;cursor:pointer;border:2px solid #fff3" title="Midnight"></div>
+                    <div onclick="OS.setTaskbarColor('28,10,20')" style="width:22px;height:22px;border-radius:50%;background:#1c0a14;cursor:pointer;border:2px solid #fff3" title="Wine"></div>
+                    <div onclick="OS.setTaskbarColor('6,18,8')" style="width:22px;height:22px;border-radius:50%;background:#061208;cursor:pointer;border:2px solid #fff3" title="Forest"></div>
+                    <div onclick="OS.setTaskbarColor('5,12,28')" style="width:22px;height:22px;border-radius:50%;background:#050c1c;cursor:pointer;border:2px solid #fff3" title="Ocean"></div>
+                    <input type="color" value="#08090e" oninput="OS.setTaskbarColorHex(this.value)" style="width:24px;height:24px;border:none;border-radius:50%;background:none;cursor:pointer;padding:0" title="Custom">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ICONS & WIDGETS PAGE -->
+            <div class="sp2-page" id="sp2pg_icons_${id}">
+              <div class="sp2-hero">
+                <div class="sp2-hero-icon" style="background:rgba(251,191,36,0.12);color:#fbbf24"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></div>
+                <div><div class="sp2-hero-title">Icons & Widgets</div><div class="sp2-hero-sub">Desktop icon size, visibility, and widget management</div></div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">Desktop Icons</div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Show Desktop Icons</div><div class="sp2-row-sub">Toggle all desktop app shortcuts</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-icons_${id}" ${SETTINGS.get('showIcons')?'checked':''} onchange="OS.setIconVisibility(this.checked)"><span class="tog-slider"></span></label>
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Icon Size</div></div>
+                  <div style="display:flex;align-items:center;gap:8px"><span id="sp2iconSizeVal_${id}" style="font-size:11px;color:var(--os-accent);font-family:var(--mono);width:28px">${SETTINGS.get('iconSize')}</span><input type="range" class="sp2-slider" min="60" max="120" value="${SETTINGS.get('iconSize')}" oninput="OS.setIconSize(this.value);document.getElementById('sp2iconSizeVal_${id}').textContent=this.value"></div>
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Manage Hidden Icons</div><div class="sp2-row-sub">Restore icons that were hidden</div></div>
+                  <button class="sp2-action-btn" onclick="OS.openHiddenManager()">Manage</button>
+                </div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">Widgets</div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Show Widgets</div><div class="sp2-row-sub">Toggle all desktop widgets independently of icons</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-widgets_${id}" ${SETTINGS.get('showWidgets')!==false?'checked':''} onchange="WIDGETS.setVisible(this.checked)"><span class="tog-slider"></span></label>
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Add Widget</div><div class="sp2-row-sub">Clock, Calendar, Now Playing, Vocabulary</div></div>
+                  <button class="sp2-action-btn" onclick="WIDGETS.openPicker()">+ Add</button>
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Widget Opacity</div><div class="sp2-row-sub">Background translucency of all widgets</div></div>
+                  <input type="range" class="sp2-slider" min="20" max="100" value="${Math.round((SETTINGS.get('widgetOpacity')||0.82)*100)}" oninput="OS.setWidgetOpacity(this.value)" style="width:130px">
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Widget Background Color</div><div class="sp2-row-sub">Tint color of widget surfaces</div></div>
+                  <div class="sp2-accent-row" style="padding:0;gap:7px">
+                    <div onclick="OS.setWidgetColor('13,15,22')" style="width:22px;height:22px;border-radius:50%;background:#0d0f16;cursor:pointer;border:2px solid #fff3" title="Dark"></div>
+                    <div onclick="OS.setWidgetColor('22,18,32')" style="width:22px;height:22px;border-radius:50%;background:#161220;cursor:pointer;border:2px solid #fff3" title="Plum"></div>
+                    <div onclick="OS.setWidgetColor('10,20,28')" style="width:22px;height:22px;border-radius:50%;background:#0a141c;cursor:pointer;border:2px solid #fff3" title="Slate"></div>
+                    <div onclick="OS.setWidgetColor('30,30,30')" style="width:22px;height:22px;border-radius:50%;background:#1e1e1e;cursor:pointer;border:2px solid #fff3" title="Graphite"></div>
+                    <input type="color" value="#0d0f16" oninput="OS.setWidgetColorHex(this.value)" style="width:24px;height:24px;border:none;border-radius:50%;background:none;cursor:pointer;padding:0" title="Custom">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- DISPLAY PAGE -->
+            <div class="sp2-page" id="sp2pg_display_${id}">
+              <div class="sp2-hero">
+                <div class="sp2-hero-icon" style="background:rgba(74,222,128,0.12);color:#4ade80"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+                <div><div class="sp2-hero-title">Display</div><div class="sp2-hero-sub">Animations, boot, and visual effects</div></div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">Visual Effects</div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Animations</div><div class="sp2-row-sub">Window open, close, minimize effects</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-anims_${id}" ${SETTINGS.get('animations')!==false?'checked':''} onchange="OS.setAnimations(this.checked)"><span class="tog-slider"></span></label>
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Boot Intro</div><div class="sp2-row-sub">Show boot sequence on load</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-boot_${id}" ${SETTINGS.get('showBoot')?'checked':''} onchange="SETTINGS.set('showBoot',this.checked)"><span class="tog-slider"></span></label>
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Launch Confirm Dialog</div><div class="sp2-row-sub">Show confirmation before opening apps</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-confirm_${id}" ${SETTINGS.get('launchConfirm')?'checked':''} onchange="SETTINGS.set('launchConfirm',this.checked)"><span class="tog-slider"></span></label>
+                </div>
+              </div>
+            </div>
+
+            <!-- PERFORMANCE PAGE -->
+            <div class="sp2-page" id="sp2pg_performance_${id}">
+              <div class="sp2-hero">
+                <div class="sp2-hero-icon" style="background:rgba(248,113,113,0.12);color:#f87171"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></div>
+                <div><div class="sp2-hero-title">Performance</div><div class="sp2-hero-sub">Optimize for games and heavy apps</div></div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">Game Mode</div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Lag Mode for Slow Apps</div><div class="sp2-row-sub">Adds a delay before loading links — helps some games initialize</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-lag_${id}" ${SETTINGS.get('lagMode')?'checked':''} onchange="SETTINGS.set('lagMode',this.checked)"><span class="tog-slider"></span></label>
+                </div>
+              </div>
+            </div>
+
+            <!-- ABOUT PAGE -->
+            <div class="sp2-page" id="sp2pg_about_${id}">
+              <div class="sp2-hero">
+                <div class="sp2-hero-icon" style="background:rgba(167,139,250,0.12);color:#a78bfa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg></div>
+                <div><div class="sp2-hero-title">NovOS</div><div class="sp2-hero-sub">Browser-based desktop environment</div></div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">System Information</div>
+                <div class="sp2-row"><div><div class="sp2-row-label">Version</div></div><span style="font-size:12px;color:var(--os-muted);font-family:var(--mono)">NovOS 4.19</span></div>
+                <div class="sp2-row"><div><div class="sp2-row-label">Environment</div></div><span style="font-size:12px;color:var(--os-muted);font-family:var(--mono)">${navigator.userAgent.includes('Chrome')?'Chromium':'Browser'}-based</span></div>
+                <div class="sp2-row"><div><div class="sp2-row-label">Storage Used</div></div><span id="sp2StorageInfo_${id}" style="font-size:12px;color:var(--os-muted);font-family:var(--mono)">Calculating…</span></div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">Data</div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Wipe All Data</div><div class="sp2-row-sub">Clears all settings, pinned apps, and desktop layout</div></div>
+                  <button class="sp2-action-btn" style="color:var(--os-red);border-color:rgba(248,113,113,0.3)" onclick="OS.wipeData()">Wipe Data</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event,'se')"></div>`;
+
+    document.getElementById('windowLayer').appendChild(el);
+    WM.windows[id]={app:{name:'Settings',url:'__settings__',icon:''},minimized:false,maximized:false,prevRect:null};
+    WM.focus(id);TB.addWindow(id,{name:'Settings',url:'__settings__',icon:''});WM.makeDraggable(id);
+
+    // Sync wallpaper active state
+    SP2.syncWp(id);
+
+    // Calc storage
+    setTimeout(()=>{
+      try{
+        let total=0;
+        for(let k in localStorage){if(localStorage.hasOwnProperty(k))total+=((localStorage[k].length+k.length)*2);}
+        const kb=(total/1024).toFixed(1);
+        const el2=document.getElementById('sp2StorageInfo_'+id);
+        if(el2)el2.textContent=kb+' KB / ~5 MB';
+      }catch(e){}
+    },100);
+  },
 
   _emojiList:['🎮','🕹','🎯','🎲','🎪','🎨','🎬','🎵','🎸','📱','💻','🖥','🌐','🔥','⚡','✨','🚀','🌈','🦄','🐉','🍀','🌟','💎','🏆','🎭','🗺','📦','🔮','🧩','🎃','🦊','🐱','🐶','🦁','🐸','🦋','🌺','🌙','☀️','❄️','🎄','🏔','🌊','🎆','💡','🔑','🎁','🎉','🍕','🍔'],
   _toggleEmojiRow(){
@@ -2297,7 +2840,7 @@ const OS={
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
-        <span style="font-size:14px;margin-right:2px">📁</span>
+        <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#fbbf24;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><line x1="3" y1="12" x2="21" y2="12" opacity="0.4"/></svg></div>
         <div class="wnd-title">File Explorer</div>
         <div class="wnd-ctrl-btns">
           <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
@@ -2428,6 +2971,49 @@ const OS={
         (doc.head||doc.body||doc.documentElement).appendChild(s);
       }catch(err){/* cross-origin iframe — cannot inject, expected */}
     };
+
+    // Inject a lightweight Now Playing reporter into the Monochrome iframe.
+    // DISABLED for the cross-origin music frame — injecting into it trips
+    // Cloudflare/Amazon bot checks. Kept for any same-origin media frames only.
+    WM._injectNowPlaying=(frm)=>{
+      try{
+        // Never inject into the music frame (it's cross-origin and CF-protected).
+        if(frm&&frm.id==='frm_'+(Object.keys(WM.windows).find(k=>WM.windows[k].app&&WM.windows[k].app.url==='__music__')||''))return;
+        const doc=frm.contentDocument||frm.contentWindow&&frm.contentWindow.document;
+        if(!doc)return;
+        const s=doc.createElement('script');
+        s.textContent=`(function(){
+          function report(){
+            var info=null;
+            try{
+              var ms=navigator.mediaSession&&navigator.mediaSession.metadata;
+              var media=document.querySelector('audio,video');
+              var playing=media?!media.paused:false;
+              if(ms&&ms.title){
+                var art='';
+                if(ms.artwork&&ms.artwork.length)art=ms.artwork[ms.artwork.length-1].src;
+                info={title:ms.title,artist:ms.artist||ms.album||'',artwork:art,playing:playing};
+              }else if(media&&(media.currentSrc||media.src)){
+                info={title:document.title||'Track',artist:'',artwork:'',playing:playing};
+              }
+            }catch(e){}
+            window.parent.postMessage({__novos_nowplaying:true,info:info},'*');
+          }
+          setInterval(report,1500);
+          document.addEventListener('play',report,true);
+          document.addEventListener('pause',report,true);
+          report();
+        })();`;
+        (doc.head||doc.body||doc.documentElement).appendChild(s);
+      }catch(err){/* cross-origin — expected, widget will show idle state */}
+    };
+
+    // Listen for Now Playing updates from the Monochrome iframe.
+    window.addEventListener('message',e=>{
+      if(e.data&&e.data.__novos_nowplaying){
+        WIDGETS.updateNowPlaying(e.data.info);
+      }
+    });
   }
 };
 
@@ -2665,7 +3251,7 @@ const VIEWERS={
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)">
-        <span style="font-size:14px;flex-shrink:0">🖼</span>
+        <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#34d399;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/><path d="M21 15l-5-5L5 21"/></svg></div>
         <div class="wnd-title">${file.name}</div>
         <div class="wnd-ctrl-btns">
           <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
@@ -2732,7 +3318,7 @@ const VIEWERS={
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)">
-        <span style="font-size:14px;flex-shrink:0">🌐</span>
+        <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#60a5fa;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
         <div class="wnd-title">${file.name}</div>
         <div class="wnd-ctrl-btns">
           <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
@@ -2742,7 +3328,7 @@ const VIEWERS={
       </div>
       <div class="wnd-body" style="display:flex;flex-direction:column;overflow:hidden">
         <div style="height:38px;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 10px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)">
-          <span style="font-size:11px;color:var(--os-muted)">🌐 HTML Viewer — ${file.name}</span>
+          <span style="font-size:11px;color:var(--os-muted)">HTML Viewer — ${file.name}</span>
           <div style="flex:1"></div>
           <button class="fe-btn" onclick="document.getElementById('hvFrm_${id}').contentDocument&&document.getElementById('hvFrm_${id}').contentDocument.location.reload()">↺ Reload</button>
         </div>
@@ -2766,7 +3352,7 @@ const VIEWERS={
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)">
-        <span style="font-size:14px;flex-shrink:0">🎬</span>
+        <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#f87171;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="5.5" width="14" height="13" rx="2"/><path d="M16 9.5l6-3.5v12l-6-3.5V9.5z"/></svg></div>
         <div class="wnd-title">${file.name}</div>
         <div class="wnd-ctrl-btns">
           <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
@@ -2793,7 +3379,7 @@ const VIEWERS={
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)">
-        <span style="font-size:14px;flex-shrink:0">🎵</span>
+        <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#f472b6;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
         <div class="wnd-title">${file.name}</div>
         <div class="wnd-ctrl-btns">
           <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
@@ -2801,7 +3387,7 @@ const VIEWERS={
         </div>
       </div>
       <div class="wnd-body" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;background:var(--os-bg)">
-        <div style="width:90px;height:90px;border-radius:50%;background:rgba(var(--os-accent-rgb),0.12);border:2px solid rgba(var(--os-accent-rgb),0.3);display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 0 24px rgba(var(--os-accent-rgb),0.2)">🎵</div>
+        <div style="width:90px;height:90px;border-radius:50%;background:rgba(var(--os-accent-rgb),0.12);border:2px solid rgba(var(--os-accent-rgb),0.3);display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(var(--os-accent-rgb),0.2);color:#f472b6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="38" height="38"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
         <div style="font-size:13px;font-weight:600;color:var(--os-text);text-align:center;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${file.name.replace(/\.[^.]+$/,'')}</div>
         ${file.dataUrl&&file.dataUrl!=='__too_large__'
           ?`<audio id="aud_${id}" controls autoplay style="width:100%;max-width:260px;outline:none"><source src="${file.dataUrl}" type="${file.type}">Your browser does not support audio.</audio>`
@@ -2826,7 +3412,7 @@ const TM={
     el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
     el.innerHTML=`
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)">
-        <span style="font-size:14px;flex-shrink:0">📊</span>
+        <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#4ade80;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M7 8v4M11 6v6M15 9v3M19 7v5" stroke-opacity="0.9"/></svg></div>
         <div class="wnd-title">Task Manager</div>
         <div class="wnd-ctrl-btns">
           <button class="wnd-ctrl-btn" onclick="TM.refresh('${id}')" title="Refresh"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
@@ -2943,7 +3529,17 @@ const LAUNCHER={
   _render(q){
     const body=document.getElementById('lpBody');if(!body)return;
     const sc=OS.shortcuts;
-    const all=[...sc.games,...sc.web,...sc.apps];
+    const userApps=[...sc.games,...sc.web,...sc.apps];
+    // System apps always searchable
+    const sysApps=[
+      {name:'Settings',url:'__settings__',icon:'',isSystem:true,systemAction:'openSettings'},
+      {name:'File Explorer',url:'__explorer__',icon:'',isSystem:true,systemAction:'openFileExplorer'},
+      {name:'App Library',url:'__library__',icon:'',isSystem:true,systemAction:'openAppLibrary'},
+      {name:'Aspen Browser',url:'__browser__',icon:'',isSystem:true,systemAction:'openBrowser'},
+      {name:'Task Manager',url:'__tm__',icon:'',isSystem:true,systemAction:'openTM'},
+      {name:'Monochrome Music',url:'__music__',icon:'',isSystem:true,systemAction:'openMonochrome'},
+    ];
+    const all=[...sysApps,...userApps];
 
     if(q){
       // Search results
@@ -2967,28 +3563,48 @@ const LAUNCHER={
     }
   },
 
+  // Returns an inline SVG system icon (sized) for system urls, or null.
+  _sysLauncherIcon(url,size){
+    const map={
+      '__browser__':{c:'#60a5fa',s:`<circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/>`},
+      '__music__':{c:'#f472b6',s:`<circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.7"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5" stroke-opacity="0.4"/>`},
+      '__explorer__':{c:'#fbbf24',s:`<path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><line x1="3" y1="12" x2="21" y2="12" opacity="0.4"/>`},
+      '__settings__':{c:'#94a3b8',s:`<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>`},
+      '__library__':{c:'#a78bfa',s:`<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>`},
+      '__tm__':{c:'#4ade80',s:`<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M7 8v4M11 6v6M15 9v3M19 7v5"/>`},
+    };
+    const m=map[url];if(!m)return null;
+    const px=size||40;const radius=Math.round(px*0.25);
+    return `<div style="width:${px}px;height:${px}px;border-radius:${radius}px;display:flex;align-items:center;justify-content:center;background:${m.c}1a;color:${m.c}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="${Math.round(px*0.6)}" height="${Math.round(px*0.6)}">${m.s}</svg></div>`;
+  },
+
   _appCard(app){
     const esc=JSON.stringify(app).replace(/"/g,'&quot;');
+    const sysIcon=this._sysLauncherIcon(app.url,40);
     const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
-    const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http');
-    const imgEl=isEmoji
-      ?`<div class="lp-app-icon">${app.icon}</div>`
+    const imgEl=sysIcon
+      ?`<div class="lp-app-icon" style="padding:0;background:transparent">${sysIcon}</div>`
       :`<img class="lp-app-icon" src="${icon}" style="border-radius:10px;width:40px;height:40px;object-fit:cover" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(app.url||'')}'" alt="">`;
     return `<div class="lp-app" onclick="LAUNCHER.launch(${esc})">${imgEl}<div class="lp-app-label">${app.name}</div></div>`;
   },
 
   _recentRow(app){
     const esc=JSON.stringify(app).replace(/"/g,'&quot;');
+    const sysIcon=this._sysLauncherIcon(app.url,28);
     const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
-    const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http');
-    const imgEl=isEmoji
-      ?`<div class="lp-recent-icon">${app.icon}</div>`
+    const imgEl=sysIcon
+      ?`<div class="lp-recent-icon" style="padding:0;background:transparent">${sysIcon}</div>`
       :`<img class="lp-recent-icon" src="${icon}" style="border-radius:7px;width:28px;height:28px;object-fit:cover" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(app.url||'')}'" alt="">`;
-    return `<div class="lp-recent-item" onclick="LAUNCHER.launch(${esc})">${imgEl}<div class="lp-recent-name">${app.name}</div><div class="lp-recent-cat">Game</div></div>`;
+    return `<div class="lp-recent-item" onclick="LAUNCHER.launch(${esc})">${imgEl}<div class="lp-recent-name">${app.name}</div><div class="lp-recent-cat">${sysIcon?'System':'Game'}</div></div>`;
   },
 
   launch(app){
     this.close();
+    if(app.isSystem&&app.systemAction){
+      if(app.systemAction==='openTM')TM.open();
+      else if(OS[app.systemAction])OS[app.systemAction]();
+      return;
+    }
     OS.launch(app);
   }
 };
@@ -3003,12 +3619,16 @@ const TBDrag={
 
   attach(btn,idx){
     btn.setAttribute('draggable','true');
+    // Block native drag on children so only the button itself drags
+    btn.querySelectorAll('*').forEach(c=>{c.setAttribute('draggable','false');c.style.pointerEvents='none';});
     btn.addEventListener('dragstart',e=>{
+      // Only allow drag from the button element itself
       this._dragging=btn;
       this._origIdx=idx;
       this._startX=e.clientX;
       setTimeout(()=>btn.classList.add('dragging-tb'),0);
       e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.setData('text/plain',idx.toString());
     });
     btn.addEventListener('dragend',()=>{
       btn.classList.remove('dragging-tb');
@@ -3023,11 +3643,12 @@ const TBDrag={
     btn.addEventListener('drop',e=>{
       e.preventDefault();btn.style.outline='';
       if(!this._dragging||this._dragging===btn)return;
-      const allBtns=[...document.querySelectorAll('#taskbarApps .tb-app')];
+      // Search ALL tb-app buttons across both containers
+      const allBtns=[...document.querySelectorAll('#taskbarUserApps .tb-app, #taskbarApps .tb-app')];
       const fromIdx=allBtns.indexOf(this._dragging);
       const toIdx=allBtns.indexOf(btn);
       if(fromIdx===-1||toIdx===-1)return;
-      // Reorder TB.pinned
+      // Build the full ordered pinned list and reorder
       const moved=TB.pinned.splice(fromIdx,1)[0];
       if(moved){TB.pinned.splice(toIdx,0,moved);TB.savePinned();TB.render();}
     });
@@ -3038,11 +3659,237 @@ const TBDrag={
 const _origTBRender=TB.render.bind(TB);
 TB.render=function(){
   _origTBRender();
-  const cont=document.getElementById('taskbarApps');
-  if(!cont)return;
-  cont.querySelectorAll('.tb-app').forEach((btn,idx)=>{
+  // Collect all tb-app buttons from BOTH containers in order (user-left first, then sys-right)
+  const allBtns=[
+    ...document.querySelectorAll('#taskbarUserApps .tb-app'),
+    ...document.querySelectorAll('#taskbarApps .tb-app')
+  ];
+  allBtns.forEach((btn,idx)=>{
     TBDrag.attach(btn,idx);
   });
+};
+
+/* ═══════════════════════════════════════════════
+   WIDGET ENGINE
+═══════════════════════════════════════════════ */
+const WIDGETS={
+  _data:[],_timers:{},_musicWidgetIds:[],_nowPlaying:null,
+
+  // Called when Monochrome posts track info, or to clear when nothing is playing.
+  updateNowPlaying(info){
+    this._nowPlaying=info;
+    (this._musicWidgetIds||[]).forEach(id=>{
+      const trackEl=document.getElementById(id+'_track');
+      const artistEl=document.getElementById(id+'_artist');
+      const eqEl=document.getElementById(id+'_eq');
+      const artEl=document.getElementById(id+'_art');
+      if(!trackEl)return;
+      if(info&&info.title){
+        trackEl.textContent=info.title;
+        artistEl.textContent=info.artist||'Monochrome';
+        if(eqEl)eqEl.style.display=info.playing?'flex':'none';
+        if(artEl&&info.artwork){artEl.innerHTML=`<img src="${info.artwork}" style="width:100%;height:100%;object-fit:cover;border-radius:10px" alt="">`;}
+      }else{
+        trackEl.textContent='Nothing playing';
+        artistEl.textContent='Open Monochrome to play';
+        if(eqEl)eqEl.style.display='none';
+      }
+    });
+  },
+
+  load(){
+    try{this._data=JSON.parse(localStorage.getItem('novos_widgets')||'[]');}catch{this._data=[];}
+  },
+  save(){localStorage.setItem('novos_widgets',JSON.stringify(this._data));},
+
+  setVisible(show){
+    SETTINGS.set('showWidgets',show);
+    document.getElementById('widgetLayer').style.visibility=show?'':'hidden';
+  },
+
+  openPicker(){document.getElementById('widgetPicker').classList.add('open');},
+  closePicker(){document.getElementById('widgetPicker').classList.remove('open');},
+
+  add(type){
+    const id='wgt_'+(Date.now());
+    const w={id,type,x:Math.round(window.innerWidth*0.6+Math.random()*100),y:80+this._data.length*30};
+    this._data.push(w);this.save();this._renderOne(w);
+    OS.notify('Widget Added',type.replace('-',' ')+' widget added to desktop.');
+  },
+
+  remove(id){
+    this._data=this._data.filter(w=>w.id!==id);
+    this.save();
+    clearInterval(this._timers[id]);
+    delete this._timers[id];
+    const el=document.getElementById(id);
+    if(el)el.remove();
+  },
+
+  init(){
+    this.load();
+    const layer=document.getElementById('widgetLayer');
+    if(!layer)return;
+    layer.style.visibility=SETTINGS.get('showWidgets')!==false?'':'hidden';
+    this._data.forEach(w=>this._renderOne(w));
+  },
+
+  _renderOne(w){
+    const layer=document.getElementById('widgetLayer');
+    if(!layer)return;
+    const el=document.createElement('div');
+    el.className='desk-widget';
+    el.id=w.id;
+    el.style.left=(w.x||100)+'px';
+    el.style.top=(w.y||100)+'px';
+
+    const closeBtn=`<div class="widget-handle"><button class="widget-close-btn" onclick="WIDGETS.remove('${w.id}')" title="Remove">✕</button></div>`;
+
+    if(w.type==='clock-digital'){
+      el.innerHTML=`${closeBtn}<div class="widget-box widget-clock-digital"><div class="widget-clock-time" id="${w.id}_t">--:--</div><div class="widget-clock-date" id="${w.id}_d"></div></div>`;
+      const tick=()=>{
+        const n=new Date();
+        let h=n.getHours(),m=n.getMinutes(),s=n.getSeconds();
+        const ap=h>=12?'PM':'AM';h=h%12||12;
+        const tEl=document.getElementById(w.id+'_t');
+        const dEl=document.getElementById(w.id+'_d');
+        if(tEl)tEl.textContent=h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+' '+ap;
+        if(dEl){const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];dEl.textContent=days[n.getDay()]+', '+months[n.getMonth()]+' '+n.getDate()+', '+n.getFullYear();}
+      };
+      tick();this._timers[w.id]=setInterval(tick,1000);
+
+    }else if(w.type==='clock-analog'){
+      el.innerHTML=`${closeBtn}<div class="widget-box" style="padding:14px;width:158px"><svg id="${w.id}_svg" viewBox="0 0 120 120" width="130" height="130">
+        <circle cx="60" cy="60" r="56" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+        ${[...Array(12)].map((_,i)=>{const a=(i*30-90)*Math.PI/180;const r1=46,r2=52;return`<line x1="${60+r1*Math.cos(a)}" y1="${60+r1*Math.sin(a)}" x2="${60+r2*Math.cos(a)}" y2="${60+r2*Math.sin(a)}" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>`}).join('')}
+        <line id="${w.id}_h" x1="60" y1="60" x2="60" y2="32" stroke="rgba(255,255,255,0.9)" stroke-width="3" stroke-linecap="round"/>
+        <line id="${w.id}_m" x1="60" y1="60" x2="60" y2="20" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round"/>
+        <line id="${w.id}_s" x1="60" y1="60" x2="60" y2="16" stroke="rgba(var(--os-accent-rgb),1)" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="60" cy="60" r="3" fill="rgba(var(--os-accent-rgb),1)"/>
+      </svg></div>`;
+      const tickA=()=>{
+        const n=new Date();
+        const s=n.getSeconds()+n.getMilliseconds()/1000;
+        const m=n.getMinutes()+s/60;
+        const h=(n.getHours()%12)+m/60;
+        const rot=(deg,cx,cy,len,strokeW)=>{const a=(deg-90)*Math.PI/180;return{x2:60+len*Math.cos(a),y2:60+len*Math.sin(a)};};
+        const setHand=(id,deg,len)=>{const a=(deg-90)*Math.PI/180;const line=document.getElementById(id);if(line){line.setAttribute('x2',60+len*Math.cos(a));line.setAttribute('y2',60+len*Math.sin(a));}};
+        setHand(w.id+'_h',h*30,26);
+        setHand(w.id+'_m',m*6,36);
+        setHand(w.id+'_s',s*6,44);
+      };
+      tickA();this._timers[w.id]=setInterval(tickA,200);
+
+    }else if(w.type==='calendar'){
+      const renderCal=()=>{
+        const now=new Date();
+        const y=now.getFullYear(),mo=now.getMonth();
+        const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const firstDay=new Date(y,mo,1).getDay();
+        const daysInMonth=new Date(y,mo+1,0).getDate();
+        const prevDays=new Date(y,mo,0).getDate();
+        let cells='';
+        const dayLabels=['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="widget-cal-day-label">${d}</div>`).join('');
+        for(let i=0;i<firstDay;i++){cells+=`<div class="widget-cal-day other-month">${prevDays-firstDay+i+1}</div>`;}
+        for(let d=1;d<=daysInMonth;d++){const isToday=d===now.getDate();cells+=`<div class="widget-cal-day${isToday?' today':''}">${d}</div>`;}
+        const total=firstDay+daysInMonth;const remaining=(7-total%7)%7;
+        for(let i=1;i<=remaining;i++){cells+=`<div class="widget-cal-day other-month">${i}</div>`;}
+        return`<div class="widget-box widget-calendar"><div class="widget-cal-header"><span>${months[mo]} ${y}</span></div><div class="widget-cal-grid">${dayLabels}${cells}</div></div>`;
+      };
+      el.innerHTML=closeBtn+renderCal();
+
+    }else if(w.type==='music'){
+      el.innerHTML=`${closeBtn}<div class="widget-box widget-music">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="widget-music-art" id="${w.id}_art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" width="24" height="24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.6"/></svg></div>
+          <div style="flex:1;min-width:0">
+            <div id="${w.id}_track" style="font-size:12.5px;font-weight:600;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Nothing playing</div>
+            <div id="${w.id}_artist" style="font-size:11px;color:var(--os-muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Open Monochrome to play</div>
+          </div>
+          <div id="${w.id}_eq" style="display:none;align-items:flex-end;gap:2px;height:16px;flex-shrink:0">
+            <span style="width:2.5px;background:#f472b6;border-radius:1px;animation:npEq 0.8s ease-in-out infinite"></span>
+            <span style="width:2.5px;background:#f472b6;border-radius:1px;animation:npEq 0.8s ease-in-out infinite 0.2s"></span>
+            <span style="width:2.5px;background:#f472b6;border-radius:1px;animation:npEq 0.8s ease-in-out infinite 0.4s"></span>
+          </div>
+        </div>
+        <button onclick="OS.openMonochrome()" style="width:100%;margin-top:10px;height:30px;border-radius:8px;background:rgba(244,114,182,0.12);border:1px solid rgba(244,114,182,0.25);color:#f472b6;font-family:var(--font);font-size:11.5px;font-weight:500;cursor:pointer;transition:all 0.13s" onmouseover="this.style.background='rgba(244,114,182,0.25)'" onmouseout="this.style.background='rgba(244,114,182,0.12)'">Open Monochrome</button>
+      </div>`;
+      WIDGETS._musicWidgetIds=WIDGETS._musicWidgetIds||[];
+      if(!WIDGETS._musicWidgetIds.includes(w.id))WIDGETS._musicWidgetIds.push(w.id);
+
+    }else if(w.type==='vocab'){
+      const words=[
+        {word:'Ephemeral',type:'adj.',def:'Lasting for a very short time; transitory.'},
+        {word:'Serendipity',type:'n.',def:'The occurrence of events by chance in a happy or beneficial way.'},
+        {word:'Sonder',type:'n.',def:'The realization that each passerby has a life as vivid and complex as your own.'},
+        {word:'Liminal',type:'adj.',def:'Relating to a transitional or initial stage of a process.'},
+        {word:'Hiraeth',type:'n.',def:'A homesickness for a home you cannot return to, or that never was.'},
+        {word:'Petrichor',type:'n.',def:'The pleasant, earthy smell produced by rainfall on dry earth.'},
+        {word:'Solipsism',type:'n.',def:'The view that the self is all that can be known to exist.'},
+        {word:'Ineffable',type:'adj.',def:'Too great or extreme to be expressed or described in words.'},
+        {word:'Halcyon',type:'adj.',def:'Denoting a period of time in the past that was idyllically happy and peaceful.'},
+        {word:'Verisimilitude',type:'n.',def:'The appearance of being true or real; plausibility.'},
+      ];
+      const dayIdx=Math.floor(Date.now()/86400000)%words.length;
+      const vocab=words[dayIdx];
+      el.innerHTML=`${closeBtn}<div class="widget-box widget-vocab">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--os-dim);margin-bottom:8px">Word of the Day</div>
+        <div class="widget-vocab-word">${vocab.word}</div>
+        <div class="widget-vocab-type">${vocab.type}</div>
+        <div class="widget-vocab-def">${vocab.def}</div>
+      </div>`;
+    }
+
+    layer.appendChild(el);
+    this._attachWidgetDrag(el,w);
+  },
+
+  _attachWidgetDrag(el,w){
+    let ox=0,oy=0,dragging=false;
+    el.addEventListener('mousedown',e=>{
+      if(e.target.closest('.widget-handle')||e.target.closest('button'))return;
+      dragging=true;ox=e.clientX-el.offsetLeft;oy=e.clientY-el.offsetTop;
+      el.classList.add('widget-dragging');e.preventDefault();
+    });
+    document.addEventListener('mousemove',e=>{
+      if(!dragging)return;
+      const nx=e.clientX-ox,ny=e.clientY-oy;
+      el.style.left=Math.max(0,nx)+'px';el.style.top=Math.max(26,ny)+'px';
+      w.x=Math.round(nx);w.y=Math.round(ny);
+    });
+    document.addEventListener('mouseup',()=>{
+      if(!dragging)return;dragging=false;
+      el.classList.remove('widget-dragging');
+      this.save();
+    });
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   SETTINGS WINDOW CONTROLLER
+═══════════════════════════════════════════════ */
+const SP2={
+  nav(page,wid){
+    document.querySelectorAll(`[id^="sp2pg_"][id$="_${wid}"]`).forEach(p=>p.classList.remove('active'));
+    const target=document.getElementById(`sp2pg_${page}_${wid}`);
+    if(target)target.classList.add('active');
+    document.querySelectorAll(`#sp2Main_${wid}`).forEach(()=>{});
+    // Update nav active
+    const navItems=document.getElementById(`sp2Main_${wid}`)?.closest('.sp2-layout')?.querySelectorAll('.sp2-nav-item');
+    if(navItems){navItems.forEach(n=>{n.classList.toggle('active',n.getAttribute('onclick')&&n.getAttribute('onclick').includes(`'${page}'`));});}
+  },
+  syncWp(wid){
+    const wp=SETTINGS.get('wallpaper')||'aurora';
+    ['aurora','sunset','ocean','forest','void','plain','custom'].forEach(w=>{
+      const el=document.getElementById(`sp2wp_${w}_${wid}`);
+      if(el)el.classList.toggle('active',w===wp);
+    });
+  },
+  setTaskbarOpacity(val){
+    const opacity=(+val/100).toFixed(2);
+    SETTINGS.set('taskbarOpacity',+opacity);
+    document.documentElement.style.setProperty('--taskbar-opacity',opacity);
+  }
 };
 
 /* ═══════════════════════════════════════════════
@@ -3057,17 +3904,11 @@ const WP_TINTS={
   plain:'rgba(10,11,16,0.88)',
   custom:'rgba(8,9,14,0.88)',
 };
-function applyTaskbarTint(){
-  const wp=SETTINGS.get('wallpaper')||'aurora';
-  const tint=WP_TINTS[wp]||WP_TINTS.aurora;
-  document.getElementById('taskbar').style.setProperty('--taskbar-bg',tint);
-  document.getElementById('taskbar').style.background=tint;
-}
-// Patch OS.setWallpaper to also update tint
-const _origSetWallpaper=OS.setWallpaper.bind(OS);
-OS.setWallpaper=function(name){_origSetWallpaper(name);applyTaskbarTint();};
+// Taskbar background is now driven by user-selectable color + opacity
+// (see OS.setTaskbarColor / SP2.setTaskbarOpacity), so no wallpaper auto-tint.
+function applyTaskbarTint(){/* deprecated — kept as no-op for compatibility */}
 
-window.addEventListener('load',()=>{OS.init();initTopBar();applyTaskbarTint();});
+window.addEventListener('load',()=>{OS.init();initTopBar();WIDGETS.init();});
 window.addEventListener('beforeunload',e=>{e.preventDefault();e.returnValue='';});
 
 /* ═══ TASKBAR PREVIEW ═══ */
