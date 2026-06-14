@@ -330,7 +330,8 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 /* ALT+TAB SWITCHER */
 #altTabOverlay{position:fixed;inset:0;z-index:200001;background:rgba(0,0,0,0.65);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px}
 #altTabOverlay.open{display:flex}
-#altTabTitle{font-size:11px;color:var(--os-muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px}
+#altTabTitle{font-size:11px;color:var(--os-muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;user-select:none}
+#altTabOverlay{pointer-events:all}
 #altTabList{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:90vw}
 .alt-tab-item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 16px;border-radius:var(--radius-lg);border:2px solid transparent;cursor:pointer;transition:all 0.15s;min-width:90px;max-width:110px}
 .alt-tab-item.selected{background:rgba(var(--os-accent-rgb),0.18);border-color:rgba(var(--os-accent-rgb),0.5)}
@@ -1180,6 +1181,8 @@ const DEFAULT_SHORTCUTS = {
     {name:"Smash Karts",url:"https://smashkarts.io",icon:"https://play-lh.googleusercontent.com/cM1CXOuBIy0kjGfoCTOKNa812iuVX6X2DDop8xNH4mNyjuM-oj3wVqZ7wiAOizq_TA",isDefault:true},
     {name:"bonk.io",url:"https://bonk.io",icon:"https://b.thumbs.redditmedia.com/9p8-wn2_KPdgjPTaR9fx-NIVgFhvsgBL0WPdbv5GMkA.png",isDefault:true},
     {name:"Granny 3",url:"https://wasm.rip/files/granny/granny3.html",icon:"https://play-lh.googleusercontent.com/QvKhAg9SyqVZ24DdjJCkuwPVpO4kz7cdbNO3bUxGALrlaeVTxJLLL9zHyaFq-NJ6eLg7",isDefault:true},
+    {name:"Dice A Million",url:"https://wasm.rip/files/diceAmillion/diceamillion.html",icon:"https://img.succesone.fr/2026/02/Dice-A-Million-SuccesOneFR-microsoft-220x300.jpg",isDefault:true},
+    {name:"Granny 2",url:"https://nostaligafun.pages.dev/games/games-accualy/ANDROID/Granny2_Data/index.html",icon:"https://play-lh.googleusercontent.com/iZ7NP-56YenT2dpgKEAw3n7IKFyu-S_9Iu3ayo28XYTgZpFtxsK_HXltV36pysSJqq8",isDefault:true},
     
   ],
   apps:[
@@ -1878,9 +1881,9 @@ const ALT_TAB={
   open:false,
   _idx:0,
   _ids:[],
+  _shiftHeld:false,
 
   getWindowList(){
-    // Show ALL windows including minimized — filter nulls defensively
     return Object.entries(WM.windows)
       .filter(([id,w])=>w&&w.app&&document.getElementById(id))
       .map(([id,w])=>({id,app:w.app,minimized:w.minimized}));
@@ -1890,32 +1893,42 @@ const ALT_TAB={
     const wins=this.getWindowList();
     if(wins.length===0)return;
     this._ids=wins.map(w=>w.id);
-    // Start from the currently focused window, then cycle to next
     const focusedEl=document.querySelector('.os-window.focused');
     const currentIdx=focusedEl?this._ids.indexOf(focusedEl.id):-1;
-    this._idx=currentIdx===-1?0:(currentIdx+1)%this._ids.length;
-
+    // Start already on next item (like real Alt+Tab — first press moves to next)
+    this._idx=(currentIdx+1)%this._ids.length;
     this.render();
     document.getElementById('altTabOverlay').classList.add('open');
     this.open=true;
+    this._shiftHeld=true;
   },
 
   render(){
     const wins=this.getWindowList();
     const list=document.getElementById('altTabList');
-    list.innerHTML=wins.map((w)=>{
+    list.innerHTML=wins.map((w,i)=>{
       const icon=w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`;
       const sel=this._ids[this._idx]===w.id?'selected':'';
       const isEmoji=icon&&[...icon].length<=2&&!icon.startsWith('http')&&!icon.startsWith('data:');
       const iconEl=isEmoji
         ?`<div class="alt-tab-icon" style="font-size:24px;display:flex;align-items:center;justify-content:center">${icon}</div>`
         :`<img class="alt-tab-icon" src="${icon}" onerror="this.outerHTML='<div class=alt-tab-icon style=font-size:22px>🖥</div>'" alt="">`;
-      return `<div class="alt-tab-item ${sel}" onclick="ALT_TAB.selectById('${w.id}')">
+      return `<div class="alt-tab-item ${sel}" data-altidx="${i}"
+        onmouseenter="ALT_TAB.hoverSelect(${i})"
+        onclick="ALT_TAB.selectById('${w.id}')">
         ${iconEl}
         <div class="alt-tab-label">${w.app.name}</div>
         ${w.minimized?'<div style="font-size:9px;color:var(--os-muted);background:rgba(255,255,255,0.07);border-radius:4px;padding:1px 5px">minimized</div>':''}
       </div>`;
     }).join('');
+  },
+
+  // Mouse hover updates the selection index (but doesn't confirm yet — that happens on Shift release)
+  hoverSelect(idx){
+    this._idx=idx;
+    document.querySelectorAll('#altTabList .alt-tab-item').forEach((el,i)=>{
+      el.classList.toggle('selected',i===idx);
+    });
   },
 
   next(){
@@ -1924,16 +1937,23 @@ const ALT_TAB={
     this.render();
   },
 
+  prev(){
+    if(!this.open)return;
+    this._idx=(this._idx-1+this._ids.length)%this._ids.length;
+    this.render();
+  },
+
+  // Clicking an item directly selects and closes (mouse click = immediate confirm)
   selectById(id){
     const idx=this._ids.indexOf(id);
-    if(idx!==-1)this._idx=idx;
-    this.confirm();
+    if(idx!==-1){this._idx=idx;this.confirm();}
   },
 
   confirm(){
     if(!this.open)return;
     document.getElementById('altTabOverlay').classList.remove('open');
     this.open=false;
+    this._shiftHeld=false;
     const id=this._ids[this._idx];
     if(id&&WM.windows[id]){
       if(WM.windows[id].minimized)WM.restore(id);
@@ -1944,6 +1964,29 @@ const ALT_TAB={
   cancel(){
     document.getElementById('altTabOverlay').classList.remove('open');
     this.open=false;
+    this._shiftHeld=false;
+  },
+
+  handleKeydown(e){
+    if(e.key==='Shift'){this._shiftHeld=true;return;}
+    if(e.key==='Tab'&&e.shiftKey){
+      e.preventDefault();
+      if(!this.open){this.show();}
+      else{this.next();}
+      return;
+    }
+    if(this.open){
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();this.confirm();}
+      if(e.key==='Escape'){e.preventDefault();this.cancel();}
+    }
+  },
+
+  // Releasing Shift auto-confirms the currently highlighted item — exactly like Windows Alt+Tab
+  handleKeyup(e){
+    if(e.key==='Shift'){
+      this._shiftHeld=false;
+      if(this.open)this.confirm();
+    }
   }
 };
 
@@ -3228,30 +3271,29 @@ const OS={
     this._initDragHandlers();
   },
 
-  // FIX: keyboard shortcuts — Tab = start menu, Shift+Tab = window switcher
+  // keyboard shortcuts — Tab = launcher, Shift+Tab (hold) = window switcher
   setupKeyboard(){
     const _handleKey=e=>{
+      // Always let ALT_TAB handle its own keys first, even inside inputs
+      ALT_TAB.handleKeydown(e);
       const tag=document.activeElement&&document.activeElement.tagName;
       if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
-      if((e.ctrlKey||e.metaKey)&&(e.key==='p'||e.key==='P')){
-        e.preventDefault();CMDK.toggle();return;
-      }
-      if(e.key==='Tab'){
+      if(e.key==='Tab'&&!e.shiftKey){
         e.preventDefault();
-        if(e.shiftKey){ALT_TAB.next();}
-        else{this.toggleStart();}
-      }
-      if(ALT_TAB.open){
-        if(e.key==='Enter'||e.key===' '){e.preventDefault();ALT_TAB.confirm();}
+        LAUNCHER.toggle(e);
       }
     };
+    const _handleKeyUp=e=>{
+      ALT_TAB.handleKeyup(e);
+    };
     document.addEventListener('keydown',_handleKey);
+    document.addEventListener('keyup',_handleKeyUp);
 
-    // Intercept keydown from iframes by listening on the window level
-    // Each iframe's contentWindow posts a message when Shift+Tab is pressed
+    // Intercept keydown/keyup from iframes
     window.addEventListener('message',e=>{
       if(e.data==='novos_shifttab')ALT_TAB.next();
-      if(e.data==='novos_tab')this.toggleStart();
+      if(e.data==='novos_tab')LAUNCHER.toggle();
+      if(e.data==='novos_shiftup')ALT_TAB.handleKeyup({key:'Shift'});
     });
 
     // Inject a tiny keydown relay script into every iframe when it loads
@@ -3260,7 +3302,14 @@ const OS={
         const doc=frm.contentDocument||frm.contentWindow&&frm.contentWindow.document;
         if(!doc)return;
         const s=doc.createElement('script');
-        s.textContent=`document.addEventListener('keydown',function(e){if(e.key==='Tab'){e.preventDefault();window.parent.postMessage(e.shiftKey?'novos_shifttab':'novos_tab','*');}});`;
+        s.textContent=`
+          document.addEventListener('keydown',function(e){
+            if(e.key==='Tab'){e.preventDefault();window.parent.postMessage(e.shiftKey?'novos_shifttab':'novos_tab','*');}
+          });
+          document.addEventListener('keyup',function(e){
+            if(e.key==='Shift'){window.parent.postMessage('novos_shiftup','*');}
+          });
+        `;
         (doc.head||doc.body||doc.documentElement).appendChild(s);
       }catch(err){/* cross-origin iframe — cannot inject, expected */}
     };
@@ -4296,7 +4345,12 @@ window.addEventListener('load',()=>{
   OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init();
   setTimeout(()=>SESSION.restore(),SETTINGS.get('showBoot')?2600:200);
 });
-window.addEventListener('beforeunload',()=>{SESSION.save();});
+window.addEventListener('beforeunload',(e)=>{
+  try{SESSION.save();}catch(_){}
+  e.preventDefault();
+  e.returnValue='Leave NovOS? Your session will be saved.';
+  return 'Leave NovOS? Your session will be saved.';
+});
 
 /* ═══════════════════════════════════════════════
    NOTIFICATION HISTORY
