@@ -34,6 +34,10 @@ body.liquid-glass .os-window{border:1px solid var(--lg-border);box-shadow:0 32px
 body.liquid-glass .os-window.focused{box-shadow:0 40px 100px rgba(0,0,0,0.6),inset 0 1px 0 var(--lg-glow),0 0 0 1px rgba(var(--os-accent-rgb),0.35),0 0 30px rgba(var(--os-accent-rgb),0.12)}
 body.liquid-glass .widget-box{border:1px solid var(--lg-border);box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 var(--lg-glow),inset 0 0 20px rgba(255,255,255,0.05);backdrop-filter:blur(32px) saturate(1.8) brightness(1.1)}
 body.liquid-glass #startMenu,body.liquid-glass #launcherPanel,body.liquid-glass #ctxMenu,body.liquid-glass #quickMenu,body.liquid-glass .modal-box,body.liquid-glass #settingsPanel{border:1px solid var(--lg-border);box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 var(--lg-glow);backdrop-filter:blur(40px) saturate(1.9) brightness(1.1)}
+#dndBtn:hover{color:var(--os-text);background:var(--os-surface)}
+#dndBtn.dnd-active{color:var(--os-accent)}
+#dndBtn.dnd-active .dnd-slash{opacity:1}
+body.dnd-on #notifToastStack{display:none}
 body.liquid-glass #topBar{border-bottom:1px solid var(--lg-border);box-shadow:inset 0 1px 0 var(--lg-glow);backdrop-filter:blur(30px) saturate(2) brightness(1.1)}
 body.liquid-glass .tb-app:hover,body.liquid-glass #startBtn:hover,body.liquid-glass #appsGridBtn:hover{box-shadow:inset 0 1px 0 var(--lg-glow),0 8px 20px rgba(0,0,0,0.35),0 0 16px rgba(255,255,255,0.08)}
 body.liquid-glass .lib-card,body.liquid-glass .sp2-card,body.liquid-glass .widget-music-art{backdrop-filter:blur(20px) saturate(1.6)}
@@ -76,8 +80,11 @@ body.has-maximized #windowLayer>.os-window:not(.maximized){pointer-events:none}
 .desk-icon.folder .desk-icon-img{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.25);font-size:calc(var(--desk-icon-size)*0.32)}
 
 /* TOP BAR */
-#topBar{position:fixed;top:0;left:0;right:0;z-index:9999;height:28px;background:rgba(18,18,28,0.88);backdrop-filter:blur(24px) saturate(1.8);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-family:var(--font);font-size:12px;color:rgba(255,255,255,0.92);letter-spacing:0.01em;transition:transform 0.3s ease,opacity 0.3s ease}
-#topBar.topbar-hidden{transform:translateY(-100%);opacity:0;pointer-events:none}
+#topBar{position:fixed;top:0;left:0;right:0;z-index:9999;height:28px;background:rgba(18,18,28,0.88);backdrop-filter:blur(24px) saturate(1.8);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-family:var(--font);font-size:12px;color:rgba(255,255,255,0.92);letter-spacing:0.01em;transition:transform 0.3s ease,opacity 0.3s ease,visibility 0.3s}
+#topBar.topbar-hidden{transform:translateY(-100%);opacity:0;pointer-events:none;visibility:hidden}
+/* In fullscreen/maximized: top bar is gone entirely and cannot be peeked */
+body.has-maximized #topBar{transform:translateY(-100%)!important;opacity:0!important;pointer-events:none!important;visibility:hidden!important}
+body.has-maximized #topBarPeekZone{display:none!important;pointer-events:none!important}
 #topBarCenter{position:absolute;left:50%;transform:translateX(-50%);font-weight:500;font-size:12.5px;display:flex;align-items:center;gap:8px;white-space:nowrap}
 #topBarRight{display:flex;align-items:center;gap:8px;font-size:12px}
 .tb-stat{display:flex;align-items:center;gap:3px}
@@ -187,7 +194,7 @@ body.taskbar-autohide #desktop{height:100vh}
 .sm-footer-btn:hover{background:var(--os-surface2);color:var(--os-text)}
 
 /* WINDOWS */
-#windowLayer{position:absolute;inset:0;z-index:100;pointer-events:none}
+#windowLayer{position:absolute;inset:0;z-index:100;pointer-events:none;transform:translateZ(0);isolation:isolate}
 @keyframes wndOpen{from{opacity:0;transform:scale(0.93) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes wndClose{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(0.9)}}
 @keyframes wndMinimize{from{opacity:1;transform:scale(1) translateY(0)}to{opacity:0;transform:scale(0.75) translateY(48px)}}
@@ -357,13 +364,7 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .boot-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px}
 .boot-logo-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(var(--os-accent-rgb),0.9),rgba(244,122,255,0.7));display:flex;align-items:center;justify-content:center}
 .boot-logo-text{font-size:1.7rem;font-weight:600;letter-spacing:-0.03em;color:var(--os-text)}
-.boot-line{font-family:var(--mono);font-size:11px;color:var(--os-muted);overflow:hidden;width:0;white-space:nowrap;animation:lineReveal 0.25s forwards ease-out}
-.boot-line:nth-child(2){animation-delay:0.05s}
-.boot-line:nth-child(3){animation-delay:0.25s}
-.boot-line:nth-child(4){animation-delay:0.45s}
-.boot-line:nth-child(5){animation-delay:0.63s}
-.boot-line:nth-child(6){animation-delay:0.78s;color:var(--os-green)}
-@keyframes lineReveal{to{width:360px}}
+.boot-line{display:none}
 
 /* MODALS */
 .overlay-modal{position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center}
@@ -505,24 +506,151 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+
+/* NOTIFICATION HISTORY */
+#notifHistoryPanel{position:fixed;top:36px;right:8px;z-index:99997;width:280px;background:rgba(13,14,22,0.97);border:1px solid var(--os-border2);border-radius:var(--radius-lg);backdrop-filter:blur(32px);box-shadow:0 16px 48px rgba(0,0,0,0.6);overflow:hidden;transform:translateY(-8px) scale(0.96);opacity:0;pointer-events:none;transition:all 0.2s cubic-bezier(0.34,1.3,0.64,1);max-height:380px;display:flex;flex-direction:column}
+#notifHistoryPanel.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
+.nh-header{padding:10px 14px 8px;border-bottom:1px solid var(--os-border);display:flex;align-items:center;justify-content:space-between}
+.nh-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim)}
+.nh-clear{font-size:10.5px;color:var(--os-accent);cursor:pointer;background:none;border:none;font-family:var(--font);transition:opacity 0.12s}
+.nh-clear:hover{opacity:0.7}
+.nh-list{overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
+.nh-item{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.1s}
+.nh-item:hover{background:var(--os-surface)}
+.nh-item:last-child{border-bottom:none}
+.nh-item-title{font-size:11.5px;font-weight:600;color:var(--os-text);margin-bottom:2px}
+.nh-item-body{font-size:11px;color:var(--os-muted);line-height:1.4}
+.nh-item-time{font-size:10px;color:var(--os-dim);margin-top:3px;font-family:var(--mono)}
+.nh-empty{padding:28px 14px;text-align:center;color:var(--os-dim);font-size:12px}
+
+/* AI QUICK PROMPT */
+#quickPrompt{position:fixed;inset:0;z-index:600000;display:flex;align-items:flex-start;justify-content:center;padding-top:17vh;background:rgba(0,0,0,0.45);backdrop-filter:blur(7px);transition:opacity 0.18s ease}
+#quickPrompt.qp-hidden{opacity:0;pointer-events:none}
+#quickPromptBox{width:min(640px,92vw);background:rgba(16,17,26,0.94);border:1px solid var(--os-border2);border-radius:var(--radius-xl);box-shadow:var(--shadow-window);backdrop-filter:blur(40px) saturate(1.8);overflow:hidden;transform:translateY(0) scale(1);transition:transform 0.18s cubic-bezier(0.34,1.4,0.5,1)}
+#quickPrompt.qp-hidden #quickPromptBox{transform:translateY(-14px) scale(0.97)}
+body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0 32px 80px rgba(0,0,0,0.55),inset 0 1px 0 var(--lg-glow)}
+#qpModelRow{padding:13px 16px 2px}
+#qpTitle{display:flex;align-items:center;gap:8px;color:var(--os-text)}
+#qpTitle svg{color:var(--os-accent);flex-shrink:0}
+#qpTitle span{font-size:13px;font-weight:600;letter-spacing:-0.01em}
+#qpTitle .qp-sub{font-size:11px;font-weight:400;color:var(--os-dim);letter-spacing:0;margin-left:2px}
+#qpInput{width:100%;background:transparent;border:none;outline:none;resize:none;color:var(--os-text);font-family:var(--font);font-size:15px;line-height:1.5;padding:14px 16px 6px;max-height:240px}
+#qpInput::placeholder{color:var(--os-dim)}
+#qpFooter{display:flex;align-items:center;justify-content:space-between;padding:8px 13px 13px}
+#qpHint{font-family:var(--mono);font-size:10.5px;color:var(--os-dim);letter-spacing:0.02em}
+#qpSend{height:30px;padding:0 16px;border-radius:8px;font-family:var(--font);font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid rgba(var(--os-accent-rgb),0.35);background:rgba(var(--os-accent-rgb),0.16);color:var(--os-accent);transition:all 0.13s}
+#qpSend:hover{background:var(--os-accent);color:#fff;border-color:var(--os-accent)}
+
+/* SCREENSAVER */
+#screensaver{position:fixed;inset:0;z-index:500000;background:#04040a;display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;cursor:none}
+#screensaver.active{display:flex}
+.ss-time{font-size:clamp(60px,12vw,120px);font-weight:200;color:rgba(255,255,255,0.9);font-family:'Geist Mono',monospace;letter-spacing:-0.04em;line-height:1;text-shadow:0 0 60px rgba(var(--os-accent-rgb),0.3)}
+.ss-date{font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,0.3);letter-spacing:0.2em;text-transform:uppercase;font-weight:300}
 </style>
 </head>
 <body>
 
 <!-- BOOT -->
 <div id="boot">
-  <div class="boot-logo">
-    <div class="boot-logo-icon">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg>
+  <canvas id="bootCanvas" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.18;pointer-events:none"></canvas>
+  <div id="bootInner" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;position:relative;z-index:1">
+    <div id="bootRing" style="position:relative;width:90px;height:90px;margin-bottom:32px">
+      <svg viewBox="0 0 90 90" width="90" height="90" style="position:absolute;inset:0;animation:bootSpin 2.2s linear infinite">
+        <circle cx="45" cy="45" r="38" fill="none" stroke="rgba(124,109,250,0.18)" stroke-width="2"/>
+        <circle cx="45" cy="45" r="38" fill="none" stroke="url(#bootGrad)" stroke-width="2" stroke-linecap="round" stroke-dasharray="60 180" style="filter:drop-shadow(0 0 6px rgba(124,109,250,0.8))"/>
+        <defs><linearGradient id="bootGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c6dfa"/><stop offset="100%" stop-color="#f47aff"/></linearGradient></defs>
+      </svg>
+      <svg viewBox="0 0 90 90" width="90" height="90" style="position:absolute;inset:0;animation:bootSpinRev 3.5s linear infinite;opacity:0.5">
+        <circle cx="45" cy="45" r="28" fill="none" stroke="rgba(244,122,255,0.15)" stroke-width="1"/>
+        <circle cx="45" cy="45" r="28" fill="none" stroke="#f47aff" stroke-width="1" stroke-linecap="round" stroke-dasharray="20 156" style="filter:drop-shadow(0 0 4px rgba(244,122,255,0.6))"/>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20" stroke="#a78bfa"/><path d="M2 12h20"/></svg>
+      </div>
     </div>
-    <div class="boot-logo-text">NovOS</div>
+    <div id="bootWordmark" style="font-size:2rem;font-weight:600;letter-spacing:-0.04em;color:#fff;opacity:0;transform:translateY(10px);transition:opacity 0.6s ease,transform 0.6s ease;margin-bottom:6px">NovOS</div>
+    <div id="bootTagline" style="font-size:12px;color:rgba(255,255,255,0.3);letter-spacing:0.18em;text-transform:uppercase;opacity:0;transition:opacity 0.6s ease 0.2s;margin-bottom:40px">Desktop Environment</div>
+    <div id="bootBar" style="width:200px;height:2px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;opacity:0;transition:opacity 0.4s ease 0.5s">
+      <div id="bootBarFill" style="height:100%;width:0%;background:linear-gradient(90deg,#7c6dfa,#f47aff);border-radius:2px;transition:width 0.08s linear;box-shadow:0 0 8px rgba(124,109,250,0.8)"></div>
+    </div>
+    <div id="bootStatus" style="font-family:'Geist Mono',monospace;font-size:10.5px;color:rgba(255,255,255,0.22);margin-top:12px;letter-spacing:0.04em;height:14px;opacity:0;transition:opacity 0.4s ease 0.6s"></div>
   </div>
-  <div class="boot-line">▸ kernel v4.19 loading...</div>
-  <div class="boot-line">▸ mounting filesystem...</div>
-  <div class="boot-line">▸ initializing display manager...</div>
-  <div class="boot-line">▸ starting session daemon...</div>
-  <div class="boot-line">▸ [  OK  ] desktop environment ready</div>
 </div>
+<style>
+@keyframes bootSpin{to{transform:rotate(360deg)}}
+@keyframes bootSpinRev{to{transform:rotate(-360deg)}}
+</style>
+<script>
+(function(){
+  const steps=[
+    {pct:12,msg:'kernel v4.19 initializing…'},
+    {pct:28,msg:'mounting virtual filesystem…'},
+    {pct:44,msg:'loading display compositor…'},
+    {pct:61,msg:'starting session daemon…'},
+    {pct:77,msg:'applying user configuration…'},
+    {pct:90,msg:'launching desktop environment…'},
+    {pct:100,msg:'ready.'},
+  ];
+  let step=0;
+  function nextStep(){
+    if(step>=steps.length)return;
+    const s=steps[step++];
+    const fill=document.getElementById('bootBarFill');
+    const status=document.getElementById('bootStatus');
+    if(fill)fill.style.width=s.pct+'%';
+    if(status)status.textContent=s.msg;
+    if(step<steps.length)setTimeout(nextStep,step===1?320:260+Math.random()*120);
+  }
+  // Particle canvas
+  const canvas=document.getElementById('bootCanvas');
+  if(canvas){
+    canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+    const ctx=canvas.getContext('2d');
+    const pts=Array.from({length:55},()=>({
+      x:Math.random()*canvas.width,y:Math.random()*canvas.height,
+      vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,
+      r:Math.random()*1.4+0.4,
+      c:Math.random()>0.5?'124,109,250':'244,122,255'
+    }));
+    let af;
+    function drawPts(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      pts.forEach(p=>{
+        p.x+=p.vx;p.y+=p.vy;
+        if(p.x<0||p.x>canvas.width)p.vx*=-1;
+        if(p.y<0||p.y>canvas.height)p.vy*=-1;
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(${p.c},0.7)`;ctx.fill();
+      });
+      // Draw connecting lines
+      for(let i=0;i<pts.length;i++){
+        for(let j=i+1;j<pts.length;j++){
+          const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+          const dist=Math.sqrt(dx*dx+dy*dy);
+          if(dist<120){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(124,109,250,${0.12*(1-dist/120)})`;ctx.lineWidth=0.5;ctx.stroke();}
+        }
+      }
+      af=requestAnimationFrame(drawPts);
+    }
+    drawPts();
+    // Stop canvas when boot hides
+    const obs=new MutationObserver(()=>{if(document.getElementById('boot').classList.contains('hide')){cancelAnimationFrame(af);canvas.remove();}});
+    obs.observe(document.getElementById('boot'),{attributes:true,attributeFilter:['class']});
+  }
+  // Animate in
+  setTimeout(()=>{
+    const wm=document.getElementById('bootWordmark');
+    const tl=document.getElementById('bootTagline');
+    const bar=document.getElementById('bootBar');
+    const st=document.getElementById('bootStatus');
+    if(wm){wm.style.opacity='1';wm.style.transform='translateY(0)';}
+    if(tl)tl.style.opacity='1';
+    if(bar)bar.style.opacity='1';
+    if(st)st.style.opacity='1';
+    setTimeout(nextStep,400);
+  },180);
+})();
+</script>
 
 <!-- DESKTOP -->
 <div id="desktop">
@@ -565,6 +693,21 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
         <div class="wp-picker-name">Word of the Day</div>
         <div class="wp-picker-desc">Daily vocabulary word</div>
       </div>
+      <div class="wp-picker-item" onclick="WIDGETS.add('note');WIDGETS.closePicker()">
+        <div class="wp-picker-icon" style="background:rgba(251,191,36,0.12);color:#fbbf24"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M14 3v5h5"/><path d="M5 3h9l5 5v13H5z"/><path d="M9 13h6M9 17h4"/></svg></div>
+        <div class="wp-picker-name">Sticky Note</div>
+        <div class="wp-picker-desc">Editable note, saved locally</div>
+      </div>
+      <div class="wp-picker-item" onclick="WIDGETS.add('timer');WIDGETS.closePicker()">
+        <div class="wp-picker-icon" style="background:rgba(56,189,248,0.12);color:#38bdf8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" width="20" height="20"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg></div>
+        <div class="wp-picker-name">Timer</div>
+        <div class="wp-picker-desc">Countdown with a notification</div>
+      </div>
+      <div class="wp-picker-item" onclick="WIDGETS.add('stats');WIDGETS.closePicker()">
+        <div class="wp-picker-icon" style="background:rgba(248,113,113,0.12);color:#f87171"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 4-6"/></svg></div>
+        <div class="wp-picker-name">System Stats</div>
+        <div class="wp-picker-desc">Live FPS and memory</div>
+      </div>
     </div>
   </div>
 </div>
@@ -595,7 +738,7 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 </div>
 
 <div id="taskbarPeekZone" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()"></div>
-<div id="topBarPeekZone" style="position:fixed;top:0;left:0;right:0;height:4px;z-index:10000;display:none" onmouseenter="document.getElementById('topBar').classList.remove('topbar-hidden')" onmouseleave="document.getElementById('topBar').classList.add('topbar-hidden')"></div>
+<div id="topBarPeekZone" style="position:fixed;top:0;left:0;right:0;height:4px;z-index:10000;display:none"></div>
 
 <!-- TASKBAR -->
 <div id="taskbar" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()">
@@ -926,13 +1069,60 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
   </div>
 </div>
 
+<!-- NOTIFICATION HISTORY PANEL -->
+<div id="notifHistoryPanel">
+  <div class="nh-header">
+    <span class="nh-title">Notifications</span>
+    <button class="nh-clear" onclick="NOTIF_HISTORY.clear()">Clear all</button>
+  </div>
+  <div class="nh-list" id="nhList">
+    <div class="nh-empty">No notifications yet.</div>
+  </div>
+</div>
+
+<!-- SCREENSAVER -->
+<div id="screensaver" onclick="SCREENSAVER.hide()">
+  <div class="ss-time" id="ssTime">12:00</div>
+  <div class="ss-date" id="ssDate"></div>
+</div>
+
+<!-- COMMAND PALETTE -->
+<div id="cmdkOverlay" onclick="if(event.target===this)CMDK.close()" style="position:fixed;inset:0;z-index:600001;display:none;align-items:flex-start;justify-content:center;padding-top:15vh;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px)">
+  <div style="width:min(600px,92vw);background:rgba(14,16,24,0.97);border:1px solid var(--os-border2);border-radius:var(--radius-xl);box-shadow:var(--shadow-window);backdrop-filter:blur(40px) saturate(1.8);overflow:hidden">
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--os-border)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--os-muted)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="cmdkInput" type="text" placeholder="Search apps and commands…" autocomplete="off" oninput="CMDK.render(this.value)" onkeydown="CMDK.key(event)" style="flex:1;background:transparent;border:none;outline:none;font-family:var(--font);font-size:15px;color:var(--os-text);caret-color:var(--os-accent)">
+      <span style="font-family:var(--mono);font-size:10px;color:var(--os-dim)">ESC</span>
+    </div>
+    <div id="cmdkList" style="max-height:50vh;overflow-y:auto;padding:6px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent"></div>
+  </div>
+</div>
+
+<!-- AI QUICK PROMPT -->
+<div id="quickPrompt" class="qp-hidden" onclick="if(event.target===this)QP.close()">
+  <div id="quickPromptBox">
+    <div id="qpModelRow">
+      <div id="qpTitle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="5" y="7" width="14" height="11" rx="2.5"/><path d="M12 3v4"/><path d="M9 12h.01M15 12h.01" stroke-width="2.4"/><path d="M9.5 15h5"/><path d="M3 11v3M21 11v3"/></svg>
+        <span>Ask AI<span class="qp-sub">— prompt copies to clipboard</span></span>
+      </div>
+    </div>
+    <textarea id="qpInput" rows="1" placeholder="Ask anything…   (Enter to send · Esc to close)"></textarea>
+    <div id="qpFooter">
+      <span id="qpHint">Ctrl + Alt + Space</span>
+      <button id="qpSend" type="button" onclick="QP.send()">Send →</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ═══════════════════════════════════════════════════════════════════
    DEFAULT DESKTOP APPS — keyed by URL so cache busting works
 ═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_DESKTOP_APPS = [
   { name:"Aspen Browser", url:"__browser__", icon:"", isDefault:true, isSystem:true, systemAction:"openBrowser"},
-  { name:"Monochrome Music", url:"__music__", icon:"", isDefault:true, isSystem:true, systemAction:"openMonochrome"},
+  { name:"Freefy Music", url:"__music__", icon:"", isDefault:true, isSystem:true, systemAction:"openMonochrome"},
+  { name:"AI",           url:"__ai__",     icon:"", isDefault:true, isSystem:true, systemAction:"openAI" },
   { name:"File Explorer",    url:"__explorer__", icon:"", isDefault:true, isSystem:true, systemAction:"openFileExplorer" },
   { name:"Settings",         url:"__settings__", icon:"", isDefault:true, isSystem:true, systemAction:"openSettingsWindow" },
   { name:"App Library",      url:"__library__",  icon:"", isDefault:true, isSystem:true, systemAction:"openAppLibrary" },
@@ -1112,7 +1302,8 @@ const WM={
   _sysTitlebarIcon(url){
     const map={
       '__browser__':{c:'#60a5fa',s:`<circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/>`},
-      '__music__':{c:'#f472b6',s:`<circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.7"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5" stroke-opacity="0.4"/>`},
+      '__music__':{c:'#f472b6',s:`<path d="M9 17V5l10-2v12"/><circle cx="6.5" cy="17" r="2.6" fill="currentColor" stroke="none"/><circle cx="16.5" cy="15" r="2.6" fill="currentColor" stroke="none"/>`},
+      '__ai__':{c:'#3b5bdb',s:`<rect x="5" y="7" width="14" height="11" rx="2.5"/><path d="M12 3v4M9 12h.01M15 12h.01M9.5 15h5"/><path d="M3 11v3M21 11v3"/>`},
       '__explorer__':{c:'#fbbf24',s:`<path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>`},
       '__settings__':{c:'#94a3b8',s:`<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>`},
       '__library__':{c:'#a78bfa',s:`<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>`},
@@ -1152,11 +1343,6 @@ const WM={
         </div>
       </div>
       <div class="wnd-body">
-        <div class="wnd-loader" id="ldr_${id}">
-          <div class="loader-ring"></div>
-          <div class="wnd-loader-txt">Loading ${app.name}…</div>
-          <div class="wnd-loader-sub" id="ldrsub_${id}"></div>
-        </div>
         <iframe class="wnd-iframe" id="frm_${id}" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen" allow="fullscreen; autoplay; clipboard-write; pointer-lock" allowfullscreen></iframe>
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event,'se')"></div>
@@ -1172,9 +1358,9 @@ const WM={
     let realUrl=app.url==='__PVZ__'?PVZ_URL:app.url;
     // Resolve system app identifiers (browser/music) to their real loadable URL.
     if(OS._systemRealUrl)realUrl=OS._systemRealUrl(app.url);
+    // Quick-prompt launches carry a pre-filled URL for the AI app.
+    if(app._qpUrl)realUrl=app._qpUrl;
     const frm=document.getElementById('frm_'+id);
-    const ldr=document.getElementById('ldr_'+id);
-    if(ldr)ldr.style.display='none';
     frm.addEventListener('load',()=>{
       if(WM._onIframeLoad)WM._onIframeLoad(frm);
       // Do NOT inject into the cross-origin music frame — injection trips CF/CDN bot checks.
@@ -1291,40 +1477,19 @@ const WM={
   // FIX: refresh now properly shows loader, waits for real load, then hides
   refreshWindow(id){
     const frm=document.getElementById('frm_'+id);
-    const ldr=document.getElementById('ldr_'+id);
     if(!frm)return;
 
-    // If this frame uses a srcdoc shell (cross-origin self-navigation), just
-    // reapply the shell so it re-navigates cleanly — reading frm.src is useless here.
     if(frm.hasAttribute('srcdoc')&&frm.getAttribute('srcdoc')){
       const shell=frm.getAttribute('srcdoc');
-      if(ldr)ldr.classList.remove('hidden');
       frm.removeAttribute('srcdoc');
       frm.src='about:blank';
-      const onLoadS=()=>{if(ldr)ldr.classList.add('hidden');frm.removeEventListener('load',onLoadS);};
-      frm.addEventListener('load',onLoadS);
       setTimeout(()=>{frm.removeAttribute('src');frm.setAttribute('srcdoc',shell);},60);
       return;
     }
 
     const currentSrc=frm.src;
     if(!currentSrc||currentSrc==='about:blank')return;
-
-    // Show loader
-    if(ldr)ldr.classList.remove('hidden');
-
-    // Set to blank first, then reload
     frm.src='about:blank';
-
-    const onLoad=()=>{
-      // Only hide when actually loaded the real URL
-      if(frm.src&&frm.src!=='about:blank'){
-        if(ldr)ldr.classList.add('hidden');
-        frm.removeEventListener('load',onLoad);
-      }
-    };
-    frm.addEventListener('load',onLoad);
-
     setTimeout(()=>{frm.src=currentSrc;},60);
   },
 
@@ -1333,13 +1498,36 @@ const WM={
     if(this.windows[id]&&this.windows[id].maximized)return;
     this.focus(id);
     const el=document.getElementById(id);
-    const sx=e.clientX-el.offsetLeft,sy=e.clientY-el.offsetTop;
+    const rect=el.getBoundingClientRect();
+    const sx=e.clientX-rect.left,sy=e.clientY-rect.top;
+    let rafId=null;
+    let lastX=e.clientX,lastY=e.clientY;
+    const SNAP_THRESHOLD=14;
     const move=ev=>{
-      el.style.left=Math.max(0,Math.min(window.innerWidth-el.offsetWidth,ev.clientX-sx))+'px';
-      el.style.top=Math.max(0,Math.min(window.innerHeight-48-40,ev.clientY-sy))+'px';
+      lastX=ev.clientX;lastY=ev.clientY;
+      // Snap zone detection (no RAF so ghost is instant)
+      const x=lastX,y=lastY,W=window.innerWidth;
+      if(x<=SNAP_THRESHOLD)this._showSnapGhost('left');
+      else if(x>=W-SNAP_THRESHOLD)this._showSnapGhost('right');
+      else if(y<=SNAP_THRESHOLD)this._showSnapGhost('max');
+      else this._hideSnapGhost();
+      if(rafId)return;
+      rafId=requestAnimationFrame(()=>{
+        rafId=null;
+        el.style.left=Math.max(0,Math.min(window.innerWidth-el.offsetWidth,lastX-sx))+'px';
+        el.style.top=Math.max(0,Math.min(window.innerHeight-48-40,lastY-sy))+'px';
+      });
     };
-    const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up)};
-    document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);
+    const up=()=>{
+      if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+      document.removeEventListener('mousemove',move,{capture:true});
+      document.removeEventListener('mouseup',up,{capture:true});
+      const zone=this._snapZone;
+      this._hideSnapGhost();
+      if(zone)this._applySnap(id,zone);
+    };
+    document.addEventListener('mousemove',move,{capture:true,passive:true});
+    document.addEventListener('mouseup',up,{capture:true});
     e.preventDefault();
   },
 
@@ -1347,21 +1535,83 @@ const WM={
     if(this.windows[id]&&this.windows[id].maximized)return;
     const el=document.getElementById(id);
     const sx=e.clientX,sy=e.clientY,sw=el.offsetWidth,sh=el.offsetHeight,sl=el.offsetLeft,st=el.offsetTop;
+    let rafId=null;
+    let lastX=e.clientX,lastY=e.clientY;
     const move=ev=>{
-      const dx=ev.clientX-sx,dy=ev.clientY-sy;
-      if(edge==='se'||edge==='e'||edge==='ne'){el.style.width=Math.max(320,sw+dx)+'px';}
-      if(edge==='sw'||edge==='w'||edge==='nw'){const nw=Math.max(320,sw-dx);el.style.width=nw+'px';el.style.left=(sl+sw-nw)+'px';}
-      if(edge==='se'||edge==='s'||edge==='sw'){el.style.height=Math.max(220,sh+dy)+'px';}
-      if(edge==='ne'||edge==='n'||edge==='nw'){const nh=Math.max(220,sh-dy);el.style.height=nh+'px';el.style.top=(st+sh-nh)+'px';}
+      lastX=ev.clientX;lastY=ev.clientY;
+      if(rafId)return;
+      rafId=requestAnimationFrame(()=>{
+        rafId=null;
+        const dx=lastX-sx,dy=lastY-sy;
+        if(edge==='se'||edge==='e'||edge==='ne'){el.style.width=Math.max(320,sw+dx)+'px';}
+        if(edge==='sw'||edge==='w'||edge==='nw'){const nw=Math.max(320,sw-dx);el.style.width=nw+'px';el.style.left=(sl+sw-nw)+'px';}
+        if(edge==='se'||edge==='s'||edge==='sw'){el.style.height=Math.max(220,sh+dy)+'px';}
+        if(edge==='ne'||edge==='n'||edge==='nw'){const nh=Math.max(220,sh-dy);el.style.height=nh+'px';el.style.top=(st+sh-nh)+'px';}
+      });
     };
-    const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up)};
-    document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);
+    const up=()=>{
+      if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+      document.removeEventListener('mousemove',move,{capture:true});
+      document.removeEventListener('mouseup',up,{capture:true});
+    };
+    document.addEventListener('mousemove',move,{capture:true,passive:true});
+    document.addEventListener('mouseup',up,{capture:true});
     e.preventDefault();
   },
 
   makeDraggable(id){
     const el=document.getElementById(id);
     if(el)el.addEventListener('mousedown',()=>this.focus(id));
+  },
+
+  _snapGhost:null,
+  _snapZone:null,
+
+  _showSnapGhost(zone){
+    if(this._snapZone===zone)return;
+    this._snapZone=zone;
+    if(!this._snapGhost){
+      const g=document.createElement('div');
+      g.id='snapGhost';
+      g.style.cssText='position:fixed;z-index:99990;border-radius:12px;background:rgba(var(--os-accent-rgb),0.12);border:2px solid rgba(var(--os-accent-rgb),0.4);pointer-events:none;transition:all 0.15s cubic-bezier(0.34,1.2,0.64,1);backdrop-filter:blur(4px)';
+      document.body.appendChild(g);
+      this._snapGhost=g;
+    }
+    const g=this._snapGhost;
+    const tb=72+10; // taskbar height + margin
+    const topOff=28; // topbar
+    const W=window.innerWidth,H=window.innerHeight-topOff-tb;
+    if(zone==='left'){g.style.cssText+=';display:block';Object.assign(g.style,{left:'8px',top:(topOff+8)+'px',width:(W/2-12)+'px',height:H-16+'px'});}
+    else if(zone==='right'){Object.assign(g.style,{left:(W/2+4)+'px',top:(topOff+8)+'px',width:(W/2-12)+'px',height:H-16+'px'});}
+    else if(zone==='max'){Object.assign(g.style,{left:'8px',top:(topOff+8)+'px',width:(W-16)+'px',height:H-16+'px'});}
+    g.style.opacity='1';
+  },
+
+  _hideSnapGhost(){
+    this._snapZone=null;
+    if(this._snapGhost){this._snapGhost.style.opacity='0';setTimeout(()=>{if(this._snapGhost){this._snapGhost.remove();this._snapGhost=null;}},150);}
+  },
+
+  _applySnap(id,zone){
+    const el=document.getElementById(id);if(!el)return;
+    const tb=72+10;const topOff=28;
+    const W=window.innerWidth,H=window.innerHeight-topOff-tb;
+    const w=this.windows[id];if(!w)return;
+    w.prevRect={top:el.style.top,left:el.style.left,width:el.style.width,height:el.style.height};
+    // Snapping never enters true fullscreen — it just resizes the windowed frame,
+    // so the top bar stays visible and the titlebar remains accessible.
+    w.maximized=false;
+    el.classList.remove('maximized');
+    if(zone==='left'){
+      el.style.left='8px';el.style.top=(topOff+8)+'px';el.style.width=(W/2-12)+'px';el.style.height=(H-16)+'px';
+    } else if(zone==='right'){
+      el.style.left=(W/2+4)+'px';el.style.top=(topOff+8)+'px';el.style.width=(W/2-12)+'px';el.style.height=(H-16)+'px';
+    } else if(zone==='max'){
+      // Fill the full working area but remain a normal window
+      el.style.left='8px';el.style.top=(topOff+8)+'px';el.style.width=(W-16)+'px';el.style.height=(H-16)+'px';
+    }
+    TB.updateAutoHide();
+    OS.notify('Snapped','Window resized to fill. Drag the titlebar to restore.');
   },
 
   hasMaximizedWindow(){return Object.values(this.windows).some(w=>w.maximized&&!w.minimized);}
@@ -1381,6 +1631,7 @@ const TB={
         {name:'Task Manager',url:'__tm__',icon:''},
         {name:'App Library',url:'__library__',icon:''},
         {name:'Aspen Browser',url:'__browser__',icon:''},
+        {name:'AI',url:'__ai__',icon:''},
       ];
       this.savePinned();
     }
@@ -1405,7 +1656,8 @@ const TB={
       taskbar.classList.add('taskbar-hidden');
       this._hidden=true;
       if(topBar)topBar.classList.add('topbar-hidden');
-      if(topPeek)topPeek.style.display='block';
+      // Top bar is fully inaccessible in fullscreen — peek zone stays disabled
+      if(topPeek)topPeek.style.display='none';
     }else{
       document.body.classList.remove('taskbar-autohide');
       taskbar.classList.remove('taskbar-hidden');
@@ -1497,9 +1749,19 @@ const TB={
       '__music__':{
         color:'#f472b6',
         svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-          <circle cx="12" cy="12" r="9"/>
-          <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.7"/>
-          <path d="M12 3v4M12 17v4M3 12h4M17 12h4" stroke-opacity="0.4"/>
+          <path d="M9 17V5l10-2v12"/>
+          <circle cx="6.5" cy="17" r="2.6" fill="currentColor" stroke="none"/>
+          <circle cx="16.5" cy="15" r="2.6" fill="currentColor" stroke="none"/>
+        </svg>`
+      },
+      '__ai__':{
+        color:'#3b5bdb',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <rect x="5" y="7" width="14" height="11" rx="2.5"/>
+          <path d="M12 3v4"/><circle cx="12" cy="3" r="0.6" fill="currentColor" stroke="none"/>
+          <path d="M9 12h.01M15 12h.01" stroke-width="2.4"/>
+          <path d="M9.5 15h5"/>
+          <path d="M3 11v3M21 11v3"/>
         </svg>`
       },
     };
@@ -1518,7 +1780,7 @@ const TB={
   },
   // System URLs that always live on the right side of the taskbar
   _isSystemUrl(url){
-    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__photo__','__video__','__audio__','__html__','__music__'].includes(url);
+    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__photo__','__video__','__audio__','__html__','__music__','__ai__'].includes(url);
   },
 
   _makeBtn(app,wid,isPinned){
@@ -1915,7 +2177,8 @@ const OS={
       '__settings__':{color:'#94a3b8',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>`},
       '__browser__':{color:'#60a5fa',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/><path d="M4 7.5h16M4 16.5h16" opacity="0.4"/></svg>`},
       '__folder__':{color:'#fbbf24',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>`},
-      '__music__':{color:'#f472b6',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.7"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5" stroke-opacity="0.4"/></svg>`},
+      '__music__':{color:'#f472b6',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M9 17V5l10-2v12"/><circle cx="6.5" cy="17" r="2.6" fill="currentColor" stroke="none"/><circle cx="16.5" cy="15" r="2.6" fill="currentColor" stroke="none"/></svg>`},
+      '__ai__':{color:'#3b5bdb',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><rect x="5" y="7" width="14" height="11" rx="2.5"/><path d="M12 3v4"/><path d="M9 12h.01M15 12h.01" stroke-width="2.4"/><path d="M9.5 15h5"/><path d="M3 11v3M21 11v3"/></svg>`},
     };
 
     this.desktopItems.forEach((item)=>{
@@ -1973,22 +2236,33 @@ const OS={
 
   _initDragHandlers(){
     let hasMoved=false;
+    let _rafId=null;
+    let _lastEx=0,_lastEy=0;
+    let _contRect=null;
     document.addEventListener('mousemove',e=>{
       if(!this._dragItem)return;
       hasMoved=true;
+      _lastEx=e.clientX;_lastEy=e.clientY;
       const el=document.getElementById('desk_'+this._dragItem.id);
-      if(el&&!el.classList.contains('dragging'))el.classList.add('dragging');
-      const cont=document.getElementById('desktopIcons');
-      const cr=cont.getBoundingClientRect();
-      let nx=e.clientX-cr.left-this._dragOffX;
-      let ny=e.clientY-cr.top-this._dragOffY;
-      nx=Math.max(0,Math.min(cr.width-80,nx));
-      ny=Math.max(0,Math.min(cr.height-90,ny));
-      this._dragItem.x=Math.round(nx);this._dragItem.y=Math.round(ny);
-      if(el){el.style.left=nx+'px';el.style.top=ny+'px';}
-    });
+      if(el&&!el.classList.contains('dragging')){el.classList.add('dragging');_contRect=document.getElementById('desktopIcons').getBoundingClientRect();}
+      if(_rafId)return;
+      _rafId=requestAnimationFrame(()=>{
+        _rafId=null;
+        if(!this._dragItem)return;
+        const cr=_contRect||document.getElementById('desktopIcons').getBoundingClientRect();
+        let nx=_lastEx-cr.left-this._dragOffX;
+        let ny=_lastEy-cr.top-this._dragOffY;
+        nx=Math.max(0,Math.min(cr.width-80,nx));
+        ny=Math.max(0,Math.min(cr.height-90,ny));
+        this._dragItem.x=Math.round(nx);this._dragItem.y=Math.round(ny);
+        const el2=document.getElementById('desk_'+this._dragItem.id);
+        if(el2){el2.style.left=nx+'px';el2.style.top=ny+'px';}
+      });
+    },{passive:true});
     document.addEventListener('mouseup',()=>{
       if(!this._dragItem)return;
+      if(_rafId){cancelAnimationFrame(_rafId);_rafId=null;}
+      _contRect=null;
       document.querySelectorAll('.desk-icon.dragging').forEach(e=>e.classList.remove('dragging'));
       if(hasMoved)saveDesktopItems(this.desktopItems);
       hasMoved=false;
@@ -2214,6 +2488,7 @@ const OS={
       '__explorer__':()=>this.openFileExplorer(),
       '__browser__':()=>this.openBrowser(),
       '__music__':()=>this.openMonochrome(),
+      '__ai__':()=>this.openAI(),
     };
     if(sysMap[app.url]){sysMap[app.url]();return;}
     if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
@@ -2228,7 +2503,8 @@ const OS={
   _systemRealUrl(sysUrl){
     return {
       '__browser__':'https://riaannn.github.io/site-v2-static/site.html',
-      '__music__':'https://monochrome.tf'
+      '__music__':'https://freefy.app/',
+      '__ai__':'https://unlimited.surf'
     }[sysUrl]||sysUrl;
   },
   openBrowser(){
@@ -2239,7 +2515,12 @@ const OS={
   openMonochrome(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__music__');
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
-    WM.open({name:'Monochrome Music',url:'__music__',icon:''});
+    WM.open({name:'Freefy Music',url:'__music__',icon:''});
+  },
+  openAI(){
+    const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__ai__');
+    if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
+    WM.open({name:'AI',url:'__ai__',icon:''});
   },
   openTM(){TM.open();},
 
@@ -2892,6 +3173,15 @@ const OS={
   },
 
   notify(title,body){
+    // DND: still log to history, but suppress the toast unless bypassed
+    if(typeof DND!=='undefined'&&DND.isOn()&&!this._dndBypass){
+      if(typeof NOTIF_HISTORY!=='undefined'&&NOTIF_HISTORY.push){
+        NOTIF_HISTORY.push(title,body);
+      }
+      return;
+    }
+    NOTIF_HISTORY.add(title,body);
+    if(typeof DND!=='undefined'&&DND.active){return;}
     const area=document.getElementById('notifArea');
     const n=document.createElement('div');n.className='notif';
     n.style.animation='notifSlideIn 0.25s cubic-bezier(0.34,1.3,0.64,1) both';
@@ -2943,6 +3233,9 @@ const OS={
     const _handleKey=e=>{
       const tag=document.activeElement&&document.activeElement.tagName;
       if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
+      if((e.ctrlKey||e.metaKey)&&(e.key==='p'||e.key==='P')){
+        e.preventDefault();CMDK.toggle();return;
+      }
       if(e.key==='Tab'){
         e.preventDefault();
         if(e.shiftKey){ALT_TAB.next();}
@@ -3537,7 +3830,8 @@ const LAUNCHER={
       {name:'App Library',url:'__library__',icon:'',isSystem:true,systemAction:'openAppLibrary'},
       {name:'Aspen Browser',url:'__browser__',icon:'',isSystem:true,systemAction:'openBrowser'},
       {name:'Task Manager',url:'__tm__',icon:'',isSystem:true,systemAction:'openTM'},
-      {name:'Monochrome Music',url:'__music__',icon:'',isSystem:true,systemAction:'openMonochrome'},
+      {name:'Freefy Music',url:'__music__',icon:'',isSystem:true,systemAction:'openMonochrome'},
+      {name:'AI',url:'__ai__',icon:'',isSystem:true,systemAction:'openAI'},
     ];
     const all=[...sysApps,...userApps];
 
@@ -3567,7 +3861,8 @@ const LAUNCHER={
   _sysLauncherIcon(url,size){
     const map={
       '__browser__':{c:'#60a5fa',s:`<circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/>`},
-      '__music__':{c:'#f472b6',s:`<circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.7"/><path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5" stroke-opacity="0.4"/>`},
+      '__music__':{c:'#f472b6',s:`<path d="M9 17V5l10-2v12"/><circle cx="6.5" cy="17" r="2.6" fill="currentColor" stroke="none"/><circle cx="16.5" cy="15" r="2.6" fill="currentColor" stroke="none"/>`},
+      '__ai__':{c:'#3b5bdb',s:`<rect x="5" y="7" width="14" height="11" rx="2.5"/><path d="M12 3v4"/><path d="M9 12h.01M15 12h.01" stroke-width="2.4"/><path d="M9.5 15h5"/><path d="M3 11v3M21 11v3"/>`},
       '__explorer__':{c:'#fbbf24',s:`<path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><line x1="3" y1="12" x2="21" y2="12" opacity="0.4"/>`},
       '__settings__':{c:'#94a3b8',s:`<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>`},
       '__library__':{c:'#a78bfa',s:`<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>`},
@@ -3717,6 +4012,31 @@ const WIDGETS={
     OS.notify('Widget Added',type.replace('-',' ')+' widget added to desktop.');
   },
 
+  timerAdjust(id,delta){
+    const st=this._timerState&&this._timerState[id];if(!st||st.running)return;
+    st.remaining=Math.max(0,st.remaining+delta);
+    this._timerRender(id);
+  },
+  timerToggle(id){
+    const st=this._timerState&&this._timerState[id];if(!st)return;
+    const btn=document.getElementById(id+'_btn');
+    if(st.running){clearInterval(this._timers[id]);st.running=false;if(btn)btn.textContent='Start';return;}
+    if(st.remaining<=0)return;
+    st.running=true;if(btn)btn.textContent='Pause';
+    this._timers[id]=setInterval(()=>{
+      st.remaining--;this._timerRender(id);
+      if(st.remaining<=0){clearInterval(this._timers[id]);st.running=false;
+        if(btn)btn.textContent='Start';st.remaining=300;
+        OS.notify('Timer Done','Your countdown has finished.');}
+    },1000);
+  },
+  _timerRender(id){
+    const st=this._timerState&&this._timerState[id];if(!st)return;
+    const disp=document.getElementById(id+'_disp');if(!disp)return;
+    const m=Math.floor(st.remaining/60),s=st.remaining%60;
+    disp.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  },
+
   remove(id){
     this._data=this._data.filter(w=>w.id!==id);
     this.save();
@@ -3838,6 +4158,42 @@ const WIDGETS={
         <div class="widget-vocab-type">${vocab.type}</div>
         <div class="widget-vocab-def">${vocab.def}</div>
       </div>`;
+
+    }else if(w.type==='note'){
+      const saved=w.text||'';
+      el.innerHTML=`${closeBtn}<div class="widget-box" style="padding:14px;width:200px;min-height:140px;background:rgba(251,191,36,0.10);border-color:rgba(251,191,36,0.25)">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#fbbf24;margin-bottom:8px">Note</div>
+        <div id="${w.id}_note" contenteditable="true" style="font-size:12.5px;color:var(--os-text);line-height:1.6;outline:none;min-height:90px;word-break:break-word" data-ph="Type here…">${saved}</div>
+      </div>`;
+      setTimeout(()=>{const n=document.getElementById(w.id+'_note');if(n)n.addEventListener('input',()=>{w.text=n.innerHTML;this.save();});},0);
+
+    }else if(w.type==='timer'){
+      el.innerHTML=`${closeBtn}<div class="widget-box" style="padding:16px;width:190px;text-align:center">
+        <div id="${w.id}_disp" style="font-size:34px;font-weight:300;font-family:var(--mono);color:var(--os-text);letter-spacing:-0.02em">05:00</div>
+        <div style="display:flex;gap:5px;justify-content:center;margin-top:10px">
+          <button onclick="WIDGETS.timerAdjust('${w.id}',-60)" style="flex:1;height:26px;border-radius:6px;background:var(--os-surface);border:1px solid var(--os-border);color:var(--os-muted);cursor:pointer;font-family:var(--font)">−1m</button>
+          <button onclick="WIDGETS.timerAdjust('${w.id}',60)" style="flex:1;height:26px;border-radius:6px;background:var(--os-surface);border:1px solid var(--os-border);color:var(--os-muted);cursor:pointer;font-family:var(--font)">+1m</button>
+        </div>
+        <button id="${w.id}_btn" onclick="WIDGETS.timerToggle('${w.id}')" style="width:100%;margin-top:6px;height:30px;border-radius:8px;background:rgba(var(--os-accent-rgb),0.14);border:1px solid rgba(var(--os-accent-rgb),0.3);color:var(--os-accent);cursor:pointer;font-family:var(--font);font-weight:600">Start</button>
+      </div>`;
+      this._timerState=this._timerState||{};
+      this._timerState[w.id]={remaining:300,running:false};
+
+    }else if(w.type==='stats'){
+      el.innerHTML=`${closeBtn}<div class="widget-box" style="padding:16px;width:200px">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--os-dim);margin-bottom:10px">System</div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--os-text);margin-bottom:6px"><span style="color:var(--os-muted)">FPS</span><span id="${w.id}_fps" style="font-family:var(--mono);color:var(--os-green)">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--os-text);margin-bottom:6px"><span style="color:var(--os-muted)">Memory</span><span id="${w.id}_mem" style="font-family:var(--mono);color:var(--os-accent)">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--os-text)"><span style="color:var(--os-muted)">Windows</span><span id="${w.id}_win" style="font-family:var(--mono);color:var(--os-text)">0</span></div>
+      </div>`;
+      let frames=0,last=performance.now(),fps=0;
+      const loop=()=>{if(!document.getElementById(w.id))return;frames++;const now=performance.now();
+        if(now-last>=1000){fps=frames;frames=0;last=now;
+          const f=document.getElementById(w.id+'_fps');if(f)f.textContent=fps;
+          const m=document.getElementById(w.id+'_mem');if(m)m.textContent=(navigator.deviceMemory?navigator.deviceMemory+' GB':'n/a');
+          const wn=document.getElementById(w.id+'_win');if(wn)wn.textContent=Object.keys(WM.windows).length;}
+        requestAnimationFrame(loop);};
+      requestAnimationFrame(loop);
     }
 
     layer.appendChild(el);
@@ -3908,8 +4264,356 @@ const WP_TINTS={
 // (see OS.setTaskbarColor / SP2.setTaskbarOpacity), so no wallpaper auto-tint.
 function applyTaskbarTint(){/* deprecated — kept as no-op for compatibility */}
 
-window.addEventListener('load',()=>{OS.init();initTopBar();WIDGETS.init();});
-window.addEventListener('beforeunload',e=>{e.preventDefault();e.returnValue='';});
+const SESSION={
+  save(){
+    try{
+      const open=Object.values(WM.windows)
+        .filter(w=>w&&w.app&&w.app.url&&!w.app.url.startsWith('__folder__'))
+        .map(w=>{const el=Object.keys(WM.windows).find(k=>WM.windows[k]===w);const dom=el&&document.getElementById(el);
+          return {url:w.app.url,name:w.app.name,icon:w.app.icon||'',min:w.minimized,
+            rect:dom?{t:dom.style.top,l:dom.style.left,w:dom.style.width,h:dom.style.height}:null};});
+      localStorage.setItem('novos_session',JSON.stringify(open));
+    }catch(e){}
+  },
+  restore(){
+    let s;try{s=JSON.parse(localStorage.getItem('novos_session')||'[]');}catch{return;}
+    if(!s.length)return;
+    s.forEach(w=>{
+      let id;
+      if(w.url==='__settings__')OS.openSettings();
+      else if(w.url==='__library__')OS.openAppLibrary();
+      else if(w.url==='__explorer__')OS.openFileExplorer();
+      else if(w.url==='__tm__')TM.open();
+      else id=WM.open({name:w.name,url:w.url,icon:w.icon});
+      if(id&&w.rect){const el=document.getElementById(id);
+        if(el){el.style.top=w.rect.t;el.style.left=w.rect.l;el.style.width=w.rect.w;el.style.height=w.rect.h;}}
+      if(id&&w.min)setTimeout(()=>WM.minimize(id),50);
+    });
+  }
+};
+
+window.addEventListener('load',()=>{
+  OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init();
+  setTimeout(()=>SESSION.restore(),SETTINGS.get('showBoot')?2600:200);
+});
+window.addEventListener('beforeunload',()=>{SESSION.save();});
+
+/* ═══════════════════════════════════════════════
+   NOTIFICATION HISTORY
+═══════════════════════════════════════════════ */
+const DND={
+  _on:false,
+  _btnEl:null,
+
+  init(){
+    this._on=localStorage.getItem('novos_dnd')==='1';
+    this._btnEl=document.getElementById('dndBtn');
+    this._sync();
+  },
+
+  toggle(){
+    this._on=!this._on;
+    localStorage.setItem('novos_dnd',this._on?'1':'0');
+    this._sync();
+    // Confirm the state change itself, even while suppressed (this one bypasses)
+    if(typeof OS!=='undefined'&&OS.notify){
+      OS._dndBypass=true;
+      OS.notify(this._on?'Do Not Disturb on':'Do Not Disturb off',
+        this._on?'Toasts are silenced — still logged to history.':'Toasts will show again.');
+      OS._dndBypass=false;
+    }
+  },
+
+  isOn(){return this._on;},
+
+  _sync(){
+    const b=this._btnEl;
+    if(b){
+      b.classList.toggle('dnd-active',this._on);
+      b.title=this._on?'Do Not Disturb: on':'Do Not Disturb: off';
+      b.setAttribute('aria-pressed',this._on?'true':'false');
+    }
+    document.body.classList.toggle('dnd-on',this._on);
+  },
+};
+
+const NOTIF_HISTORY={
+  _log:[],
+  _open:false,
+  _btnEl:null,
+
+  add(title,body){
+    const now=new Date();
+    const h=now.getHours()%12||12,m=String(now.getMinutes()).padStart(2,'0'),ap=now.getHours()>=12?'PM':'AM';
+    this._log.unshift({title,body,time:`${h}:${m} ${ap}`});
+    if(this._log.length>30)this._log.pop();
+    this._renderList();
+    this._pulseBadge();
+  },
+
+  _pulseBadge(){
+    const btn=document.getElementById('nhToggleBtn');
+    if(btn){btn.style.color='var(--os-accent)';setTimeout(()=>{btn.style.color='';},2000);}
+  },
+
+  toggle(){
+    this._open=!this._open;
+    document.getElementById('notifHistoryPanel').classList.toggle('open',this._open);
+  },
+
+  close(){this._open=false;document.getElementById('notifHistoryPanel').classList.remove('open');},
+
+  clear(){
+    this._log=[];
+    this._renderList();
+  },
+
+  _renderList(){
+    const list=document.getElementById('nhList');if(!list)return;
+    if(!this._log.length){list.innerHTML='<div class="nh-empty">No notifications yet.</div>';return;}
+    list.innerHTML=this._log.map(n=>`<div class="nh-item"><div class="nh-item-title">${n.title}</div><div class="nh-item-body">${n.body}</div><div class="nh-item-time">${n.time}</div></div>`).join('');
+  },
+
+  init(){
+    // Inject the DND toggle, then the bell button, into the top bar right area
+    const right=document.getElementById('topBarRight');
+    if(right){
+      const dndBtn=document.createElement('div');
+      dndBtn.id='dndBtn';
+      dndBtn.className='tb-top-icon';
+      dndBtn.title='Do Not Disturb: off';
+      dndBtn.setAttribute('aria-pressed','false');
+      dndBtn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/><line x1="3" y1="3" x2="21" y2="21" class="dnd-slash" style="opacity:0;transition:opacity 0.15s"/></svg>`;
+      dndBtn.onclick=(e)=>{e.stopPropagation();if(typeof DND!=='undefined')DND.toggle();};
+      right.insertBefore(dndBtn,right.firstChild);
+      if(typeof DND!=='undefined'&&DND._sync){DND._btnEl=dndBtn;DND._sync();}
+
+      const btn=document.createElement('div');
+      btn.id='nhToggleBtn';
+      btn.className='tb-top-icon';
+      btn.title='Notifications';
+      btn.style.cssText='transition:color 0.3s;cursor:pointer';
+      btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`;
+      btn.onclick=(e)=>{e.stopPropagation();this.toggle();};
+      right.insertBefore(btn,right.firstChild);
+    }
+    // Close when clicking outside
+    document.addEventListener('click',e=>{
+      if(this._open&&!document.getElementById('notifHistoryPanel').contains(e.target)&&e.target.id!=='nhToggleBtn'&&!e.target.closest('#nhToggleBtn'))this.close();
+    });
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   AI QUICK PROMPT — Ctrl+Alt+Space launcher
+═══════════════════════════════════════════════ */
+const CMDK={
+  _open:false,_idx:0,_items:[],
+
+  _actions(){
+    return [
+      {label:'Open App Library',hint:'Apps',fn:()=>OS.openAppLibrary()},
+      {label:'Open File Explorer',hint:'Files',fn:()=>OS.openFileExplorer()},
+      {label:'Open Settings',hint:'System',fn:()=>OS.openSettings()},
+      {label:'Open Task Manager',hint:'System',fn:()=>TM.open()},
+      {label:'Open Aspen Browser',hint:'Web',fn:()=>OS.openBrowser()},
+      {label:'Open Freefy Music',hint:'Media',fn:()=>OS.openMonochrome()},
+      {label:'Open AI',hint:'AI',fn:()=>OS.openAI()},
+      {label:'Add Widget',hint:'Widgets',fn:()=>WIDGETS.openPicker()},
+      {label:'Toggle Animations',hint:'Display',fn:()=>OS.setAnimations(!(SETTINGS.get('animations')!==false))},
+      {label:'Toggle Do Not Disturb',hint:'System',fn:()=>DND.toggle()},
+      {label:'Toggle Liquid Glass',hint:'Theme',fn:()=>OS.setLiquidGlass(!SETTINGS.get('liquidGlass'))},
+      {label:'New Folder',hint:'Desktop',fn:()=>document.getElementById('createFolderModal').classList.add('open')},
+      {label:'Wipe All Data',hint:'Danger',fn:()=>OS.wipeData(),danger:true},
+    ];
+  },
+
+  toggle(){this._open?this.close():this.open();},
+  open(){
+    this._open=true;this._idx=0;
+    document.getElementById('cmdkOverlay').style.display='flex';
+    const inp=document.getElementById('cmdkInput');
+    if(inp){inp.value='';setTimeout(()=>inp.focus(),50);}
+    this.render('');
+  },
+  close(){this._open=false;document.getElementById('cmdkOverlay').style.display='none';},
+
+  render(q){
+    const apps=[...OS.shortcuts.games,...OS.shortcuts.web,...OS.shortcuts.apps]
+      .map(a=>({label:a.label||a.name,name:a.name,hint:'Launch',fn:()=>OS.launch(a)}));
+    let all=[...this._actions(),...apps];
+    if(q){const lq=q.toLowerCase();all=all.filter(i=>i.label.toLowerCase().includes(lq));}
+    this._items=all.slice(0,40);this._idx=0;
+    const list=document.getElementById('cmdkList');
+    if(!this._items.length){list.innerHTML='<div style="padding:24px;text-align:center;color:var(--os-muted);font-size:13px">No matches</div>';return;}
+    list.innerHTML=this._items.map((it,i)=>`<div class="cmdk-item" data-i="${i}" onclick="CMDK.run(${i})" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:${it.danger?'var(--os-red)':'var(--os-text)'};${i===0?'background:rgba(var(--os-accent-rgb),0.14)':''}">
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${it.label}</span>
+      <span style="font-size:10px;color:var(--os-dim);font-family:var(--mono)">${it.hint}</span></div>`).join('');
+  },
+
+  _highlight(){
+    document.querySelectorAll('#cmdkList .cmdk-item').forEach((el,i)=>{
+      el.style.background=i===this._idx?'rgba(var(--os-accent-rgb),0.14)':'';
+      if(i===this._idx)el.scrollIntoView({block:'nearest'});
+    });
+  },
+
+  key(e){
+    if(e.key==='ArrowDown'){e.preventDefault();this._idx=Math.min(this._items.length-1,this._idx+1);this._highlight();}
+    else if(e.key==='ArrowUp'){e.preventDefault();this._idx=Math.max(0,this._idx-1);this._highlight();}
+    else if(e.key==='Enter'){e.preventDefault();this.run(this._idx);}
+    else if(e.key==='Escape'){e.preventDefault();this.close();}
+  },
+
+  run(i){const it=this._items[i];if(!it)return;this.close();it.fn();}
+};
+
+const QP={
+  _open:false,
+
+  init(){
+    const input=document.getElementById('qpInput');
+    if(input){
+      // Auto-grow textarea
+      input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,240)+'px';});
+      input.addEventListener('keydown',e=>{
+        if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();this.send();}
+        if(e.key==='Escape'){e.preventDefault();this.close();}
+      });
+    }
+    // Global shortcut (page-focused only — browsers block true OS-level hotkeys)
+    document.addEventListener('keydown',e=>{
+      if(e.ctrlKey&&e.altKey&&(e.code==='Space'||e.key===' ')){
+        e.preventDefault();
+        this.toggle();
+      }
+    });
+  },
+
+  toggle(){this._open?this.close():this.open();},
+
+  open(){
+    this._open=true;
+    document.getElementById('quickPrompt').classList.remove('qp-hidden');
+    const input=document.getElementById('qpInput');
+    if(input){input.value='';input.style.height='auto';setTimeout(()=>input.focus(),60);}
+  },
+
+  close(){
+    this._open=false;
+    document.getElementById('quickPrompt').classList.add('qp-hidden');
+  },
+
+  async send(){
+    const input=document.getElementById('qpInput');
+    const prompt=(input&&input.value||'').trim();
+    if(!prompt){input&&input.focus();return;}
+    this.close();
+
+    // Cross-origin reality: we cannot type into unlimited.surf's textbox from a
+    // sandboxed iframe. The clipboard is the only bridge that works without the
+    // target site cooperating. So: copy the prompt, open the app, and tell the
+    // user to paste (Ctrl/Cmd+V) — the cursor lands in the AI input on load.
+    let copied=false;
+    try{
+      await navigator.clipboard.writeText(prompt);
+      copied=true;
+    }catch(_){
+      copied=this._fallbackCopy(prompt);
+    }
+
+    // Still try hash + query deep-linking in case the app ever honors it.
+    const base=OS._systemRealUrl('__ai__');
+    const sep=base.includes('?')?'&':'?';
+    const targetUrl=base+sep+'q='+encodeURIComponent(prompt)+'#q='+encodeURIComponent(prompt);
+
+    // The srcdoc shell also posts the prompt — harmless if nothing listens,
+    // and ready to work the moment the app adds a listener.
+    const _u=JSON.stringify(targetUrl);
+    const _p=JSON.stringify(prompt);
+    const shell=`<!doctype html><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#08090d;color:#6b6f85;font:12px system-ui,sans-serif;display:flex;align-items:center;justify-content:center}</style><script>(function(){var u=${_u},p=${_p};try{window.name=JSON.stringify({__novos_prompt:true,text:p});}catch(e){}try{setTimeout(function(){window.location.replace(u);},30);}catch(e){window.location.href=u;}})();<\/script><div>Loading\u2026</div>`;
+
+    const existing=Object.entries(WM.windows).find(([,w])=>w.app&&w.app.url==='__ai__');
+    if(existing){
+      const [wid]=existing;
+      if(WM.windows[wid].minimized)WM.restore(wid);else WM.focus(wid);
+      const frm=document.getElementById('frm_'+wid);
+      if(frm){frm.removeAttribute('src');frm.srcdoc=shell;}
+    }else{
+      WM.open({name:'AI',url:'__ai__',icon:'',_qpUrl:targetUrl});
+    }
+
+    if(copied){
+      OS.notify('Prompt copied','Press Ctrl+V (Cmd+V on Mac) in the AI window to paste it.');
+    }else{
+      OS.notify('AI opened','Couldn\'t auto-copy — re-type your prompt in the AI window.');
+    }
+  },
+
+  // Legacy clipboard fallback for when navigator.clipboard is unavailable.
+  _fallbackCopy(text){
+    try{
+      const ta=document.createElement('textarea');
+      ta.value=text;
+      ta.style.cssText='position:fixed;top:-9999px;left:-9999px;opacity:0';
+      document.body.appendChild(ta);
+      ta.focus();ta.select();
+      const ok=document.execCommand('copy');
+      ta.remove();
+      return ok;
+    }catch(_){return false;}
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   SCREENSAVER — clock after 5min idle
+═══════════════════════════════════════════════ */
+const SCREENSAVER={
+  _timer:null,
+  _tickTimer:null,
+  _IDLE_MS:1*60*1000,
+  _active:false,
+
+  init(){
+    const reset=()=>this._resetIdle();
+    ['mousemove','mousedown','keydown','touchstart','wheel'].forEach(ev=>document.addEventListener(ev,reset,{passive:true}));
+    this._resetIdle();
+  },
+
+  _resetIdle(){
+    if(this._active)this.hide();
+    clearTimeout(this._timer);
+    this._timer=setTimeout(()=>this._show(),this._IDLE_MS);
+  },
+
+  _show(){
+    this._active=true;
+    const el=document.getElementById('screensaver');
+    el.classList.add('active');
+    this._tick();
+    this._tickTimer=setInterval(()=>this._tick(),1000);
+  },
+
+  hide(){
+    this._active=false;
+    document.getElementById('screensaver').classList.remove('active');
+    clearInterval(this._tickTimer);
+    this._resetIdle();
+  },
+
+  _tick(){
+    const n=new Date();
+    let h=n.getHours()%12||12,m=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');
+    const ap=n.getHours()>=12?'PM':'AM';
+    const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const tEl=document.getElementById('ssTime');
+    const dEl=document.getElementById('ssDate');
+    if(tEl)tEl.textContent=`${h}:${m}`;
+    if(dEl)dEl.textContent=`${days[n.getDay()]} · ${months[n.getMonth()]} ${n.getDate()}, ${n.getFullYear()}`;
+  }
+};
+
 
 /* ═══ TASKBAR PREVIEW ═══ */
 const TBP={
