@@ -57,7 +57,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 body.has-maximized #desktop::after{display:none}
 body.has-maximized #desktopIcons{pointer-events:none;visibility:hidden}
 body.has-maximized #wallpaper{pointer-events:none}
-body.has-maximized #windowLayer>.os-window:not(.maximized){pointer-events:none}
+body.has-maximized #windowLayer>.os-window:not(.maximized){pointer-events:all;z-index:100050!important}
 
 /* DESKTOP ICONS */
 #desktopIcons{position:absolute;inset:0;z-index:5;pointer-events:none}
@@ -80,7 +80,7 @@ body.has-maximized #windowLayer>.os-window:not(.maximized){pointer-events:none}
 .desk-icon.folder .desk-icon-img{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.25);font-size:calc(var(--desk-icon-size)*0.32)}
 
 /* TOP BAR */
-#topBar{position:fixed;top:0;left:0;right:0;z-index:9999;height:28px;background:rgba(18,18,28,0.88);backdrop-filter:blur(24px) saturate(1.8);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-family:var(--font);font-size:12px;color:rgba(255,255,255,0.92);letter-spacing:0.01em;transition:transform 0.3s ease,opacity 0.3s ease,visibility 0.3s}
+#topBar{position:fixed;top:0;left:0;right:0;z-index:9999;height:28px;background:linear-gradient(180deg,rgba(var(--os-accent-rgb),0.16),rgba(14,14,20,0.92) 65%);border-bottom:1px solid rgba(var(--os-accent-rgb),0.18);backdrop-filter:blur(24px) saturate(1.8);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-family:var(--font);font-size:12px;color:rgba(255,255,255,0.92);letter-spacing:0.01em;transition:transform 0.3s ease,opacity 0.3s ease,visibility 0.3s,background 0.4s ease,border-color 0.4s ease}
 #topBar.topbar-hidden{transform:translateY(-100%);opacity:0;pointer-events:none;visibility:hidden}
 /* In fullscreen/maximized: top bar is gone entirely and cannot be peeked */
 body.has-maximized #topBar{transform:translateY(-100%)!important;opacity:0!important;pointer-events:none!important;visibility:hidden!important}
@@ -207,10 +207,11 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(30px);overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both;will-change:transform;transform:translateZ(0);contain:layout style}
 .os-window.minimized{display:none}
 .os-window.maximized{top:0!important;left:0!important;width:100%!important;height:100%!important;border-radius:0;border-color:transparent;backdrop-filter:none!important;box-shadow:none!important}
-.os-window.focused{box-shadow:0 40px 100px rgba(0,0,0,0.75),0 0 0 1px rgba(var(--os-accent-rgb),0.18)}
+.os-window.focused{box-shadow:0 40px 100px rgba(0,0,0,0.75),0 0 0 1px rgba(var(--os-accent-rgb),0.28)}
+.os-window.focused .wnd-titlebar{background:linear-gradient(180deg,rgba(var(--os-accent-rgb),0.16),rgba(255,255,255,0.03));border-bottom-color:rgba(var(--os-accent-rgb),0.22)}
 .os-window:not(.focused){filter:brightness(0.88)}
 .os-window.maximized:not(.focused){filter:none!important}
-.wnd-titlebar{height:var(--titlebar-h);flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 6px 0 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--os-border);cursor:move;user-select:none}
+.wnd-titlebar{height:var(--titlebar-h);flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 6px 0 12px;background:linear-gradient(180deg,rgba(var(--os-accent-rgb),0.10),rgba(255,255,255,0.025));border-bottom:1px solid rgba(var(--os-accent-rgb),0.14);cursor:move;user-select:none;transition:background 0.4s ease,border-color 0.4s ease}
 .wnd-icon{width:16px;height:16px;border-radius:4px;object-fit:cover;flex-shrink:0}
 .wnd-title{flex:1;font-size:12px;font-weight:500;color:var(--os-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wnd-ctrl-btns{display:flex;align-items:center;gap:1px;flex-shrink:0;margin-left:auto}
@@ -547,6 +548,68 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 #screensaver.active{display:flex}
 .ss-time{font-size:clamp(60px,12vw,120px);font-weight:200;color:rgba(255,255,255,0.9);font-family:'Geist Mono',monospace;letter-spacing:-0.04em;line-height:1;text-shadow:0 0 60px rgba(var(--os-accent-rgb),0.3)}
 .ss-date{font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,0.3);letter-spacing:0.2em;text-transform:uppercase;font-weight:300}
+
+/* IN-GAME OVERLAY (Steam-style) */
+#gameOverlay{position:fixed;inset:0;z-index:400000;display:none;pointer-events:none}
+#gameOverlay.active{display:block}
+#gameOverlayDim{position:absolute;inset:0;background:rgba(0,0,0,0.72);opacity:0;transition:opacity 0.25s ease;pointer-events:all;backdrop-filter:blur(2px)}
+#gameOverlay.active #gameOverlayDim{opacity:1}
+/* Steam-style: full-screen panel that slides in from left */
+#gameOverlayShell{position:absolute;inset:0;display:flex;pointer-events:all;transform:translateX(-18px) scale(0.99);opacity:0;transition:transform 0.28s cubic-bezier(0.34,1.2,0.64,1),opacity 0.22s ease}
+#gameOverlay.active #gameOverlayShell{transform:translateX(0) scale(1);opacity:1}
+/* Left sidebar — tabs */
+#goSidebar{width:220px;flex-shrink:0;background:rgba(14,16,22,0.97);border-right:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;overflow:hidden}
+#goSidebarHeader{padding:18px 18px 12px;border-bottom:1px solid rgba(255,255,255,0.07)}
+#goSidebarBadge{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#fff;letter-spacing:0.01em;margin-bottom:4px}
+#goSidebarBadge svg{color:var(--os-accent);filter:drop-shadow(0 0 5px rgba(var(--os-accent-rgb),0.5))}
+#goSidebarGame{font-size:11px;color:rgba(255,255,255,0.4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#goSidebarNav{flex:1;padding:8px;display:flex;flex-direction:column;gap:2px}
+.go-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);border:1px solid transparent;transition:all 0.13s;user-select:none}
+.go-nav-item:hover{background:rgba(255,255,255,0.07);color:#fff}
+.go-nav-item.active{background:rgba(var(--os-accent-rgb),0.18);border-color:rgba(var(--os-accent-rgb),0.35);color:#fff}
+.go-nav-item svg{width:16px;height:16px;flex-shrink:0}
+.go-nav-item .go-nav-badge{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--os-accent);background:rgba(var(--os-accent-rgb),0.15);border-radius:4px;padding:1px 5px}
+#goSidebarFooter{padding:12px 14px;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between}
+#goCloseOverlayBtn{height:30px;padding:0 14px;border-radius:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);font-family:var(--font);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.13s}
+#goCloseOverlayBtn:hover{background:rgba(248,113,113,0.2);border-color:rgba(248,113,113,0.4);color:#fff}
+#goHintLabel{font-size:10px;color:rgba(255,255,255,0.22);font-family:var(--mono)}
+/* Main content area */
+#goMain{flex:1;display:flex;flex-direction:column;overflow:hidden;background:rgba(10,11,16,0.96)}
+.go-panel{display:none;flex:1;flex-direction:column}
+.go-panel.active{display:flex}
+/* Stopwatch panel */
+#goPanel_stopwatch{align-items:stretch}
+.go-sw-top{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;padding:40px 32px 24px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.go-sw-display{font-family:var(--mono);font-size:clamp(40px,7vw,72px);font-weight:200;color:#fff;letter-spacing:-0.02em;text-shadow:0 0 40px rgba(var(--os-accent-rgb),0.3);line-height:1}
+.go-sw-sub{font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px}
+.go-sw-controls{display:flex;gap:8px;margin-top:16px}
+.go-sw-btn{height:36px;padding:0 20px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;font-family:var(--font);font-size:12.5px;font-weight:500;cursor:pointer;transition:all 0.13s}
+.go-sw-btn:hover{background:rgba(255,255,255,0.14)}
+.go-sw-btn.primary{background:rgba(var(--os-accent-rgb),0.25);border-color:rgba(var(--os-accent-rgb),0.5)}
+.go-sw-btn.primary:hover{background:var(--os-accent);border-color:var(--os-accent)}
+.go-sw-laps{flex:1;overflow-y:auto;padding:8px 0;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
+.go-sw-lap{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.5);padding:8px 32px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.go-sw-lap:first-child{color:rgba(255,255,255,0.8);background:rgba(var(--os-accent-rgb),0.06)}
+/* Notes panel */
+#goPanel_notes{background:rgba(10,11,16,0.96)}
+.go-notes-toolbar{height:44px;flex-shrink:0;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;font-weight:600;color:#fff;gap:10px}
+.go-notes-status{font-size:10px;color:var(--os-accent);font-family:var(--mono);margin-left:auto}
+.go-notes-text{flex:1;padding:20px 24px;color:rgba(255,255,255,0.88);font-size:13.5px;line-height:1.8;outline:none;overflow-y:auto;background:transparent}
+.go-notes-text:empty::before{content:'Jot down strategies, codes, reminders…';color:rgba(255,255,255,0.2)}
+/* Browser panel */
+#goPanel_browser{background:#0a0b10}
+.go-browser-bar{height:44px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 14px;background:rgba(14,16,22,0.9);border-bottom:1px solid rgba(255,255,255,0.07)}
+.go-browser-url{flex:1;height:28px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:rgba(255,255,255,0.65);font-family:var(--mono);font-size:11px;display:flex;align-items:center;padding:0 10px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.go-browser-btn{height:28px;padding:0 11px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:rgba(255,255,255,0.65);font-size:11.5px;cursor:pointer;font-family:var(--font);transition:all 0.12s}
+.go-browser-btn:hover{background:rgba(255,255,255,0.13);color:#fff}
+.go-browser-frame-wrap{flex:1;position:relative;background:#0a0b10}
+.go-browser-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+/* Session info panel */
+#goPanel_session{padding:28px 32px;gap:14px;flex-wrap:wrap;align-content:flex-start}
+.go-session-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px 18px;min-width:180px;flex:1}
+.go-session-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(255,255,255,0.3);margin-bottom:8px}
+.go-session-val{font-size:22px;font-weight:300;font-family:var(--mono);color:#fff}
+.go-sessio
 </style>
 </head>
 <body>
@@ -709,6 +772,11 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
         <div class="wp-picker-name">System Stats</div>
         <div class="wp-picker-desc">Live FPS and memory</div>
       </div>
+      <div class="wp-picker-item" onclick="WIDGETS.add('session');WIDGETS.closePicker()">
+        <div class="wp-picker-icon" style="background:rgba(167,139,250,0.12);color:#a78bfa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg></div>
+        <div class="wp-picker-name">Session Timer</div>
+        <div class="wp-picker-desc">Uptime + active game time</div>
+      </div>
     </div>
   </div>
 </div>
@@ -738,6 +806,7 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
   </div>
 </div>
 
+<div id="continueDock" style="position:fixed;bottom:calc(var(--taskbar-h) + 18px);left:50%;transform:translateX(-50%);z-index:9997;display:none;align-items:center;gap:8px;padding:8px 12px;background:rgba(13,14,22,0.92);border:1px solid var(--os-border2);border-radius:16px;backdrop-filter:blur(28px) saturate(1.6);box-shadow:0 12px 40px rgba(0,0,0,0.6);max-width:88vw;overflow-x:auto;scrollbar-width:none"></div>
 <div id="taskbarPeekZone" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()"></div>
 <div id="topBarPeekZone" style="position:fixed;top:0;left:0;right:0;height:4px;z-index:10000;display:none"></div>
 
@@ -761,6 +830,10 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
         <div class="qm-item" onclick="TM.open()">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="8" y="2" width="5" height="5" rx="1"/><rect x="14" y="2" width="4" height="5" rx="1"/><rect x="2" y="9" width="5" height="9" rx="1"/><rect x="8" y="9" width="5" height="5" rx="1"/><rect x="14" y="9" width="4" height="7" rx="1"/></svg>
           Task Manager
+        </div>
+        <div class="qm-item" onclick="LAUNCHER.close();DOCK.toggle()">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="10" cy="10" r="7"/><path d="M8 7l5 3-5 3z" fill="currentColor" stroke="none"/></svg>
+          Continue Playing
         </div>
         <div class="qm-item" onclick="OS.openSettings()">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="10" cy="10" r="2.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42"/></svg>
@@ -1099,6 +1172,102 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
   </div>
 </div>
 
+<!-- IN-GAME OVERLAY (Steam-style) -->
+<div id="gameOverlay">
+  <div id="gameOverlayDim" onclick="if(event.target===this)GAMEOVERLAY.close()"></div>
+  <div id="gameOverlayShell">
+    <!-- Sidebar -->
+    <div id="goSidebar">
+      <div id="goSidebarHeader">
+        <div id="goSidebarBadge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="6" width="20" height="13" rx="3"/><circle cx="8" cy="12.5" r="1.6" fill="currentColor" stroke="none"/><path d="M14 11h4M14 14h2.5"/></svg>
+          NovOS Overlay
+        </div>
+        <div id="goSidebarGame">No game active</div>
+      </div>
+      <div id="goSidebarNav">
+        <div class="go-nav-item active" onclick="GAMEOVERLAY.showPanel('stopwatch')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg>
+          Stopwatch
+          <span class="go-nav-badge" id="goSwMini">00:00</span>
+        </div>
+        <div class="go-nav-item" onclick="GAMEOVERLAY.showPanel('notes')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M5 3h9l5 5v13H5z"/><path d="M9 13h6M9 17h4"/></svg>
+          Notes
+        </div>
+        <div class="go-nav-item" onclick="GAMEOVERLAY.showPanel('browser')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/></svg>
+          Browser
+        </div>
+        <div class="go-nav-item" onclick="GAMEOVERLAY.showPanel('session')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Session
+        </div>
+      </div>
+      <div id="goSidebarFooter">
+        <button id="goCloseOverlayBtn" onclick="GAMEOVERLAY.close()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Close
+        </button>
+        <span id="goHintLabel">Alt+Shift</span>
+      </div>
+    </div>
+    <!-- Main panel -->
+    <div id="goMain">
+      <div class="go-panel active" id="goPanel_stopwatch">
+        <div class="go-sw-top">
+          <div class="go-sw-display" id="goSwDisplay">00:00:00</div>
+          <div class="go-sw-sub">Session Stopwatch</div>
+          <div class="go-sw-controls">
+            <button class="go-sw-btn primary" id="goSwToggleBtn" onclick="GAMEOVERLAY.swToggle()">Start</button>
+            <button class="go-sw-btn" onclick="GAMEOVERLAY.swLap()">Lap</button>
+            <button class="go-sw-btn" onclick="GAMEOVERLAY.swReset()">Reset</button>
+          </div>
+        </div>
+        <div class="go-sw-laps" id="goSwLaps"></div>
+      </div>
+      <div class="go-panel" id="goPanel_notes">
+        <div class="go-notes-toolbar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M14 3v5h5"/><path d="M5 3h9l5 5v13H5z"/><path d="M9 13h6M9 17h4"/></svg>
+          Game Notes
+          <span class="go-notes-status" id="goNotesStatus">Saved</span>
+        </div>
+        <div class="go-notes-text" id="goNotesText" contenteditable="true"></div>
+      </div>
+      <div class="go-panel" id="goPanel_browser">
+        <div class="go-browser-bar">
+          <button class="go-browser-btn" onclick="GAMEOVERLAY.browserReload()">↺</button>
+          <div class="go-browser-url">supermath.salavat.ru</div>
+          <button class="go-browser-btn" onclick="GAMEOVERLAY.browserOpenFull()">Open in Window</button>
+        </div>
+        <div class="go-browser-frame-wrap">
+          <iframe id="goBrowserFrame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" src="about:blank"></iframe>
+        </div>
+      </div>
+      <div class="go-panel" id="goPanel_session" style="flex-wrap:wrap;align-content:flex-start;padding:28px 32px;gap:14px;overflow-y:auto">
+        <div class="go-session-card" style="flex-basis:100%">
+          <div class="go-session-label">Now Playing</div>
+          <div class="go-session-val" id="goSessGame" style="font-size:16px;font-weight:600">—</div>
+        </div>
+        <div class="go-session-card">
+          <div class="go-session-label">Session Uptime</div>
+          <div class="go-session-val" id="goSessUp">0:00</div>
+          <div class="go-session-sub">Since page load</div>
+        </div>
+        <div class="go-session-card">
+          <div class="go-session-label">Game Time This Session</div>
+          <div class="go-session-val" id="goSessActive">0:00</div>
+          <div class="go-session-sub">Active focus time</div>
+        </div>
+        <div class="go-session-card" style="flex-basis:100%">
+          <div class="go-session-label">Total Playtime (all time)</div>
+          <div class="go-session-val" id="goSessTotal" style="font-size:16px">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- AI QUICK PROMPT -->
 <div id="quickPrompt" class="qp-hidden" onclick="if(event.target===this)QP.close()">
   <div id="quickPromptBox">
@@ -1325,6 +1494,8 @@ const WM={
     const dh=Math.min(window.innerHeight*0.8,680);
     const x=Math.max(20,(window.innerWidth-dw)*0.5+(Math.random()*40-20));
     const y=Math.max(10,(window.innerHeight-48-dh)*0.3+(Math.random()*20-10));
+    const _hasMax=document.body.classList.contains('has-maximized');
+    this._zCounter=_hasMax?Math.max(this._zCounter,100050):this._zCounter;
     el.style.cssText=`width:${dw}px;height:${dh}px;top:${y}px;left:${x}px;z-index:${++this._zCounter}`;
     const _sysTitleIcon=WM._sysTitlebarIcon(app.url);
     const _iconHtml=_sysTitleIcon
@@ -1404,9 +1575,13 @@ const WM={
     const el=document.getElementById(id);
     if(el){
       el.classList.add('focused');
+      const _hasMax=document.body.classList.contains('has-maximized')&&!el.classList.contains('maximized');
+      if(_hasMax)this._zCounter=Math.max(this._zCounter,100050);
       el.style.zIndex=++this._zCounter;
     }
     TB.setActive(id);
+    if(typeof PLAYTIME!=='undefined')PLAYTIME.syncFocus(id);
+    if(typeof GAMEOVERLAY!=='undefined'&&el&&this.windows[id])GAMEOVERLAY.trackFocus(this.windows[id].app);
   },
 
   closeWindow(id){
@@ -1419,6 +1594,7 @@ const WM={
         el.remove();
       },180);
     }
+    if(typeof PLAYTIME!=='undefined'&&this.windows[id]&&PLAYTIME._active&&PLAYTIME._active.url===this.windows[id].app.url)PLAYTIME.stop();
     delete this.windows[id];TB.removeWindow(id);TB.updateAutoHide();
   },
 
@@ -1429,6 +1605,7 @@ const WM={
     el.style.pointerEvents='none';
     setTimeout(()=>{el.classList.add('minimized');el.style.animation='';el.style.pointerEvents='';},220);
     TB.setActive(null);TB.updateAutoHide();
+    if(typeof PLAYTIME!=='undefined'&&PLAYTIME._active&&this.windows[id]&&PLAYTIME._active.url===this.windows[id].app.url)PLAYTIME.stop();
   },
   restore(id){
     const el=document.getElementById(id);if(!el)return;
@@ -1445,13 +1622,17 @@ const WM={
     this.windows[id].maximized=true;
     this.windows[id].prevRect={top:el.style.top,left:el.style.left,width:el.style.width,height:el.style.height};
     el.classList.add('maximized');
-    // Auto-minimize all other non-minimized windows for performance
     Object.keys(this.windows).forEach(wid=>{
       if(wid!==id&&this.windows[wid]&&!this.windows[wid].minimized){
         this.minimize(wid);
       }
     });
     TB.updateAutoHide();
+    // Auto-focus the iframe so keyboard input goes straight to the game
+    setTimeout(()=>{
+      const frm=document.getElementById('frm_'+id);
+      if(frm)frm.focus({preventScroll:true});
+    },120);
   },
   restoreMax(id){
     const el=document.getElementById(id);if(!el)return;
@@ -2576,71 +2757,281 @@ const OS={
   },
   openSettingsWindow(){this.openSettings();},
 
-  /* ─── App Library ───────────────────────────────────────────── */
+  /* ─── App Library (Steam-style, single tab) ───────────────────── */
   openAppLibrary(){
     this.closeStart();
+    const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__library__');
+    if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
     const id=WM.newId();const el=document.createElement('div');
     el.className='os-window focused';el.id=id;
-    const dw=Math.min(window.innerWidth*0.82,960),dh=Math.min(window.innerHeight*0.8,660);
+    const dw=Math.min(window.innerWidth*0.88,1180),dh=Math.min(window.innerHeight*0.86,740);
     el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
     el.innerHTML=`
       <style>
-        .lib2-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px;padding:22px;overflow-y:auto;height:100%;align-content:start;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
-        .lib2-card{position:relative;border-radius:14px;overflow:hidden;cursor:pointer;width:100%;height:200px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);transition:transform 0.18s cubic-bezier(0.34,1.4,0.64,1),box-shadow 0.18s ease;transform-style:preserve-3d}
-        .lib2-card:hover{box-shadow:0 12px 36px rgba(0,0,0,0.6);transform:perspective(500px) rotateY(0deg) scale(1.04)}
-        .lib2-card.tilt-left{transform:perspective(500px) rotateY(-8deg) scale(1.04)}
-        .lib2-card.tilt-right{transform:perspective(500px) rotateY(8deg) scale(1.04)}
-        .lib2-img{width:100%;height:100%;object-fit:cover;display:block;transition:filter 0.2s}
-        .lib2-card:hover .lib2-img{filter:brightness(0.38) saturate(0.7)}
-        .lib2-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;transition:opacity 0.2s;padding:10px;pointer-events:none}
-        .lib2-card:hover .lib2-overlay{opacity:1}
-        .lib2-name{font-size:11.5px;font-weight:600;color:#fff;text-align:center;line-height:1.3;text-shadow:0 1px 6px rgba(0,0,0,0.8);word-break:break-word}
-        .lib2-launch-btn{pointer-events:all;padding:5px 14px;background:rgba(var(--os-accent-rgb),0.85);border:none;border-radius:20px;color:#fff;font-size:11px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all 0.13s;backdrop-filter:blur(6px)}
-        .lib2-launch-btn:hover{background:var(--os-accent);transform:scale(1.07)}
-        .lib2-emoji-card{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:42px;background:rgba(var(--os-accent-rgb),0.08)}
-        .lib2-card:hover .lib2-emoji-card{filter:brightness(0.38)}
+        .stlib-wrap{display:flex;height:100%;overflow:hidden;background:linear-gradient(180deg,rgba(0,0,0,0.12),transparent 120px)}
+        .stlib-side{width:280px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--os-border);background:rgba(0,0,0,0.16)}
+        .stlib-side-search{padding:12px;border-bottom:1px solid var(--os-border)}
+        .stlib-side-search input{width:100%;height:30px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:7px;padding:0 10px;color:var(--os-text);font-family:var(--font);font-size:12px;outline:none}
+        .stlib-side-search input:focus{border-color:rgba(var(--os-accent-rgb),0.4)}
+        .stlib-side-list{flex:1;overflow-y:auto;padding:6px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
+        .stlib-side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--os-dim);padding:10px 10px 5px}
+        .stlib-row{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:7px;cursor:pointer;border:1px solid transparent;transition:all 0.12s}
+        .stlib-row:hover{background:var(--os-surface)}
+        .stlib-row.active{background:rgba(var(--os-accent-rgb),0.14);border-color:rgba(var(--os-accent-rgb),0.3)}
+        .stlib-row-icon{width:28px;height:28px;border-radius:6px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,0.05)}
+        .stlib-row-name{flex:1;font-size:12px;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .stlib-row-time{font-size:9.5px;color:var(--os-dim);font-family:var(--mono);flex-shrink:0}
+        .stlib-row.playing::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--os-green);box-shadow:0 0 6px var(--os-green);flex-shrink:0}
+        .stlib-main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+        .stlib-hero{position:relative;height:230px;flex-shrink:0;overflow:hidden;background:#0a0b10}
+        .stlib-hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.55) saturate(1.05);transform:scale(1.02)}
+        .stlib-hero-fade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,9,13,0.1) 0%,rgba(8,9,13,0.55) 55%,rgba(8,9,13,0.97) 100%)}
+        .stlib-hero-content{position:absolute;left:24px;right:24px;bottom:18px;display:flex;align-items:flex-end;gap:16px}
+        .stlib-hero-icon{width:72px;height:72px;border-radius:14px;object-fit:cover;border:2px solid rgba(255,255,255,0.18);box-shadow:0 8px 24px rgba(0,0,0,0.5);flex-shrink:0;background:rgba(255,255,255,0.06)}
+        .stlib-hero-text{flex:1;min-width:0}
+        .stlib-hero-title{font-size:24px;font-weight:600;color:#fff;letter-spacing:-0.02em;text-shadow:0 2px 12px rgba(0,0,0,0.6);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .stlib-hero-meta{font-size:11.5px;color:rgba(255,255,255,0.65);margin-top:4px;display:flex;gap:12px;align-items:center}
+        .stlib-hero-actions{display:flex;gap:8px;flex-shrink:0}
+        .stlib-play-btn{height:42px;padding:0 26px;border-radius:8px;background:var(--os-accent);border:none;color:#fff;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.13s;display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(var(--os-accent-rgb),0.35)}
+        .stlib-play-btn:hover{opacity:0.9;transform:translateY(-1px)}
+        .stlib-icon-btn{width:42px;height:42px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.13s;flex-shrink:0}
+        .stlib-icon-btn:hover{background:rgba(255,255,255,0.16)}
+        .stlib-icon-btn.danger:hover{background:rgba(248,113,113,0.25);border-color:rgba(248,113,113,0.4);color:var(--os-red)}
+        .stlib-body{flex:1;overflow-y:auto;padding:20px 24px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
+        .stlib-stats-row{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+        .stlib-stat{flex:1;min-width:120px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:10px;padding:12px 14px}
+        .stlib-stat-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim);margin-bottom:5px}
+        .stlib-stat-val{font-size:17px;font-weight:600;color:var(--os-text);font-family:var(--mono)}
+        .stlib-section-title{font-size:13px;font-weight:600;color:var(--os-text);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+        .stlib-note-box{background:var(--os-surface);border:1px solid var(--os-border);border-radius:10px;padding:14px;margin-bottom:18px}
+        .stlib-note-text{font-size:12.5px;line-height:1.7;color:var(--os-text);white-space:pre-wrap;word-break:break-word;min-height:60px;outline:none}
+        .stlib-note-text:empty::before{content:attr(data-ph);color:var(--os-dim)}
+        .stlib-note-status{font-size:10px;color:var(--os-dim);margin-top:8px;text-align:right;font-family:var(--mono)}
+        .stlib-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--os-muted);text-align:center;padding:40px}
+        .stlib-empty-icon{width:56px;height:56px;border-radius:14px;background:var(--os-surface);border:1px solid var(--os-border);display:flex;align-items:center;justify-content:center}
+        .stlib-recent-rail{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+        .stlib-recent-card{flex-shrink:0;width:118px;cursor:pointer;border-radius:9px;overflow:hidden;border:1px solid var(--os-border);background:var(--os-surface);transition:all 0.15s}
+        .stlib-recent-card:hover{border-color:rgba(var(--os-accent-rgb),0.4);transform:translateY(-2px)}
+        .stlib-recent-img{width:100%;height:64px;object-fit:cover;display:block}
+        .stlib-recent-info{padding:6px 8px}
+        .stlib-recent-name{font-size:10.5px;font-weight:500;color:var(--os-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .stlib-recent-time{font-size:9px;color:var(--os-accent);font-family:var(--mono);margin-top:2px}
       </style>
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
         <div class="wnd-title">App Library</div>
         <div class="wnd-ctrl-btns">
-          <button class="wnd-ctrl-btn" onclick="OS.libRefresh('${id}')" title="Refresh"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+          <button class="wnd-ctrl-btn" onclick="OS.libRandom()" title="Random Game"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.2" fill="currentColor"/><circle cx="16" cy="8" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="8" cy="16" r="1.2" fill="currentColor"/><circle cx="16" cy="16" r="1.2" fill="currentColor"/></svg></button>
           <button class="wnd-ctrl-btn" onclick="OS.addShortcutOpen()" title="Add App"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
           <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
           <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
           <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
       </div>
-      <div class="wnd-toolbar" style="background:rgba(0,0,0,0.2);border-bottom:1px solid rgba(255,255,255,0.06)">
-        <div class="wnd-tabs">
-          <div class="wnd-tab active" id="libtab-games" onclick="OS.libTab('games','${id}')">🎮 Games</div>
-          <div class="wnd-tab" id="libtab-web" onclick="OS.libTab('web','${id}')">🌐 Web</div>
-          <div class="wnd-tab" id="libtab-apps" onclick="OS.libTab('apps','${id}')">📦 Apps</div>
+      <div class="wnd-body" style="overflow:hidden">
+        <div class="stlib-wrap">
+          <div class="stlib-side">
+            <div class="stlib-side-search">
+              <input type="text" id="stlibSearch_${id}" placeholder="Search library…" oninput="OS.stlibSearch('${id}',this.value)">
+            </div>
+            <div class="stlib-side-list" id="stlibList_${id}"></div>
+          </div>
+          <div class="stlib-main" id="stlibMain_${id}"></div>
         </div>
-        <select class="wnd-search" id="libsort_${id}" style="width:130px;cursor:pointer" onchange="OS.libSearch('${id}')">
-          <option value="default">Default order</option>
-          <option value="alpha">A → Z</option>
-          <option value="alpha_desc">Z → A</option>
-          <option value="category">By Series</option>
-        </select>
-        <input type="text" class="wnd-search" id="libsearch_${id}" placeholder="Search…" oninput="OS.libSearch('${id}')" style="width:140px">
       </div>
-      <div class="wnd-body" style="overflow:hidden"><div class="lib2-grid" id="libgrid_${id}"></div></div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
-    WM.windows[id]={app:{name:'App Library',url:'__library__',icon:''},minimized:false,maximized:false,prevRect:null,libTab:'games'};
+    WM.windows[id]={app:{name:'App Library',url:'__library__',icon:''},minimized:false,maximized:false,prevRect:null,libSelected:null};
     WM.focus(id);TB.addWindow(id,{name:'App Library',url:'__library__',icon:''});WM.makeDraggable(id);
-    this.libTab('games',id);
+    this.stlibRenderSidebar(id,'');
+    const first=[...this.shortcuts.games,...this.shortcuts.web,...this.shortcuts.apps][0];
+    this.stlibSelect(id,(PLAYTIME.recent(1)[0]&&this._findAppByUrl(PLAYTIME.recent(1)[0].url))||first);
   },
 
-  libRefresh(wid){const w=WM.windows[wid];if(!w)return;this.libRender(w.libTab||'games',wid,'');OS.notify('Library','App list refreshed.');},
-
-  libTab(tab,wid){
-    ['games','web','apps'].forEach(t=>{const el=document.getElementById('libtab-'+t);if(el)el.classList.toggle('active',t===tab);});
-    if(WM.windows[wid])WM.windows[wid].libTab=tab;
-    this.libRender(tab,wid,'');
+  _findAppByUrl(url){
+    const all=[...this.shortcuts.games,...this.shortcuts.web,...this.shortcuts.apps];
+    return all.find(a=>a.url===url);
   },
-  libSearch(wid){const tab=WM.windows[wid]&&WM.windows[wid].libTab||'games';const q=document.getElementById('libsearch_'+wid)?.value||'';const sort=document.getElementById('libsort_'+wid)?.value||'default';this.libRender(tab,wid,q,sort);},
+
+  libRandom(){
+    const games=this.shortcuts.games||[];
+    if(!games.length){OS.notify('No games','Your games library is empty.');return;}
+    const pick=games[Math.floor(Math.random()*games.length)];
+    OS.notify('Random pick',pick.name+' — rolling the dice!');
+    this.launch(pick);
+  },
+
+  stlibSearch(wid,q){this.stlibRenderSidebar(wid,q);},
+
+  stlibRenderSidebar(wid,q){
+    const list=document.getElementById('stlibList_'+wid);if(!list)return;
+    const sel=WM.windows[wid]&&WM.windows[wid].libSelected;
+    const ql=(q||'').toLowerCase();
+    const matches=app=>!ql||app.name.toLowerCase().includes(ql);
+
+    const recent=PLAYTIME.recent(40).map(p=>this._findAppByUrl(p.url)).filter(Boolean).filter(matches);
+    const recentUrls=new Set(recent.map(a=>a.url));
+
+    const sections=[
+      {label:'Recently Played',apps:recent},
+      {label:'Games',apps:(this.shortcuts.games||[]).filter(matches).filter(a=>!recentUrls.has(a.url))},
+      {label:'Web',apps:(this.shortcuts.web||[]).filter(matches)},
+      {label:'Apps',apps:(this.shortcuts.apps||[]).filter(matches)},
+    ];
+
+    let html='';
+    sections.forEach(sec=>{
+      if(!sec.apps.length)return;
+      html+=`<div class="stlib-side-section">${sec.label}</div>`;
+      sec.apps.forEach(app=>{
+        const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
+        const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
+        const isActive=sel&&sel.url===app.url;
+        const isPlaying=PLAYTIME._active&&PLAYTIME._active.url===app.url;
+        const entry=PLAYTIME.log.find(e=>e.url===app.url);
+        const timeStr=entry&&entry.totalMs?PLAYTIME.fmt(entry.totalMs):'';
+        const esc=JSON.stringify(app).replace(/"/g,'&quot;');
+        const iconHtml=isEmoji
+          ?`<div class="stlib-row-icon" style="display:flex;align-items:center;justify-content:center;font-size:15px">${app.icon}</div>`
+          :`<img class="stlib-row-icon" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(app.url||'')}'" alt="">`;
+        html+=`<div class="stlib-row${isActive?' active':''}${isPlaying?' playing':''}" onclick="OS.stlibSelect('${wid}',${esc})" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})">
+          ${iconHtml}
+          <div class="stlib-row-name">${app.name}</div>
+          ${timeStr?`<div class="stlib-row-time">${timeStr}</div>`:''}
+        </div>`;
+      });
+    });
+    if(!html)html='<div style="text-align:center;padding:30px 14px;color:var(--os-dim);font-size:12px">No matches.</div>';
+    list.innerHTML=html;
+  },
+
+  stlibSelect(wid,app){
+    if(!WM.windows[wid])return;
+    WM.windows[wid].libSelected=app||null;
+    this.stlibRenderSidebar(wid,document.getElementById('stlibSearch_'+wid)?.value||'');
+    this.stlibRenderMain(wid);
+  },
+
+  stlibRenderMain(wid){
+    const main=document.getElementById('stlibMain_'+wid);if(!main)return;
+    const app=WM.windows[wid]&&WM.windows[wid].libSelected;
+    if(!app){
+      main.innerHTML=`<div class="stlib-empty">
+        <div class="stlib-empty-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></div>
+        <div>Select an app from the list to see details.</div>
+      </div>`;
+      return;
+    }
+    const icon=app.icon||`https://www.google.com/s2/favicons?sz=128&domain=${app.url}`;
+    const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
+    const entry=PLAYTIME.log.find(e=>e.url===app.url);
+    const totalTime=entry&&entry.totalMs?PLAYTIME.fmt(entry.totalMs):'Never played';
+    const lastPlayed=entry&&entry.lastPlayed?new Date(entry.lastPlayed).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
+    const note=this._getGameNote(app.url);
+    const isPinned=TB.pinned.some(p=>p.url===app.url);
+    const heroImg=isEmoji?'':icon;
+    const escApp=JSON.stringify(app).replace(/"/g,'&quot;');
+
+    main.innerHTML=`
+      <div class="stlib-hero">
+        ${heroImg?`<img class="stlib-hero-img" src="${heroImg}" onerror="this.style.display='none'" alt="">`:''}
+        <div class="stlib-hero-fade"></div>
+        <div class="stlib-hero-content">
+          ${isEmoji
+            ?`<div class="stlib-hero-icon" style="display:flex;align-items:center;justify-content:center;font-size:34px">${app.icon}</div>`
+            :`<img class="stlib-hero-icon" src="${icon}" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(app.url||'')}'" alt="">`}
+          <div class="stlib-hero-text">
+            <div class="stlib-hero-title">${app.name}</div>
+            <div class="stlib-hero-meta"><span>${totalTime!=='Never played'?totalTime+' played':'Not played yet'}</span>${lastPlayed!=='—'?`<span>· Last played ${lastPlayed}</span>`:''}</div>
+          </div>
+          <div class="stlib-hero-actions">
+            <button class="stlib-play-btn" onclick="OS.launch(${escApp})">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              ${app.isPVZ?'Play':'Launch'}
+            </button>
+            <button class="stlib-icon-btn" title="${isPinned?'Unpin from Taskbar':'Pin to Taskbar'}" onclick="OS.stlibTogglePin('${wid}',${escApp})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="${isPinned?'currentColor':'none'}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.5 5.5L19 9l-4 3.5L16 18l-4-3-4 3 1-5.5L5 9l5.5-1.5z"/></svg>
+            </button>
+            <button class="stlib-icon-btn" title="Add to Desktop" onclick="OS.addToDesktop(${escApp})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/></svg>
+            </button>
+            ${!app.isDefault?`<button class="stlib-icon-btn danger" title="Remove" onclick="OS.removeShortcut(${escApp})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/></svg>
+            </button>`:''}
+          </div>
+        </div>
+      </div>
+      <div class="stlib-body">
+        <div class="stlib-stats-row">
+          <div class="stlib-stat"><div class="stlib-stat-label">Total Playtime</div><div class="stlib-stat-val">${totalTime}</div></div>
+          <div class="stlib-stat"><div class="stlib-stat-label">Last Played</div><div class="stlib-stat-val" style="font-size:13px">${lastPlayed}</div></div>
+          <div class="stlib-stat"><div class="stlib-stat-label">Category</div><div class="stlib-stat-val" style="font-size:13px">${this._libSeriesKey(app.name)}</div></div>
+        </div>
+        <div class="stlib-section-title">Notes <span style="font-size:10px;color:var(--os-dim);font-weight:400">walkthroughs, codes, seeds…</span></div>
+        <div class="stlib-note-box">
+          <div class="stlib-note-text" id="stlibNote_${wid}" contenteditable="true" data-ph="Click to add a note for this game…">${note?note.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}</div>
+          <div class="stlib-note-status" id="stlibNoteStat_${wid}">Saved</div>
+        </div>
+        <div class="stlib-section-title">Recently Played</div>
+        <div class="stlib-recent-rail" id="stlibRecentRail_${wid}"></div>
+      </div>`;
+
+    // Note autosave
+    const noteEl=document.getElementById('stlibNote_'+wid);
+    const statEl=document.getElementById('stlibNoteStat_'+wid);
+    if(noteEl){
+      let saveTimer=null;
+      noteEl.addEventListener('input',()=>{
+        if(statEl)statEl.textContent='Saving…';
+        clearTimeout(saveTimer);
+        saveTimer=setTimeout(()=>{
+          const notes=this._loadGameNotes();
+          const val=noteEl.innerText.trim();
+          if(val)notes[app.url]=val;else delete notes[app.url];
+          localStorage.setItem('novos_gamenotes',JSON.stringify(notes));
+          if(statEl)statEl.textContent='Saved';
+        },500);
+      });
+    }
+
+    // Recently played rail (separate from main list, horizontal cards)
+    const rail=document.getElementById('stlibRecentRail_'+wid);
+    if(rail){
+      const recent=PLAYTIME.recent(10).map(p=>({...p,appRef:this._findAppByUrl(p.url)})).filter(p=>p.appRef);
+      if(!recent.length){
+        rail.innerHTML='<div style="font-size:11.5px;color:var(--os-dim);padding:8px 0">No play history yet — launch something!</div>';
+      }else{
+        rail.innerHTML=recent.map(p=>{
+          const a=p.appRef;
+          const icon=a.icon||`https://www.google.com/s2/favicons?sz=128&domain=${a.url}`;
+          const esc=JSON.stringify(a).replace(/"/g,'&quot;');
+          return `<div class="stlib-recent-card" onclick="OS.stlibSelect('${wid}',${esc})">
+            <img class="stlib-recent-img" src="${icon}" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(a.url||'')}'" alt="">
+            <div class="stlib-recent-info">
+              <div class="stlib-recent-name">${a.name}</div>
+              <div class="stlib-recent-time">${PLAYTIME.fmt(p.totalMs)}</div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+    }
+  },
+
+  stlibTogglePin(wid,app){
+    if(TB.pinned.some(p=>p.url===app.url))TB.unpin(app.url);
+    else TB.pin(app);
+    this.stlibRenderMain(wid);
+  },
+
+  stlibRefreshAllOpen(){
+    Object.keys(WM.windows).forEach(wid=>{
+      if(WM.windows[wid].app.url==='__library__'){
+        this.stlibRenderSidebar(wid,document.getElementById('stlibSearch_'+wid)?.value||'');
+        this.stlibRenderMain(wid);
+      }
+    });
+  },
+
   _libSeriesKey(name){
     // Groups common game series together by extracting the franchise name
     const lower=name.toLowerCase();
@@ -2660,72 +3051,9 @@ const OS={
       ['worldbox','Worldbox'],['poly bridge','Poly Bridge'],
     ];
     for(const [kw,label] of series){if(lower.includes(kw))return label;}
-    return name; // ungrouped items sort by their own name
+    return 'General';
   },
-  libRender(tab,wid,q,sort='default'){
-    const grid=document.getElementById('libgrid_'+wid);if(!grid)return;
-    const items=this.shortcuts[tab]||[];
-    let filtered=q?items.filter(i=>i.name.toLowerCase().includes(q.toLowerCase())):[...items];
-    // Apply sort
-    if(sort==='alpha'){filtered.sort((a,b)=>a.name.localeCompare(b.name));}
-    else if(sort==='alpha_desc'){filtered.sort((a,b)=>b.name.localeCompare(a.name));}
-    else if(sort==='category'){
-      filtered.sort((a,b)=>{
-        const sa=this._libSeriesKey(a.name),sb=this._libSeriesKey(b.name);
-        if(sa!==sb)return sa.localeCompare(sb);
-        return a.name.localeCompare(b.name);
-      });
-    }
-    const esc2=(app)=>JSON.stringify(app).replace(/"/g,'&quot;');
-    // Insert series dividers when sorting by category
-    const showDividers=sort==='category'&&!q;
-    let lastSeries='';
-    const cards=filtered.map(app=>{
-      const icon=app.icon||`https://www.google.com/s2/favicons?sz=128&domain=${app.url}`;
-      const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
-      const imgEl=isEmoji
-        ?`<div class="lib2-emoji-card">${app.icon}</div>`
-        :`<img class="lib2-img" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(app.url||'')}'" alt="">`;
-      const esc=esc2(app);
-      let divider='';
-      if(showDividers){
-        const series=this._libSeriesKey(app.name);
-        if(series!==lastSeries){
-          lastSeries=series;
-          divider=`<div style="grid-column:1/-1;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:var(--os-dim);padding:4px 2px 2px;border-bottom:1px solid var(--os-border);margin-bottom:2px">${series}</div>`;
-        }
-      }
-      return divider+`<div class="lib2-card" ondblclick="OS.launch(${esc})" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})" data-libcard="1">
-        ${imgEl}
-        <div class="lib2-overlay">
-          <div class="lib2-name">${app.name}</div>
-          <button class="lib2-launch-btn" onclick="event.stopPropagation();OS.launch(${esc})">Launch</button>
-        </div>
-      </div>`;
-    }).join('');
-    if(!filtered.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--os-muted);font-size:13px;opacity:0.6">No apps found.</div>';return;}
-    grid.innerHTML=cards;
-    // Tilt animation on hover
-    grid.querySelectorAll('.lib2-card').forEach(card=>{
-      let _tiltTimer=null;
-      card.addEventListener('mouseenter',()=>{
-        card.classList.remove('tilt-left','tilt-right');
-        let phase=0;
-        const tick=()=>{
-          if(!card.matches(':hover'))return;
-          card.classList.toggle('tilt-left',phase%2===0);
-          card.classList.toggle('tilt-right',phase%2===1);
-          phase++;
-          _tiltTimer=setTimeout(tick,280);
-        };
-        _tiltTimer=setTimeout(tick,60);
-      });
-      card.addEventListener('mouseleave',()=>{
-        clearTimeout(_tiltTimer);
-        card.classList.remove('tilt-left','tilt-right');
-      });
-    });
-  },
+
   libCtx(e,app){
     const folders=this.desktopItems.filter(d=>d.type==='folder');
     const folderItems=folders.map(f=>({
@@ -2735,7 +3063,6 @@ const OS={
         if(f.items.find(i=>i.url===app.url)){OS.notify('Already in folder',app.name+' is already in that folder.');return;}
         f.items.push({name:app.name,url:app.url,icon:app.icon||''});
         saveDesktopItems(this.desktopItems);
-        // Re-render open folder windows
         document.querySelectorAll('[id^="fgrid_"]').forEach(g=>{
           const wid=g.id.replace('fgrid_','');
           if(WM.windows[wid])this._renderFolderContents(wid,f);
@@ -2756,11 +3083,21 @@ const OS={
     CTX.show(e.clientX,e.clientY,items);
   },
 
+  _gameNotes:null,
+  _loadGameNotes(){if(!this._gameNotes){try{this._gameNotes=JSON.parse(localStorage.getItem('novos_gamenotes')||'{}');}catch{this._gameNotes={};}}return this._gameNotes;},
+  _getGameNote(url){return this._loadGameNotes()[url]||'';},
+
   removeShortcut(app){
     ['web','games','apps'].forEach(cat=>{this.shortcuts[cat]=this.shortcuts[cat].filter(s=>s.url!==app.url||s.isDefault);});
     saveShortcuts(this.shortcuts);
     this.desktopItems=this.desktopItems.filter(d=>d.url!==app.url||d.isDefault);
     saveDesktopItems(this.desktopItems);this.renderDesktop();
+    Object.keys(WM.windows).forEach(wid=>{
+      if(WM.windows[wid].app.url==='__library__'&&WM.windows[wid].libSelected&&WM.windows[wid].libSelected.url===app.url){
+        WM.windows[wid].libSelected=null;
+      }
+    });
+    this.stlibRefreshAllOpen();
     this.notify('Removed',app.name+' removed');
   },
 
@@ -3072,6 +3409,15 @@ const OS={
                 <div class="sp2-row"><div><div class="sp2-row-label">Storage Used</div></div><span id="sp2StorageInfo_${id}" style="font-size:12px;color:var(--os-muted);font-family:var(--mono)">Calculating…</span></div>
               </div>
               <div class="sp2-card">
+                <div class="sp2-card-header">Keyboard Shortcuts</div>
+                <div class="sp2-row"><div><div class="sp2-row-label">Tab</div><div class="sp2-row-sub">Open the app launcher</div></div><span style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">Tab</span></div>
+                <div class="sp2-row"><div><div class="sp2-row-label">Window switcher</div><div class="sp2-row-sub">Hold to cycle, release to select</div></div><span style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">Shift + Tab</span></div>
+                <div class="sp2-row"><div><div class="sp2-row-label">In-game overlay</div><div class="sp2-row-sub">Only while a game or app window is focused</div></div><span style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">Alt + Shift</span></div>
+                <div class="sp2-row"><div><div class="sp2-row-label">Ask AI quick prompt</div><div class="sp2-row-sub">Opens the quick AI prompt box</div></div><span style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">Ctrl + Alt + Space</span></div>
+                <div class="sp2-row"><div><div class="sp2-row-label">Close / cancel</div><div class="sp2-row-sub">Closes overlays, menus, and dialogs</div></div><span style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">Esc</span></div>
+                <div class="sp2-row-sub" style="padding:0 16px 12px;line-height:1.5">These shortcuts work globally — even while a game or app has keyboard focus — as long as that app runs same-origin inside its window frame.</div>
+              </div>
+              <div class="sp2-card">
                 <div class="sp2-card-header">Data</div>
                 <div class="sp2-row">
                   <div><div class="sp2-row-label">Wipe All Data</div><div class="sp2-row-sub">Clears all settings, pinned apps, and desktop layout</div></div>
@@ -3289,26 +3635,62 @@ const OS={
     document.addEventListener('keydown',_handleKey);
     document.addEventListener('keyup',_handleKeyUp);
 
-    // Intercept keydown/keyup from iframes
+    // Intercept keydown/keyup from iframes — these are the GLOBAL shortcuts that
+    // must keep working even while a game/app iframe has keyboard focus.
     window.addEventListener('message',e=>{
       if(e.data==='novos_shifttab')ALT_TAB.next();
       if(e.data==='novos_tab')LAUNCHER.toggle();
       if(e.data==='novos_shiftup')ALT_TAB.handleKeyup({key:'Shift'});
+      if(e.data==='novos_altshift'){
+        // Mirrors the same focused-game gating used for the native hotkey path.
+        if(GAMEOVERLAY._open||GAMEOVERLAY._hasFocusedGame())GAMEOVERLAY.toggle();
+      }
+      if(e.data==='novos_ctrlaltspace')QP.toggle();
+      if(e.data==='novos_escape'){
+        if(GAMEOVERLAY._open)GAMEOVERLAY.close();
+        else if(ALT_TAB.open)ALT_TAB.cancel();
+        else if(LAUNCHER._open)LAUNCHER.close();
+      }
     });
 
-    // Inject a tiny keydown relay script into every iframe when it loads
+    // Inject a tiny keydown relay script into every iframe when it loads.
+    // This is what makes shortcuts "global" — without it, a focused game iframe
+    // swallows every keypress and the parent page never sees Tab/Alt+Shift/etc.
     WM._onIframeLoad=(frm)=>{
       try{
         const doc=frm.contentDocument||frm.contentWindow&&frm.contentWindow.document;
         if(!doc)return;
         const s=doc.createElement('script');
         s.textContent=`
-          document.addEventListener('keydown',function(e){
-            if(e.key==='Tab'){e.preventDefault();window.parent.postMessage(e.shiftKey?'novos_shifttab':'novos_tab','*');}
-          });
-          document.addEventListener('keyup',function(e){
-            if(e.key==='Shift'){window.parent.postMessage('novos_shiftup','*');}
-          });
+          (function(){
+            var altDown=false, shiftDown=false, ctrlDown=false, comboFired=false;
+            document.addEventListener('keydown',function(e){
+              if(e.key==='Alt')altDown=true;
+              if(e.key==='Shift')shiftDown=true;
+              if(e.key==='Control')ctrlDown=true;
+              if(e.key==='Tab'){e.preventDefault();window.parent.postMessage(e.shiftKey?'novos_shifttab':'novos_tab','*');return;}
+              if(e.key==='Escape'){window.parent.postMessage('novos_escape','*');}
+              if(e.altKey&&e.shiftKey&&(e.key==='Alt'||e.key==='Shift')){
+                if(!comboFired){comboFired=true;e.preventDefault();window.parent.postMessage('novos_altshift','*');}
+              }
+              if(e.ctrlKey&&e.altKey&&(e.code==='Space'||e.key===' ')){
+                e.preventDefault();window.parent.postMessage('novos_ctrlaltspace','*');
+              }
+            },true);
+            document.addEventListener('keyup',function(e){
+              if(e.key==='Shift'){window.parent.postMessage('novos_shiftup','*');shiftDown=false;comboFired=false;}
+              if(e.key==='Alt'){altDown=false;comboFired=false;}
+              if(e.key==='Control')ctrlDown=false;
+            },true);
+            // Activity relay — any interaction inside the frame resets the OS screensaver
+            ['mousemove','mousedown','keydown','touchstart','wheel','click'].forEach(function(ev){
+              document.addEventListener(ev,function(){window.parent.postMessage('__novos_activity','*');},{passive:true,capture:true});
+            });
+            // Respond to pings from the OS screensaver poller
+            window.addEventListener('message',function(e){
+              if(e.data==='__novos_ping')window.parent.postMessage('__novos_activity','*');
+            });
+          })();
         `;
         (doc.head||doc.body||doc.documentElement).appendChild(s);
       }catch(err){/* cross-origin iframe — cannot inject, expected */}
@@ -4228,6 +4610,31 @@ const WIDGETS={
       this._timerState=this._timerState||{};
       this._timerState[w.id]={remaining:300,running:false};
 
+    }else if(w.type==='session'){
+      el.innerHTML=`${closeBtn}<div class="widget-box" style="padding:16px;width:210px">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--os-dim);margin-bottom:10px">Session</div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--os-text);margin-bottom:6px"><span style="color:var(--os-muted)">Uptime</span><span id="${w.id}_up" style="font-family:var(--mono);color:var(--os-accent)">0:00</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--os-text);margin-bottom:8px"><span style="color:var(--os-muted)">Active</span><span id="${w.id}_active" style="font-family:var(--mono);color:var(--os-green);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right">—</span></div>
+        <div id="${w.id}_game" style="font-size:11px;color:var(--os-muted);line-height:1.5;border-top:1px solid var(--os-border);padding-top:8px">No game focused</div>
+      </div>`;
+      const fmt=s=>{const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return h>0?`${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${m}:${String(sec).padStart(2,'0')}`;};
+      const tickS=()=>{
+        if(!document.getElementById(w.id))return;
+        const up=document.getElementById(w.id+'_up');
+        if(up)up.textContent=fmt(Math.floor((Date.now()-PLAYTIME.sessionStart)/1000));
+        const cur=PLAYTIME.currentGame();
+        const actEl=document.getElementById(w.id+'_active');
+        const gameEl=document.getElementById(w.id+'_game');
+        if(cur){
+          if(actEl)actEl.textContent=fmt(Math.floor((Date.now()-cur.start)/1000));
+          if(gameEl)gameEl.textContent='Playing '+cur.name;
+        }else{
+          if(actEl)actEl.textContent='—';
+          if(gameEl)gameEl.textContent='No game focused';
+        }
+      };
+      tickS();this._timers[w.id]=setInterval(tickS,1000);
+
     }else if(w.type==='stats'){
       el.innerHTML=`${closeBtn}<div class="widget-box" style="padding:16px;width:200px">
         <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--os-dim);margin-bottom:10px">System</div>
@@ -4313,6 +4720,259 @@ const WP_TINTS={
 // (see OS.setTaskbarColor / SP2.setTaskbarOpacity), so no wallpaper auto-tint.
 function applyTaskbarTint(){/* deprecated — kept as no-op for compatibility */}
 
+const PLAYTIME={
+  sessionStart:Date.now(),
+  _active:null,          // {url,name,start}
+  log:[],                // [{url,name,icon,lastPlayed,totalMs}]
+
+  load(){try{this.log=JSON.parse(localStorage.getItem('novos_playtime')||'[]');}catch{this.log=[];}},
+  save(){localStorage.setItem('novos_playtime',JSON.stringify(this.log));},
+
+  // Only track real game/app windows, not system utilities
+  _isGame(app){return app&&app.url&&!app.url.startsWith('__');},
+
+  currentGame(){return this._active;},
+
+  start(app){
+    if(!this._isGame(app))return;
+    if(this._active&&this._active.url===app.url)return;
+    this.stop();
+    this._active={url:app.url,name:app.name,icon:app.icon||'',start:Date.now()};
+  },
+
+  stop(){
+    if(!this._active)return;
+    const elapsed=Date.now()-this._active.start;
+    const {url,name,icon}=this._active;
+    let entry=this.log.find(e=>e.url===url);
+    if(!entry){entry={url,name,icon,totalMs:0,lastPlayed:0};this.log.push(entry);}
+    entry.totalMs+=elapsed;
+    entry.lastPlayed=Date.now();
+    entry.name=name;entry.icon=icon;
+    this.save();
+    this._active=null;
+    if(typeof OS!=='undefined'&&OS.stlibRefreshAllOpen)OS.stlibRefreshAllOpen();
+  },
+
+  // Called by WM.focus — switch the active game to whatever's now focused
+  syncFocus(id){
+    const w=WM.windows[id];
+    if(w&&this._isGame(w.app)&&!w.minimized){this.start(w.app);}
+  },
+
+  fmt(ms){
+    const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60);
+    if(h>0)return h+'h '+m+'m';
+    if(m>0)return m+'m';
+    return Math.max(1,Math.floor(s/60))+'m';
+  },
+
+  recent(n){
+    return [...this.log].sort((a,b)=>b.lastPlayed-a.lastPlayed).slice(0,n||10);
+  }
+};
+
+const GAMEOVERLAY={
+  _open:false,
+  _swMs:0,_swRunning:false,_swInterval:null,_swLapCount:0,
+  _activeGameUrl:null,_activeGameName:'',
+  _browserLoaded:false,
+
+  // Tracks whichever non-system window is currently focused, so the overlay
+  // knows what to dim/label even if the user hasn't touched playtime tracking.
+  trackFocus(app){
+    if(!app||!app.url||app.url.startsWith('__'))return;
+    this._activeGameUrl=app.url;
+    this._activeGameName=app.name;
+    // Auto-focus the maximized window so keyboard input always goes to the game
+    const wid=Object.keys(WM.windows).find(id=>{
+      const w=WM.windows[id];
+      return w&&w.app&&w.app.url===app.url&&w.maximized&&!w.minimized;
+    });
+    if(wid){
+      const frm=document.getElementById('frm_'+wid);
+      if(frm&&document.activeElement!==frm)frm.focus({preventScroll:true});
+    }
+  },
+
+  toggle(){this._open?this.close():this.open();},
+
+  open(){
+    if(!this._hasFocusedGame()){
+      OS.notify('No game running','Maximize a game or app first, then press Alt+Shift to bring up the overlay.');
+      return;
+    }
+    const focusedEl=document.querySelector('.os-window.focused');
+    const win=WM.windows[focusedEl.id];
+    this._activeGameUrl=win.app.url;this._activeGameName=win.app.name;
+
+    this._open=true;
+    document.getElementById('gameOverlay').classList.add('active');
+    const sgEl=document.getElementById('goSidebarGame');
+    if(sgEl)sgEl.textContent=this._activeGameName;
+    this._loadNotes();
+    if(!this._browserLoaded){
+      const frm=document.getElementById('goBrowserFrame');
+      if(frm)frm.src='https://supermath.salavat.ru/search.html';
+      this._browserLoaded=true;
+    }
+    this.showPanel('stopwatch');
+  },
+
+  close(){
+    this._open=false;
+    document.getElementById('gameOverlay').classList.remove('active');
+  },
+
+  showPanel(name){
+    document.querySelectorAll('.go-panel').forEach(p=>p.classList.toggle('active',p.id==='goPanel_'+name));
+    document.querySelectorAll('.go-nav-item').forEach((n,i)=>{
+      const panels=['stopwatch','notes','browser','session'];
+      n.classList.toggle('active',panels[i]===name);
+    });
+    if(name==='session')this._tickSession();
+  },
+
+  _sessionTicker:null,
+  _tickSession(){
+    const fmt=ms=>{const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return h>0?`${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${m}:${String(sec).padStart(2,'0')}`;};
+    const tick=()=>{
+      const upEl=document.getElementById('goSessUp');
+      const actEl=document.getElementById('goSessActive');
+      const gameEl=document.getElementById('goSessGame');
+      const totEl=document.getElementById('goSessTotal');
+      if(upEl)upEl.textContent=fmt(Date.now()-PLAYTIME.sessionStart);
+      const cur=PLAYTIME.currentGame();
+      if(cur){
+        if(actEl)actEl.textContent=fmt(Date.now()-cur.start);
+        if(gameEl)gameEl.textContent=cur.name;
+        const entry=PLAYTIME.log.find(e=>e.url===cur.url);
+        if(totEl)totEl.textContent=entry&&entry.totalMs?PLAYTIME.fmt(entry.totalMs+Date.now()-cur.start):'Just started';
+      }else{
+        if(actEl)actEl.textContent='0:00';
+        if(gameEl)gameEl.textContent=this._activeGameName||'—';
+        const entry=PLAYTIME.log.find(e=>e.url===this._activeGameUrl);
+        if(totEl)totEl.textContent=entry&&entry.totalMs?PLAYTIME.fmt(entry.totalMs):'No history';
+      }
+    };
+    tick();
+    clearInterval(this._sessionTicker);
+    this._sessionTicker=setInterval(tick,1000);
+  },
+
+  _fmtSw(ms){
+    const totalSec=Math.floor(ms/1000);
+    const h=Math.floor(totalSec/3600),m=Math.floor((totalSec%3600)/60),s=totalSec%60;
+    return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  },
+  _fmtSwMini(ms){
+    const totalSec=Math.floor(ms/1000);
+    const m=Math.floor(totalSec/60),s=totalSec%60;
+    return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  },
+
+  swToggle(){
+    const btn=document.getElementById('goSwToggleBtn');
+    if(this._swRunning){
+      clearInterval(this._swInterval);this._swRunning=false;
+      if(btn)btn.textContent='Resume';
+    }else{
+      this._swRunning=true;
+      if(btn)btn.textContent='Pause';
+      const start=Date.now()-this._swMs;
+      this._swInterval=setInterval(()=>{
+        this._swMs=Date.now()-start;
+        const disp=document.getElementById('goSwDisplay');
+        const mini=document.getElementById('goSwMini');
+        if(disp)disp.textContent=this._fmtSw(this._swMs);
+        if(mini)mini.textContent=this._fmtSwMini(this._swMs);
+      },1000);
+    }
+  },
+  swLap(){
+    if(!this._swMs)return;
+    this._swLapCount++;
+    const laps=document.getElementById('goSwLaps');
+    if(laps){
+      const row=document.createElement('div');
+      row.className='go-sw-lap';
+      row.innerHTML=`<span>Lap ${this._swLapCount}</span><span>${this._fmtSw(this._swMs)}</span>`;
+      laps.prepend(row);
+    }
+  },
+  swReset(){
+    clearInterval(this._swInterval);
+    this._swRunning=false;this._swMs=0;this._swLapCount=0;
+    const disp=document.getElementById('goSwDisplay');
+    const mini=document.getElementById('gameOverlayStopwatchMini');
+    const btn=document.getElementById('goSwToggleBtn');
+    const laps=document.getElementById('goSwLaps');
+    if(disp)disp.textContent='00:00:00';
+    if(mini)mini.textContent='00:00';
+    if(btn)btn.textContent='Start';
+    if(laps)laps.innerHTML='';
+  },
+
+  _notesKey(){return 'novos_overlay_notes';},
+  _loadNotes(){
+    let all={};try{all=JSON.parse(localStorage.getItem(this._notesKey())||'{}');}catch{all={};}
+    const txt=document.getElementById('goNotesText');
+    if(txt)txt.innerHTML=(all[this._activeGameUrl]||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    if(!txt||!txt._goBound){
+      if(txt){
+        txt._goBound=true;
+        let t=null;
+        txt.addEventListener('input',()=>{
+          const stat=document.getElementById('goNotesStatus');
+          if(stat)stat.textContent='Saving…';
+          clearTimeout(t);
+          t=setTimeout(()=>{
+            let all2={};try{all2=JSON.parse(localStorage.getItem(this._notesKey())||'{}');}catch{all2={};}
+            all2[this._activeGameUrl]=txt.innerText;
+            localStorage.setItem(this._notesKey(),JSON.stringify(all2));
+            if(stat)stat.textContent='Saved';
+          },500);
+        });
+      }
+    }
+  },
+
+  browserReload(){
+    const frm=document.getElementById('goBrowserFrame');
+    if(frm){const s=frm.src;frm.src='about:blank';setTimeout(()=>frm.src=s,50);}
+  },
+  browserOpenFull(){
+    this.close();
+    WM.open({name:'Truffled',url:'https://supermath.salavat.ru/search.html',icon:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwfE4pX9Gdw2cY6nX4VJrph-O4iUqZKpIX_w&s'});
+  },
+
+  // True only when a real (non-system) app/game window is focused and not minimized.
+  _hasFocusedGame(){
+    const focusedEl=document.querySelector('.os-window.focused');
+    if(!focusedEl)return false;
+    const w=WM.windows[focusedEl.id];
+    return !!(w&&w.app&&w.app.url&&!w.app.url.startsWith('__')&&!w.minimized&&w.maximized);
+  },
+
+  init(){
+    document.addEventListener('keydown',e=>{
+      if((e.key==='Alt'||e.key==='Shift')&&!this._comboArmed){this._comboArmed=true;}
+      if(e.altKey&&e.shiftKey&&(e.key==='Alt'||e.key==='Shift')){
+        // Only fire once per physical combo press, not on every repeat
+        if(!this._fired){
+          this._fired=true;
+          // Block entirely on desktop / system windows — only toggles while playing.
+          if(this._open||this._hasFocusedGame()){e.preventDefault();this.toggle();}
+        }
+      }
+      if(this._open&&e.key==='Escape'){e.preventDefault();this.close();}
+    });
+    document.addEventListener('keyup',e=>{
+      if(e.key==='Alt'||e.key==='Shift'){this._fired=false;this._comboArmed=false;}
+    });
+  }
+};
+
 const SESSION={
   save(){
     try{
@@ -4342,10 +5002,12 @@ const SESSION={
 };
 
 window.addEventListener('load',()=>{
-  OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init();
+  PLAYTIME.load();
+  OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init();GAMEOVERLAY.init();
   setTimeout(()=>SESSION.restore(),SETTINGS.get('showBoot')?2600:200);
 });
 window.addEventListener('beforeunload',(e)=>{
+  try{PLAYTIME.stop();}catch(_){}
   try{SESSION.save();}catch(_){}
   e.preventDefault();
   e.returnValue='Leave NovOS? Your session will be saved.';
@@ -4625,12 +5287,33 @@ const QP={
 const SCREENSAVER={
   _timer:null,
   _tickTimer:null,
-  _IDLE_MS:1*60*1000,
+  _IDLE_MS:5*60*1000,
   _active:false,
 
   init(){
     const reset=()=>this._resetIdle();
+    // Listen on the main document
     ['mousemove','mousedown','keydown','touchstart','wheel'].forEach(ev=>document.addEventListener(ev,reset,{passive:true}));
+
+    // Also reset idle when any iframe posts any message (covers game activity,
+    // mouse moves inside iframes, and the relay messages we already inject)
+    window.addEventListener('message',()=>this._resetIdle(),{passive:true});
+
+    // Ping iframes every 4 seconds asking them to report activity.
+    // Same-origin iframes respond instantly; cross-origin ones are silent
+    // but we also poll them via the visibility/focus APIs below.
+    setInterval(()=>{
+      document.querySelectorAll('.wnd-iframe').forEach(frm=>{
+        try{frm.contentWindow&&frm.contentWindow.postMessage('__novos_ping','*');}catch(_){}
+      });
+    },4000);
+
+    // When the OS window regains focus from an iframe, count that as activity
+    window.addEventListener('focus',()=>this._resetIdle(),{passive:true});
+    document.addEventListener('visibilitychange',()=>{
+      if(!document.hidden)this._resetIdle();
+    },{passive:true});
+
     this._resetIdle();
   },
 
@@ -4668,6 +5351,38 @@ const SCREENSAVER={
   }
 };
 
+
+/* ═══ CONTINUE PLAYING DOCK ═══ */
+const DOCK={
+  _visible:false,
+  toggle(){this._visible?this.hide():this.show();},
+  show(){this._visible=true;this.render();document.getElementById('continueDock').style.display='flex';},
+  hide(){this._visible=false;document.getElementById('continueDock').style.display='none';},
+  render(){
+    const dock=document.getElementById('continueDock');
+    if(!dock||!this._visible)return;
+    const recent=PLAYTIME.recent(8);
+    if(!recent.length){
+      dock.innerHTML='<div style="font-size:11px;color:var(--os-muted);padding:6px 10px">No games played yet</div>';
+      return;
+    }
+    dock.innerHTML='<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim);padding:0 8px;flex-shrink:0">Continue</div>'+
+      recent.map(g=>{
+        const icon=g.icon||`https://www.google.com/s2/favicons?sz=64&domain=${g.url}`;
+        const app=DOCK._findApp(g.url)||{name:g.name,url:g.url,icon:g.icon};
+        const esc=JSON.stringify(app).replace(/"/g,'&quot;');
+        return `<div onclick="DOCK.hide();OS.launch(${esc})" title="${g.name} · ${PLAYTIME.fmt(g.totalMs)} played" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px;border-radius:10px;cursor:pointer;flex-shrink:0;width:74px;transition:background 0.12s" onmouseover="this.style.background='var(--os-surface)'" onmouseout="this.style.background=''">
+          <img src="${icon}" style="width:42px;height:42px;border-radius:9px;object-fit:cover" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(g.url)}'" alt="">
+          <div style="font-size:9.5px;color:var(--os-text);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:66px">${g.name}</div>
+          <div style="font-size:8.5px;color:var(--os-accent);font-family:var(--mono)">${PLAYTIME.fmt(g.totalMs)}</div>
+        </div>`;
+      }).join('');
+  },
+  _findApp(url){
+    const all=[...OS.shortcuts.games,...OS.shortcuts.web,...OS.shortcuts.apps];
+    return all.find(a=>a.url===url);
+  }
+};
 
 /* ═══ TASKBAR PREVIEW ═══ */
 const TBP={
