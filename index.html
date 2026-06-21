@@ -175,6 +175,8 @@ body.taskbar-autohide #desktop{height:100vh}
 #tbClock span{display:block;color:var(--os-text);font-size:12px}
 .tb-tray-btn{width:32px;height:32px;border-radius:8px;background:transparent;border:1px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--os-muted);font-size:14px;transition:all 0.15s}
 .tb-tray-btn:hover{background:var(--os-surface);border-color:var(--os-border);color:var(--os-text)}
+.tb-fallback-btn{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:var(--os-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0}
+.tb-fallback-btn:hover{background:rgba(var(--os-accent-rgb),0.16);border-color:rgba(var(--os-accent-rgb),0.3);color:var(--os-text);transform:translateY(-2px)}
 
 /* START MENU */
 #startMenu{position:fixed;bottom:calc(var(--taskbar-h) + 8px);left:8px;z-index:10000;width:340px;background:rgba(13,14,20,0.95);border:1px solid var(--os-border2);border-radius:var(--radius-xl);backdrop-filter:blur(40px) saturate(1.8);box-shadow:0 24px 64px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.04);overflow:hidden;transform:translateY(14px) scale(0.95);opacity:0;pointer-events:none;transition:all 0.22s cubic-bezier(0.34,1.3,0.64,1);transform-origin:bottom left}
@@ -910,6 +912,15 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 <div id="taskbarPeekZone" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()"></div>
 <div id="topBarPeekZone" style="position:fixed;top:0;left:0;right:0;height:4px;z-index:10000;display:none"></div>
 
+<!-- LEFT EDGE OVERLAY PEEK — only visible in fullscreen/maximized -->
+<div id="overlayPeekZone" style="position:fixed;top:0;left:0;width:6px;height:100vh;z-index:400500;display:none"></div>
+<div id="overlayPeekBtn" style="position:fixed;top:50%;left:0;transform:translateY(-50%) translateX(-100%);z-index:400501;transition:transform 0.22s cubic-bezier(0.34,1.2,0.64,1);display:none;pointer-events:none">
+  <div onclick="GAMEOVERLAY.toggle()" style="width:38px;height:52px;background:rgba(13,15,22,0.96);border:1px solid rgba(255,255,255,0.14);border-left:none;border-radius:0 12px 12px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;box-shadow:4px 0 20px rgba(0,0,0,0.5);backdrop-filter:blur(20px);pointer-events:all" onmouseover="this.style.background='rgba(var(--os-accent-rgb),0.22)';this.style.borderColor='rgba(var(--os-accent-rgb),0.5)'" onmouseout="this.style.background='rgba(13,15,22,0.96)';this.style.borderColor='rgba(255,255,255,0.14)'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+    <div style="font-size:7.5px;color:rgba(255,255,255,0.5);letter-spacing:0.05em;font-family:var(--font);line-height:1.2;text-align:center">OVR</div>
+  </div>
+</div>
+
 <!-- TASKBAR -->
 <div id="taskbar" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()">
   <div id="taskbarLeft" style="display:flex;align-items:center;gap:2px;flex:1;justify-content:flex-start">
@@ -954,6 +965,8 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
     <div id="taskbarApps"></div>
   </div>
   <div style="flex:1;display:flex;justify-content:flex-end;align-items:center;gap:4px;padding-right:4px">
+    <div id="fallbackTaskbarGroup" style="display:none"></div>
+    <div class="tb-divider" style="height:24px;margin:0 4px"></div>
     <div id="novosBtn" onclick="LAUNCHER.toggle(event)" title="NovOS" style="width:48px;height:56px;border-radius:14px;background:transparent;border:1px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.18s cubic-bezier(0.34,1.5,0.64,1);flex-shrink:0;color:rgba(255,255,255,0.8)" onmouseover="this.style.background='rgba(255,255,255,0.09)';this.style.borderColor='rgba(255,255,255,0.12)';this.style.transform='scale(1.18) translateY(-4px)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.borderColor='transparent';this.style.transform='';this.style.color='rgba(255,255,255,0.8)'">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="26" height="26" style="filter:drop-shadow(0 0 6px rgba(var(--os-accent-rgb),0.5))">
         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.7"/>
@@ -1468,27 +1481,7 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
   </div>
 </div>
 
-<!-- FALLBACK CONTROL — mouse-only access to shortcuts when a cross-origin
-     game/iframe has captured all keyboard input. Floats above the iframe
-     layer (z-index higher than .os-window) since mouse clicks still reach
-     elements visually on top, even though keystrokes can't be read out of
-     a sandboxed cross-origin frame. -->
-<div id="fallbackDock" style="position:fixed;z-index:500050;display:flex;flex-direction:column;align-items:flex-end;gap:6px;transition:opacity 0.2s ease;">
-  <div id="fallbackDockBtns" style="display:none;flex-direction:column;gap:6px;background:rgba(13,14,20,0.95);border:1px solid var(--os-border2);border-radius:14px;padding:6px;backdrop-filter:blur(20px);box-shadow:0 12px 32px rgba(0,0,0,0.5)">
-    <button onclick="FALLBACK_DOCK.run('launcher')" title="App Launcher" style="width:38px;height:38px;border-radius:9px;background:var(--os-surface);border:1px solid var(--os-border);color:var(--os-text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.13s" onmouseover="this.style.background='rgba(var(--os-accent-rgb),0.18)'" onmouseout="this.style.background='var(--os-surface)'">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
-    </button>
-    <button onclick="FALLBACK_DOCK.run('overlay')" title="Game Overlay" style="width:38px;height:38px;border-radius:9px;background:var(--os-surface);border:1px solid var(--os-border);color:var(--os-text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.13s" onmouseover="this.style.background='rgba(var(--os-accent-rgb),0.18)'" onmouseout="this.style.background='var(--os-surface)'">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 8v4M12 16h.01"/></svg>
-    </button>
-    <button onclick="FALLBACK_DOCK.run('ai')" title="Ask AI" style="width:38px;height:38px;border-radius:9px;background:var(--os-surface);border:1px solid var(--os-border);color:var(--os-text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.13s" onmouseover="this.style.background='rgba(var(--os-accent-rgb),0.18)'" onmouseout="this.style.background='var(--os-surface)'">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="11" rx="2.5"/><path d="M12 3v4"/><path d="M9 12h.01M15 12h.01" stroke-width="2.4"/><path d="M9.5 15h5"/><path d="M3 11v3M21 11v3"/></svg>
-    </button>
-  </div>
-  <button id="fallbackDockToggle" onclick="FALLBACK_DOCK.toggle()" title="Shortcuts (mouse-accessible)" style="width:40px;height:40px;border-radius:50%;background:rgba(var(--os-accent-rgb),0.85);border:1px solid rgba(255,255,255,0.2);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.5);transition:transform 0.15s" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M18 13h.01M9 13h6"/></svg>
-  </button>
-</div>
+
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
@@ -1557,6 +1550,7 @@ const DEFAULT_SHORTCUTS = {
     {name:"Granny 3",url:"https://wasm.rip/files/granny/granny3.html",icon:"https://play-lh.googleusercontent.com/QvKhAg9SyqVZ24DdjJCkuwPVpO4kz7cdbNO3bUxGALrlaeVTxJLLL9zHyaFq-NJ6eLg7",isDefault:true},
     {name:"Dice A Million",url:"https://wasm.rip/files/diceAmillion/diceamillion.html",icon:"https://img.succesone.fr/2026/02/Dice-A-Million-SuccesOneFR-microsoft-220x300.jpg",isDefault:true},
     {name:"Granny 2",url:"https://nostaligafun.pages.dev/games/games-accualy/ANDROID/Granny2_Data/index.html",icon:"https://play-lh.googleusercontent.com/iZ7NP-56YenT2dpgKEAw3n7IKFyu-S_9Iu3ayo28XYTgZpFtxsK_HXltV36pysSJqq8",isDefault:true},
+    {name:"Among Us",url:"https://nostaligafun.pages.dev/games/games-accualy/ANDROID/AmongUs_Data/index.html",icon:"https://upload.wikimedia.org/wikipedia/en/9/9a/Among_Us_cover_art.jpg",isDefault:true},
     
   ],
   apps:[
@@ -2184,12 +2178,14 @@ const TB={
       if(topBar)topBar.classList.add('topbar-hidden');
       // Top bar is fully inaccessible in fullscreen — peek zone stays disabled
       if(topPeek)topPeek.style.display='none';
+      OVERLAY_PEEK.enable();
     }else{
       document.body.classList.remove('taskbar-autohide');
       taskbar.classList.remove('taskbar-hidden');
       this._hidden=false;
       if(topBar)topBar.classList.remove('topbar-hidden');
       if(topPeek)topPeek.style.display='none';
+      OVERLAY_PEEK.disable();
     }
   },
   peekShow(){if(!this._hidden)return;clearTimeout(this._peekTimeout);document.getElementById('taskbar').classList.remove('taskbar-hidden');},
@@ -3176,6 +3172,37 @@ const OS={
         .stlib-recent-info{padding:6px 8px}
         .stlib-recent-name{font-size:10.5px;font-weight:500;color:var(--os-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .stlib-recent-time{font-size:9px;color:var(--os-accent);font-family:var(--mono);margin-top:2px}
+        .stlib-side-home{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:7px;cursor:pointer;border:1px solid transparent;transition:all 0.12s;margin-bottom:2px}
+        .stlib-side-home:hover{background:var(--os-surface)}
+        .stlib-side-home.active{background:rgba(var(--os-accent-rgb),0.14);border-color:rgba(var(--os-accent-rgb),0.3)}
+        .stlib-side-home.active .stlib-row-name{color:var(--os-accent)}
+        .stlib-home{padding:4px 4px 30px}
+        .stlib-home-section{margin-bottom:28px}
+        .stlib-home-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px}
+        .stlib-home-title{font-size:15px;font-weight:600;color:var(--os-text)}
+        .stlib-home-sub{font-size:11px;color:var(--os-muted);margin-top:2px}
+        .stlib-home-sortbar{display:flex;align-items:center;gap:7px;flex-shrink:0}
+        .stlib-sort-select{height:26px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:6px;padding:0 8px;color:var(--os-text);font-family:var(--font);font-size:11px;outline:none;cursor:pointer}
+        .stlib-continue-rail{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
+        .stlib-continue-card{flex-shrink:0;width:230px;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;border:1px solid var(--os-border);background:var(--os-surface);transition:all 0.15s}
+        .stlib-continue-card:hover{transform:translateY(-3px);border-color:rgba(var(--os-accent-rgb),0.4);box-shadow:0 10px 26px rgba(0,0,0,0.4)}
+        .stlib-continue-img{width:100%;height:108px;object-fit:cover;display:block;filter:brightness(0.82);transition:filter 0.15s}
+        .stlib-continue-card:hover .stlib-continue-img{filter:brightness(1)}
+        .stlib-continue-info{padding:10px 12px}
+        .stlib-continue-name{font-size:12.5px;font-weight:600;color:var(--os-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .stlib-continue-meta{font-size:10.5px;color:var(--os-muted);margin-top:3px}
+        .stlib-continue-play{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(var(--os-accent-rgb),0.92);display:flex;align-items:center;justify-content:center;color:#fff;opacity:0;transition:opacity 0.15s;box-shadow:0 4px 14px rgba(0,0,0,0.4)}
+        .stlib-continue-card:hover .stlib-continue-play{opacity:1}
+        .stlib-allgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+        .stlib-cap-card{cursor:pointer;border-radius:9px;overflow:hidden;border:1px solid var(--os-border);background:var(--os-surface);transition:all 0.15s}
+        .stlib-cap-card:hover{transform:translateY(-3px);border-color:rgba(var(--os-accent-rgb),0.4);box-shadow:0 10px 24px rgba(0,0,0,0.4)}
+        .stlib-cap-img-wrap{width:100%;aspect-ratio:2/3;background:#0a0b10;position:relative;overflow:hidden}
+        .stlib-cap-img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.85);transition:filter 0.15s}
+        .stlib-cap-card:hover .stlib-cap-img{filter:brightness(1)}
+        .stlib-cap-playtime{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(0,0,0,0.85),transparent);padding:20px 8px 6px;font-size:9.5px;color:#fff;font-family:var(--mono);opacity:0;transition:opacity 0.15s}
+        .stlib-cap-card:hover .stlib-cap-playtime{opacity:1}
+        .stlib-cap-info{padding:8px 9px}
+        .stlib-cap-name{font-size:11.5px;font-weight:500;color:var(--os-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       </style>
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
@@ -3201,11 +3228,10 @@ const OS={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
-    WM.windows[id]={app:{name:'App Library',url:'__library__',icon:''},minimized:false,maximized:false,prevRect:null,libSelected:null};
+    WM.windows[id]={app:{name:'App Library',url:'__library__',icon:''},minimized:false,maximized:false,prevRect:null,libSelected:null,libSort:'recent'};
     WM.focus(id);TB.addWindow(id,{name:'App Library',url:'__library__',icon:''});WM.makeDraggable(id);
     this.stlibRenderSidebar(id,'');
-    const first=[...this.shortcuts.games,...this.shortcuts.web,...this.shortcuts.apps][0];
-    this.stlibSelect(id,(PLAYTIME.recent(1)[0]&&this._findAppByUrl(PLAYTIME.recent(1)[0].url))||first);
+    this.stlibSelect(id,null);
   },
 
   _findAppByUrl(url){
@@ -3240,6 +3266,14 @@ const OS={
     ];
 
     let html='';
+    if(!ql){
+      const homeActive=!sel;
+      html+=`<div class="stlib-side-home${homeActive?' active':''}" onclick="OS.stlibSelect('${wid}',null)">
+        <div class="stlib-row-icon" style="display:flex;align-items:center;justify-content:center;background:rgba(var(--os-accent-rgb),0.14);color:var(--os-accent);border-radius:6px;width:28px;height:28px;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></div>
+        <div class="stlib-row-name" style="font-weight:600">Home</div>
+      </div>
+      <div style="height:1px;background:var(--os-border);margin:6px 4px 8px"></div>`;
+    }
     sections.forEach(sec=>{
       if(!sec.apps.length)return;
       html+=`<div class="stlib-side-section">${sec.label}</div>`;
@@ -3276,10 +3310,7 @@ const OS={
     const main=document.getElementById('stlibMain_'+wid);if(!main)return;
     const app=WM.windows[wid]&&WM.windows[wid].libSelected;
     if(!app){
-      main.innerHTML=`<div class="stlib-empty">
-        <div class="stlib-empty-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></div>
-        <div>Select an app from the list to see details.</div>
-      </div>`;
+      this._renderHome(wid);
       return;
     }
     const icon=app.icon||`https://www.google.com/s2/favicons?sz=128&domain=${app.url}`;
@@ -3375,6 +3406,96 @@ const OS={
         }).join('');
       }
     }
+  },
+
+  _renderHome(wid){
+    const main=document.getElementById('stlibMain_'+wid);if(!main)return;
+    const recent=PLAYTIME.recent(10).map(p=>({...p,appRef:this._findAppByUrl(p.url)})).filter(p=>p.appRef);
+    const allGames=this.shortcuts.games||[];
+    const sortMode=(WM.windows[wid]&&WM.windows[wid].libSort)||'recent';
+    let sortedGames=[...allGames];
+    if(sortMode==='alpha')sortedGames.sort((a,b)=>a.name.localeCompare(b.name));
+    else if(sortMode==='playtime'){
+      sortedGames.sort((a,b)=>{
+        const ea=PLAYTIME.log.find(e=>e.url===a.url),eb=PLAYTIME.log.find(e=>e.url===b.url);
+        return (eb&&eb.totalMs||0)-(ea&&ea.totalMs||0);
+      });
+    }
+
+    main.innerHTML=`
+      <div class="stlib-home">
+        <div class="stlib-home-section">
+          <div class="stlib-home-header">
+            <div>
+              <div class="stlib-home-title">Continue Playing</div>
+              <div class="stlib-home-sub">Pick up where you left off</div>
+            </div>
+          </div>
+          <div class="stlib-continue-rail" id="stlibContinueRail_${wid}"></div>
+        </div>
+        <div class="stlib-home-section">
+          <div class="stlib-home-header">
+            <div class="stlib-home-title">All Games <span style="color:var(--os-muted);font-weight:400;font-size:13px">(${allGames.length})</span></div>
+            <div class="stlib-home-sortbar">
+              <span style="font-size:10.5px;color:var(--os-muted)">Sort</span>
+              <select class="stlib-sort-select" onchange="OS.stlibSetSort('${wid}',this.value)">
+                <option value="recent"${sortMode==='recent'?' selected':''}>Default</option>
+                <option value="alpha"${sortMode==='alpha'?' selected':''}>Alphabetical</option>
+                <option value="playtime"${sortMode==='playtime'?' selected':''}>Most Played</option>
+              </select>
+            </div>
+          </div>
+          <div class="stlib-allgrid" id="stlibAllGrid_${wid}"></div>
+        </div>
+      </div>`;
+
+    const rail=document.getElementById('stlibContinueRail_'+wid);
+    if(rail){
+      if(!recent.length){
+        rail.innerHTML='<div style="font-size:12px;color:var(--os-dim);padding:16px 0">No games played yet — pick something from "All Games" below to get started.</div>';
+      }else{
+        rail.innerHTML=recent.map(p=>{
+          const a=p.appRef;
+          const icon=a.icon||`https://www.google.com/s2/favicons?sz=128&domain=${a.url}`;
+          const esc=JSON.stringify(a).replace(/"/g,'&quot;');
+          return `<div class="stlib-continue-card" onclick="OS.stlibSelect('${wid}',${esc})" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})">
+            <img class="stlib-continue-img" src="${icon}" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(a.url||'')}'" alt="">
+            <div class="stlib-continue-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="stlib-continue-info">
+              <div class="stlib-continue-name">${a.name}</div>
+              <div class="stlib-continue-meta">${PLAYTIME.fmt(p.totalMs)} played</div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+    }
+
+    const grid=document.getElementById('stlibAllGrid_'+wid);
+    if(grid){
+      if(!sortedGames.length){
+        grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--os-dim);font-size:12px">No games in your library.</div>';
+      }else{
+        grid.innerHTML=sortedGames.map(a=>{
+          const icon=a.icon||`https://www.google.com/s2/favicons?sz=128&domain=${a.url}`;
+          const entry=PLAYTIME.log.find(e=>e.url===a.url);
+          const timeStr=entry&&entry.totalMs?PLAYTIME.fmt(entry.totalMs):'Not played';
+          const esc=JSON.stringify(a).replace(/"/g,'&quot;');
+          return `<div class="stlib-cap-card" onclick="OS.stlibSelect('${wid}',${esc})" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})">
+            <div class="stlib-cap-img-wrap">
+              <img class="stlib-cap-img" src="${icon}" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(a.url||'')}'" alt="">
+              <div class="stlib-cap-playtime">${timeStr}</div>
+            </div>
+            <div class="stlib-cap-info"><div class="stlib-cap-name">${a.name}</div></div>
+          </div>`;
+        }).join('');
+      }
+    }
+  },
+
+  stlibSetSort(wid,mode){
+    if(!WM.windows[wid])return;
+    WM.windows[wid].libSort=mode;
+    this._renderHome(wid);
   },
 
   stlibTogglePin(wid,app){
@@ -5798,65 +5919,10 @@ const SESSION={
    a cross-origin game/iframe owns all keyboard focus.
 ═══════════════════════════════════════════════ */
 const FALLBACK_DOCK={
-  _open:false,
-  _pos:null,
-
-  init(){
-    const dock=document.getElementById('fallbackDock');
-    if(!dock)return;
-    let saved=null;
-    try{saved=JSON.parse(localStorage.getItem('novos_fallbackdock_pos')||'null');}catch{}
-    this._pos=saved||{right:18,bottom:18};
-    this._applyPos();
-    this._attachDrag(dock);
-  },
-
-  _applyPos(){
-    const dock=document.getElementById('fallbackDock');
-    if(!dock)return;
-    dock.style.right=this._pos.right+'px';
-    dock.style.bottom=this._pos.bottom+'px';
-    dock.style.left='';dock.style.top='';
-  },
-
-  _attachDrag(dock){
-    const toggle=document.getElementById('fallbackDockToggle');
-    if(!toggle)return;
-    let dragging=false,moved=false,sx=0,sy=0,startRight=0,startBottom=0;
-    toggle.addEventListener('mousedown',e=>{
-      dragging=true;moved=false;
-      sx=e.clientX;sy=e.clientY;
-      startRight=this._pos.right;startBottom=this._pos.bottom;
-      e.preventDefault();
-    });
-    document.addEventListener('mousemove',e=>{
-      if(!dragging)return;
-      const dx=e.clientX-sx,dy=e.clientY-sy;
-      if(Math.abs(dx)>3||Math.abs(dy)>3)moved=true;
-      if(!moved)return;
-      this._pos.right=Math.max(4,startRight-dx);
-      this._pos.bottom=Math.max(4,startBottom-dy);
-      this._applyPos();
-    });
-    document.addEventListener('mouseup',()=>{
-      if(!dragging)return;
-      dragging=false;
-      if(moved){
-        localStorage.setItem('novos_fallbackdock_pos',JSON.stringify(this._pos));
-      }else{
-        this.toggle();
-      }
-    });
-  },
-
-  toggle(){
-    this._open=!this._open;
-    const btns=document.getElementById('fallbackDockBtns');
-    if(btns)btns.style.display=this._open?'flex':'none';
-  },
-
+  // Mouse-only shortcut access now lives directly in the taskbar
+  // (#fallbackTaskbarGroup), so it inherits the taskbar's auto-hide/peek
+  // behavior automatically — no floating dock, no drag state needed.
   run(action){
-    this.toggle();
     if(action==='launcher')LAUNCHER.toggle();
     else if(action==='overlay'){
       if(GAMEOVERLAY._open||GAMEOVERLAY._hasFocusedGame())GAMEOVERLAY.toggle();
@@ -5868,7 +5934,7 @@ const FALLBACK_DOCK={
 
 window.addEventListener('load',()=>{
   PLAYTIME.load();
-  OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init();GAMEOVERLAY.init();FALLBACK_DOCK.init();
+  OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init();GAMEOVERLAY.init();
   setTimeout(()=>SESSION.restore(),SETTINGS.get('showBoot')?2600:200);
 });
 window.addEventListener('beforeunload',(e)=>{
@@ -6216,6 +6282,45 @@ const SCREENSAVER={
   }
 };
 
+
+/* ═══ LEFT-EDGE OVERLAY PEEK ═══ */
+const OVERLAY_PEEK={
+  _zone:null,_btn:null,_hideTimer:null,_enabled:false,
+
+  enable(){
+    this._enabled=true;
+    this._zone=this._zone||document.getElementById('overlayPeekZone');
+    this._btn=this._btn||document.getElementById('overlayPeekBtn');
+    if(this._zone)this._zone.style.display='block';
+    if(this._btn)this._btn.style.display='block';
+    if(!this._zone)return;
+    this._zone.onmouseenter=()=>this._show();
+    this._zone.onmouseleave=()=>this._scheduleHide();
+    if(this._btn){
+      this._btn.onmouseenter=()=>{clearTimeout(this._hideTimer);};
+      this._btn.onmouseleave=()=>this._scheduleHide();
+    }
+  },
+
+  disable(){
+    this._enabled=false;
+    if(this._zone){this._zone.style.display='none';this._zone.onmouseenter=null;this._zone.onmouseleave=null;}
+    if(this._btn){this._btn.style.display='none';this._btn.style.transform='translateY(-50%) translateX(-100%)';this._btn.onmouseenter=null;this._btn.onmouseleave=null;}
+    clearTimeout(this._hideTimer);
+  },
+
+  _show(){
+    clearTimeout(this._hideTimer);
+    if(this._btn)this._btn.style.transform='translateY(-50%) translateX(0)';
+  },
+
+  _scheduleHide(){
+    clearTimeout(this._hideTimer);
+    this._hideTimer=setTimeout(()=>{
+      if(this._btn)this._btn.style.transform='translateY(-50%) translateX(-100%)';
+    },600);
+  }
+};
 
 /* ═══ CONTINUE PLAYING DOCK ═══ */
 const DOCK={
