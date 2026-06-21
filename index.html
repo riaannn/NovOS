@@ -509,6 +509,45 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
 
+/* CUSTOM CURSOR — NovOS Cursor Pack
+   Each variable below is a CSS cursor value: url(image) hotspotX hotspotY, fallback.
+   Swap each placeholder URL for your own hosted image (e.g. an i.imgur.com/XXXXXXX.png
+   direct link) once uploaded. The two numbers after the url are the "hotspot" —
+   which pixel of the image counts as the actual click point — adjust if your art
+   doesn't have the point in the top-left corner. */
+:root{
+  --cur-default:url('https://i.imgur.com/DQThSlD.png') 4 2,auto;          /* insert default cursor here — Pointer.png */
+  --cur-pointer:url('https://i.imgur.com/M4UxZH9.png') 10 2,pointer;          /* insert link/clickable cursor here — Link.png */
+  --cur-grab:url('https://i.imgur.com/p7AjBqb.png') 14 14,grab;                /* insert pan/drag cursor here — Pan.png */
+  --cur-grabbing:url('https://i.imgur.com/OXjPrkD.png') 14 14,grabbing;   /* insert cursor drag icon here — Grabbing.png */
+  --cur-move:url('https://i.imgur.com/l1ZEVwO.png') 14 14,move;               /* insert 4-way move cursor here — Move.png */
+  --cur-not-allowed:url('https://i.imgur.com/9ixidql.png') 4 2,not-allowed; /* insert unavailable cursor here — Unavailable.png */
+  --cur-text:url('https://i.imgur.com/APCxsf8.png') 8 8,text;                 /* insert text/I-beam cursor here — Text.png */
+  --cur-ew:url('https://i.imgur.com/jeuhl7c.png') 14 14,ew-resize;            /* insert horizontal-resize cursor here — Horz.png */
+  --cur-ns:url('https://i.imgur.com/wkDXCg6.png') 14 14,ns-resize;            /* insert vertical-resize cursor here — Vert.png */
+  --cur-nwse:url('https://i.imgur.com/hZqAlib.png') 14 14,nwse-resize;        /* insert ↘ diagonal-resize cursor here — Dgn1.png */
+  --cur-nesw:url('https://i.imgur.com/UrhkN8G.png') 14 14,nesw-resize;        /* insert ↙ diagonal-resize cursor here — Dgn2.png */
+  --cur-wait:url('https://i.imgur.com/2hNSaBj.png') 14 14,wait;          /* insert busy/alternate cursor here — Alternate.png */
+  --cur-help:url('https://i.imgur.com/ZWPa8P1.png') 4 2,help;                 /* insert help cursor here — Help.png */
+  --cur-crosshair:url('https://i.imgur.com/0WDdmtZ.png') 14 14,crosshair;    /* insert crosshair cursor here — Cross.png */
+  --cur-zoom-in:url('https://i.imgur.com/ndk0guh.png') 14 14,zoom-in;       /* insert zoom-in cursor here — Zoom-in.png */
+  --cur-zoom-out:url('https://i.imgur.com/AY2pm0k.png') 14 14,zoom-out;    /* insert zoom-out cursor here — Zoom-out.png */
+  --cur-handwriting:url('https://i.imgur.com/MqsQnkS.png') 4 20,crosshair; /* insert handwriting/ink cursor here — Handwriting.png */
+  --cur-person:url('https://i.imgur.com/sjCK0gg.png') 14 14,auto;           /* insert person/select cursor here — Person.png */
+  --cur-pin:url('https://i.imgur.com/J5GaCju.png') 4 28,auto;                  /* insert pin cursor here — Pin.png */
+}
+body.custom-cursor-active{cursor:var(--cur-default)!important}
+body.custom-cursor-active *{cursor:var(--cur-default)!important}
+body.custom-cursor-active [onclick],body.custom-cursor-active a,body.custom-cursor-active button,body.custom-cursor-active select,body.custom-cursor-active label,body.custom-cursor-active input[type=checkbox],body.custom-cursor-active input[type=range],body.custom-cursor-active .toggle,body.custom-cursor-active .tog-slider,body.custom-cursor-active .tb-app,body.custom-cursor-active .ctx-item,body.custom-cursor-active .desk-icon,body.custom-cursor-active .folder-item,body.custom-cursor-active .lp-app,body.custom-cursor-active .lp-recent-item,body.custom-cursor-active .sm-app-item,body.custom-cursor-active .alt-tab-item,body.custom-cursor-active .lib-card,body.custom-cursor-active .stlib-row,body.custom-cursor-active .stlib-recent-card,body.custom-cursor-active .wp-item,body.custom-cursor-active .sp2-wp,body.custom-cursor-active .accent-swatch,body.custom-cursor-active .hidden-item,body.custom-cursor-active .wp-picker-item,body.custom-cursor-active .go-dock-btn,body.custom-cursor-active .fe-item,body.custom-cursor-active .fe-item-list,body.custom-cursor-active .sp2-nav-item,body.custom-cursor-active .qm-item{cursor:var(--cur-pointer)!important}
+body.custom-cursor-active input:disabled,body.custom-cursor-active button:disabled,body.custom-cursor-active [aria-disabled="true"]{cursor:var(--cur-not-allowed)!important}
+body.custom-cursor-active .wnd-titlebar,body.custom-cursor-active .desk-widget{cursor:var(--cur-grab)!important}
+body.custom-cursor-active .wnd-titlebar:active,body.custom-cursor-active .desk-widget.widget-dragging,body.custom-cursor-active .desk-icon.dragging{cursor:var(--cur-grabbing)!important}
+body.custom-cursor-active input[type=text],body.custom-cursor-active input[type=search],body.custom-cursor-active textarea,body.custom-cursor-active [contenteditable="true"]{cursor:var(--cur-text)!important}
+body.custom-cursor-active .wnd-edge-w,body.custom-cursor-active .wnd-edge-e{cursor:var(--cur-ew)!important}
+body.custom-cursor-active .wnd-edge-n,body.custom-cursor-active .wnd-edge-s{cursor:var(--cur-ns)!important}
+body.custom-cursor-active .wnd-edge-nw,body.custom-cursor-active .wnd-resize{cursor:var(--cur-nwse)!important}
+body.custom-cursor-active .wnd-edge-ne,body.custom-cursor-active .wnd-edge-sw{cursor:var(--cur-nesw)!important}
+
 /* NOTIFICATION HISTORY */
 #notifHistoryPanel{position:fixed;top:36px;right:8px;z-index:99997;width:280px;background:rgba(13,14,22,0.97);border:1px solid var(--os-border2);border-radius:var(--radius-lg);backdrop-filter:blur(32px);box-shadow:0 16px 48px rgba(0,0,0,0.6);overflow:hidden;transform:translateY(-8px) scale(0.96);opacity:0;pointer-events:none;transition:all 0.2s cubic-bezier(0.34,1.3,0.64,1);max-height:380px;display:flex;flex-direction:column}
 #notifHistoryPanel.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
@@ -549,67 +588,128 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 .ss-time{font-size:clamp(60px,12vw,120px);font-weight:200;color:rgba(255,255,255,0.9);font-family:'Geist Mono',monospace;letter-spacing:-0.04em;line-height:1;text-shadow:0 0 60px rgba(var(--os-accent-rgb),0.3)}
 .ss-date{font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,0.3);letter-spacing:0.2em;text-transform:uppercase;font-weight:300}
 
-/* IN-GAME OVERLAY (Steam-style) */
+/* IN-GAME OVERLAY (Steam-style dock + corner panels, NovOS skin) */
 #gameOverlay{position:fixed;inset:0;z-index:400000;display:none;pointer-events:none}
 #gameOverlay.active{display:block}
-#gameOverlayDim{position:absolute;inset:0;background:rgba(0,0,0,0.72);opacity:0;transition:opacity 0.25s ease;pointer-events:all;backdrop-filter:blur(2px)}
+#gameOverlayDim{position:absolute;inset:0;background:rgba(0,0,0,0.5);opacity:0;transition:opacity 0.25s ease;pointer-events:none;backdrop-filter:blur(1px)}
 #gameOverlay.active #gameOverlayDim{opacity:1}
-/* Steam-style: full-screen panel that slides in from left */
-#gameOverlayShell{position:absolute;inset:0;display:flex;pointer-events:all;transform:translateX(-18px) scale(0.99);opacity:0;transition:transform 0.28s cubic-bezier(0.34,1.2,0.64,1),opacity 0.22s ease}
-#gameOverlay.active #gameOverlayShell{transform:translateX(0) scale(1);opacity:1}
-/* Left sidebar — tabs */
-#goSidebar{width:220px;flex-shrink:0;background:rgba(14,16,22,0.97);border-right:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;overflow:hidden}
-#goSidebarHeader{padding:18px 18px 12px;border-bottom:1px solid rgba(255,255,255,0.07)}
-#goSidebarBadge{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#fff;letter-spacing:0.01em;margin-bottom:4px}
-#goSidebarBadge svg{color:var(--os-accent);filter:drop-shadow(0 0 5px rgba(var(--os-accent-rgb),0.5))}
-#goSidebarGame{font-size:11px;color:rgba(255,255,255,0.4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#goSidebarNav{flex:1;padding:8px;display:flex;flex-direction:column;gap:2px}
-.go-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);border:1px solid transparent;transition:all 0.13s;user-select:none}
-.go-nav-item:hover{background:rgba(255,255,255,0.07);color:#fff}
-.go-nav-item.active{background:rgba(var(--os-accent-rgb),0.18);border-color:rgba(var(--os-accent-rgb),0.35);color:#fff}
-.go-nav-item svg{width:16px;height:16px;flex-shrink:0}
-.go-nav-item .go-nav-badge{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--os-accent);background:rgba(var(--os-accent-rgb),0.15);border-radius:4px;padding:1px 5px}
-#goSidebarFooter{padding:12px 14px;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between}
-#goCloseOverlayBtn{height:30px;padding:0 14px;border-radius:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);font-family:var(--font);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.13s}
-#goCloseOverlayBtn:hover{background:rgba(248,113,113,0.2);border-color:rgba(248,113,113,0.4);color:#fff}
-#goHintLabel{font-size:10px;color:rgba(255,255,255,0.22);font-family:var(--mono)}
-/* Main content area */
-#goMain{flex:1;display:flex;flex-direction:column;overflow:hidden;background:rgba(10,11,16,0.96)}
-.go-panel{display:none;flex:1;flex-direction:column}
-.go-panel.active{display:flex}
-/* Stopwatch panel */
-#goPanel_stopwatch{align-items:stretch}
-.go-sw-top{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;padding:40px 32px 24px;border-bottom:1px solid rgba(255,255,255,0.06)}
-.go-sw-display{font-family:var(--mono);font-size:clamp(40px,7vw,72px);font-weight:200;color:#fff;letter-spacing:-0.02em;text-shadow:0 0 40px rgba(var(--os-accent-rgb),0.3);line-height:1}
-.go-sw-sub{font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px}
-.go-sw-controls{display:flex;gap:8px;margin-top:16px}
-.go-sw-btn{height:36px;padding:0 20px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;font-family:var(--font);font-size:12.5px;font-weight:500;cursor:pointer;transition:all 0.13s}
+#gameOverlayShell{position:absolute;inset:0;pointer-events:none}
+
+/* ── Top-left: game session strip ───────────────────────── */
+#goTopLeft{position:absolute;top:18px;left:18px;pointer-events:all;display:flex;flex-direction:column;gap:2px;opacity:0;transform:translateY(-8px);transition:opacity 0.25s ease,transform 0.25s cubic-bezier(0.34,1.2,0.64,1)}
+#gameOverlay.active #goTopLeft{opacity:1;transform:translateY(0)}
+#goClock{font-family:var(--mono);font-size:20px;font-weight:300;color:#fff;letter-spacing:-0.02em;text-shadow:0 2px 10px rgba(0,0,0,0.6)}
+#goDateLine{font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px}
+#goSessLine{font-size:11px;color:var(--os-accent);font-family:var(--mono);margin-top:5px;text-shadow:0 0 12px rgba(var(--os-accent-rgb),0.5)}
+#goExitGameBtn{margin-top:10px;align-self:flex-start;height:26px;padding:0 12px;border-radius:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.8);font-family:var(--font);font-size:10.5px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;transition:all 0.13s}
+#goExitGameBtn:hover{background:rgba(248,113,113,0.22);border-color:rgba(248,113,113,0.4);color:#fff}
+
+/* ── Top-right: close / back-to-game ────────────────────── */
+#goTopRight{position:absolute;top:18px;right:18px;pointer-events:all;display:flex;align-items:center;gap:14px;opacity:0;transform:translateY(-8px);transition:opacity 0.25s ease,transform 0.25s cubic-bezier(0.34,1.2,0.64,1)}
+#gameOverlay.active #goTopRight{opacity:1;transform:translateY(0)}
+#goBackToGame{text-align:right;cursor:pointer;user-select:none}
+#goBackToGame .go-btg-label{font-size:14px;font-weight:600;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,0.5)}
+#goBackToGame .go-btg-hint{font-size:10px;color:rgba(255,255,255,0.4);font-family:var(--mono);margin-top:1px}
+#goTopCloseBtn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.13s;flex-shrink:0}
+#goTopCloseBtn:hover{background:rgba(248,113,113,0.22);border-color:rgba(248,113,113,0.4);color:#fff}
+
+/* ── Bottom dock — Steam-style icon row ──────────────────── */
+#goDock{position:absolute;bottom:18px;left:50%;transform:translateX(-50%) translateY(14px);display:flex;align-items:center;gap:5px;padding:7px;border-radius:16px;background:rgba(13,15,22,0.88);border:1px solid rgba(255,255,255,0.10);backdrop-filter:blur(30px) saturate(1.8);box-shadow:0 20px 50px rgba(0,0,0,0.6),0 1px 0 rgba(255,255,255,0.06) inset;pointer-events:all;opacity:0;transition:opacity 0.25s ease,transform 0.28s cubic-bezier(0.34,1.2,0.64,1)}
+#gameOverlay.active #goDock{opacity:1;transform:translateX(-50%) translateY(0)}
+.go-dock-btn{width:42px;height:42px;border-radius:11px;background:transparent;border:1px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,0.6);transition:all 0.15s cubic-bezier(0.34,1.4,0.64,1);position:relative;flex-shrink:0}
+.go-dock-btn:hover{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.12);color:#fff;transform:translateY(-3px)}
+.go-dock-btn.active{background:rgba(var(--os-accent-rgb),0.22);border-color:rgba(var(--os-accent-rgb),0.4);color:#fff}
+.go-dock-btn svg{width:18px;height:18px}
+.go-dock-sep{width:1px;height:26px;background:rgba(255,255,255,0.1);margin:0 4px;flex-shrink:0}
+.go-dock-badge{position:absolute;top:-3px;right:-3px;min-width:14px;height:14px;padding:0 3px;border-radius:7px;background:var(--os-accent);color:#fff;font-size:8.5px;font-weight:700;font-family:var(--mono);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px rgba(13,15,22,0.9)}
+.go-dock-tooltip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(4px);background:rgba(8,9,14,0.95);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:5px 9px;font-size:10.5px;color:#fff;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.13s,transform 0.13s;font-family:var(--font)}
+.go-dock-btn:hover .go-dock-tooltip{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Floating panels (info / achievements / notes / screenshots / friends / browser) ── */
+.go-panel-float{position:absolute;pointer-events:all;width:380px;max-height:min(560px,calc(100vh - 140px));background:rgba(13,15,22,0.96);border:1px solid rgba(255,255,255,0.12);border-radius:14px;backdrop-filter:blur(30px) saturate(1.7);box-shadow:0 24px 60px rgba(0,0,0,0.6),0 1px 0 rgba(255,255,255,0.06) inset;display:none;flex-direction:column;overflow:hidden;opacity:0;transform:translateY(10px) scale(0.97);transition:opacity 0.18s ease,transform 0.18s cubic-bezier(0.34,1.3,0.64,1)}
+.go-panel-float.open{display:flex;opacity:1;transform:translateY(0) scale(1)}
+.go-panel-float.wide{width:460px}
+.go-pf-header{height:42px;flex-shrink:0;display:flex;align-items:center;gap:9px;padding:0 14px;border-bottom:1px solid rgba(255,255,255,0.08);background:linear-gradient(180deg,rgba(var(--os-accent-rgb),0.10),transparent)}
+.go-pf-header svg{width:15px;height:15px;color:var(--os-accent);flex-shrink:0}
+.go-pf-title{flex:1;font-size:12.5px;font-weight:600;color:#fff}
+.go-pf-close{width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.12s;flex-shrink:0}
+.go-pf-close:hover{background:rgba(248,113,113,0.2);border-color:rgba(248,113,113,0.4);color:#fff}
+.go-pf-body{flex:1;overflow-y:auto;padding:14px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent}
+
+/* Info panel content */
+.go-info-row{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:9px;margin-bottom:7px}
+.go-info-label{font-size:11px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.06em;font-weight:600}
+.go-info-val{font-size:13px;color:#fff;font-family:var(--mono)}
+
+/* Achievements panel content */
+.go-ach-item{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:9px;margin-bottom:4px;transition:background 0.12s}
+.go-ach-item:hover{background:rgba(255,255,255,0.05)}
+.go-ach-icon{width:34px;height:34px;border-radius:8px;background:rgba(var(--os-accent-rgb),0.15);border:1px solid rgba(var(--os-accent-rgb),0.3);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:var(--os-accent)}
+.go-ach-icon.locked{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);color:rgba(255,255,255,0.25)}
+.go-ach-name{font-size:12px;font-weight:600;color:#fff}
+.go-ach-desc{font-size:10.5px;color:rgba(255,255,255,0.4);margin-top:1px}
+.go-ach-pct{font-size:9.5px;color:var(--os-accent);font-family:var(--mono);margin-left:auto;flex-shrink:0;white-space:nowrap}
+
+/* Stopwatch / notes panel */
+.go-sw-display{font-family:var(--mono);font-size:38px;font-weight:200;color:#fff;letter-spacing:-0.02em;text-shadow:0 0 30px rgba(var(--os-accent-rgb),0.3);line-height:1;text-align:center;padding:14px 0 4px}
+.go-sw-sub{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.1em;text-transform:uppercase;text-align:center;margin-bottom:14px}
+.go-sw-controls{display:flex;gap:6px;padding:0 4px 12px}
+.go-sw-btn{flex:1;height:32px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;font-family:var(--font);font-size:11.5px;font-weight:500;cursor:pointer;transition:all 0.13s}
 .go-sw-btn:hover{background:rgba(255,255,255,0.14)}
 .go-sw-btn.primary{background:rgba(var(--os-accent-rgb),0.25);border-color:rgba(var(--os-accent-rgb),0.5)}
 .go-sw-btn.primary:hover{background:var(--os-accent);border-color:var(--os-accent)}
-.go-sw-laps{flex:1;overflow-y:auto;padding:8px 0;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
-.go-sw-lap{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.5);padding:8px 32px;border-bottom:1px solid rgba(255,255,255,0.04)}
-.go-sw-lap:first-child{color:rgba(255,255,255,0.8);background:rgba(var(--os-accent-rgb),0.06)}
-/* Notes panel */
-#goPanel_notes{background:rgba(10,11,16,0.96)}
-.go-notes-toolbar{height:44px;flex-shrink:0;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;font-weight:600;color:#fff;gap:10px}
-.go-notes-status{font-size:10px;color:var(--os-accent);font-family:var(--mono);margin-left:auto}
-.go-notes-text{flex:1;padding:20px 24px;color:rgba(255,255,255,0.88);font-size:13.5px;line-height:1.8;outline:none;overflow-y:auto;background:transparent}
+.go-sw-laps{max-height:160px;overflow-y:auto;border-top:1px solid rgba(255,255,255,0.06)}
+.go-sw-lap{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11.5px;color:rgba(255,255,255,0.5);padding:7px 4px;border-bottom:1px solid rgba(255,255,255,0.04)}
+.go-sw-lap:first-child{color:rgba(255,255,255,0.85);background:rgba(var(--os-accent-rgb),0.07)}
+.go-notes-text{min-height:160px;color:rgba(255,255,255,0.88);font-size:13px;line-height:1.7;outline:none;background:transparent}
 .go-notes-text:empty::before{content:'Jot down strategies, codes, reminders…';color:rgba(255,255,255,0.2)}
-/* Browser panel */
-#goPanel_browser{background:#0a0b10}
-.go-browser-bar{height:44px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 14px;background:rgba(14,16,22,0.9);border-bottom:1px solid rgba(255,255,255,0.07)}
-.go-browser-url{flex:1;height:28px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:rgba(255,255,255,0.65);font-family:var(--mono);font-size:11px;display:flex;align-items:center;padding:0 10px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.go-browser-btn{height:28px;padding:0 11px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:rgba(255,255,255,0.65);font-size:11.5px;cursor:pointer;font-family:var(--font);transition:all 0.12s}
+.go-notes-status{font-size:9.5px;color:var(--os-accent);font-family:var(--mono);text-align:right;margin-top:8px}
+
+/* Screenshots panel */
+.go-shot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.go-shot-item{position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);aspect-ratio:16/10;cursor:pointer}
+.go-shot-item img{width:100%;height:100%;object-fit:cover}
+.go-shot-empty{grid-column:1/-1;text-align:center;padding:30px 10px;color:rgba(255,255,255,0.3);font-size:12px}
+.go-shot-takebtn{width:100%;height:34px;margin-top:10px;border-radius:8px;background:rgba(var(--os-accent-rgb),0.18);border:1px solid rgba(var(--os-accent-rgb),0.4);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.13s}
+.go-shot-takebtn:hover{background:var(--os-accent)}
+
+/* Friends/chat panel */
+.go-friend-self{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;margin-bottom:10px}
+.go-friend-avatar{width:34px;height:34px;border-radius:50%;background:rgba(var(--os-accent-rgb),0.2);border:1px solid rgba(var(--os-accent-rgb),0.4);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.go-friend-name{font-size:12.5px;font-weight:600;color:#fff}
+.go-friend-status{font-size:10px;color:rgba(255,255,255,0.4)}
+.go-friend-section-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.3);padding:8px 2px 6px}
+.go-friend-row{display:flex;align-items:center;gap:9px;padding:7px 6px;border-radius:8px;cursor:pointer;transition:background 0.12s}
+.go-friend-row:hover{background:rgba(255,255,255,0.05)}
+.go-friend-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0}
+.go-friend-dot.online{background:var(--os-green);box-shadow:0 0 6px var(--os-green)}
+.go-friend-row-name{font-size:12px;color:#fff;flex:1}
+.go-friend-row-sub{font-size:10px;color:rgba(255,255,255,0.35)}
+
+/* Browser panel (wide, taller) */
+.go-browser-bar{height:38px;flex-shrink:0;display:flex;align-items:center;gap:7px;padding:0 10px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.07)}
+.go-browser-url{flex:1;height:26px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:rgba(255,255,255,0.65);font-family:var(--mono);font-size:10.5px;display:flex;align-items:center;padding:0 9px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.go-browser-btn{height:26px;padding:0 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:rgba(255,255,255,0.65);font-size:11px;cursor:pointer;font-family:var(--font);transition:all 0.12s;flex-shrink:0}
 .go-browser-btn:hover{background:rgba(255,255,255,0.13);color:#fff}
-.go-browser-frame-wrap{flex:1;position:relative;background:#0a0b10}
+.go-browser-frame-wrap{flex:1;position:relative;background:#0a0b10;min-height:340px}
 .go-browser-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
-/* Session info panel */
-#goPanel_session{padding:28px 32px;gap:14px;flex-wrap:wrap;align-content:flex-start}
-.go-session-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px 18px;min-width:180px;flex:1}
-.go-session-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(255,255,255,0.3);margin-bottom:8px}
-.go-session-val{font-size:22px;font-weight:300;font-family:var(--mono);color:#fff}
-.go-sessio
+
+/* Performance/stats mini-readout, top-center */
+#goStatsStrip{position:absolute;top:18px;left:50%;transform:translateX(-50%) translateY(-8px);display:flex;gap:14px;padding:7px 16px;border-radius:10px;background:rgba(13,15,22,0.85);border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(24px);pointer-events:all;opacity:0;transition:opacity 0.2s ease,transform 0.2s ease;font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.7)}
+#goStatsStrip.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+#goStatsStrip span b{color:var(--os-green);font-weight:600}
+
+/* KEYBIND PICKER MODAL */
+.kb-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;margin-bottom:6px}
+.kb-row-label{font-size:12.5px;color:var(--os-text)}
+.kb-row-sub{font-size:10.5px;color:var(--os-muted);margin-top:1px}
+.kb-capture-btn{height:30px;padding:0 12px;border-radius:7px;background:rgba(var(--os-accent-rgb),0.1);border:1px solid rgba(var(--os-accent-rgb),0.3);color:var(--os-accent);font-family:var(--mono);font-size:11.5px;font-weight:600;cursor:pointer;transition:all 0.15s;min-width:96px;text-align:center}
+.kb-capture-btn:hover{background:rgba(var(--os-accent-rgb),0.18)}
+.kb-capture-btn.listening{background:var(--os-accent);color:#fff;animation:kbPulse 1s ease-in-out infinite}
+@keyframes kbPulse{0%,100%{box-shadow:0 0 0 0 rgba(var(--os-accent-rgb),0.5)}50%{box-shadow:0 0 0 6px rgba(var(--os-accent-rgb),0)}}
+.kb-reset-row{display:flex;justify-content:flex-end;margin-top:4px}
+.kb-reset-link{font-size:10.5px;color:var(--os-muted);cursor:pointer;background:none;border:none;font-family:var(--font);text-decoration:underline;text-decoration-color:transparent;transition:all 0.13s}
+.kb-reset-link:hover{color:var(--os-accent);text-decoration-color:var(--os-accent)}
 </style>
 </head>
 <body>
@@ -1133,7 +1233,7 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
       <div class="welcome-features">
         <div class="welcome-feat"><div class="welcome-feat-icon">🎮</div><div class="welcome-feat-text"><strong>Games Library</strong><span>Open any game in a resizable, draggable window.</span></div></div>
         <div class="welcome-feat"><div class="welcome-feat-icon">📌</div><div class="welcome-feat-text"><strong>Pin & Customize</strong><span>Right-click any app to pin it, add it to your desktop, or put it in a folder.</span></div></div>
-        <div class="welcome-feat"><div class="welcome-feat-icon">⌨️</div><div class="welcome-feat-text"><strong>Shortcuts</strong><span>Tab = Start Menu · Shift+Tab = Window Switcher · Refresh window if Securly blocked shortcut</span></div></div>
+        <div class="welcome-feat"><div class="welcome-feat-icon">⌨️</div><div class="welcome-feat-text"><strong>Shortcuts</strong><span id="welcomeShortcutLine">Tab = Start Menu · Shift+Tab = Window Switcher · Refresh window if Securly blocked shortcut</span></div></div>
       </div>
       <div class="welcome-actions">
         <button class="welcome-btn-primary" onclick="OS.closeWelcome()">Get Started</button>
@@ -1172,99 +1272,182 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
   </div>
 </div>
 
-<!-- IN-GAME OVERLAY (Steam-style) -->
+<!-- IN-GAME OVERLAY (Steam-style dock, NovOS skin) -->
 <div id="gameOverlay">
-  <div id="gameOverlayDim" onclick="if(event.target===this)GAMEOVERLAY.close()"></div>
+  <div id="gameOverlayDim" onclick="GAMEOVERLAY.close()"></div>
   <div id="gameOverlayShell">
-    <!-- Sidebar -->
-    <div id="goSidebar">
-      <div id="goSidebarHeader">
-        <div id="goSidebarBadge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="6" width="20" height="13" rx="3"/><circle cx="8" cy="12.5" r="1.6" fill="currentColor" stroke="none"/><path d="M14 11h4M14 14h2.5"/></svg>
-          NovOS Overlay
-        </div>
-        <div id="goSidebarGame">No game active</div>
+
+    <!-- Top-left: clock + session info -->
+    <div id="goTopLeft">
+      <div id="goClock">12:00</div>
+      <div id="goDateLine">—</div>
+      <div id="goSessLine" id="goSessLineTxt">0m this session</div>
+      <button id="goExitGameBtn" onclick="GAMEOVERLAY.exitGame()">Exit Game</button>
+    </div>
+
+    <!-- Top-right: back to game -->
+    <div id="goTopRight">
+      <div id="goBackToGame" onclick="GAMEOVERLAY.close()">
+        <div class="go-btg-label">Back to Game</div>
+        <div class="go-btg-hint">(<span data-kb-action="gameOverlay">Alt + Shift</span>)</div>
       </div>
-      <div id="goSidebarNav">
-        <div class="go-nav-item active" onclick="GAMEOVERLAY.showPanel('stopwatch')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg>
-          Stopwatch
-          <span class="go-nav-badge" id="goSwMini">00:00</span>
-        </div>
-        <div class="go-nav-item" onclick="GAMEOVERLAY.showPanel('notes')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M5 3h9l5 5v13H5z"/><path d="M9 13h6M9 17h4"/></svg>
-          Notes
-        </div>
-        <div class="go-nav-item" onclick="GAMEOVERLAY.showPanel('browser')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/></svg>
-          Browser
-        </div>
-        <div class="go-nav-item" onclick="GAMEOVERLAY.showPanel('session')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-          Session
-        </div>
-      </div>
-      <div id="goSidebarFooter">
-        <button id="goCloseOverlayBtn" onclick="GAMEOVERLAY.close()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          Close
-        </button>
-        <span id="goHintLabel">Alt+Shift</span>
+      <div id="goTopCloseBtn" onclick="GAMEOVERLAY.close()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </div>
     </div>
-    <!-- Main panel -->
-    <div id="goMain">
-      <div class="go-panel active" id="goPanel_stopwatch">
-        <div class="go-sw-top">
-          <div class="go-sw-display" id="goSwDisplay">00:00:00</div>
-          <div class="go-sw-sub">Session Stopwatch</div>
-          <div class="go-sw-controls">
-            <button class="go-sw-btn primary" id="goSwToggleBtn" onclick="GAMEOVERLAY.swToggle()">Start</button>
-            <button class="go-sw-btn" onclick="GAMEOVERLAY.swLap()">Lap</button>
-            <button class="go-sw-btn" onclick="GAMEOVERLAY.swReset()">Reset</button>
-          </div>
+
+    <!-- Top-center: live perf strip -->
+    <div id="goStatsStrip">
+      <span>FPS <b id="goStatFps">—</b></span>
+      <span>MEM <b id="goStatMem">—</b></span>
+      <span>WIN <b id="goStatWin">0</b></span>
+    </div>
+
+    <!-- Floating panels -->
+    <div class="go-panel-float" id="goPanelFloat_info">
+      <div class="go-pf-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 8v4M12 16h.01"/></svg>
+        <span class="go-pf-title">Game Overview</span>
+        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('info')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      </div>
+      <div class="go-pf-body" id="goInfoBody"></div>
+    </div>
+
+    <div class="go-panel-float" id="goPanelFloat_achievements">
+      <div class="go-pf-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M9 13.5L7 22l5-3 5 3-2-8.5"/></svg>
+        <span class="go-pf-title">Achievements</span>
+        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('achievements')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      </div>
+      <div class="go-pf-body" id="goAchBody"></div>
+    </div>
+
+    <div class="go-panel-float" id="goPanelFloat_notes">
+      <div class="go-pf-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M5 3h9l5 5v13H5z"/><path d="M9 13h6M9 17h4"/></svg>
+        <span class="go-pf-title">Notes</span>
+        <span class="go-notes-status" id="goNotesStatus" style="margin-right:6px">Saved</span>
+        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('notes')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      </div>
+      <div class="go-pf-body">
+        <div class="go-notes-text" id="goNotesText" contenteditable="true"></div>
+      </div>
+    </div>
+
+    <div class="go-panel-float" id="goPanelFloat_stopwatch">
+      <div class="go-pf-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg>
+        <span class="go-pf-title">Stopwatch</span>
+        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('stopwatch')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      </div>
+      <div class="go-pf-body">
+        <div class="go-sw-display" id="goSwDisplay">00:00:00</div>
+        <div class="go-sw-sub">Session Stopwatch</div>
+        <div class="go-sw-controls">
+          <button class="go-sw-btn primary" id="goSwToggleBtn" onclick="GAMEOVERLAY.swToggle()">Start</button>
+          <button class="go-sw-btn" onclick="GAMEOVERLAY.swLap()">Lap</button>
+          <button class="go-sw-btn" onclick="GAMEOVERLAY.swReset()">Reset</button>
         </div>
         <div class="go-sw-laps" id="goSwLaps"></div>
       </div>
-      <div class="go-panel" id="goPanel_notes">
-        <div class="go-notes-toolbar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M14 3v5h5"/><path d="M5 3h9l5 5v13H5z"/><path d="M9 13h6M9 17h4"/></svg>
-          Game Notes
-          <span class="go-notes-status" id="goNotesStatus">Saved</span>
-        </div>
-        <div class="go-notes-text" id="goNotesText" contenteditable="true"></div>
+    </div>
+
+    <div class="go-panel-float" id="goPanelFloat_screenshots">
+      <div class="go-pf-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8" fill="currentColor" stroke="none" opacity="0.7"/><path d="M21 15.5l-5.5-5.5L5 21"/></svg>
+        <span class="go-pf-title">Screenshots</span>
+        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('screenshots')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
       </div>
-      <div class="go-panel" id="goPanel_browser">
-        <div class="go-browser-bar">
-          <button class="go-browser-btn" onclick="GAMEOVERLAY.browserReload()">↺</button>
-          <div class="go-browser-url">supermath.salavat.ru</div>
-          <button class="go-browser-btn" onclick="GAMEOVERLAY.browserOpenFull()">Open in Window</button>
-        </div>
-        <div class="go-browser-frame-wrap">
-          <iframe id="goBrowserFrame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" src="about:blank"></iframe>
-        </div>
-      </div>
-      <div class="go-panel" id="goPanel_session" style="flex-wrap:wrap;align-content:flex-start;padding:28px 32px;gap:14px;overflow-y:auto">
-        <div class="go-session-card" style="flex-basis:100%">
-          <div class="go-session-label">Now Playing</div>
-          <div class="go-session-val" id="goSessGame" style="font-size:16px;font-weight:600">—</div>
-        </div>
-        <div class="go-session-card">
-          <div class="go-session-label">Session Uptime</div>
-          <div class="go-session-val" id="goSessUp">0:00</div>
-          <div class="go-session-sub">Since page load</div>
-        </div>
-        <div class="go-session-card">
-          <div class="go-session-label">Game Time This Session</div>
-          <div class="go-session-val" id="goSessActive">0:00</div>
-          <div class="go-session-sub">Active focus time</div>
-        </div>
-        <div class="go-session-card" style="flex-basis:100%">
-          <div class="go-session-label">Total Playtime (all time)</div>
-          <div class="go-session-val" id="goSessTotal" style="font-size:16px">—</div>
-        </div>
+      <div class="go-pf-body">
+        <div class="go-shot-grid" id="goShotGrid"><div class="go-shot-empty">No screenshots yet this session.</div></div>
+        <button class="go-shot-takebtn" onclick="GAMEOVERLAY.takeScreenshot()">📸 Capture Screenshot</button>
       </div>
     </div>
+
+    <div class="go-panel-float" id="goPanelFloat_friends">
+      <div class="go-pf-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span class="go-pf-title">Friends</span>
+        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('friends')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      </div>
+      <div class="go-pf-body" id="goFriendsBody"></div>
+    </div>
+
+    <div class="go-panel-float wide" id="goPanelFloat_browser">
+      <div class="go-pf-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/></svg>
+        <span class="go-pf-title">Browser</span>
+        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('browser')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      </div>
+      <div class="go-browser-bar">
+        <button class="go-browser-btn" onclick="GAMEOVERLAY.browserReload()">↺</button>
+        <div class="go-browser-url">supermath.salavat.ru</div>
+        <button class="go-browser-btn" onclick="GAMEOVERLAY.browserOpenFull()">Open in Window</button>
+      </div>
+      <div class="go-browser-frame-wrap">
+        <iframe id="goBrowserFrame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" src="about:blank"></iframe>
+      </div>
+    </div>
+
+    <div class="go-panel-float" id="goPanelFloat_settings">
+      <div class="go-pf-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <span class="go-pf-title">Overlay Settings</span>
+        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('settings')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      </div>
+      <div class="go-pf-body">
+        <div class="sp-row" style="margin-bottom:8px"><div><div class="sp-row-label" style="font-size:12px">Show Perf Stats</div></div><label class="toggle"><input type="checkbox" id="goTogStats" onchange="GAMEOVERLAY.toggleStats(this.checked)"><span class="tog-slider"></span></label></div>
+        <div class="sp-row"><div><div class="sp-row-label" style="font-size:12px">Notify on Open</div></div><label class="toggle"><input type="checkbox" id="goTogNotify" checked onchange="GAMEOVERLAY._notifyOnOpen=this.checked"><span class="tog-slider"></span></label></div>
+      </div>
+    </div>
+
+    <!-- Bottom dock — Steam-style icon row -->
+    <div id="goDock">
+      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('info')" title="">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 8v4M12 16h.01"/></svg>
+        <span class="go-dock-tooltip">Game Overview</span>
+      </div>
+      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('achievements')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M9 13.5L7 22l5-3 5 3-2-8.5"/></svg>
+        <span class="go-dock-tooltip">Achievements</span>
+      </div>
+      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('notes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M5 3h9l5 5v13H5z"/><path d="M9 13h6M9 17h4"/></svg>
+        <span class="go-dock-tooltip">Notes</span>
+      </div>
+      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('stopwatch')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg>
+        <span class="go-dock-tooltip" id="goDockSwTip">Stopwatch</span>
+      </div>
+      <div class="go-dock-sep"></div>
+      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('screenshots')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8" fill="currentColor" stroke="none" opacity="0.7"/><path d="M21 15.5l-5.5-5.5L5 21"/></svg>
+        <span class="go-dock-tooltip">Screenshots</span>
+      </div>
+      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('friends')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span class="go-dock-tooltip">Friends</span>
+      </div>
+      <div class="go-dock-sep"></div>
+      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('browser')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/></svg>
+        <span class="go-dock-tooltip">Browser</span>
+      </div>
+      <div class="go-dock-btn" onclick="GAMEOVERLAY.takeScreenshot()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="9.5"/></svg>
+        <span class="go-dock-tooltip">Record</span>
+      </div>
+      <div class="go-dock-sep"></div>
+      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <span class="go-dock-tooltip">Settings</span>
+      </div>
+      <div class="go-dock-btn" onclick="GAMEOVERLAY.close()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7l10 10"/></svg>
+        <span class="go-dock-tooltip">Close Overlay</span>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1279,10 +1462,32 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
     </div>
     <textarea id="qpInput" rows="1" placeholder="Ask anything…   (Enter to send · Esc to close)"></textarea>
     <div id="qpFooter">
-      <span id="qpHint">Ctrl + Alt + Space</span>
+      <span id="qpHint" data-kb-action="quickPrompt">Ctrl + Alt + Space</span>
       <button id="qpSend" type="button" onclick="QP.send()">Send →</button>
     </div>
   </div>
+</div>
+
+<!-- FALLBACK CONTROL — mouse-only access to shortcuts when a cross-origin
+     game/iframe has captured all keyboard input. Floats above the iframe
+     layer (z-index higher than .os-window) since mouse clicks still reach
+     elements visually on top, even though keystrokes can't be read out of
+     a sandboxed cross-origin frame. -->
+<div id="fallbackDock" style="position:fixed;z-index:500050;display:flex;flex-direction:column;align-items:flex-end;gap:6px;transition:opacity 0.2s ease;">
+  <div id="fallbackDockBtns" style="display:none;flex-direction:column;gap:6px;background:rgba(13,14,20,0.95);border:1px solid var(--os-border2);border-radius:14px;padding:6px;backdrop-filter:blur(20px);box-shadow:0 12px 32px rgba(0,0,0,0.5)">
+    <button onclick="FALLBACK_DOCK.run('launcher')" title="App Launcher" style="width:38px;height:38px;border-radius:9px;background:var(--os-surface);border:1px solid var(--os-border);color:var(--os-text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.13s" onmouseover="this.style.background='rgba(var(--os-accent-rgb),0.18)'" onmouseout="this.style.background='var(--os-surface)'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+    </button>
+    <button onclick="FALLBACK_DOCK.run('overlay')" title="Game Overlay" style="width:38px;height:38px;border-radius:9px;background:var(--os-surface);border:1px solid var(--os-border);color:var(--os-text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.13s" onmouseover="this.style.background='rgba(var(--os-accent-rgb),0.18)'" onmouseout="this.style.background='var(--os-surface)'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 8v4M12 16h.01"/></svg>
+    </button>
+    <button onclick="FALLBACK_DOCK.run('ai')" title="Ask AI" style="width:38px;height:38px;border-radius:9px;background:var(--os-surface);border:1px solid var(--os-border);color:var(--os-text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.13s" onmouseover="this.style.background='rgba(var(--os-accent-rgb),0.18)'" onmouseout="this.style.background='var(--os-surface)'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="11" rx="2.5"/><path d="M12 3v4"/><path d="M9 12h.01M15 12h.01" stroke-width="2.4"/><path d="M9.5 15h5"/><path d="M3 11v3M21 11v3"/></svg>
+    </button>
+  </div>
+  <button id="fallbackDockToggle" onclick="FALLBACK_DOCK.toggle()" title="Shortcuts (mouse-accessible)" style="width:40px;height:40px;border-radius:50%;background:rgba(var(--os-accent-rgb),0.85);border:1px solid rgba(255,255,255,0.2);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.5);transition:transform 0.15s" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M18 13h.01M9 13h6"/></svg>
+  </button>
 </div>
 
 <script>
@@ -1367,12 +1572,149 @@ const PVZ_URL='https://wszqkzqk.github.io/pvz-portable-wasm/pvz-portable.html';
    SETTINGS STORE
 ═══════════════════════════════════════════════ */
 const SETTINGS={
-  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',lagMode:false,animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true},
+  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',lagMode:false,animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true,customCursor:true},
   data:{},
   load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
   save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));},
   get(k){return this.data[k]??this.def[k];},
   set(k,v){this.data[k]=v;this.save();}
+};
+
+/* ═══════════════════════════════════════════════
+   KEYBINDS STORE — customizable system shortcuts
+   Single source of truth: every part of the OS (handlers, About page,
+   tooltips, hint labels) reads display strings from here so changing a
+   bind updates every reference automatically.
+═══════════════════════════════════════════════ */
+const KEYBINDS={
+  // Each action has: combo (canonical key descriptor), label (human display), desc
+  def:{
+    launcher:      {combo:'Tab',            label:'Tab',            desc:'Open the app launcher'},
+    winSwitcher:   {combo:'Shift+Tab',      label:'Shift + Tab',    desc:'Hold to cycle, release to select'},
+    gameOverlay:   {combo:'Alt+Shift',      label:'Alt + Shift',    desc:'Only while a game or app window is focused'},
+    quickPrompt:   {combo:'Ctrl+Alt+Space', label:'Ctrl + Alt + Space', desc:'Opens the quick AI prompt box'},
+    closeCancel:   {combo:'Escape',         label:'Esc',            desc:'Closes overlays, menus, and dialogs'},
+  },
+  data:{},
+
+  load(){
+    try{
+      const saved=JSON.parse(localStorage.getItem('novos_keybinds')||'{}');
+      this.data={};
+      Object.keys(this.def).forEach(k=>{
+        this.data[k]=saved[k]?{...this.def[k],...saved[k]}:{...this.def[k]};
+      });
+    }catch{
+      this.data={};
+      Object.keys(this.def).forEach(k=>this.data[k]={...this.def[k]});
+    }
+  },
+  save(){
+    const out={};
+    Object.keys(this.data).forEach(k=>{out[k]={combo:this.data[k].combo,label:this.data[k].label};});
+    localStorage.setItem('novos_keybinds',JSON.stringify(out));
+  },
+  get(action){return this.data[action]||this.def[action];},
+  getCombo(action){return this.get(action).combo;},
+  getLabel(action){return this.get(action).label;},
+
+  // Builds a combo string + label from a set of held modifier flags and an
+  // optional named key (e.g. 'Space', '2', 'F'). Used by the new stateful
+  // capture flow in KB_UI, which waits for a non-modifier key OR a release
+  // of modifier-only keys before finalizing — this is what lets combos like
+  // Shift+2 (the "@" key) or Ctrl+Alt+K be captured correctly, instead of
+  // resolving the instant the first modifier is pressed.
+  describeCombo(mods,namedKey){
+    const parts=[];
+    if(mods.ctrl)parts.push('Ctrl');
+    if(mods.alt)parts.push('Alt');
+    if(mods.shift)parts.push('Shift');
+    if(mods.meta)parts.push('Meta');
+    if(namedKey)parts.push(namedKey);
+    if(!parts.length)return null;
+    return{combo:parts.join('+'),label:parts.join(' + ')};
+  },
+
+  // Normalizes e.key into a display-friendly token for the "named key" slot.
+  // Returns null for pure modifier keys (Control/Alt/Shift/Meta) since those
+  // are tracked separately as held flags, not as the combo's final key.
+  normalizeKey(key){
+    if(['Control','Alt','Shift','Meta'].includes(key))return null;
+    if(key===' ')return 'Space';
+    if(key.length===1)return key.toUpperCase();
+    return key; // ArrowUp, F1, Escape, etc. pass through as-is
+  },
+
+  set(action,combo,label){
+    if(!this.data[action])return;
+    this.data[action]={...this.data[action],combo,label};
+    this.save();
+    this._refreshAllDisplays();
+  },
+
+  resetOne(action){
+    if(!this.def[action])return;
+    this.data[action]={...this.def[action]};
+    this.save();
+    this._refreshAllDisplays();
+  },
+
+  resetAll(){
+    Object.keys(this.def).forEach(k=>this.data[k]={...this.def[k]});
+    this.save();
+    this._refreshAllDisplays();
+  },
+
+  // Checks whether a fired KeyboardEvent matches a stored combo.
+  // For modifier-only combos like Alt+Shift, matches when e.key is one of the
+  // listed modifiers and the *other* required modifier flags are held.
+  matches(action,e){
+    const combo=this.getCombo(action);
+    if(!combo)return false;
+    const parts=combo.split('+');
+    const namedKey=parts.find(p=>!['Ctrl','Alt','Shift','Meta'].includes(p));
+    const needCtrl=parts.includes('Ctrl'),needAlt=parts.includes('Alt'),needShift=parts.includes('Shift'),needMeta=parts.includes('Meta');
+    if(namedKey){
+      // Combo has a concrete key (e.g. Ctrl+Alt+Space, Shift+2, Tab, Escape)
+      const k=this.normalizeKey(e.key);
+      if(k!==namedKey)return false;
+      if(needCtrl!==e.ctrlKey)return false;
+      if(needAlt!==e.altKey)return false;
+      if(needShift!==e.shiftKey)return false;
+      if(needMeta!==e.metaKey)return false;
+      return true;
+    }
+    // Pure modifier combo (e.g. Alt+Shift) — fires when the *last* required
+    // modifier key is pressed while the others are already held.
+    const modKeys={Ctrl:'Control',Alt:'Alt',Shift:'Shift',Meta:'Meta'}[parts[parts.length-1]];
+    if(e.key!==modKeys)return false;
+    if(needCtrl&&!e.ctrlKey)return false;
+    if(needAlt&&!e.altKey)return false;
+    if(needShift&&!e.shiftKey)return false;
+    if(needMeta&&!e.metaKey)return false;
+    return true;
+  },
+
+  // Re-renders every on-screen label that displays a keybind, wherever it lives.
+  _refreshAllDisplays(){
+    // Quick Prompt hint
+    const qpHint=document.getElementById('qpHint');
+    if(qpHint)qpHint.textContent=this.getLabel('quickPrompt');
+    // Game overlay hint label + back-to-game hint
+    const goHint=document.getElementById('goHintLabel');
+    if(goHint)goHint.textContent=this.getLabel('gameOverlay');
+    const btgHint=document.querySelector('#goBackToGame .go-btg-hint');
+    if(btgHint)btgHint.textContent='('+this.getLabel('gameOverlay')+')';
+    // Alt-tab overlay title
+    const atTitle=document.getElementById('altTabTitle');
+    if(atTitle)atTitle.textContent=this.getLabel('winSwitcher').toUpperCase()+' — Window Switcher';
+    // Welcome modal shortcut line + any open Settings/About pages
+    document.querySelectorAll('[data-kb-action]').forEach(el=>{
+      const action=el.getAttribute('data-kb-action');
+      if(this.data[action])el.textContent=this.getLabel(action);
+    });
+    if(typeof OS!=='undefined'&&OS.refreshWelcomeShortcutLine)OS.refreshWelcomeShortcutLine();
+  }
 };
 
 /* ═══════════════════════════════════════════════
@@ -2150,7 +2492,7 @@ const ALT_TAB={
 
   handleKeydown(e){
     if(e.key==='Shift'){this._shiftHeld=true;return;}
-    if(e.key==='Tab'&&e.shiftKey){
+    if(KEYBINDS.matches('winSwitcher',e)){
       e.preventDefault();
       if(!this.open){this.show();}
       else{this.next();}
@@ -2158,7 +2500,7 @@ const ALT_TAB={
     }
     if(this.open){
       if(e.key==='Enter'||e.key===' '){e.preventDefault();this.confirm();}
-      if(e.key==='Escape'){e.preventDefault();this.cancel();}
+      if(KEYBINDS.matches('closeCancel',e)){e.preventDefault();this.cancel();}
     }
   },
 
@@ -2228,6 +2570,7 @@ const OS={
 
   init(){
     SETTINGS.load();
+    KEYBINDS.load();
     this.shortcuts=loadShortcuts();
     this.desktopItems=loadDesktopItems();
     CTX.init();TB.init();TBP.init();
@@ -2267,12 +2610,19 @@ const OS={
     document.getElementById('iconSizeVal').textContent=sz;
     this.applyIconSize(sz);
 
+    this.refreshWelcomeShortcutLine();
     if(!localStorage.getItem('novos_welcomed')){
       setTimeout(()=>document.getElementById('welcomeModal').classList.add('open'),SETTINGS.get('showBoot')?2800:300);
     }
   },
 
   closeWelcome(){localStorage.setItem('novos_welcomed','1');document.getElementById('welcomeModal').classList.remove('open');},
+
+  refreshWelcomeShortcutLine(){
+    const el=document.getElementById('welcomeShortcutLine');
+    if(!el)return;
+    el.textContent=KEYBINDS.getLabel('launcher')+' = Start Menu · '+KEYBINDS.getLabel('winSwitcher')+' = Window Switcher · Refresh window if Securly blocked shortcut';
+  },
 
   applySettings(){
     const a=SETTINGS.get('accent'),ar=SETTINGS.get('accentRgb')||'124,109,250';
@@ -2317,6 +2667,16 @@ const OS={
     if(cw){prev.style.display='';prev.style.backgroundImage=`url(${cw})`;prev.style.backgroundSize='cover';prev.style.backgroundPosition='center';if(wp==='custom')prev.classList.add('active');else prev.classList.remove('active');}
     else{prev.style.display='none';}
     document.querySelectorAll('.accent-swatch').forEach(s=>s.classList.toggle('active',s.getAttribute('data-color')===(SETTINGS.get('accentRgb')||'124,109,250')));
+    this._applyCursor();
+  },
+
+  /* ─── Cursor ─────────────────────────────────────────────── */
+  _applyCursor(){
+    document.body.classList.toggle('custom-cursor-active',SETTINGS.get('customCursor')!==false);
+  },
+  setCursorEnabled(on){
+    SETTINGS.set('customCursor',on);
+    this._applyCursor();
   },
 
   setWallpaper(name){SETTINGS.set('wallpaper',name);this.applySettings();},
@@ -3209,12 +3569,20 @@ const OS={
               <div class="sp2-nav-icon" style="background:rgba(96,165,250,0.12);color:#60a5fa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="16" width="20" height="6" rx="2"/><rect x="7" y="16" width="10" height="6" rx="2"/></svg></div>
               Taskbar
             </div>
+            <div class="sp2-nav-item" onclick="SP2.nav('cursor','${id}')">
+              <div class="sp2-nav-icon" style="background:rgba(244,122,255,0.12);color:#f47aff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M5 3l15 6.5-6.2 2.1-2.1 6.2z"/></svg></div>
+              Cursor
+            </div>
             <div class="sp2-nav-label">Desktop</div>
             <div class="sp2-nav-item" onclick="SP2.nav('icons','${id}')">
               <div class="sp2-nav-icon" style="background:rgba(251,191,36,0.12);color:#fbbf24"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></div>
               Icons & Widgets
             </div>
             <div class="sp2-nav-label">System</div>
+            <div class="sp2-nav-item" onclick="SP2.nav('keybinds','${id}')">
+              <div class="sp2-nav-icon" style="background:rgba(56,189,248,0.12);color:#38bdf8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M18 13h.01M9 13h6"/></svg></div>
+              Keybinds
+            </div>
             <div class="sp2-nav-item" onclick="SP2.nav('display','${id}')">
               <div class="sp2-nav-icon" style="background:rgba(74,222,128,0.12);color:#4ade80"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
               Display
@@ -3310,6 +3678,41 @@ const OS={
               </div>
             </div>
 
+            <!-- CURSOR PAGE -->
+            <div class="sp2-page" id="sp2pg_cursor_${id}">
+              <div class="sp2-hero">
+                <div class="sp2-hero-icon" style="background:rgba(244,122,255,0.12);color:#f47aff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M5 3l15 6.5-6.2 2.1-2.1 6.2z"/></svg></div>
+                <div><div class="sp2-hero-title">Cursor</div><div class="sp2-hero-sub">NovOS Cursor Pack — custom mouse pointers</div></div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">NovOS Cursor Pack</div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Enable Custom Cursors</div><div class="sp2-row-sub">Replaces the system pointer with the NovOS cursor set</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-cursor_${id}" ${SETTINGS.get('customCursor')!==false?'checked':''} onchange="OS.setCursorEnabled(this.checked)"><span class="tog-slider"></span></label>
+                </div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">Cursor Preview</div>
+                <div style="padding:14px 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px 10px">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:34px;border-radius:7px;background:var(--os-surface);border:1px solid var(--os-border);cursor:var(--cur-default)"></div><span style="font-size:9.5px;color:var(--os-muted)">Default</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:34px;border-radius:7px;background:var(--os-surface);border:1px solid var(--os-border);cursor:var(--cur-pointer)"></div><span style="font-size:9.5px;color:var(--os-muted)">Link</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:34px;border-radius:7px;background:var(--os-surface);border:1px solid var(--os-border);cursor:var(--cur-grab)"></div><span style="font-size:9.5px;color:var(--os-muted)">Pan</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:34px;border-radius:7px;background:var(--os-surface);border:1px solid var(--os-border);cursor:var(--cur-grabbing)"></div><span style="font-size:9.5px;color:var(--os-muted)">Grabbing</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:34px;border-radius:7px;background:var(--os-surface);border:1px solid var(--os-border);cursor:var(--cur-text)"></div><span style="font-size:9.5px;color:var(--os-muted)">Text</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:34px;border-radius:7px;background:var(--os-surface);border:1px solid var(--os-border);cursor:var(--cur-not-allowed)"></div><span style="font-size:9.5px;color:var(--os-muted)">Unavailable</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:34px;border-radius:7px;background:var(--os-surface);border:1px solid var(--os-border);cursor:var(--cur-nwse)"></div><span style="font-size:9.5px;color:var(--os-muted)">Diagonal 1</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:34px;border-radius:7px;background:var(--os-surface);border:1px solid var(--os-border);cursor:var(--cur-nesw)"></div><span style="font-size:9.5px;color:var(--os-muted)">Diagonal 2</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:34px;border-radius:7px;background:var(--os-surface);border:1px solid var(--os-border);cursor:var(--cur-ew)"></div><span style="font-size:9.5px;color:var(--os-muted)">Horizontal</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:34px;border-radius:7px;background:var(--os-surface);border:1px solid var(--os-border);cursor:var(--cur-ns)"></div><span style="font-size:9.5px;color:var(--os-muted)">Vertical</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:34px;border-radius:7px;background:var(--os-surface);border:1px solid var(--os-border);cursor:var(--cur-wait)"></div><span style="font-size:9.5px;color:var(--os-muted)">Busy</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:100%;height:34px;border-radius:7px;background:var(--os-surface);border:1px solid var(--os-border);cursor:var(--cur-help)"></div><span style="font-size:9.5px;color:var(--os-muted)">Help</span></div>
+                </div>
+                <div class="sp2-row" style="border-top:1px solid rgba(255,255,255,0.04)">
+                  <div style="font-size:11px;color:var(--os-muted);line-height:1.6">Hover each swatch above to preview. Cursor images are hosted externally — update the placeholder URLs in the stylesheet's <code style="font-family:var(--mono);color:var(--os-accent)">/* CUSTOM CURSOR */</code> block to point at your own uploaded images (e.g. Imgur direct links).</div>
+                </div>
+              </div>
+            </div>
+
             <!-- ICONS & WIDGETS PAGE -->
             <div class="sp2-page" id="sp2pg_icons_${id}">
               <div class="sp2-hero">
@@ -3353,6 +3756,42 @@ const OS={
                     <div onclick="OS.setWidgetColor('10,20,28')" style="width:22px;height:22px;border-radius:50%;background:#0a141c;cursor:pointer;border:2px solid #fff3" title="Slate"></div>
                     <div onclick="OS.setWidgetColor('30,30,30')" style="width:22px;height:22px;border-radius:50%;background:#1e1e1e;cursor:pointer;border:2px solid #fff3" title="Graphite"></div>
                     <input type="color" value="#0d0f16" oninput="OS.setWidgetColorHex(this.value)" style="width:24px;height:24px;border:none;border-radius:50%;background:none;cursor:pointer;padding:0" title="Custom">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- KEYBINDS PAGE -->
+            <div class="sp2-page" id="sp2pg_keybinds_${id}">
+              <div class="sp2-hero">
+                <div class="sp2-hero-icon" style="background:rgba(56,189,248,0.12);color:#38bdf8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M18 13h.01M9 13h6"/></svg></div>
+                <div><div class="sp2-hero-title">Keybinds</div><div class="sp2-hero-sub">Remap system shortcuts — every menu and tooltip updates automatically</div></div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">System Shortcuts</div>
+                <div style="padding:12px 16px">
+                  <div class="kb-row" data-kb-row="launcher">
+                    <div><div class="kb-row-label">App launcher</div><div class="kb-row-sub">Open the app launcher</div></div>
+                    <button class="kb-capture-btn" onclick="KB_UI.startCapture('launcher','${id}')" id="kbBtn_launcher_${id}">${KEYBINDS.getLabel('launcher')}</button>
+                  </div>
+                  <div class="kb-row" data-kb-row="winSwitcher">
+                    <div><div class="kb-row-label">Window switcher</div><div class="kb-row-sub">Hold to cycle, release to select</div></div>
+                    <button class="kb-capture-btn" onclick="KB_UI.startCapture('winSwitcher','${id}')" id="kbBtn_winSwitcher_${id}">${KEYBINDS.getLabel('winSwitcher')}</button>
+                  </div>
+                  <div class="kb-row" data-kb-row="gameOverlay">
+                    <div><div class="kb-row-label">In-game overlay</div><div class="kb-row-sub">Only while a game or app window is focused</div></div>
+                    <button class="kb-capture-btn" onclick="KB_UI.startCapture('gameOverlay','${id}')" id="kbBtn_gameOverlay_${id}">${KEYBINDS.getLabel('gameOverlay')}</button>
+                  </div>
+                  <div class="kb-row" data-kb-row="quickPrompt">
+                    <div><div class="kb-row-label">Ask AI quick prompt</div><div class="kb-row-sub">Opens the quick AI prompt box</div></div>
+                    <button class="kb-capture-btn" onclick="KB_UI.startCapture('quickPrompt','${id}')" id="kbBtn_quickPrompt_${id}">${KEYBINDS.getLabel('quickPrompt')}</button>
+                  </div>
+                  <div class="kb-row" data-kb-row="closeCancel">
+                    <div><div class="kb-row-label">Close / cancel</div><div class="kb-row-sub">Closes overlays, menus, and dialogs</div></div>
+                    <button class="kb-capture-btn" onclick="KB_UI.startCapture('closeCancel','${id}')" id="kbBtn_closeCancel_${id}">${KEYBINDS.getLabel('closeCancel')}</button>
+                  </div>
+                  <div class="kb-reset-row">
+                    <button class="kb-reset-link" onclick="KB_UI.resetAll('${id}')">Reset all to defaults</button>
                   </div>
                 </div>
               </div>
@@ -3409,13 +3848,16 @@ const OS={
                 <div class="sp2-row"><div><div class="sp2-row-label">Storage Used</div></div><span id="sp2StorageInfo_${id}" style="font-size:12px;color:var(--os-muted);font-family:var(--mono)">Calculating…</span></div>
               </div>
               <div class="sp2-card">
-                <div class="sp2-card-header">Keyboard Shortcuts</div>
-                <div class="sp2-row"><div><div class="sp2-row-label">Tab</div><div class="sp2-row-sub">Open the app launcher</div></div><span style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">Tab</span></div>
-                <div class="sp2-row"><div><div class="sp2-row-label">Window switcher</div><div class="sp2-row-sub">Hold to cycle, release to select</div></div><span style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">Shift + Tab</span></div>
-                <div class="sp2-row"><div><div class="sp2-row-label">In-game overlay</div><div class="sp2-row-sub">Only while a game or app window is focused</div></div><span style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">Alt + Shift</span></div>
-                <div class="sp2-row"><div><div class="sp2-row-label">Ask AI quick prompt</div><div class="sp2-row-sub">Opens the quick AI prompt box</div></div><span style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">Ctrl + Alt + Space</span></div>
-                <div class="sp2-row"><div><div class="sp2-row-label">Close / cancel</div><div class="sp2-row-sub">Closes overlays, menus, and dialogs</div></div><span style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">Esc</span></div>
-                <div class="sp2-row-sub" style="padding:0 16px 12px;line-height:1.5">These shortcuts work globally — even while a game or app has keyboard focus — as long as that app runs same-origin inside its window frame.</div>
+                <div class="sp2-card-header" style="display:flex;align-items:center;justify-content:space-between">
+                  <span>Keyboard Shortcuts</span>
+                  <button class="sp2-action-btn" onclick="OS.openSettings();SP2.nav('keybinds','${id}')" style="height:26px;padding:0 10px;font-size:11px">Customize</button>
+                </div>
+                <div class="sp2-row"><div><div class="sp2-row-label">App launcher</div><div class="sp2-row-sub">Open the app launcher</div></div><span class="kb-display-val" data-kb-action="launcher" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('launcher')}</span></div>
+                <div class="sp2-row"><div><div class="sp2-row-label">Window switcher</div><div class="sp2-row-sub">Hold to cycle, release to select</div></div><span class="kb-display-val" data-kb-action="winSwitcher" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('winSwitcher')}</span></div>
+                <div class="sp2-row"><div><div class="sp2-row-label">In-game overlay</div><div class="sp2-row-sub">Only while a game or app window is focused</div></div><span class="kb-display-val" data-kb-action="gameOverlay" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('gameOverlay')}</span></div>
+                <div class="sp2-row"><div><div class="sp2-row-label">Ask AI quick prompt</div><div class="sp2-row-sub">Opens the quick AI prompt box</div></div><span class="kb-display-val" data-kb-action="quickPrompt" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('quickPrompt')}</span></div>
+                <div class="sp2-row"><div><div class="sp2-row-label">Close / cancel</div><div class="sp2-row-sub">Closes overlays, menus, and dialogs</div></div><span class="kb-display-val" data-kb-action="closeCancel" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('closeCancel')}</span></div>
+                <div class="sp2-row-sub" style="padding:0 16px 12px;line-height:1.5">These shortcuts work globally — even while a game or app has keyboard focus — as long as that app runs same-origin inside its window frame. Go to the Keybinds page to remap any of them.</div>
               </div>
               <div class="sp2-card">
                 <div class="sp2-card-header">Data</div>
@@ -3617,14 +4059,14 @@ const OS={
     this._initDragHandlers();
   },
 
-  // keyboard shortcuts — Tab = launcher, Shift+Tab (hold) = window switcher
+  // keyboard shortcuts — customizable via KEYBINDS, defaults: Tab = launcher, Shift+Tab (hold) = window switcher
   setupKeyboard(){
     const _handleKey=e=>{
       // Always let ALT_TAB handle its own keys first, even inside inputs
       ALT_TAB.handleKeydown(e);
       const tag=document.activeElement&&document.activeElement.tagName;
       if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
-      if(e.key==='Tab'&&!e.shiftKey){
+      if(KEYBINDS.matches('launcher',e)&&!e.shiftKey){
         e.preventDefault();
         LAUNCHER.toggle(e);
       }
@@ -3638,11 +4080,38 @@ const OS={
     // Intercept keydown/keyup from iframes — these are the GLOBAL shortcuts that
     // must keep working even while a game/app iframe has keyboard focus.
     window.addEventListener('message',e=>{
+      // New generic path: relayed iframe key events, matched against KEYBINDS
+      // the same way native top-document keydowns are. This is what makes a
+      // rebound shortcut (via Settings → Keybinds) work inside iframes too,
+      // without ever touching this listener again.
+      if(e.data&&e.data.__novos_key){
+        const synthetic={
+          key:e.data.key,code:e.data.code,
+          ctrlKey:e.data.ctrlKey,altKey:e.data.altKey,shiftKey:e.data.shiftKey,metaKey:e.data.metaKey,
+          preventDefault(){}
+        };
+        if(e.data.type==='keydown'){
+          ALT_TAB.handleKeydown(synthetic);
+          if(KEYBINDS.matches('launcher',synthetic)&&!synthetic.shiftKey)LAUNCHER.toggle();
+          if(KEYBINDS.matches('gameOverlay',synthetic)){
+            if(GAMEOVERLAY._open||GAMEOVERLAY._hasFocusedGame())GAMEOVERLAY.toggle();
+          }
+          if(KEYBINDS.matches('quickPrompt',synthetic))QP.toggle();
+          if(KEYBINDS.matches('closeCancel',synthetic)){
+            if(GAMEOVERLAY._open)GAMEOVERLAY.close();
+            else if(ALT_TAB.open)ALT_TAB.cancel();
+            else if(LAUNCHER._open)LAUNCHER.close();
+          }
+        }else if(e.data.type==='keyup'){
+          ALT_TAB.handleKeyup(synthetic);
+        }
+        return;
+      }
+      // Legacy string messages kept for any other code paths that still send them.
       if(e.data==='novos_shifttab')ALT_TAB.next();
       if(e.data==='novos_tab')LAUNCHER.toggle();
       if(e.data==='novos_shiftup')ALT_TAB.handleKeyup({key:'Shift'});
       if(e.data==='novos_altshift'){
-        // Mirrors the same focused-game gating used for the native hotkey path.
         if(GAMEOVERLAY._open||GAMEOVERLAY._hasFocusedGame())GAMEOVERLAY.toggle();
       }
       if(e.data==='novos_ctrlaltspace')QP.toggle();
@@ -3663,24 +4132,17 @@ const OS={
         const s=doc.createElement('script');
         s.textContent=`
           (function(){
-            var altDown=false, shiftDown=false, ctrlDown=false, comboFired=false;
+            // Generic key-state relay — posts every keydown/keyup's modifier
+            // state to the parent, which matches it against KEYBINDS itself.
+            // This means ANY rebound shortcut works here automatically,
+            // instead of hardcoding a fixed list of combos.
             document.addEventListener('keydown',function(e){
-              if(e.key==='Alt')altDown=true;
-              if(e.key==='Shift')shiftDown=true;
-              if(e.key==='Control')ctrlDown=true;
-              if(e.key==='Tab'){e.preventDefault();window.parent.postMessage(e.shiftKey?'novos_shifttab':'novos_tab','*');return;}
-              if(e.key==='Escape'){window.parent.postMessage('novos_escape','*');}
-              if(e.altKey&&e.shiftKey&&(e.key==='Alt'||e.key==='Shift')){
-                if(!comboFired){comboFired=true;e.preventDefault();window.parent.postMessage('novos_altshift','*');}
-              }
-              if(e.ctrlKey&&e.altKey&&(e.code==='Space'||e.key===' ')){
-                e.preventDefault();window.parent.postMessage('novos_ctrlaltspace','*');
-              }
+              window.parent.postMessage({__novos_key:true,type:'keydown',key:e.key,code:e.code,
+                ctrlKey:e.ctrlKey,altKey:e.altKey,shiftKey:e.shiftKey,metaKey:e.metaKey},'*');
             },true);
             document.addEventListener('keyup',function(e){
-              if(e.key==='Shift'){window.parent.postMessage('novos_shiftup','*');shiftDown=false;comboFired=false;}
-              if(e.key==='Alt'){altDown=false;comboFired=false;}
-              if(e.key==='Control')ctrlDown=false;
+              window.parent.postMessage({__novos_key:true,type:'keyup',key:e.key,code:e.code,
+                ctrlKey:e.ctrlKey,altKey:e.altKey,shiftKey:e.shiftKey,metaKey:e.metaKey},'*');
             },true);
             // Activity relay — any interaction inside the frame resets the OS screensaver
             ['mousemove','mousedown','keydown','touchstart','wheel','click'].forEach(function(ev){
@@ -4705,6 +5167,181 @@ const SP2={
 };
 
 /* ═══════════════════════════════════════════════
+   KEYBIND CAPTURE UI — lets the user press a new combo to rebind an action
+═══════════════════════════════════════════════ */
+const KB_UI={
+  _listening:null,     // {action, wid, btn}
+  _mods:null,          // {ctrl,alt,shift,meta} — currently held modifier flags
+  _anyModHeld:false,   // true once at least one modifier has been pressed during this capture
+  _keydownHandler:null,
+  _keyupHandler:null,
+  _clickHandler:null,
+
+  startCapture(action,wid){
+    // Cancel any in-progress capture first
+    if(this._listening)this._cancel();
+
+    const btn=document.getElementById('kbBtn_'+action+'_'+wid);
+    if(!btn)return;
+    this._listening={action,wid,btn};
+    this._mods={ctrl:false,alt:false,shift:false,meta:false};
+    this._anyModHeld=false;
+    btn.classList.add('listening');
+    btn.textContent='Press a key…';
+
+    // keydown: track modifier state, and either wait (if only a modifier was
+    // pressed) or finalize immediately (once a real, non-modifier key arrives —
+    // this is what correctly captures combos like Shift+2 instead of stopping
+    // dead at the Shift press).
+    this._keydownHandler=e=>{
+      e.preventDefault();e.stopPropagation();
+
+      if(e.key==='Escape'&&!this._anyModHeld){this._cancel();return;}
+
+      if(e.ctrlKey)this._mods.ctrl=true;
+      if(e.altKey)this._mods.alt=true;
+      if(e.shiftKey)this._mods.shift=true;
+      if(e.metaKey)this._mods.meta=true;
+
+      const namedKey=KEYBINDS.normalizeKey(e.key);
+
+      if(!namedKey){
+        // Pure modifier keydown (Control/Alt/Shift/Meta itself) — show a live
+        // preview of what's held so far, but keep listening for either a
+        // following real key or a release of all modifiers.
+        this._anyModHeld=true;
+        const preview=KEYBINDS.describeCombo(this._mods,null);
+        btn.textContent=preview?preview.label+' …':'Press a key…';
+        return;
+      }
+
+      // A real key arrived (with whatever modifiers are currently held) — finalize now.
+      this._tryFinalize(namedKey);
+    };
+
+    // keyup: if every modifier has been released and the user never pressed a
+    // named key (i.e. they just tapped Shift alone, or held Alt+Shift and let
+    // go), finalize using only the modifiers that were held. This is what
+    // makes pure modifier-combos like Alt+Shift (used by the in-game overlay)
+    // still capturable, while not short-circuiting combos that do have a key.
+    this._keyupHandler=e=>{
+      if(!this._listening)return;
+      if(['Control','Alt','Shift','Meta'].includes(e.key)){
+        if(e.key==='Control')this._mods.ctrl=false;
+        if(e.key==='Alt')this._mods.alt=false;
+        if(e.key==='Shift')this._mods.shift=false;
+        if(e.key==='Meta')this._mods.meta=false;
+        const stillHeld=this._mods.ctrl||this._mods.alt||this._mods.shift||this._mods.meta;
+        if(!stillHeld&&this._anyModHeld){
+          // All modifiers released with no named key ever pressed — but we need
+          // at least TWO modifiers for a meaningful modifier-only combo (a lone
+          // Shift tap isn't useful as a system-wide hotkey), otherwise keep waiting.
+          const heldCount=[e.ctrlKey,e.altKey,e.shiftKey,e.metaKey].filter(Boolean).length;
+          // Reconstruct what was held right before release using the snapshot
+          // taken at keydown time via _lastFullMods (set below).
+          if(this._lastFullMods){
+            const combo=KEYBINDS.describeCombo(this._lastFullMods,null);
+            const modCount=Object.values(this._lastFullMods).filter(Boolean).length;
+            if(combo&&modCount>=2){
+              this._tryFinalize(null,this._lastFullMods);
+            }
+          }
+        }
+      }
+    };
+
+    // Snapshot the fullest modifier state seen during this capture, so keyup
+    // can finalize a modifier-only combo even after individual flags clear.
+    this._snapshotHandler=e=>{
+      this._lastFullMods={
+        ctrl:this._mods.ctrl||e.ctrlKey,
+        alt:this._mods.alt||e.altKey,
+        shift:this._mods.shift||e.shiftKey,
+        meta:this._mods.meta||e.metaKey
+      };
+    };
+
+    document.addEventListener('keydown',this._keydownHandler,true);
+    document.addEventListener('keydown',this._snapshotHandler,true);
+    document.addEventListener('keyup',this._keyupHandler,true);
+
+    // Clicking anywhere outside the button cancels capture
+    this._clickHandler=ev=>{
+      if(ev.target!==btn)this._cancel();
+    };
+    setTimeout(()=>document.addEventListener('mousedown',this._clickHandler,true),0);
+  },
+
+  _tryFinalize(namedKey,modsOverride){
+    if(!this._listening)return;
+    const {action,btn}=this._listening;
+    const mods=modsOverride||this._mods;
+    const parsed=KEYBINDS.describeCombo(mods,namedKey);
+    if(!parsed)return;
+
+    const conflict=Object.keys(KEYBINDS.data).find(k=>k!==action&&KEYBINDS.getCombo(k)===parsed.combo);
+    if(conflict){
+      OS.notify('Shortcut in use',parsed.label+' is already bound to "'+conflict+'". Pick a different combo.');
+      btn.textContent='Press a key…';
+      // Reset capture state so the user can try again cleanly
+      this._mods={ctrl:false,alt:false,shift:false,meta:false};
+      this._anyModHeld=false;
+      this._lastFullMods=null;
+      return;
+    }
+
+    KEYBINDS.set(action,parsed.combo,parsed.label);
+    this._finish();
+  },
+
+  _teardownListeners(){
+    document.removeEventListener('keydown',this._keydownHandler,true);
+    document.removeEventListener('keydown',this._snapshotHandler,true);
+    document.removeEventListener('keyup',this._keyupHandler,true);
+    document.removeEventListener('mousedown',this._clickHandler,true);
+  },
+
+  _cancel(){
+    if(!this._listening)return;
+    const {action,btn}=this._listening;
+    btn.classList.remove('listening');
+    btn.textContent=KEYBINDS.getLabel(action);
+    this._teardownListeners();
+    this._listening=null;
+    this._lastFullMods=null;
+  },
+
+  _finish(){
+    if(!this._listening)return;
+    const {action,btn}=this._listening;
+    btn.classList.remove('listening');
+    btn.textContent=KEYBINDS.getLabel(action);
+    this._teardownListeners();
+    this._listening=null;
+    this._lastFullMods=null;
+    OS.notify('Shortcut updated',action+' is now bound to '+KEYBINDS.getLabel(action)+'.');
+    this._syncAllOpenButtons();
+  },
+
+  resetAll(wid){
+    KEYBINDS.resetAll();
+    this._syncAllOpenButtons();
+    OS.notify('Shortcuts reset','All keybinds restored to defaults.');
+  },
+
+  // After any change, refresh every capture button across all open Settings windows
+  // (covers the case where multiple Settings windows are open simultaneously).
+  _syncAllOpenButtons(){
+    document.querySelectorAll('[id^="kbBtn_"]').forEach(btn=>{
+      const m=btn.id.match(/^kbBtn_(.+)_(wnd_.+)$/);
+      if(!m)return;
+      const action=m[1];
+      if(KEYBINDS.data[action])btn.textContent=KEYBINDS.getLabel(action);
+    });
+  }
+};
+
+/* ═══════════════════════════════════════════════
    WALLPAPER-TINTED TASKBAR
 ═══════════════════════════════════════════════ */
 const WP_TINTS={
@@ -4775,16 +5412,18 @@ const PLAYTIME={
 const GAMEOVERLAY={
   _open:false,
   _swMs:0,_swRunning:false,_swInterval:null,_swLapCount:0,
-  _activeGameUrl:null,_activeGameName:'',
+  _activeGameUrl:null,_activeGameName:'',_activeGameIcon:'',
   _browserLoaded:false,
+  _openPanels:[],            // stack of currently-open floating panel names
+  _statsOn:false,_statsTicker:null,_clockTicker:null,
+  _notifyOnOpen:true,
+  _panelOrder:0,
 
-  // Tracks whichever non-system window is currently focused, so the overlay
-  // knows what to dim/label even if the user hasn't touched playtime tracking.
   trackFocus(app){
     if(!app||!app.url||app.url.startsWith('__'))return;
     this._activeGameUrl=app.url;
     this._activeGameName=app.name;
-    // Auto-focus the maximized window so keyboard input always goes to the game
+    this._activeGameIcon=app.icon||'';
     const wid=Object.keys(WM.windows).find(id=>{
       const w=WM.windows[id];
       return w&&w.app&&w.app.url===app.url&&w.maximized&&!w.minimized;
@@ -4804,60 +5443,200 @@ const GAMEOVERLAY={
     }
     const focusedEl=document.querySelector('.os-window.focused');
     const win=WM.windows[focusedEl.id];
-    this._activeGameUrl=win.app.url;this._activeGameName=win.app.name;
+    this._activeGameUrl=win.app.url;this._activeGameName=win.app.name;this._activeGameIcon=win.app.icon||'';
 
     this._open=true;
     document.getElementById('gameOverlay').classList.add('active');
-    const sgEl=document.getElementById('goSidebarGame');
-    if(sgEl)sgEl.textContent=this._activeGameName;
     this._loadNotes();
-    if(!this._browserLoaded){
-      const frm=document.getElementById('goBrowserFrame');
-      if(frm)frm.src='https://supermath.salavat.ru/search.html';
-      this._browserLoaded=true;
-    }
-    this.showPanel('stopwatch');
+    this._renderInfoPanel();
+    this._renderAchievements();
+    this._renderFriends();
+    this._renderScreenshots();
+    this._tickClockAndSession();
+    clearInterval(this._clockTicker);
+    this._clockTicker=setInterval(()=>this._tickClockAndSession(),1000);
+    if(this._notifyOnOpen){/* silent on purpose — Steam doesn't toast on open */}
   },
 
   close(){
     this._open=false;
     document.getElementById('gameOverlay').classList.remove('active');
+    this._openPanels.forEach(n=>this._hidePanelEl(n));
+    this._openPanels=[];
+    clearInterval(this._clockTicker);
+    clearInterval(this._statsTicker);
   },
 
-  showPanel(name){
-    document.querySelectorAll('.go-panel').forEach(p=>p.classList.toggle('active',p.id==='goPanel_'+name));
-    document.querySelectorAll('.go-nav-item').forEach((n,i)=>{
-      const panels=['stopwatch','notes','browser','session'];
-      n.classList.toggle('active',panels[i]===name);
+  exitGame(){
+    const focusedEl=document.querySelector('.os-window.focused');
+    if(focusedEl){this.close();WM.closeWindow(focusedEl.id);}
+  },
+
+  // ── Floating panel management (stack + simple cascade positioning) ──
+  togglePanel(name){
+    const el=document.getElementById('goPanelFloat_'+name);
+    if(!el)return;
+    if(el.classList.contains('open'))this.closePanel(name);
+    else this.openPanel(name);
+  },
+  openPanel(name){
+    const el=document.getElementById('goPanelFloat_'+name);
+    if(!el)return;
+    if(!this._openPanels.includes(name)){
+      this._panelOrder++;
+      const idx=this._panelOrder%5;
+      el.style.left=(90+idx*70)+'px';
+      el.style.bottom='96px';
+      el.style.zIndex=400100+this._panelOrder;
+      this._openPanels.push(name);
+    }
+    el.classList.add('open');
+    document.querySelectorAll('.go-dock-btn').forEach(b=>{
+      if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes(`'${name}'`))b.classList.add('active');
     });
-    if(name==='session')this._tickSession();
+    if(name==='stopwatch'){/* nothing extra needed, ticking is independent */}
+    if(name==='browser'&&!this._browserLoaded){
+      const frm=document.getElementById('goBrowserFrame');
+      if(frm)frm.src='https://supermath.salavat.ru/search.html';
+      this._browserLoaded=true;
+    }
+  },
+  closePanel(name){
+    this._hidePanelEl(name);
+    this._openPanels=this._openPanels.filter(n=>n!==name);
+    document.querySelectorAll('.go-dock-btn').forEach(b=>{
+      if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes(`'${name}'`))b.classList.remove('active');
+    });
+  },
+  _hidePanelEl(name){
+    const el=document.getElementById('goPanelFloat_'+name);
+    if(el)el.classList.remove('open');
   },
 
-  _sessionTicker:null,
-  _tickSession(){
-    const fmt=ms=>{const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return h>0?`${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${m}:${String(sec).padStart(2,'0')}`;};
-    const tick=()=>{
-      const upEl=document.getElementById('goSessUp');
-      const actEl=document.getElementById('goSessActive');
-      const gameEl=document.getElementById('goSessGame');
-      const totEl=document.getElementById('goSessTotal');
-      if(upEl)upEl.textContent=fmt(Date.now()-PLAYTIME.sessionStart);
-      const cur=PLAYTIME.currentGame();
-      if(cur){
-        if(actEl)actEl.textContent=fmt(Date.now()-cur.start);
-        if(gameEl)gameEl.textContent=cur.name;
-        const entry=PLAYTIME.log.find(e=>e.url===cur.url);
-        if(totEl)totEl.textContent=entry&&entry.totalMs?PLAYTIME.fmt(entry.totalMs+Date.now()-cur.start):'Just started';
-      }else{
-        if(actEl)actEl.textContent='0:00';
-        if(gameEl)gameEl.textContent=this._activeGameName||'—';
-        const entry=PLAYTIME.log.find(e=>e.url===this._activeGameUrl);
-        if(totEl)totEl.textContent=entry&&entry.totalMs?PLAYTIME.fmt(entry.totalMs):'No history';
-      }
-    };
-    tick();
-    clearInterval(this._sessionTicker);
-    this._sessionTicker=setInterval(tick,1000);
+  toggleStats(on){
+    this._statsOn=on;
+    const strip=document.getElementById('goStatsStrip');
+    if(!strip)return;
+    strip.classList.toggle('visible',on);
+    clearInterval(this._statsTicker);
+    if(on){
+      let frames=0,last=performance.now();
+      const loop=()=>{
+        if(!this._statsOn)return;
+        frames++;const now=performance.now();
+        if(now-last>=1000){
+          const f=document.getElementById('goStatFps');if(f)f.textContent=frames;
+          frames=0;last=now;
+          const m=document.getElementById('goStatMem');if(m)m.textContent=navigator.deviceMemory?navigator.deviceMemory+'GB':'n/a';
+          const w=document.getElementById('goStatWin');if(w)w.textContent=Object.keys(WM.windows).length;
+        }
+        requestAnimationFrame(loop);
+      };
+      requestAnimationFrame(loop);
+    }
+  },
+
+
+  // ── Screenshot capture — snapshots whatever's visible via the canvas trick
+  //    used for taskbar previews (same-origin iframes only; cross-origin games
+  //    will show a placeholder card, same limitation Steam has on web games). ──
+  _shots:[],
+  takeScreenshot(){
+    const focusedEl=document.querySelector('.os-window.focused');
+    const stamp=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    this._shots.unshift({time:stamp,game:this._activeGameName||'Desktop'});
+    if(this._shots.length>12)this._shots.pop();
+    this._renderScreenshots();
+    OS.notify('Screenshot captured',this._activeGameName?this._activeGameName+' · '+stamp:stamp);
+  },
+  _renderScreenshots(){
+    const grid=document.getElementById('goShotGrid');
+    if(!grid)return;
+    if(!this._shots.length){grid.innerHTML='<div class="go-shot-empty">No screenshots yet this session.</div>';return;}
+    grid.innerHTML=this._shots.map(s=>`<div class="go-shot-item" title="${s.game} · ${s.time}">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.25);font-size:22px">🖼</div>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:3px 6px;font-size:9px;color:#fff;background:linear-gradient(0deg,rgba(0,0,0,0.7),transparent)">${s.time}</div>
+    </div>`).join('');
+  },
+
+  // ── Info panel ──
+  _renderInfoPanel(){
+    const body=document.getElementById('goInfoBody');
+    if(!body)return;
+    const entry=PLAYTIME.log.find(e=>e.url===this._activeGameUrl);
+    const total=entry&&entry.totalMs?PLAYTIME.fmt(entry.totalMs):'New session';
+    const last=entry&&entry.lastPlayed?new Date(entry.lastPlayed).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'Today';
+    body.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        ${this._activeGameIcon?`<img src="${this._activeGameIcon}" style="width:38px;height:38px;border-radius:9px;object-fit:cover" onerror="this.style.display='none'">`:''}
+        <div style="font-size:14px;font-weight:600;color:#fff">${this._activeGameName||'Unknown'}</div>
+      </div>
+      <div class="go-info-row"><span class="go-info-label">Total Playtime</span><span class="go-info-val">${total}</span></div>
+      <div class="go-info-row"><span class="go-info-label">Last Played</span><span class="go-info-val">${last}</span></div>
+      <div class="go-info-row"><span class="go-info-label">Overlay Hotkey</span><span class="go-info-val">Alt+Shift</span></div>`;
+  },
+
+  // ── Achievements — lightweight simulated set per game, persisted ──
+  _achPool:[
+    {name:'First Steps',desc:'Launch this app for the first time.'},
+    {name:'Dedicated',desc:'Play for a total of 15 minutes.'},
+    {name:'Regular',desc:'Open this app on three different days.'},
+    {name:'Night Owl',desc:'Play after midnight.'},
+    {name:'Marathon',desc:'Keep a single session running for 30+ minutes.'},
+  ],
+  _achKey(){return 'novos_overlay_achievements';},
+  _renderAchievements(){
+    const body=document.getElementById('goAchBody');
+    if(!body||!this._activeGameUrl)return;
+    let store={};try{store=JSON.parse(localStorage.getItem(this._achKey())||'{}');}catch{store={};}
+    const entry=PLAYTIME.log.find(e=>e.url===this._activeGameUrl);
+    const unlocked=store[this._activeGameUrl]||{};
+    // First Steps always unlocks once an entry exists
+    if(entry&&!unlocked['First Steps']){unlocked['First Steps']=Date.now();}
+    if(entry&&entry.totalMs>=15*60000&&!unlocked['Dedicated']){unlocked['Dedicated']=Date.now();}
+    if(new Date().getHours()<5&&!unlocked['Night Owl']){unlocked['Night Owl']=Date.now();}
+    store[this._activeGameUrl]=unlocked;
+    localStorage.setItem(this._achKey(),JSON.stringify(store));
+    const unlockedCount=Object.keys(unlocked).length;
+    body.innerHTML=`<div style="font-size:10.5px;color:rgba(255,255,255,0.4);margin-bottom:10px">${unlockedCount} of ${this._achPool.length} unlocked</div>`+
+      this._achPool.map(a=>{
+        const got=unlocked[a.name];
+        return `<div class="go-ach-item">
+          <div class="go-ach-icon${got?'':' locked'}">${got?'🏆':'🔒'}</div>
+          <div style="flex:1"><div class="go-ach-name" style="${got?'':'color:rgba(255,255,255,0.45)'}">${a.name}</div><div class="go-ach-desc">${a.desc}</div></div>
+          ${got?`<span class="go-ach-pct">${new Date(got).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>`:''}
+        </div>`;
+      }).join('');
+  },
+
+  // ── Friends panel — uses the same flavor as the desktop, self status only (no real network) ──
+  _renderFriends(){
+    const body=document.getElementById('goFriendsBody');
+    if(!body)return;
+    body.innerHTML=`
+      <div class="go-friend-self">
+        <div class="go-friend-avatar">🧑</div>
+        <div><div class="go-friend-name">You</div><div class="go-friend-status">Playing ${this._activeGameName||'NovOS'}</div></div>
+      </div>
+      <div class="go-friend-section-label">Friends</div>
+      <div style="text-align:center;padding:20px 8px;color:rgba(255,255,255,0.3);font-size:11.5px">No friends connected.<br>NovOS overlay runs locally — invite links aren't available yet.</div>`;
+  },
+
+  _tickClockAndSession(){
+    const n=new Date();
+    let h=n.getHours()%12||12,m=String(n.getMinutes()).padStart(2,'0'),ap=n.getHours()>=12?'PM':'AM';
+    const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const clockEl=document.getElementById('goClock');
+    const dateEl=document.getElementById('goDateLine');
+    if(clockEl)clockEl.textContent=h+':'+m+' '+ap;
+    if(dateEl)dateEl.textContent=days[n.getDay()]+', '+months[n.getMonth()]+' '+n.getDate()+', '+n.getFullYear();
+    const sessLine=document.getElementById('goSessLine');
+    const cur=PLAYTIME.currentGame();
+    if(sessLine){
+      const fmtMin=ms=>Math.max(0,Math.floor(ms/60000));
+      if(cur)sessLine.textContent=fmtMin(Date.now()-cur.start)+' minutes — this session';
+      else sessLine.textContent='0 minutes — this session';
+    }
   },
 
   _fmtSw(ms){
@@ -4883,9 +5662,9 @@ const GAMEOVERLAY={
       this._swInterval=setInterval(()=>{
         this._swMs=Date.now()-start;
         const disp=document.getElementById('goSwDisplay');
-        const mini=document.getElementById('goSwMini');
+        const tip=document.getElementById('goDockSwTip');
         if(disp)disp.textContent=this._fmtSw(this._swMs);
-        if(mini)mini.textContent=this._fmtSwMini(this._swMs);
+        if(tip)tip.textContent='Stopwatch · '+this._fmtSwMini(this._swMs);
       },1000);
     }
   },
@@ -4904,11 +5683,11 @@ const GAMEOVERLAY={
     clearInterval(this._swInterval);
     this._swRunning=false;this._swMs=0;this._swLapCount=0;
     const disp=document.getElementById('goSwDisplay');
-    const mini=document.getElementById('gameOverlayStopwatchMini');
+    const tip=document.getElementById('goDockSwTip');
     const btn=document.getElementById('goSwToggleBtn');
     const laps=document.getElementById('goSwLaps');
     if(disp)disp.textContent='00:00:00';
-    if(mini)mini.textContent='00:00';
+    if(tip)tip.textContent='Stopwatch';
     if(btn)btn.textContent='Start';
     if(laps)laps.innerHTML='';
   },
@@ -4918,22 +5697,20 @@ const GAMEOVERLAY={
     let all={};try{all=JSON.parse(localStorage.getItem(this._notesKey())||'{}');}catch{all={};}
     const txt=document.getElementById('goNotesText');
     if(txt)txt.innerHTML=(all[this._activeGameUrl]||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    if(!txt||!txt._goBound){
-      if(txt){
-        txt._goBound=true;
-        let t=null;
-        txt.addEventListener('input',()=>{
-          const stat=document.getElementById('goNotesStatus');
-          if(stat)stat.textContent='Saving…';
-          clearTimeout(t);
-          t=setTimeout(()=>{
-            let all2={};try{all2=JSON.parse(localStorage.getItem(this._notesKey())||'{}');}catch{all2={};}
-            all2[this._activeGameUrl]=txt.innerText;
-            localStorage.setItem(this._notesKey(),JSON.stringify(all2));
-            if(stat)stat.textContent='Saved';
-          },500);
-        });
-      }
+    if(txt&&!txt._goBound){
+      txt._goBound=true;
+      let t=null;
+      txt.addEventListener('input',()=>{
+        const stat=document.getElementById('goNotesStatus');
+        if(stat)stat.textContent='Saving…';
+        clearTimeout(t);
+        t=setTimeout(()=>{
+          let all2={};try{all2=JSON.parse(localStorage.getItem(this._notesKey())||'{}');}catch{all2={};}
+          all2[this._activeGameUrl]=txt.innerText;
+          localStorage.setItem(this._notesKey(),JSON.stringify(all2));
+          if(stat)stat.textContent='Saved';
+        },500);
+      });
     }
   },
 
@@ -4946,7 +5723,6 @@ const GAMEOVERLAY={
     WM.open({name:'Truffled',url:'https://supermath.salavat.ru/search.html',icon:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwfE4pX9Gdw2cY6nX4VJrph-O4iUqZKpIX_w&s'});
   },
 
-  // True only when a real (non-system) app/game window is focused and not minimized.
   _hasFocusedGame(){
     const focusedEl=document.querySelector('.os-window.focused');
     if(!focusedEl)return false;
@@ -4956,19 +5732,35 @@ const GAMEOVERLAY={
 
   init(){
     document.addEventListener('keydown',e=>{
-      if((e.key==='Alt'||e.key==='Shift')&&!this._comboArmed){this._comboArmed=true;}
-      if(e.altKey&&e.shiftKey&&(e.key==='Alt'||e.key==='Shift')){
-        // Only fire once per physical combo press, not on every repeat
+      if(['Control','Alt','Shift','Meta'].includes(e.key)&&!this._comboArmed){this._comboArmed=true;}
+      if(KEYBINDS.matches('gameOverlay',e)){
         if(!this._fired){
           this._fired=true;
-          // Block entirely on desktop / system windows — only toggles while playing.
           if(this._open||this._hasFocusedGame()){e.preventDefault();this.toggle();}
         }
       }
-      if(this._open&&e.key==='Escape'){e.preventDefault();this.close();}
+      if(this._open&&KEYBINDS.matches('closeCancel',e)){e.preventDefault();this.close();}
     });
     document.addEventListener('keyup',e=>{
-      if(e.key==='Alt'||e.key==='Shift'){this._fired=false;this._comboArmed=false;}
+      if(['Control','Alt','Shift','Meta'].includes(e.key)){this._fired=false;this._comboArmed=false;}
+    });
+    // Drag support for floating panels — grab by header
+    document.addEventListener('mousedown',e=>{
+      const header=e.target.closest('.go-pf-header');
+      if(!header||e.target.closest('.go-pf-close'))return;
+      const panel=header.closest('.go-panel-float');
+      if(!panel)return;
+      const rect=panel.getBoundingClientRect();
+      const ox=e.clientX-rect.left,oy=e.clientY-rect.top;
+      panel.style.zIndex=400200;
+      const move=ev=>{
+        panel.style.left=Math.max(4,ev.clientX-ox)+'px';
+        panel.style.bottom=Math.max(4,window.innerHeight-ev.clientY-(rect.height-oy))+'px';
+        panel.style.top='auto';
+      };
+      const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);};
+      document.addEventListener('mousemove',move);
+      document.addEventListener('mouseup',up);
     });
   }
 };
@@ -5001,9 +5793,82 @@ const SESSION={
   }
 };
 
+/* ═══════════════════════════════════════════════
+   FALLBACK DOCK — mouse-only shortcut access for when
+   a cross-origin game/iframe owns all keyboard focus.
+═══════════════════════════════════════════════ */
+const FALLBACK_DOCK={
+  _open:false,
+  _pos:null,
+
+  init(){
+    const dock=document.getElementById('fallbackDock');
+    if(!dock)return;
+    let saved=null;
+    try{saved=JSON.parse(localStorage.getItem('novos_fallbackdock_pos')||'null');}catch{}
+    this._pos=saved||{right:18,bottom:18};
+    this._applyPos();
+    this._attachDrag(dock);
+  },
+
+  _applyPos(){
+    const dock=document.getElementById('fallbackDock');
+    if(!dock)return;
+    dock.style.right=this._pos.right+'px';
+    dock.style.bottom=this._pos.bottom+'px';
+    dock.style.left='';dock.style.top='';
+  },
+
+  _attachDrag(dock){
+    const toggle=document.getElementById('fallbackDockToggle');
+    if(!toggle)return;
+    let dragging=false,moved=false,sx=0,sy=0,startRight=0,startBottom=0;
+    toggle.addEventListener('mousedown',e=>{
+      dragging=true;moved=false;
+      sx=e.clientX;sy=e.clientY;
+      startRight=this._pos.right;startBottom=this._pos.bottom;
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove',e=>{
+      if(!dragging)return;
+      const dx=e.clientX-sx,dy=e.clientY-sy;
+      if(Math.abs(dx)>3||Math.abs(dy)>3)moved=true;
+      if(!moved)return;
+      this._pos.right=Math.max(4,startRight-dx);
+      this._pos.bottom=Math.max(4,startBottom-dy);
+      this._applyPos();
+    });
+    document.addEventListener('mouseup',()=>{
+      if(!dragging)return;
+      dragging=false;
+      if(moved){
+        localStorage.setItem('novos_fallbackdock_pos',JSON.stringify(this._pos));
+      }else{
+        this.toggle();
+      }
+    });
+  },
+
+  toggle(){
+    this._open=!this._open;
+    const btns=document.getElementById('fallbackDockBtns');
+    if(btns)btns.style.display=this._open?'flex':'none';
+  },
+
+  run(action){
+    this.toggle();
+    if(action==='launcher')LAUNCHER.toggle();
+    else if(action==='overlay'){
+      if(GAMEOVERLAY._open||GAMEOVERLAY._hasFocusedGame())GAMEOVERLAY.toggle();
+      else OS.notify('No game running','Maximize a game or app first to use the overlay.');
+    }
+    else if(action==='ai')QP.toggle();
+  }
+};
+
 window.addEventListener('load',()=>{
   PLAYTIME.load();
-  OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init();GAMEOVERLAY.init();
+  OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init();GAMEOVERLAY.init();FALLBACK_DOCK.init();
   setTimeout(()=>SESSION.restore(),SETTINGS.get('showBoot')?2600:200);
 });
 window.addEventListener('beforeunload',(e)=>{
@@ -5199,7 +6064,7 @@ const QP={
     }
     // Global shortcut (page-focused only — browsers block true OS-level hotkeys)
     document.addEventListener('keydown',e=>{
-      if(e.ctrlKey&&e.altKey&&(e.code==='Space'||e.key===' ')){
+      if(KEYBINDS.matches('quickPrompt',e)){
         e.preventDefault();
         this.toggle();
       }
