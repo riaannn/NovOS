@@ -590,116 +590,10 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 .ss-time{font-size:clamp(60px,12vw,120px);font-weight:200;color:rgba(255,255,255,0.9);font-family:'Geist Mono',monospace;letter-spacing:-0.04em;line-height:1;text-shadow:0 0 60px rgba(var(--os-accent-rgb),0.3)}
 .ss-date{font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,0.3);letter-spacing:0.2em;text-transform:uppercase;font-weight:300}
 
-/* IN-GAME OVERLAY (Steam-style dock + corner panels, NovOS skin) */
-#gameOverlay{position:fixed;inset:0;z-index:400000;display:none;pointer-events:none}
-#gameOverlay.active{display:block}
-#gameOverlayDim{position:absolute;inset:0;background:rgba(0,0,0,0.5);opacity:0;transition:opacity 0.25s ease;pointer-events:none;backdrop-filter:blur(1px)}
-#gameOverlay.active #gameOverlayDim{opacity:1}
-#gameOverlayShell{position:absolute;inset:0;pointer-events:none}
 
-/* ── Top-left: game session strip ───────────────────────── */
-#goTopLeft{position:absolute;top:18px;left:18px;pointer-events:all;display:flex;flex-direction:column;gap:2px;opacity:0;transform:translateY(-8px);transition:opacity 0.25s ease,transform 0.25s cubic-bezier(0.34,1.2,0.64,1)}
-#gameOverlay.active #goTopLeft{opacity:1;transform:translateY(0)}
-#goClock{font-family:var(--mono);font-size:20px;font-weight:300;color:#fff;letter-spacing:-0.02em;text-shadow:0 2px 10px rgba(0,0,0,0.6)}
-#goDateLine{font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px}
-#goSessLine{font-size:11px;color:var(--os-accent);font-family:var(--mono);margin-top:5px;text-shadow:0 0 12px rgba(var(--os-accent-rgb),0.5)}
-#goExitGameBtn{margin-top:10px;align-self:flex-start;height:26px;padding:0 12px;border-radius:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.8);font-family:var(--font);font-size:10.5px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;transition:all 0.13s}
-#goExitGameBtn:hover{background:rgba(248,113,113,0.22);border-color:rgba(248,113,113,0.4);color:#fff}
 
-/* ── Top-right: close / back-to-game ────────────────────── */
-#goTopRight{position:absolute;top:18px;right:18px;pointer-events:all;display:flex;align-items:center;gap:14px;opacity:0;transform:translateY(-8px);transition:opacity 0.25s ease,transform 0.25s cubic-bezier(0.34,1.2,0.64,1)}
-#gameOverlay.active #goTopRight{opacity:1;transform:translateY(0)}
-#goBackToGame{text-align:right;cursor:pointer;user-select:none}
-#goBackToGame .go-btg-label{font-size:14px;font-weight:600;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,0.5)}
-#goBackToGame .go-btg-hint{font-size:10px;color:rgba(255,255,255,0.4);font-family:var(--mono);margin-top:1px}
-#goTopCloseBtn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.13s;flex-shrink:0}
-#goTopCloseBtn:hover{background:rgba(248,113,113,0.22);border-color:rgba(248,113,113,0.4);color:#fff}
 
-/* ── Bottom dock — Steam-style icon row ──────────────────── */
-#goDock{position:absolute;bottom:18px;left:50%;transform:translateX(-50%) translateY(14px);display:flex;align-items:center;gap:5px;padding:7px;border-radius:16px;background:rgba(13,15,22,0.88);border:1px solid rgba(255,255,255,0.10);backdrop-filter:blur(30px) saturate(1.8);box-shadow:0 20px 50px rgba(0,0,0,0.6),0 1px 0 rgba(255,255,255,0.06) inset;pointer-events:all;opacity:0;transition:opacity 0.25s ease,transform 0.28s cubic-bezier(0.34,1.2,0.64,1)}
-#gameOverlay.active #goDock{opacity:1;transform:translateX(-50%) translateY(0)}
-.go-dock-btn{width:42px;height:42px;border-radius:11px;background:transparent;border:1px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,0.6);transition:all 0.15s cubic-bezier(0.34,1.4,0.64,1);position:relative;flex-shrink:0}
-.go-dock-btn:hover{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.12);color:#fff;transform:translateY(-3px)}
-.go-dock-btn.active{background:rgba(var(--os-accent-rgb),0.22);border-color:rgba(var(--os-accent-rgb),0.4);color:#fff}
-.go-dock-btn svg{width:18px;height:18px}
-.go-dock-sep{width:1px;height:26px;background:rgba(255,255,255,0.1);margin:0 4px;flex-shrink:0}
-.go-dock-badge{position:absolute;top:-3px;right:-3px;min-width:14px;height:14px;padding:0 3px;border-radius:7px;background:var(--os-accent);color:#fff;font-size:8.5px;font-weight:700;font-family:var(--mono);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px rgba(13,15,22,0.9)}
-.go-dock-tooltip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(4px);background:rgba(8,9,14,0.95);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:5px 9px;font-size:10.5px;color:#fff;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.13s,transform 0.13s;font-family:var(--font)}
-.go-dock-btn:hover .go-dock-tooltip{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ── Floating panels (info / achievements / notes / screenshots / friends / browser) ── */
-.go-panel-float{position:absolute;pointer-events:all;width:380px;max-height:min(560px,calc(100vh - 140px));background:rgba(13,15,22,0.96);border:1px solid rgba(255,255,255,0.12);border-radius:14px;backdrop-filter:blur(30px) saturate(1.7);box-shadow:0 24px 60px rgba(0,0,0,0.6),0 1px 0 rgba(255,255,255,0.06) inset;display:none;flex-direction:column;overflow:hidden;opacity:0;transform:translateY(10px) scale(0.97);transition:opacity 0.18s ease,transform 0.18s cubic-bezier(0.34,1.3,0.64,1)}
-.go-panel-float.open{display:flex;opacity:1;transform:translateY(0) scale(1)}
-.go-panel-float.wide{width:460px}
-.go-pf-header{height:42px;flex-shrink:0;display:flex;align-items:center;gap:9px;padding:0 14px;border-bottom:1px solid rgba(255,255,255,0.08);background:linear-gradient(180deg,rgba(var(--os-accent-rgb),0.10),transparent)}
-.go-pf-header svg{width:15px;height:15px;color:var(--os-accent);flex-shrink:0}
-.go-pf-title{flex:1;font-size:12.5px;font-weight:600;color:#fff}
-.go-pf-close{width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.12s;flex-shrink:0}
-.go-pf-close:hover{background:rgba(248,113,113,0.2);border-color:rgba(248,113,113,0.4);color:#fff}
-.go-pf-body{flex:1;overflow-y:auto;padding:14px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent}
-
-/* Info panel content */
-.go-info-row{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:9px;margin-bottom:7px}
-.go-info-label{font-size:11px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.06em;font-weight:600}
-.go-info-val{font-size:13px;color:#fff;font-family:var(--mono)}
-
-/* Achievements panel content */
-.go-ach-item{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:9px;margin-bottom:4px;transition:background 0.12s}
-.go-ach-item:hover{background:rgba(255,255,255,0.05)}
-.go-ach-icon{width:34px;height:34px;border-radius:8px;background:rgba(var(--os-accent-rgb),0.15);border:1px solid rgba(var(--os-accent-rgb),0.3);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:var(--os-accent)}
-.go-ach-icon.locked{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);color:rgba(255,255,255,0.25)}
-.go-ach-name{font-size:12px;font-weight:600;color:#fff}
-.go-ach-desc{font-size:10.5px;color:rgba(255,255,255,0.4);margin-top:1px}
-.go-ach-pct{font-size:9.5px;color:var(--os-accent);font-family:var(--mono);margin-left:auto;flex-shrink:0;white-space:nowrap}
-
-/* Stopwatch / notes panel */
-.go-sw-display{font-family:var(--mono);font-size:38px;font-weight:200;color:#fff;letter-spacing:-0.02em;text-shadow:0 0 30px rgba(var(--os-accent-rgb),0.3);line-height:1;text-align:center;padding:14px 0 4px}
-.go-sw-sub{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.1em;text-transform:uppercase;text-align:center;margin-bottom:14px}
-.go-sw-controls{display:flex;gap:6px;padding:0 4px 12px}
-.go-sw-btn{flex:1;height:32px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;font-family:var(--font);font-size:11.5px;font-weight:500;cursor:pointer;transition:all 0.13s}
-.go-sw-btn:hover{background:rgba(255,255,255,0.14)}
-.go-sw-btn.primary{background:rgba(var(--os-accent-rgb),0.25);border-color:rgba(var(--os-accent-rgb),0.5)}
-.go-sw-btn.primary:hover{background:var(--os-accent);border-color:var(--os-accent)}
-.go-sw-laps{max-height:160px;overflow-y:auto;border-top:1px solid rgba(255,255,255,0.06)}
-.go-sw-lap{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11.5px;color:rgba(255,255,255,0.5);padding:7px 4px;border-bottom:1px solid rgba(255,255,255,0.04)}
-.go-sw-lap:first-child{color:rgba(255,255,255,0.85);background:rgba(var(--os-accent-rgb),0.07)}
-.go-notes-text{min-height:160px;color:rgba(255,255,255,0.88);font-size:13px;line-height:1.7;outline:none;background:transparent}
-.go-notes-text:empty::before{content:'Jot down strategies, codes, reminders…';color:rgba(255,255,255,0.2)}
-.go-notes-status{font-size:9.5px;color:var(--os-accent);font-family:var(--mono);text-align:right;margin-top:8px}
-
-/* Screenshots panel */
-.go-shot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.go-shot-item{position:relative;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);aspect-ratio:16/10;cursor:pointer}
-.go-shot-item img{width:100%;height:100%;object-fit:cover}
-.go-shot-empty{grid-column:1/-1;text-align:center;padding:30px 10px;color:rgba(255,255,255,0.3);font-size:12px}
-.go-shot-takebtn{width:100%;height:34px;margin-top:10px;border-radius:8px;background:rgba(var(--os-accent-rgb),0.18);border:1px solid rgba(var(--os-accent-rgb),0.4);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.13s}
-.go-shot-takebtn:hover{background:var(--os-accent)}
-
-/* Friends/chat panel */
-.go-friend-self{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;margin-bottom:10px}
-.go-friend-avatar{width:34px;height:34px;border-radius:50%;background:rgba(var(--os-accent-rgb),0.2);border:1px solid rgba(var(--os-accent-rgb),0.4);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-.go-friend-name{font-size:12.5px;font-weight:600;color:#fff}
-.go-friend-status{font-size:10px;color:rgba(255,255,255,0.4)}
-.go-friend-section-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.3);padding:8px 2px 6px}
-.go-friend-row{display:flex;align-items:center;gap:9px;padding:7px 6px;border-radius:8px;cursor:pointer;transition:background 0.12s}
-.go-friend-row:hover{background:rgba(255,255,255,0.05)}
-.go-friend-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0}
-.go-friend-dot.online{background:var(--os-green);box-shadow:0 0 6px var(--os-green)}
-.go-friend-row-name{font-size:12px;color:#fff;flex:1}
-.go-friend-row-sub{font-size:10px;color:rgba(255,255,255,0.35)}
-
-/* Browser panel (wide, taller) */
-.go-browser-bar{height:38px;flex-shrink:0;display:flex;align-items:center;gap:7px;padding:0 10px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.07)}
-.go-browser-url{flex:1;height:26px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:rgba(255,255,255,0.65);font-family:var(--mono);font-size:10.5px;display:flex;align-items:center;padding:0 9px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.go-browser-btn{height:26px;padding:0 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:rgba(255,255,255,0.65);font-size:11px;cursor:pointer;font-family:var(--font);transition:all 0.12s;flex-shrink:0}
-.go-browser-btn:hover{background:rgba(255,255,255,0.13);color:#fff}
-.go-browser-frame-wrap{flex:1;position:relative;background:#0a0b10;min-height:340px}
-.go-browser-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
-
-/* Performance/stats mini-readout, top-center */
-#goStatsStrip{position:absolute;top:18px;left:50%;transform:translateX(-50%) translateY(-8px);display:flex;gap:14px;padding:7px 16px;border-radius:10px;background:rgba(13,15,22,0.85);border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(24px);pointer-events:all;opacity:0;transition:opacity 0.2s ease,transform 0.2s ease;font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.7)}
-#goStatsStrip.visible{opacity:1;transform:translateX(-50%) translateY(0)}
-#goStatsStrip span b{color:var(--os-green);font-weight:600}
 
 /* KEYBIND PICKER MODAL */
 .kb-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;margin-bottom:6px}
@@ -912,14 +806,7 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 <div id="taskbarPeekZone" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()"></div>
 <div id="topBarPeekZone" style="position:fixed;top:0;left:0;right:0;height:4px;z-index:10000;display:none"></div>
 
-<!-- LEFT EDGE OVERLAY PEEK — only visible in fullscreen/maximized -->
-<div id="overlayPeekZone" style="position:fixed;top:0;left:0;width:6px;height:100vh;z-index:400500;display:none"></div>
-<div id="overlayPeekBtn" style="position:fixed;top:50%;left:0;transform:translateY(-50%) translateX(-100%);z-index:400501;transition:transform 0.22s cubic-bezier(0.34,1.2,0.64,1);display:none;pointer-events:none">
-  <div onclick="GAMEOVERLAY.toggle()" style="width:38px;height:52px;background:rgba(13,15,22,0.96);border:1px solid rgba(255,255,255,0.14);border-left:none;border-radius:0 12px 12px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;box-shadow:4px 0 20px rgba(0,0,0,0.5);backdrop-filter:blur(20px);pointer-events:all" onmouseover="this.style.background='rgba(var(--os-accent-rgb),0.22)';this.style.borderColor='rgba(var(--os-accent-rgb),0.5)'" onmouseout="this.style.background='rgba(13,15,22,0.96)';this.style.borderColor='rgba(255,255,255,0.14)'">
-    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
-    <div style="font-size:7.5px;color:rgba(255,255,255,0.5);letter-spacing:0.05em;font-family:var(--font);line-height:1.2;text-align:center">OVR</div>
-  </div>
-</div>
+
 
 <!-- TASKBAR -->
 <div id="taskbar" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()">
@@ -942,10 +829,7 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="8" y="2" width="5" height="5" rx="1"/><rect x="14" y="2" width="4" height="5" rx="1"/><rect x="2" y="9" width="5" height="9" rx="1"/><rect x="8" y="9" width="5" height="5" rx="1"/><rect x="14" y="9" width="4" height="7" rx="1"/></svg>
           Task Manager
         </div>
-        <div class="qm-item" onclick="LAUNCHER.close();DOCK.toggle()">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="10" cy="10" r="7"/><path d="M8 7l5 3-5 3z" fill="currentColor" stroke="none"/></svg>
-          Continue Playing
-        </div>
+        
         <div class="qm-item" onclick="OS.openSettings()">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="10" cy="10" r="2.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42"/></svg>
           Settings
@@ -1285,184 +1169,7 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
   </div>
 </div>
 
-<!-- IN-GAME OVERLAY (Steam-style dock, NovOS skin) -->
-<div id="gameOverlay">
-  <div id="gameOverlayDim" onclick="GAMEOVERLAY.close()"></div>
-  <div id="gameOverlayShell">
 
-    <!-- Top-left: clock + session info -->
-    <div id="goTopLeft">
-      <div id="goClock">12:00</div>
-      <div id="goDateLine">—</div>
-      <div id="goSessLine" id="goSessLineTxt">0m this session</div>
-      <button id="goExitGameBtn" onclick="GAMEOVERLAY.exitGame()">Exit Game</button>
-    </div>
-
-    <!-- Top-right: back to game -->
-    <div id="goTopRight">
-      <div id="goBackToGame" onclick="GAMEOVERLAY.close()">
-        <div class="go-btg-label">Back to Game</div>
-        <div class="go-btg-hint">(<span data-kb-action="gameOverlay">Alt + Shift</span>)</div>
-      </div>
-      <div id="goTopCloseBtn" onclick="GAMEOVERLAY.close()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </div>
-    </div>
-
-    <!-- Top-center: live perf strip -->
-    <div id="goStatsStrip">
-      <span>FPS <b id="goStatFps">—</b></span>
-      <span>MEM <b id="goStatMem">—</b></span>
-      <span>WIN <b id="goStatWin">0</b></span>
-    </div>
-
-    <!-- Floating panels -->
-    <div class="go-panel-float" id="goPanelFloat_info">
-      <div class="go-pf-header">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 8v4M12 16h.01"/></svg>
-        <span class="go-pf-title">Game Overview</span>
-        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('info')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-      </div>
-      <div class="go-pf-body" id="goInfoBody"></div>
-    </div>
-
-    <div class="go-panel-float" id="goPanelFloat_achievements">
-      <div class="go-pf-header">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M9 13.5L7 22l5-3 5 3-2-8.5"/></svg>
-        <span class="go-pf-title">Achievements</span>
-        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('achievements')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-      </div>
-      <div class="go-pf-body" id="goAchBody"></div>
-    </div>
-
-    <div class="go-panel-float" id="goPanelFloat_notes">
-      <div class="go-pf-header">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M5 3h9l5 5v13H5z"/><path d="M9 13h6M9 17h4"/></svg>
-        <span class="go-pf-title">Notes</span>
-        <span class="go-notes-status" id="goNotesStatus" style="margin-right:6px">Saved</span>
-        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('notes')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-      </div>
-      <div class="go-pf-body">
-        <div class="go-notes-text" id="goNotesText" contenteditable="true"></div>
-      </div>
-    </div>
-
-    <div class="go-panel-float" id="goPanelFloat_stopwatch">
-      <div class="go-pf-header">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg>
-        <span class="go-pf-title">Stopwatch</span>
-        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('stopwatch')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-      </div>
-      <div class="go-pf-body">
-        <div class="go-sw-display" id="goSwDisplay">00:00:00</div>
-        <div class="go-sw-sub">Session Stopwatch</div>
-        <div class="go-sw-controls">
-          <button class="go-sw-btn primary" id="goSwToggleBtn" onclick="GAMEOVERLAY.swToggle()">Start</button>
-          <button class="go-sw-btn" onclick="GAMEOVERLAY.swLap()">Lap</button>
-          <button class="go-sw-btn" onclick="GAMEOVERLAY.swReset()">Reset</button>
-        </div>
-        <div class="go-sw-laps" id="goSwLaps"></div>
-      </div>
-    </div>
-
-    <div class="go-panel-float" id="goPanelFloat_screenshots">
-      <div class="go-pf-header">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8" fill="currentColor" stroke="none" opacity="0.7"/><path d="M21 15.5l-5.5-5.5L5 21"/></svg>
-        <span class="go-pf-title">Screenshots</span>
-        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('screenshots')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-      </div>
-      <div class="go-pf-body">
-        <div class="go-shot-grid" id="goShotGrid"><div class="go-shot-empty">No screenshots yet this session.</div></div>
-        <button class="go-shot-takebtn" onclick="GAMEOVERLAY.takeScreenshot()">📸 Capture Screenshot</button>
-      </div>
-    </div>
-
-    <div class="go-panel-float" id="goPanelFloat_friends">
-      <div class="go-pf-header">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span class="go-pf-title">Friends</span>
-        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('friends')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-      </div>
-      <div class="go-pf-body" id="goFriendsBody"></div>
-    </div>
-
-    <div class="go-panel-float wide" id="goPanelFloat_browser">
-      <div class="go-pf-header">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/></svg>
-        <span class="go-pf-title">Browser</span>
-        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('browser')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-      </div>
-      <div class="go-browser-bar">
-        <button class="go-browser-btn" onclick="GAMEOVERLAY.browserReload()">↺</button>
-        <div class="go-browser-url">supermath.salavat.ru</div>
-        <button class="go-browser-btn" onclick="GAMEOVERLAY.browserOpenFull()">Open in Window</button>
-      </div>
-      <div class="go-browser-frame-wrap">
-        <iframe id="goBrowserFrame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" src="about:blank"></iframe>
-      </div>
-    </div>
-
-    <div class="go-panel-float" id="goPanelFloat_settings">
-      <div class="go-pf-header">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        <span class="go-pf-title">Overlay Settings</span>
-        <div class="go-pf-close" onclick="GAMEOVERLAY.closePanel('settings')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-      </div>
-      <div class="go-pf-body">
-        <div class="sp-row" style="margin-bottom:8px"><div><div class="sp-row-label" style="font-size:12px">Show Perf Stats</div></div><label class="toggle"><input type="checkbox" id="goTogStats" onchange="GAMEOVERLAY.toggleStats(this.checked)"><span class="tog-slider"></span></label></div>
-        <div class="sp-row"><div><div class="sp-row-label" style="font-size:12px">Notify on Open</div></div><label class="toggle"><input type="checkbox" id="goTogNotify" checked onchange="GAMEOVERLAY._notifyOnOpen=this.checked"><span class="tog-slider"></span></label></div>
-      </div>
-    </div>
-
-    <!-- Bottom dock — Steam-style icon row -->
-    <div id="goDock">
-      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('info')" title="">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 8v4M12 16h.01"/></svg>
-        <span class="go-dock-tooltip">Game Overview</span>
-      </div>
-      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('achievements')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M9 13.5L7 22l5-3 5 3-2-8.5"/></svg>
-        <span class="go-dock-tooltip">Achievements</span>
-      </div>
-      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('notes')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M5 3h9l5 5v13H5z"/><path d="M9 13h6M9 17h4"/></svg>
-        <span class="go-dock-tooltip">Notes</span>
-      </div>
-      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('stopwatch')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg>
-        <span class="go-dock-tooltip" id="goDockSwTip">Stopwatch</span>
-      </div>
-      <div class="go-dock-sep"></div>
-      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('screenshots')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8" fill="currentColor" stroke="none" opacity="0.7"/><path d="M21 15.5l-5.5-5.5L5 21"/></svg>
-        <span class="go-dock-tooltip">Screenshots</span>
-      </div>
-      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('friends')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span class="go-dock-tooltip">Friends</span>
-      </div>
-      <div class="go-dock-sep"></div>
-      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('browser')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/></svg>
-        <span class="go-dock-tooltip">Browser</span>
-      </div>
-      <div class="go-dock-btn" onclick="GAMEOVERLAY.takeScreenshot()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="9.5"/></svg>
-        <span class="go-dock-tooltip">Record</span>
-      </div>
-      <div class="go-dock-sep"></div>
-      <div class="go-dock-btn" onclick="GAMEOVERLAY.togglePanel('settings')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        <span class="go-dock-tooltip">Settings</span>
-      </div>
-      <div class="go-dock-btn" onclick="GAMEOVERLAY.close()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7l10 10"/></svg>
-        <span class="go-dock-tooltip">Close Overlay</span>
-      </div>
-    </div>
-
-  </div>
-</div>
 
 <!-- AI QUICK PROMPT -->
 <div id="quickPrompt" class="qp-hidden" onclick="if(event.target===this)QP.close()">
@@ -1585,7 +1292,7 @@ const KEYBINDS={
   def:{
     launcher:      {combo:'Tab',            label:'Tab',            desc:'Open the app launcher'},
     winSwitcher:   {combo:'Shift+Tab',      label:'Shift + Tab',    desc:'Hold to cycle, release to select'},
-    gameOverlay:   {combo:'Alt+Shift',      label:'Alt + Shift',    desc:'Only while a game or app window is focused'},
+    
     quickPrompt:   {combo:'Ctrl+Alt+Space', label:'Ctrl + Alt + Space', desc:'Opens the quick AI prompt box'},
     closeCancel:   {combo:'Escape',         label:'Esc',            desc:'Closes overlays, menus, and dialogs'},
   },
@@ -1694,11 +1401,7 @@ const KEYBINDS={
     // Quick Prompt hint
     const qpHint=document.getElementById('qpHint');
     if(qpHint)qpHint.textContent=this.getLabel('quickPrompt');
-    // Game overlay hint label + back-to-game hint
-    const goHint=document.getElementById('goHintLabel');
-    if(goHint)goHint.textContent=this.getLabel('gameOverlay');
-    const btgHint=document.querySelector('#goBackToGame .go-btg-hint');
-    if(btgHint)btgHint.textContent='('+this.getLabel('gameOverlay')+')';
+    
     // Alt-tab overlay title
     const atTitle=document.getElementById('altTabTitle');
     if(atTitle)atTitle.textContent=this.getLabel('winSwitcher').toUpperCase()+' — Window Switcher';
@@ -1884,17 +1587,55 @@ const WM={
       catch{return true;}
     };
 
-    setTimeout(()=>{
+    const _useLag=SETTINGS.get('lagMode');
+
+    // Builds the same-origin srcdoc shell used for cross-origin targets.
+    const _makeShell=(u)=>{
+      const _u=JSON.stringify(u);
+      return `<!doctype html><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#08090d;color:#6b6f85;font:12px system-ui,sans-serif;display:flex;align-items:center;justify-content:center}</style><script>try{setTimeout(function(){window.location.replace(${_u});},30);}catch(e){window.location.href=${_u};}<\/script><div>Loading\u2026</div>`;
+    };
+
+    // Single, normal load (lag mode off).
+    const _loadOnce=()=>{
       if(_isCrossOrigin(realUrl)){
-        // Load a neutral same-origin srcdoc shell, then self-navigate to the real URL.
-        // Cloudflare/Amazon see a normal top-level navigation inside the frame,
-        // NOT a request originating from about:blank — which is what was failing.
-        const _u=JSON.stringify(realUrl);
-        frm.srcdoc=`<!doctype html><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#08090d;color:#6b6f85;font:12px system-ui,sans-serif;display:flex;align-items:center;justify-content:center}</style><script>try{setTimeout(function(){window.location.replace(${_u});},30);}catch(e){window.location.href=${_u};}<\/script><div>Loading\u2026</div>`;
+        frm.srcdoc=_makeShell(realUrl);
       }else{
-        // Same-origin or data URLs are safe to set directly.
         frm.src=realUrl;
       }
+    };
+
+    // Lag-mode burst loader: hammers the iframe location hundreds of times in
+    // rapid succession so startup actually feels slow/laggy, then settles on a
+    // final clean load so the game ends up properly loaded.
+    const _burstLoad=()=>{
+      const BURST_COUNT=200;     // how many rapid reloads
+      const BURST_INTERVAL=10;   // ms between each reload
+      const isX=_isCrossOrigin(realUrl);
+      let i=0;
+      const tick=()=>{
+        // Stop if the window was closed mid-burst.
+        if(!document.getElementById('frm_'+id)){return;}
+        if(i>=BURST_COUNT){_loadOnce();return;} // final settle load
+        try{
+          if(isX){
+            frm.removeAttribute('src');
+            frm.removeAttribute('srcdoc');
+            frm.src='about:blank';
+            setTimeout(()=>{if(document.getElementById('frm_'+id))frm.srcdoc=_makeShell(realUrl);},0);
+          }else{
+            frm.src='about:blank';
+            setTimeout(()=>{if(document.getElementById('frm_'+id))frm.src=realUrl;},0);
+          }
+        }catch(_){}
+        i++;
+        setTimeout(tick,BURST_INTERVAL);
+      };
+      tick();
+    };
+
+    setTimeout(()=>{
+      if(_useLag)_burstLoad();
+      else _loadOnce();
     },_lagDelay);
 
     this.windows[id]={app,minimized:false,maximized:false,prevRect:null};
@@ -1917,7 +1658,6 @@ const WM={
     }
     TB.setActive(id);
     if(typeof PLAYTIME!=='undefined')PLAYTIME.syncFocus(id);
-    if(typeof GAMEOVERLAY!=='undefined'&&el&&this.windows[id])GAMEOVERLAY.trackFocus(this.windows[id].app);
   },
 
   closeWindow(id){
@@ -2178,14 +1918,12 @@ const TB={
       if(topBar)topBar.classList.add('topbar-hidden');
       // Top bar is fully inaccessible in fullscreen — peek zone stays disabled
       if(topPeek)topPeek.style.display='none';
-      OVERLAY_PEEK.enable();
-    }else{
+      }else{
       document.body.classList.remove('taskbar-autohide');
       taskbar.classList.remove('taskbar-hidden');
       this._hidden=false;
       if(topBar)topBar.classList.remove('topbar-hidden');
       if(topPeek)topPeek.style.display='none';
-      OVERLAY_PEEK.disable();
     }
   },
   peekShow(){if(!this._hidden)return;clearTimeout(this._peekTimeout);document.getElementById('taskbar').classList.remove('taskbar-hidden');},
@@ -3176,13 +2914,128 @@ const OS={
         .stlib-side-home:hover{background:var(--os-surface)}
         .stlib-side-home.active{background:rgba(var(--os-accent-rgb),0.14);border-color:rgba(var(--os-accent-rgb),0.3)}
         .stlib-side-home.active .stlib-row-name{color:var(--os-accent)}
-        .stlib-home{padding:4px 4px 30px}
+        .stlib-home{padding:4px 4px 30px;overflow-y:auto;height:100%;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
         .stlib-home-section{margin-bottom:28px}
         .stlib-home-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px}
         .stlib-home-title{font-size:15px;font-weight:600;color:var(--os-text)}
         .stlib-home-sub{font-size:11px;color:var(--os-muted);margin-top:2px}
         .stlib-home-sortbar{display:flex;align-items:center;gap:7px;flex-shrink:0}
-        .stlib-sort-select{height:26px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:6px;padding:0 8px;color:var(--os-text);font-family:var(--font);font-size:11px;outline:none;cursor:pointer}
+        .stlib-sort-select{
+          height:30px;
+          padding:0 30px 0 13px;
+          border:1px solid var(--os-border);
+          border-radius:9px;
+          background:rgba(255,255,255,0.04);
+          color:var(--os-text);
+          font-family:var(--font);
+          font-weight:600;
+          font-size:11.5px;
+          letter-spacing:0.01em;
+          outline:none;
+          cursor:pointer;
+          -webkit-appearance:none;
+          appearance:none;
+          /* custom chevron in the muted color */
+          background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6f85' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+          background-repeat:no-repeat;
+          background-position:right 10px center;
+          transition:color .15s, background-color .15s, border-color.15s, box-shadow .15s;
+        }
+        .stlib-sort-select:hover{
+          color:var(--os-text);
+          background-color:rgba(255,255,255,0.06);
+          border-color:var(--os-border2);
+        }
+        .stlib-sort-select:focus{
+          border-color:rgba(var(--os-accent-rgb),0.5);
+          box-shadow:0 0 0 3px rgba(var(--os-accent-rgb),0.18);
+        }
+        /* dropdown list items — limited styling support, but covers most engines */
+        .stlib-sort-select option{
+          background:#161821;
+          color:var(--os-text);
+        }
+
+        /* Refined tabs for Games / Web / Apps */
+        .stlib-tabs{display:inline-flex;gap:4px;background:rgba(255,255,255,0.04);border:1px solid var(--os-border);padding:4px;border-radius:11px}
+        .stlib-tab-btn{
+          position:relative;
+          display:inline-flex;
+          align-items:center;
+          height:30px;
+          padding:0 15px;
+          border:none;
+          border-radius:8px;
+          background:transparent;
+          color:var(--os-muted);
+          font-family:var(--font);
+          font-weight:600;
+          font-size:12px;
+          letter-spacing:0.01em;
+          cursor:pointer;
+          transition:color .15s, background .15s, transform .12s;
+        }
+        .stlib-tab-btn:hover{color:var(--os-text);background:rgba(255,255,255,0.05);transform:translateY(-1px)}
+        .stlib-tab-btn.active{
+          color:var(--os-accent);
+          background:rgba(var(--os-accent-rgb),0.14);
+          box-shadow:inset 0 0 0 1px rgba(var(--os-accent-rgb),0.32), 0 4px 14px rgba(0,0,0,0.22);
+        }
+        /* Animated pill underline */
+        .stlib-tab-btn::after{
+          content:'';
+          position:absolute;
+          left:14px;right:14px;bottom:5px;height:2px;
+          border-radius:2px;
+          background:linear-gradient(90deg,var(--os-accent),#f47aff);
+          opacity:0;transform:scaleX(0.5);
+          transition:opacity .18s, transform .18s;
+        }
+        .stlib-tab-btn.active::after{opacity:0.9;transform:scaleX(1)}
+        .stlib-tab-btn svg{width:14px;height:14px;margin-right:6px;opacity:.75}
+        .stlib-tab-btn.active svg{opacity:1;filter:drop-shadow(0 0 6px rgba(var(--os-accent-rgb),0.4))}
+
+        /* Pill-style sort control — matches the Games/Web/Apps tabs */
+        .stlib-sort-pills{
+          display:inline-flex;gap:4px;
+          background:rgba(255,255,255,0.04);
+          border:1px solid var(--os-border);
+          padding:4px;border-radius:11px;
+        }
+        .stlib-sort-btn{
+          position:relative;
+          display:inline-flex;
+          align-items:center;
+          height:28px;
+          padding:0 13px;
+          border:none;
+          border-radius:8px;
+          background:transparent;
+          color:var(--os-muted);
+          font-family:var(--font);
+          font-weight:600;
+          font-size:11.5px;
+          letter-spacing:0.01em;
+          cursor:pointer;
+          transition:color .15s, background .15s, transform .12s;
+        }
+        .stlib-sort-btn:hover{color:var(--os-text);background:rgba(255,255,255,0.05);transform:translateY(-1px)}
+        .stlib-sort-btn.active{
+          color:var(--os-accent);
+          background:rgba(var(--os-accent-rgb),0.14);
+          box-shadow:inset 0 0 0 1px rgba(var(--os-accent-rgb),0.32), 0 4px 14px rgba(0,0,0,0.22);
+        }
+        .stlib-sort-btn::after{
+          content:'';
+          position:absolute;
+          left:12px;right:12px;bottom:4px;height:2px;
+          border-radius:2px;
+          background:linear-gradient(90deg,var(--os-accent),#f47aff);
+          opacity:0;transform:scaleX(0.5);
+          transition:opacity .18s, transform .18s;
+        }
+        .stlib-sort-btn.active::after{opacity:0.9;transform:scaleX(1)}
+
         .stlib-continue-rail{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
         .stlib-continue-card{flex-shrink:0;width:230px;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;border:1px solid var(--os-border);background:var(--os-surface);transition:all 0.15s}
         .stlib-continue-card:hover{transform:translateY(-3px);border-color:rgba(var(--os-accent-rgb),0.4);box-shadow:0 10px 26px rgba(0,0,0,0.4)}
@@ -3228,7 +3081,7 @@ const OS={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
-    WM.windows[id]={app:{name:'App Library',url:'__library__',icon:''},minimized:false,maximized:false,prevRect:null,libSelected:null,libSort:'recent'};
+    WM.windows[id]={app:{name:'App Library',url:'__library__',icon:''},minimized:false,maximized:false,prevRect:null,libSelected:null,libSort:'oldest'};
     WM.focus(id);TB.addWindow(id,{name:'App Library',url:'__library__',icon:''});WM.makeDraggable(id);
     this.stlibRenderSidebar(id,'');
     this.stlibSelect(id,null);
@@ -3412,18 +3265,31 @@ const OS={
     const main=document.getElementById('stlibMain_'+wid);if(!main)return;
     const recent=PLAYTIME.recent(10).map(p=>({...p,appRef:this._findAppByUrl(p.url)})).filter(p=>p.appRef);
     const allGames=this.shortcuts.games||[];
-    const sortMode=(WM.windows[wid]&&WM.windows[wid].libSort)||'recent';
-    let sortedGames=[...allGames];
-    if(sortMode==='alpha')sortedGames.sort((a,b)=>a.name.localeCompare(b.name));
+    const allWeb=this.shortcuts.web||[];
+    const allApps=this.shortcuts.apps||[];
+    const sortMode=(WM.windows[wid]&&WM.windows[wid].libSort)||'oldest';
+    const activeTab=(WM.windows[wid]&&WM.windows[wid].libTab)||'games';
+    const tabItems=activeTab==='web'?allWeb:activeTab==='apps'?allApps:allGames;
+    let sortedGames=[...tabItems];
+    const _entry=(url)=>PLAYTIME.log.find(e=>e.url===url);
+    if(sortMode==='oldest'){
+      // natural list order (first added → first shown)
+      sortedGames=[...tabItems];
+    }
+    else if(sortMode==='newest'){
+      // reverse of natural list order (most recently added → first shown)
+      sortedGames=[...tabItems].reverse();
+    }
+    else if(sortMode==='alpha')sortedGames.sort((a,b)=>a.name.localeCompare(b.name));
     else if(sortMode==='playtime'){
       sortedGames.sort((a,b)=>{
-        const ea=PLAYTIME.log.find(e=>e.url===a.url),eb=PLAYTIME.log.find(e=>e.url===b.url);
+        const ea=_entry(a.url),eb=_entry(b.url);
         return (eb&&eb.totalMs||0)-(ea&&ea.totalMs||0);
       });
     }
 
     main.innerHTML=`
-      <div class="stlib-home">
+      <div class="stlib-home" id="stlibHomeScroll_${wid}">
         <div class="stlib-home-section">
           <div class="stlib-home-header">
             <div>
@@ -3435,13 +3301,27 @@ const OS={
         </div>
         <div class="stlib-home-section">
           <div class="stlib-home-header">
-            <div class="stlib-home-title">All Games <span style="color:var(--os-muted);font-weight:400;font-size:13px">(${allGames.length})</span></div>
+            <div class="stlib-tabs">
+              <button class="stlib-tab-btn ${(WM.windows[wid]&&WM.windows[wid].libTab||'games')==='games'?'active':''}" onclick="OS.stlibSetTab('${wid}','games')" title="Games">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="11" x2="10" y2="11"/><line x1="8" y1="9" x2="8" y2="13"/><line x1="15" y1="12" x2="15.01" y2="12"/><line x1="18" y1="10" x2="18.01" y2="10"/><rect x="2" y="6" width="20" height="12" rx="4"/></svg>
+                Games
+              </button>
+              <button class="stlib-tab-btn ${(WM.windows[wid]&&WM.windows[wid].libTab||'games')==='web'?'active':''}" onclick="OS.stlibSetTab('${wid}','web')" title="Web">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a18 18 0 010 18M12 3a18 18 0 000 18M3 12h18"/></svg>
+                Web
+              </button>
+              <button class="stlib-tab-btn ${(WM.windows[wid]&&WM.windows[wid].libTab||'games')==='apps'?'active':''}" onclick="OS.stlibSetTab('${wid}','apps')" title="Apps">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+                Apps
+              </button>
+            </div>
             <div class="stlib-home-sortbar">
               <span style="font-size:10.5px;color:var(--os-muted)">Sort</span>
               <select class="stlib-sort-select" onchange="OS.stlibSetSort('${wid}',this.value)">
-                <option value="recent"${sortMode==='recent'?' selected':''}>Default</option>
-                <option value="alpha"${sortMode==='alpha'?' selected':''}>Alphabetical</option>
-                <option value="playtime"${sortMode==='playtime'?' selected':''}>Most Played</option>
+                <option value="oldest" ${sortMode==='oldest'?'selected':''}>Oldest</option>
+                <option value="newest" ${sortMode==='newest'?'selected':''}>Newest</option>
+                <option value="alpha" ${sortMode==='alpha'?'selected':''}>A–Z</option>
+                <option value="playtime" ${sortMode==='playtime'?'selected':''}>Most Played</option>
               </select>
             </div>
           </div>
@@ -3495,6 +3375,12 @@ const OS={
   stlibSetSort(wid,mode){
     if(!WM.windows[wid])return;
     WM.windows[wid].libSort=mode;
+    this._renderHome(wid);
+  },
+
+  stlibSetTab(wid,tab){
+    if(!WM.windows[wid])return;
+    WM.windows[wid].libTab=tab;
     this._renderHome(wid);
   },
 
@@ -3899,10 +3785,7 @@ const OS={
                     <div><div class="kb-row-label">Window switcher</div><div class="kb-row-sub">Hold to cycle, release to select</div></div>
                     <button class="kb-capture-btn" onclick="KB_UI.startCapture('winSwitcher','${id}')" id="kbBtn_winSwitcher_${id}">${KEYBINDS.getLabel('winSwitcher')}</button>
                   </div>
-                  <div class="kb-row" data-kb-row="gameOverlay">
-                    <div><div class="kb-row-label">In-game overlay</div><div class="kb-row-sub">Only while a game or app window is focused</div></div>
-                    <button class="kb-capture-btn" onclick="KB_UI.startCapture('gameOverlay','${id}')" id="kbBtn_gameOverlay_${id}">${KEYBINDS.getLabel('gameOverlay')}</button>
-                  </div>
+                  
                   <div class="kb-row" data-kb-row="quickPrompt">
                     <div><div class="kb-row-label">Ask AI quick prompt</div><div class="kb-row-sub">Opens the quick AI prompt box</div></div>
                     <button class="kb-capture-btn" onclick="KB_UI.startCapture('quickPrompt','${id}')" id="kbBtn_quickPrompt_${id}">${KEYBINDS.getLabel('quickPrompt')}</button>
@@ -3975,7 +3858,7 @@ const OS={
                 </div>
                 <div class="sp2-row"><div><div class="sp2-row-label">App launcher</div><div class="sp2-row-sub">Open the app launcher</div></div><span class="kb-display-val" data-kb-action="launcher" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('launcher')}</span></div>
                 <div class="sp2-row"><div><div class="sp2-row-label">Window switcher</div><div class="sp2-row-sub">Hold to cycle, release to select</div></div><span class="kb-display-val" data-kb-action="winSwitcher" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('winSwitcher')}</span></div>
-                <div class="sp2-row"><div><div class="sp2-row-label">In-game overlay</div><div class="sp2-row-sub">Only while a game or app window is focused</div></div><span class="kb-display-val" data-kb-action="gameOverlay" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('gameOverlay')}</span></div>
+                
                 <div class="sp2-row"><div><div class="sp2-row-label">Ask AI quick prompt</div><div class="sp2-row-sub">Opens the quick AI prompt box</div></div><span class="kb-display-val" data-kb-action="quickPrompt" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('quickPrompt')}</span></div>
                 <div class="sp2-row"><div><div class="sp2-row-label">Close / cancel</div><div class="sp2-row-sub">Closes overlays, menus, and dialogs</div></div><span class="kb-display-val" data-kb-action="closeCancel" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('closeCancel')}</span></div>
                 <div class="sp2-row-sub" style="padding:0 16px 12px;line-height:1.5">These shortcuts work globally — even while a game or app has keyboard focus — as long as that app runs same-origin inside its window frame. Go to the Keybinds page to remap any of them.</div>
@@ -4214,13 +4097,9 @@ const OS={
         if(e.data.type==='keydown'){
           ALT_TAB.handleKeydown(synthetic);
           if(KEYBINDS.matches('launcher',synthetic)&&!synthetic.shiftKey)LAUNCHER.toggle();
-          if(KEYBINDS.matches('gameOverlay',synthetic)){
-            if(GAMEOVERLAY._open||GAMEOVERLAY._hasFocusedGame())GAMEOVERLAY.toggle();
-          }
           if(KEYBINDS.matches('quickPrompt',synthetic))QP.toggle();
           if(KEYBINDS.matches('closeCancel',synthetic)){
-            if(GAMEOVERLAY._open)GAMEOVERLAY.close();
-            else if(ALT_TAB.open)ALT_TAB.cancel();
+            if(ALT_TAB.open)ALT_TAB.cancel();
             else if(LAUNCHER._open)LAUNCHER.close();
           }
         }else if(e.data.type==='keyup'){
@@ -4232,13 +4111,9 @@ const OS={
       if(e.data==='novos_shifttab')ALT_TAB.next();
       if(e.data==='novos_tab')LAUNCHER.toggle();
       if(e.data==='novos_shiftup')ALT_TAB.handleKeyup({key:'Shift'});
-      if(e.data==='novos_altshift'){
-        if(GAMEOVERLAY._open||GAMEOVERLAY._hasFocusedGame())GAMEOVERLAY.toggle();
-      }
       if(e.data==='novos_ctrlaltspace')QP.toggle();
       if(e.data==='novos_escape'){
-        if(GAMEOVERLAY._open)GAMEOVERLAY.close();
-        else if(ALT_TAB.open)ALT_TAB.cancel();
+        if(ALT_TAB.open)ALT_TAB.cancel();
         else if(LAUNCHER._open)LAUNCHER.close();
       }
     });
@@ -5530,361 +5405,6 @@ const PLAYTIME={
   }
 };
 
-const GAMEOVERLAY={
-  _open:false,
-  _swMs:0,_swRunning:false,_swInterval:null,_swLapCount:0,
-  _activeGameUrl:null,_activeGameName:'',_activeGameIcon:'',
-  _browserLoaded:false,
-  _openPanels:[],            // stack of currently-open floating panel names
-  _statsOn:false,_statsTicker:null,_clockTicker:null,
-  _notifyOnOpen:true,
-  _panelOrder:0,
-
-  trackFocus(app){
-    if(!app||!app.url||app.url.startsWith('__'))return;
-    this._activeGameUrl=app.url;
-    this._activeGameName=app.name;
-    this._activeGameIcon=app.icon||'';
-    const wid=Object.keys(WM.windows).find(id=>{
-      const w=WM.windows[id];
-      return w&&w.app&&w.app.url===app.url&&w.maximized&&!w.minimized;
-    });
-    if(wid){
-      const frm=document.getElementById('frm_'+wid);
-      if(frm&&document.activeElement!==frm)frm.focus({preventScroll:true});
-    }
-  },
-
-  toggle(){this._open?this.close():this.open();},
-
-  open(){
-    if(!this._hasFocusedGame()){
-      OS.notify('No game running','Maximize a game or app first, then press Alt+Shift to bring up the overlay.');
-      return;
-    }
-    const focusedEl=document.querySelector('.os-window.focused');
-    const win=WM.windows[focusedEl.id];
-    this._activeGameUrl=win.app.url;this._activeGameName=win.app.name;this._activeGameIcon=win.app.icon||'';
-
-    this._open=true;
-    document.getElementById('gameOverlay').classList.add('active');
-    this._loadNotes();
-    this._renderInfoPanel();
-    this._renderAchievements();
-    this._renderFriends();
-    this._renderScreenshots();
-    this._tickClockAndSession();
-    clearInterval(this._clockTicker);
-    this._clockTicker=setInterval(()=>this._tickClockAndSession(),1000);
-    if(this._notifyOnOpen){/* silent on purpose — Steam doesn't toast on open */}
-  },
-
-  close(){
-    this._open=false;
-    document.getElementById('gameOverlay').classList.remove('active');
-    this._openPanels.forEach(n=>this._hidePanelEl(n));
-    this._openPanels=[];
-    clearInterval(this._clockTicker);
-    clearInterval(this._statsTicker);
-  },
-
-  exitGame(){
-    const focusedEl=document.querySelector('.os-window.focused');
-    if(focusedEl){this.close();WM.closeWindow(focusedEl.id);}
-  },
-
-  // ── Floating panel management (stack + simple cascade positioning) ──
-  togglePanel(name){
-    const el=document.getElementById('goPanelFloat_'+name);
-    if(!el)return;
-    if(el.classList.contains('open'))this.closePanel(name);
-    else this.openPanel(name);
-  },
-  openPanel(name){
-    const el=document.getElementById('goPanelFloat_'+name);
-    if(!el)return;
-    if(!this._openPanels.includes(name)){
-      this._panelOrder++;
-      const idx=this._panelOrder%5;
-      el.style.left=(90+idx*70)+'px';
-      el.style.bottom='96px';
-      el.style.zIndex=400100+this._panelOrder;
-      this._openPanels.push(name);
-    }
-    el.classList.add('open');
-    document.querySelectorAll('.go-dock-btn').forEach(b=>{
-      if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes(`'${name}'`))b.classList.add('active');
-    });
-    if(name==='stopwatch'){/* nothing extra needed, ticking is independent */}
-    if(name==='browser'&&!this._browserLoaded){
-      const frm=document.getElementById('goBrowserFrame');
-      if(frm)frm.src='https://supermath.salavat.ru/search.html';
-      this._browserLoaded=true;
-    }
-  },
-  closePanel(name){
-    this._hidePanelEl(name);
-    this._openPanels=this._openPanels.filter(n=>n!==name);
-    document.querySelectorAll('.go-dock-btn').forEach(b=>{
-      if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes(`'${name}'`))b.classList.remove('active');
-    });
-  },
-  _hidePanelEl(name){
-    const el=document.getElementById('goPanelFloat_'+name);
-    if(el)el.classList.remove('open');
-  },
-
-  toggleStats(on){
-    this._statsOn=on;
-    const strip=document.getElementById('goStatsStrip');
-    if(!strip)return;
-    strip.classList.toggle('visible',on);
-    clearInterval(this._statsTicker);
-    if(on){
-      let frames=0,last=performance.now();
-      const loop=()=>{
-        if(!this._statsOn)return;
-        frames++;const now=performance.now();
-        if(now-last>=1000){
-          const f=document.getElementById('goStatFps');if(f)f.textContent=frames;
-          frames=0;last=now;
-          const m=document.getElementById('goStatMem');if(m)m.textContent=navigator.deviceMemory?navigator.deviceMemory+'GB':'n/a';
-          const w=document.getElementById('goStatWin');if(w)w.textContent=Object.keys(WM.windows).length;
-        }
-        requestAnimationFrame(loop);
-      };
-      requestAnimationFrame(loop);
-    }
-  },
-
-
-  // ── Screenshot capture — snapshots whatever's visible via the canvas trick
-  //    used for taskbar previews (same-origin iframes only; cross-origin games
-  //    will show a placeholder card, same limitation Steam has on web games). ──
-  _shots:[],
-  takeScreenshot(){
-    const focusedEl=document.querySelector('.os-window.focused');
-    const stamp=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    this._shots.unshift({time:stamp,game:this._activeGameName||'Desktop'});
-    if(this._shots.length>12)this._shots.pop();
-    this._renderScreenshots();
-    OS.notify('Screenshot captured',this._activeGameName?this._activeGameName+' · '+stamp:stamp);
-  },
-  _renderScreenshots(){
-    const grid=document.getElementById('goShotGrid');
-    if(!grid)return;
-    if(!this._shots.length){grid.innerHTML='<div class="go-shot-empty">No screenshots yet this session.</div>';return;}
-    grid.innerHTML=this._shots.map(s=>`<div class="go-shot-item" title="${s.game} · ${s.time}">
-      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.25);font-size:22px">🖼</div>
-      <div style="position:absolute;bottom:0;left:0;right:0;padding:3px 6px;font-size:9px;color:#fff;background:linear-gradient(0deg,rgba(0,0,0,0.7),transparent)">${s.time}</div>
-    </div>`).join('');
-  },
-
-  // ── Info panel ──
-  _renderInfoPanel(){
-    const body=document.getElementById('goInfoBody');
-    if(!body)return;
-    const entry=PLAYTIME.log.find(e=>e.url===this._activeGameUrl);
-    const total=entry&&entry.totalMs?PLAYTIME.fmt(entry.totalMs):'New session';
-    const last=entry&&entry.lastPlayed?new Date(entry.lastPlayed).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'Today';
-    body.innerHTML=`
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-        ${this._activeGameIcon?`<img src="${this._activeGameIcon}" style="width:38px;height:38px;border-radius:9px;object-fit:cover" onerror="this.style.display='none'">`:''}
-        <div style="font-size:14px;font-weight:600;color:#fff">${this._activeGameName||'Unknown'}</div>
-      </div>
-      <div class="go-info-row"><span class="go-info-label">Total Playtime</span><span class="go-info-val">${total}</span></div>
-      <div class="go-info-row"><span class="go-info-label">Last Played</span><span class="go-info-val">${last}</span></div>
-      <div class="go-info-row"><span class="go-info-label">Overlay Hotkey</span><span class="go-info-val">Alt+Shift</span></div>`;
-  },
-
-  // ── Achievements — lightweight simulated set per game, persisted ──
-  _achPool:[
-    {name:'First Steps',desc:'Launch this app for the first time.'},
-    {name:'Dedicated',desc:'Play for a total of 15 minutes.'},
-    {name:'Regular',desc:'Open this app on three different days.'},
-    {name:'Night Owl',desc:'Play after midnight.'},
-    {name:'Marathon',desc:'Keep a single session running for 30+ minutes.'},
-  ],
-  _achKey(){return 'novos_overlay_achievements';},
-  _renderAchievements(){
-    const body=document.getElementById('goAchBody');
-    if(!body||!this._activeGameUrl)return;
-    let store={};try{store=JSON.parse(localStorage.getItem(this._achKey())||'{}');}catch{store={};}
-    const entry=PLAYTIME.log.find(e=>e.url===this._activeGameUrl);
-    const unlocked=store[this._activeGameUrl]||{};
-    // First Steps always unlocks once an entry exists
-    if(entry&&!unlocked['First Steps']){unlocked['First Steps']=Date.now();}
-    if(entry&&entry.totalMs>=15*60000&&!unlocked['Dedicated']){unlocked['Dedicated']=Date.now();}
-    if(new Date().getHours()<5&&!unlocked['Night Owl']){unlocked['Night Owl']=Date.now();}
-    store[this._activeGameUrl]=unlocked;
-    localStorage.setItem(this._achKey(),JSON.stringify(store));
-    const unlockedCount=Object.keys(unlocked).length;
-    body.innerHTML=`<div style="font-size:10.5px;color:rgba(255,255,255,0.4);margin-bottom:10px">${unlockedCount} of ${this._achPool.length} unlocked</div>`+
-      this._achPool.map(a=>{
-        const got=unlocked[a.name];
-        return `<div class="go-ach-item">
-          <div class="go-ach-icon${got?'':' locked'}">${got?'🏆':'🔒'}</div>
-          <div style="flex:1"><div class="go-ach-name" style="${got?'':'color:rgba(255,255,255,0.45)'}">${a.name}</div><div class="go-ach-desc">${a.desc}</div></div>
-          ${got?`<span class="go-ach-pct">${new Date(got).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>`:''}
-        </div>`;
-      }).join('');
-  },
-
-  // ── Friends panel — uses the same flavor as the desktop, self status only (no real network) ──
-  _renderFriends(){
-    const body=document.getElementById('goFriendsBody');
-    if(!body)return;
-    body.innerHTML=`
-      <div class="go-friend-self">
-        <div class="go-friend-avatar">🧑</div>
-        <div><div class="go-friend-name">You</div><div class="go-friend-status">Playing ${this._activeGameName||'NovOS'}</div></div>
-      </div>
-      <div class="go-friend-section-label">Friends</div>
-      <div style="text-align:center;padding:20px 8px;color:rgba(255,255,255,0.3);font-size:11.5px">No friends connected.<br>NovOS overlay runs locally — invite links aren't available yet.</div>`;
-  },
-
-  _tickClockAndSession(){
-    const n=new Date();
-    let h=n.getHours()%12||12,m=String(n.getMinutes()).padStart(2,'0'),ap=n.getHours()>=12?'PM':'AM';
-    const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const clockEl=document.getElementById('goClock');
-    const dateEl=document.getElementById('goDateLine');
-    if(clockEl)clockEl.textContent=h+':'+m+' '+ap;
-    if(dateEl)dateEl.textContent=days[n.getDay()]+', '+months[n.getMonth()]+' '+n.getDate()+', '+n.getFullYear();
-    const sessLine=document.getElementById('goSessLine');
-    const cur=PLAYTIME.currentGame();
-    if(sessLine){
-      const fmtMin=ms=>Math.max(0,Math.floor(ms/60000));
-      if(cur)sessLine.textContent=fmtMin(Date.now()-cur.start)+' minutes — this session';
-      else sessLine.textContent='0 minutes — this session';
-    }
-  },
-
-  _fmtSw(ms){
-    const totalSec=Math.floor(ms/1000);
-    const h=Math.floor(totalSec/3600),m=Math.floor((totalSec%3600)/60),s=totalSec%60;
-    return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  },
-  _fmtSwMini(ms){
-    const totalSec=Math.floor(ms/1000);
-    const m=Math.floor(totalSec/60),s=totalSec%60;
-    return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  },
-
-  swToggle(){
-    const btn=document.getElementById('goSwToggleBtn');
-    if(this._swRunning){
-      clearInterval(this._swInterval);this._swRunning=false;
-      if(btn)btn.textContent='Resume';
-    }else{
-      this._swRunning=true;
-      if(btn)btn.textContent='Pause';
-      const start=Date.now()-this._swMs;
-      this._swInterval=setInterval(()=>{
-        this._swMs=Date.now()-start;
-        const disp=document.getElementById('goSwDisplay');
-        const tip=document.getElementById('goDockSwTip');
-        if(disp)disp.textContent=this._fmtSw(this._swMs);
-        if(tip)tip.textContent='Stopwatch · '+this._fmtSwMini(this._swMs);
-      },1000);
-    }
-  },
-  swLap(){
-    if(!this._swMs)return;
-    this._swLapCount++;
-    const laps=document.getElementById('goSwLaps');
-    if(laps){
-      const row=document.createElement('div');
-      row.className='go-sw-lap';
-      row.innerHTML=`<span>Lap ${this._swLapCount}</span><span>${this._fmtSw(this._swMs)}</span>`;
-      laps.prepend(row);
-    }
-  },
-  swReset(){
-    clearInterval(this._swInterval);
-    this._swRunning=false;this._swMs=0;this._swLapCount=0;
-    const disp=document.getElementById('goSwDisplay');
-    const tip=document.getElementById('goDockSwTip');
-    const btn=document.getElementById('goSwToggleBtn');
-    const laps=document.getElementById('goSwLaps');
-    if(disp)disp.textContent='00:00:00';
-    if(tip)tip.textContent='Stopwatch';
-    if(btn)btn.textContent='Start';
-    if(laps)laps.innerHTML='';
-  },
-
-  _notesKey(){return 'novos_overlay_notes';},
-  _loadNotes(){
-    let all={};try{all=JSON.parse(localStorage.getItem(this._notesKey())||'{}');}catch{all={};}
-    const txt=document.getElementById('goNotesText');
-    if(txt)txt.innerHTML=(all[this._activeGameUrl]||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    if(txt&&!txt._goBound){
-      txt._goBound=true;
-      let t=null;
-      txt.addEventListener('input',()=>{
-        const stat=document.getElementById('goNotesStatus');
-        if(stat)stat.textContent='Saving…';
-        clearTimeout(t);
-        t=setTimeout(()=>{
-          let all2={};try{all2=JSON.parse(localStorage.getItem(this._notesKey())||'{}');}catch{all2={};}
-          all2[this._activeGameUrl]=txt.innerText;
-          localStorage.setItem(this._notesKey(),JSON.stringify(all2));
-          if(stat)stat.textContent='Saved';
-        },500);
-      });
-    }
-  },
-
-  browserReload(){
-    const frm=document.getElementById('goBrowserFrame');
-    if(frm){const s=frm.src;frm.src='about:blank';setTimeout(()=>frm.src=s,50);}
-  },
-  browserOpenFull(){
-    this.close();
-    WM.open({name:'Truffled',url:'https://supermath.salavat.ru/search.html',icon:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwfE4pX9Gdw2cY6nX4VJrph-O4iUqZKpIX_w&s'});
-  },
-
-  _hasFocusedGame(){
-    const focusedEl=document.querySelector('.os-window.focused');
-    if(!focusedEl)return false;
-    const w=WM.windows[focusedEl.id];
-    return !!(w&&w.app&&w.app.url&&!w.app.url.startsWith('__')&&!w.minimized&&w.maximized);
-  },
-
-  init(){
-    document.addEventListener('keydown',e=>{
-      if(['Control','Alt','Shift','Meta'].includes(e.key)&&!this._comboArmed){this._comboArmed=true;}
-      if(KEYBINDS.matches('gameOverlay',e)){
-        if(!this._fired){
-          this._fired=true;
-          if(this._open||this._hasFocusedGame()){e.preventDefault();this.toggle();}
-        }
-      }
-      if(this._open&&KEYBINDS.matches('closeCancel',e)){e.preventDefault();this.close();}
-    });
-    document.addEventListener('keyup',e=>{
-      if(['Control','Alt','Shift','Meta'].includes(e.key)){this._fired=false;this._comboArmed=false;}
-    });
-    // Drag support for floating panels — grab by header
-    document.addEventListener('mousedown',e=>{
-      const header=e.target.closest('.go-pf-header');
-      if(!header||e.target.closest('.go-pf-close'))return;
-      const panel=header.closest('.go-panel-float');
-      if(!panel)return;
-      const rect=panel.getBoundingClientRect();
-      const ox=e.clientX-rect.left,oy=e.clientY-rect.top;
-      panel.style.zIndex=400200;
-      const move=ev=>{
-        panel.style.left=Math.max(4,ev.clientX-ox)+'px';
-        panel.style.bottom=Math.max(4,window.innerHeight-ev.clientY-(rect.height-oy))+'px';
-        panel.style.top='auto';
-      };
-      const up=()=>{document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);};
-      document.addEventListener('mousemove',move);
-      document.addEventListener('mouseup',up);
-    });
-  }
-};
 
 const SESSION={
   save(){
@@ -5924,17 +5444,14 @@ const FALLBACK_DOCK={
   // behavior automatically — no floating dock, no drag state needed.
   run(action){
     if(action==='launcher')LAUNCHER.toggle();
-    else if(action==='overlay'){
-      if(GAMEOVERLAY._open||GAMEOVERLAY._hasFocusedGame())GAMEOVERLAY.toggle();
-      else OS.notify('No game running','Maximize a game or app first to use the overlay.');
-    }
+    
     else if(action==='ai')QP.toggle();
   }
 };
 
 window.addEventListener('load',()=>{
   PLAYTIME.load();
-  OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init();GAMEOVERLAY.init();
+  OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init()
   setTimeout(()=>SESSION.restore(),SETTINGS.get('showBoot')?2600:200);
 });
 window.addEventListener('beforeunload',(e)=>{
@@ -6283,44 +5800,7 @@ const SCREENSAVER={
 };
 
 
-/* ═══ LEFT-EDGE OVERLAY PEEK ═══ */
-const OVERLAY_PEEK={
-  _zone:null,_btn:null,_hideTimer:null,_enabled:false,
 
-  enable(){
-    this._enabled=true;
-    this._zone=this._zone||document.getElementById('overlayPeekZone');
-    this._btn=this._btn||document.getElementById('overlayPeekBtn');
-    if(this._zone)this._zone.style.display='block';
-    if(this._btn)this._btn.style.display='block';
-    if(!this._zone)return;
-    this._zone.onmouseenter=()=>this._show();
-    this._zone.onmouseleave=()=>this._scheduleHide();
-    if(this._btn){
-      this._btn.onmouseenter=()=>{clearTimeout(this._hideTimer);};
-      this._btn.onmouseleave=()=>this._scheduleHide();
-    }
-  },
-
-  disable(){
-    this._enabled=false;
-    if(this._zone){this._zone.style.display='none';this._zone.onmouseenter=null;this._zone.onmouseleave=null;}
-    if(this._btn){this._btn.style.display='none';this._btn.style.transform='translateY(-50%) translateX(-100%)';this._btn.onmouseenter=null;this._btn.onmouseleave=null;}
-    clearTimeout(this._hideTimer);
-  },
-
-  _show(){
-    clearTimeout(this._hideTimer);
-    if(this._btn)this._btn.style.transform='translateY(-50%) translateX(0)';
-  },
-
-  _scheduleHide(){
-    clearTimeout(this._hideTimer);
-    this._hideTimer=setTimeout(()=>{
-      if(this._btn)this._btn.style.transform='translateY(-50%) translateX(-100%)';
-    },600);
-  }
-};
 
 /* ═══ CONTINUE PLAYING DOCK ═══ */
 const DOCK={
