@@ -25,6 +25,7 @@
   --lg-glow:rgba(255,255,255,0.18);
   --lg-border:rgba(255,255,255,0.22);
   --lg-tint:rgba(255,255,255,0.06);
+    --win-blur:30px;
 }
 
 /* LIQUID GLASS THEME */
@@ -206,7 +207,7 @@ body.taskbar-autohide #desktop{height:100vh}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes npEq{0%,100%{height:5px}50%{height:16px}}
 body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms!important}
-.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(30px);overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both;will-change:transform;transform:translateZ(0);contain:layout style}
+.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(var(--win-blur));overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both;will-change:transform;transform:translateZ(0);contain:layout style paint}
 .os-window.minimized{display:none}
 .os-window.maximized{top:0!important;left:0!important;width:100%!important;height:100%!important;border-radius:0;border-color:transparent;backdrop-filter:none!important;box-shadow:none!important}
 .os-window.focused{box-shadow:0 40px 100px rgba(0,0,0,0.75),0 0 0 1px rgba(var(--os-accent-rgb),0.28)}
@@ -964,10 +965,7 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
         <div><div class="sp-row-label">Launch Confirm</div><div class="sp-row-sub">Show "open in window?" dialog</div></div>
         <label class="toggle"><input type="checkbox" id="tog-confirm" checked onchange="OS.setSetting('launchConfirm',this.checked)"><span class="tog-slider"></span></label>
       </div>
-      <div class="sp-row" style="margin-top:5px">
-        <div><div class="sp-row-label">Lag Mode for Slow Apps</div><div class="sp-row-sub">Adds delay before loading links (helps some games)</div></div>
-        <label class="toggle"><input type="checkbox" id="tog-lag" onchange="OS.setSetting('lagMode',this.checked)"><span class="tog-slider"></span></label>
-      </div>
+
       <div class="sp-row" style="margin-top:5px">
         <div><div class="sp-row-label">Hide Taskbar in Fullscreen</div><div class="sp-row-sub">Auto-hide when a window is maximized</div></div>
         <label class="toggle"><input type="checkbox" id="tog-taskbarhide" checked onchange="OS.setSetting('hideTaskbarFullscreen',this.checked);TB.updateAutoHide()"><span class="tog-slider"></span></label>
@@ -1273,7 +1271,7 @@ const PVZ_URL='https://wszqkzqk.github.io/pvz-portable-wasm/pvz-portable.html';
    SETTINGS STORE
 ═══════════════════════════════════════════════ */
 const SETTINGS={
-  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',lagMode:false,animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true,customCursor:true},
+  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true,customCursor:true},
   data:{},
   load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
   save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));},
@@ -1556,7 +1554,7 @@ const WM={
         </div>
       </div>
       <div class="wnd-body">
-        <iframe class="wnd-iframe" id="frm_${id}" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen" allow="fullscreen; autoplay; clipboard-write; pointer-lock" allowfullscreen></iframe>
+        <iframe class="wnd-iframe" id="frm_${id}" loading="eager" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen referrerpolicy="no-referrer"></iframe>
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event,'se')"></div>
       <div class="wnd-edge wnd-edge-n" onmousedown="WM.startResize('${id}',event,'n')"></div>
@@ -1579,23 +1577,19 @@ const WM={
       // Do NOT inject into the cross-origin music frame — injection trips CF/CDN bot checks.
       if(app.url==='__music__'){/* clean, no injection */}
     });
-    const _lagDelay=SETTINGS.get('lagMode')?900:30;
-
     // Determine whether the target is cross-origin relative to this page.
     const _isCrossOrigin=(u)=>{
       try{return new URL(u,location.href).origin!==location.origin;}
       catch{return true;}
     };
 
-    const _useLag=SETTINGS.get('lagMode');
-
     // Builds the same-origin srcdoc shell used for cross-origin targets.
     const _makeShell=(u)=>{
       const _u=JSON.stringify(u);
-      return `<!doctype html><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#08090d;color:#6b6f85;font:12px system-ui,sans-serif;display:flex;align-items:center;justify-content:center}</style><script>try{setTimeout(function(){window.location.replace(${_u});},30);}catch(e){window.location.href=${_u};}<\/script><div>Loading\u2026</div>`;
+      return `<!doctype html><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#08090d;color:#6b6f85;font:12px system-ui,sans-serif;display:flex;align-items:center;justify-content:center}</style><script>try{setTimeout(function(){window.location.replace(${_u});},20);}catch(e){window.location.href=${_u};}<\/script><div>Loading\u2026</div>`;
     };
 
-    // Single, normal load (lag mode off).
+    // Single, normal load — no lag/burst nonsense.
     const _loadOnce=()=>{
       if(_isCrossOrigin(realUrl)){
         frm.srcdoc=_makeShell(realUrl);
@@ -1604,39 +1598,7 @@ const WM={
       }
     };
 
-    // Lag-mode burst loader: hammers the iframe location hundreds of times in
-    // rapid succession so startup actually feels slow/laggy, then settles on a
-    // final clean load so the game ends up properly loaded.
-    const _burstLoad=()=>{
-      const BURST_COUNT=200;     // how many rapid reloads
-      const BURST_INTERVAL=10;   // ms between each reload
-      const isX=_isCrossOrigin(realUrl);
-      let i=0;
-      const tick=()=>{
-        // Stop if the window was closed mid-burst.
-        if(!document.getElementById('frm_'+id)){return;}
-        if(i>=BURST_COUNT){_loadOnce();return;} // final settle load
-        try{
-          if(isX){
-            frm.removeAttribute('src');
-            frm.removeAttribute('srcdoc');
-            frm.src='about:blank';
-            setTimeout(()=>{if(document.getElementById('frm_'+id))frm.srcdoc=_makeShell(realUrl);},0);
-          }else{
-            frm.src='about:blank';
-            setTimeout(()=>{if(document.getElementById('frm_'+id))frm.src=realUrl;},0);
-          }
-        }catch(_){}
-        i++;
-        setTimeout(tick,BURST_INTERVAL);
-      };
-      tick();
-    };
-
-    setTimeout(()=>{
-      if(_useLag)_burstLoad();
-      else _loadOnce();
-    },_lagDelay);
+    setTimeout(_loadOnce,20);
 
     this.windows[id]={app,minimized:false,maximized:false,prevRect:null};
     this.focus(id);TB.addWindow(id,app);this.makeDraggable(id);
@@ -1656,8 +1618,49 @@ const WM={
       if(_hasMax)this._zCounter=Math.max(this._zCounter,100050);
       el.style.zIndex=++this._zCounter;
     }
+    this._throttleBackground(id);
     TB.setActive(id);
     if(typeof PLAYTIME!=='undefined')PLAYTIME.syncFocus(id);
+  },
+
+  // Frees GPU/compositing cost from background windows so the focused game
+  // gets the full paint budget. Tiny opacity keeps the iframe alive (game
+  // state, audio, timers all keep running) but the browser skips painting it.
+  _throttleBackground(focusedId){
+    if(typeof SETTINGS!=='undefined'&&SETTINGS.get('bgThrottle')===false){
+      Object.keys(this.windows).forEach(wid=>{
+        const f=document.getElementById('frm_'+wid);
+        if(f){f.style.opacity='';f.style.pointerEvents='';}
+      });
+      this._updateGlassLoad();
+      return;
+    }
+    Object.keys(this.windows).forEach(wid=>{
+      const f=document.getElementById('frm_'+wid);
+      if(!f)return;
+      const w=this.windows[wid];
+      if(wid===focusedId&&w&&!w.minimized){
+        f.style.opacity='';
+        f.style.pointerEvents='';
+        f.style.willChange='transform';
+      }else{
+        f.style.opacity='0.0001';
+        f.style.pointerEvents='none';
+        f.style.willChange='auto';
+      }
+    });
+    this._updateGlassLoad();
+  },
+
+  // Smart glass degrade — drops blur radius when many windows are open so
+  // backdrop-filter stops murdering the GPU under heavy load.
+  _updateGlassLoad(){
+    if(typeof SETTINGS!=='undefined'&&SETTINGS.get('smartGlass')===false){
+      document.documentElement.style.setProperty('--win-blur','30px');
+      return;
+    }
+    const active=Object.values(this.windows).filter(w=>w&&!w.minimized).length;
+    document.documentElement.style.setProperty('--win-blur',active>3?'16px':'30px');
   },
 
   closeWindow(id){
@@ -1680,6 +1683,8 @@ const WM={
     el.style.animation='wndMinimize 0.22s cubic-bezier(0.4,0,1,1) forwards';
     el.style.pointerEvents='none';
     setTimeout(()=>{el.classList.add('minimized');el.style.animation='';el.style.pointerEvents='';},220);
+    const f=document.getElementById('frm_'+id);
+    if(f){f.style.opacity='0.0001';f.style.pointerEvents='none';f.style.willChange='auto';}
     TB.setActive(null);TB.updateAutoHide();
     if(typeof PLAYTIME!=='undefined'&&PLAYTIME._active&&this.windows[id]&&PLAYTIME._active.url===this.windows[id].app.url)PLAYTIME.stop();
   },
@@ -1689,6 +1694,8 @@ const WM={
     el.classList.remove('minimized');
     el.style.animation='wndRestore 0.22s cubic-bezier(0.34,1.3,0.64,1) both';
     setTimeout(()=>{el.style.animation='';},220);
+    const f=document.getElementById('frm_'+id);
+    if(f){f.style.opacity='';f.style.pointerEvents='';}
     this.focus(id);TB.updateAutoHide();
   },
   toggleWindow(id){if(!this.windows[id])return;if(this.windows[id].minimized)this.restore(id);else this.minimize(id);},
@@ -2337,7 +2344,7 @@ const OS={
     document.getElementById('tog-confirm').checked=SETTINGS.get('launchConfirm');
     document.getElementById('tog-taskbarhide').checked=SETTINGS.get('hideTaskbarFullscreen');
     document.getElementById('tog-icons').checked=SETTINGS.get('showIcons');
-    const lagEl=document.getElementById('tog-lag');if(lagEl)lagEl.checked=SETTINGS.get('lagMode')||false;
+
 
     const sz=SETTINGS.get('iconSize');
     document.getElementById('iconSizeSlider').value=sz;
@@ -3828,13 +3835,17 @@ const OS={
             <div class="sp2-page" id="sp2pg_performance_${id}">
               <div class="sp2-hero">
                 <div class="sp2-hero-icon" style="background:rgba(248,113,113,0.12);color:#f87171"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg></div>
-                <div><div class="sp2-hero-title">Performance</div><div class="sp2-hero-sub">Optimize for games and heavy apps</div></div>
+                <div><div class="sp2-hero-title">Performance</div><div class="sp2-hero-sub">How NovOS keeps games smooth in one tab</div></div>
               </div>
               <div class="sp2-card">
-                <div class="sp2-card-header">Game Mode</div>
+                <div class="sp2-card-header">Auto Optimizations</div>
                 <div class="sp2-row">
-                  <div><div class="sp2-row-label">Lag Mode for Slow Apps</div><div class="sp2-row-sub">Adds a delay before loading links — helps some games initialize</div></div>
-                  <label class="toggle"><input type="checkbox" id="sp2tog-lag_${id}" ${SETTINGS.get('lagMode')?'checked':''} onchange="SETTINGS.set('lagMode',this.checked)"><span class="tog-slider"></span></label>
+                  <div><div class="sp2-row-label">Background Window Throttling</div><div class="sp2-row-sub">Unfocused windows stop painting to free GPU for the active game</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-bgthrottle_${id}" ${SETTINGS.get('bgThrottle')!==false?'checked':''} onchange="SETTINGS.set('bgThrottle',this.checked)"><span class="tog-slider"></span></label>
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Smart Glass Degrade</div><div class="sp2-row-sub">Reduces blur cost automatically when many windows are open</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-smartglass_${id}" ${SETTINGS.get('smartGlass')!==false?'checked':''} onchange="SETTINGS.set('smartGlass',this.checked)"><span class="tog-slider"></span></label>
                 </div>
               </div>
             </div>
@@ -5101,7 +5112,9 @@ const WIDGETS={
         <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--os-text)"><span style="color:var(--os-muted)">Windows</span><span id="${w.id}_win" style="font-family:var(--mono);color:var(--os-text)">0</span></div>
       </div>`;
       let frames=0,last=performance.now(),fps=0;
-      const loop=()=>{if(!document.getElementById(w.id))return;frames++;const now=performance.now();
+      const loop=()=>{if(!document.getElementById(w.id))return;
+        if(document.hidden){setTimeout(()=>requestAnimationFrame(loop),1000);return;}
+        frames++;const now=performance.now();
         if(now-last>=1000){fps=frames;frames=0;last=now;
           const f=document.getElementById(w.id+'_fps');if(f)f.textContent=fps;
           const m=document.getElementById(w.id+'_mem');if(m)m.textContent=(navigator.deviceMemory?navigator.deviceMemory+' GB':'n/a');
@@ -5861,22 +5874,13 @@ const TBP={
     const ph=document.getElementById('tbpvPlaceholder');
     // Remove old iframe
     const old=canvas.querySelector('iframe');if(old)old.remove();
-    const frm=document.getElementById('frm_'+wid);
-    if(frm&&frm.src&&frm.src!=='about:blank'){
-      ph.style.display='none';
-      const clone=document.createElement('iframe');
-      clone.src=frm.src;
-      clone.sandbox='allow-scripts allow-same-origin allow-forms';
-      clone.style.cssText='position:absolute;inset:0;width:400%;height:400%;transform:scale(0.25);transform-origin:top left;border:none;pointer-events:none;opacity:0;transition:opacity 0.3s';
-      canvas.appendChild(clone);
-      clone.addEventListener('load',()=>{clone.style.opacity='1';});
-      // Fallback placeholder after 2s if iframe can't load
-      setTimeout(()=>{if(clone.style.opacity==='0'){clone.remove();ph.style.display='';}},2000);
-    } else {
-      ph.style.display='';
-      const sysIcons={'__browser__':'🌐','__explorer__':'📁','__settings__':'⚙️','__library__':'📚','__folder__':'📁','__photo__':'🖼','__video__':'🎬','__audio__':'🎵','__html__':'🌐','__tm__':'📊'};
-      ph.textContent=sysIcons[w.app.url]||(isEm?w.app.icon:'🖥');
-    }
+    // Performance: never spin up a second live iframe just for a hover preview.
+    // Show the app's icon/glyph instead — zero extra CPU/GPU cost.
+    ph.style.display='';
+    const sysIcons={'__browser__':'🌐','__explorer__':'📁','__settings__':'⚙️','__library__':'📚','__folder__':'📁','__photo__':'🖼','__video__':'🎬','__audio__':'🎵','__html__':'🌐','__tm__':'📊'};
+    if(sysIcons[w.app.url]){ph.textContent=sysIcons[w.app.url];}
+    else if(isEm){ph.textContent=w.app.icon;}
+    else{ph.innerHTML=`<img src="${w.app.icon||`https://www.google.com/s2/favicons?sz=128&domain=${w.app.url}`}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;opacity:0.8" onerror="this.outerHTML='🖥'" alt="">`;}
     // Buttons
     document.getElementById('tbpvFocus').onclick=()=>{this.hide();if(w.minimized)WM.restore(wid);else WM.focus(wid);};
     document.getElementById('tbpvMin').onclick=()=>{this.hide();w.minimized?WM.restore(wid):WM.minimize(wid);};
