@@ -56,11 +56,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 #wallpaper.wp-custom{background-size:cover;background-position:center;background-repeat:no-repeat}
 #desktop::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px}
 body.has-maximized #desktop::after{display:none}
-body.has-maximized #desktopIcons{pointer-events:none;visibility:hidden;display:none}
-body.has-maximized #wallpaper{pointer-events:none;display:none}
-body.has-maximized #widgetLayer{display:none}
-body.has-maximized #topBar{display:none!important}
-body.has-maximized .os-window:not(.maximized):not(.focused){visibility:hidden;pointer-events:none}
+body.has-maximized #desktopIcons{pointer-events:none;visibility:hidden}
+body.has-maximized #wallpaper{pointer-events:none}
 body.has-maximized #windowLayer>.os-window:not(.maximized){pointer-events:all;z-index:100050!important}
 
 /* DESKTOP ICONS */
@@ -212,7 +209,7 @@ body.taskbar-autohide #desktop{height:100vh}
 body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms!important}
 .os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(var(--win-blur));overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both;will-change:transform;transform:translateZ(0);contain:layout style paint}
 .os-window.minimized{display:none}
-.os-window.maximized{top:0!important;left:0!important;width:100%!important;height:100%!important;border-radius:0;border-color:transparent;backdrop-filter:none!important;box-shadow:none!important;will-change:transform;transform:translate3d(0,0,0);contain:layout style;isolation:isolate}
+.os-window.maximized{top:0!important;left:0!important;width:100%!important;height:100%!important;border-radius:0;border-color:transparent;backdrop-filter:none!important;box-shadow:none!important}
 .os-window.focused{box-shadow:0 40px 100px rgba(0,0,0,0.75),0 0 0 1px rgba(var(--os-accent-rgb),0.28)}
 .os-window.focused .wnd-titlebar{background:linear-gradient(180deg,rgba(var(--os-accent-rgb),0.16),rgba(255,255,255,0.03));border-bottom-color:rgba(var(--os-accent-rgb),0.22)}
 .os-window:not(.focused){filter:brightness(0.88)}
@@ -230,7 +227,7 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .os-window.maximized .wnd-peek-zone{display:block}
 .os-window.maximized .wnd-body{position:absolute;inset:0}
 .wnd-body{flex:1;overflow:hidden;position:relative}
-.wnd-iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#000;will-change:transform;transform:translate3d(0,0,0);contain:strict;isolation:isolate}
+.wnd-iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#000;will-change:transform;transform:translateZ(0)}
 .wnd-loader{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(8,9,14,0.97);transition:opacity 0.3s;pointer-events:none}
 .wnd-loader.hidden{opacity:0;pointer-events:none}
 .loader-ring{width:36px;height:36px;border:2px solid rgba(var(--os-accent-rgb),0.15);border-top-color:var(--os-accent);border-radius:50%;animation:spin 0.9s linear infinite}
@@ -1536,7 +1533,7 @@ const WM={
     const y=Math.max(10,(window.innerHeight-48-dh)*0.3+(Math.random()*20-10));
     const _hasMax=document.body.classList.contains('has-maximized');
     this._zCounter=_hasMax?Math.max(this._zCounter,100050):this._zCounter;
-    el.style.cssText=`width:${dw}px;height:${dh}px;top:${y}px;left:${x}px;z-index:${++this._zCounter};will-change:transform;transform:translate3d(0,0,0);isolation:isolate`;
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${y}px;left:${x}px;z-index:${++this._zCounter}`;
     const _sysTitleIcon=WM._sysTitlebarIcon(app.url);
     const _iconHtml=_sysTitleIcon
       ?_sysTitleIcon
@@ -1576,20 +1573,32 @@ const WM={
     if(app._qpUrl)realUrl=app._qpUrl;
     const frm=document.getElementById('frm_'+id);
     frm.addEventListener('load',()=>{
-      // Apply GPU compositing layer now that content is loaded —
-      // doing this before load would throttle the initial network fetch.
-      frm.style.willChange='transform';
-      frm.style.transform='translate3d(0,0,0)';
-      frm.style.contain='strict';
-      frm.setAttribute('importance','high');
       if(WM._onIframeLoad)WM._onIframeLoad(frm);
       // Do NOT inject into the cross-origin music frame — injection trips CF/CDN bot checks.
       if(app.url==='__music__'){/* clean, no injection */}
     });
-    // Load directly — no shell, no redirect hop, no loading screen.
-    // The iframe gets the real URL immediately so the browser starts
-    // fetching the game the instant the window opens.
-    frm.src=realUrl;
+    // Determine whether the target is cross-origin relative to this page.
+    const _isCrossOrigin=(u)=>{
+      try{return new URL(u,location.href).origin!==location.origin;}
+      catch{return true;}
+    };
+
+    // Builds the same-origin srcdoc shell used for cross-origin targets.
+    const _makeShell=(u)=>{
+      const _u=JSON.stringify(u);
+      return `<!doctype html><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#08090d;color:#6b6f85;font:12px system-ui,sans-serif;display:flex;align-items:center;justify-content:center}</style><script>try{setTimeout(function(){window.location.replace(${_u});},20);}catch(e){window.location.href=${_u};}<\/script><div>Loading\u2026</div>`;
+    };
+
+    // Single, normal load — no lag/burst nonsense.
+    const _loadOnce=()=>{
+      if(_isCrossOrigin(realUrl)){
+        frm.srcdoc=_makeShell(realUrl);
+      }else{
+        frm.src=realUrl;
+      }
+    };
+
+    setTimeout(_loadOnce,20);
 
     this.windows[id]={app,minimized:false,maximized:false,prevRect:null};
     this.focus(id);TB.addWindow(id,app);this.makeDraggable(id);
@@ -1621,12 +1630,7 @@ const WM={
     if(typeof SETTINGS!=='undefined'&&SETTINGS.get('bgThrottle')===false){
       Object.keys(this.windows).forEach(wid=>{
         const f=document.getElementById('frm_'+wid);
-        if(f){
-          f.style.opacity='';
-          f.style.pointerEvents='';
-          f.removeAttribute('importance');
-          f.setAttribute('importance','auto');
-        }
+        if(f){f.style.opacity='';f.style.pointerEvents='';}
       });
       this._updateGlassLoad();
       return;
@@ -1636,32 +1640,13 @@ const WM={
       if(!f)return;
       const w=this.windows[wid];
       if(wid===focusedId&&w&&!w.minimized){
-        // Focused window — maximum priority, fully rendered
         f.style.opacity='';
         f.style.pointerEvents='';
         f.style.willChange='transform';
-        f.style.transform='translate3d(0,0,0)';
-        f.style.contain='strict';
-        f.setAttribute('importance','high');
-        f.setAttribute('loading','eager');
-        // Force a compositing layer promotion on the parent window
-        const winEl=document.getElementById(wid);
-        if(winEl){
-          winEl.style.willChange='transform';
-          winEl.style.transform='translate3d(0,0,0)';
-        }
       }else{
-        // Background window — drop from render pipeline entirely
         f.style.opacity='0.0001';
         f.style.pointerEvents='none';
         f.style.willChange='auto';
-        f.style.transform='none';
-        f.style.contain='strict';
-        f.setAttribute('importance','low');
-        const winEl=document.getElementById(wid);
-        if(winEl){
-          winEl.style.willChange='auto';
-        }
       }
     });
     this._updateGlassLoad();
@@ -1897,26 +1882,6 @@ const WM={
   },
 
   hasMaximizedWindow(){return Object.values(this.windows).some(w=>w.maximized&&!w.minimized);}
-  ,
-  _applyMaximizedSleep(isMaximized){
-    // When any window is maximized, freeze all background iframes at the
-    // browser engine level — content-visibility:hidden removes them from
-    // the paint and layout trees entirely, freeing the full tab budget
-    // for the active game frame.
-    Object.keys(this.windows).forEach(wid=>{
-      const f=document.getElementById('frm_'+wid);
-      const w=this.windows[wid];
-      if(!f||!w)return;
-      const isActive=w.maximized&&!w.minimized;
-      if(isMaximized&&!isActive){
-        f.style.contentVisibility='hidden';
-        f.setAttribute('importance','low');
-      }else{
-        f.style.contentVisibility='';
-        if(isActive)f.setAttribute('importance','high');
-      }
-    });
-  }
 };
 
 /* ═══════════════════════════════════════════════
@@ -1952,7 +1917,6 @@ const TB={
     const taskbar=document.getElementById('taskbar');
     const topBar=document.getElementById('topBar');
     document.body.classList.toggle('has-maximized',hasMax);
-    WM._applyMaximizedSleep(hasMax);
     const topPeek=document.getElementById('topBarPeekZone');
     if(setting&&hasMax){
       document.body.classList.add('taskbar-autohide');
