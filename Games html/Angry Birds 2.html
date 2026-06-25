@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angry Birds 2</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <iframe src="about:blank" id="gameFrame" allow="fullscreen; autoplay"></iframe>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const frame = document.getElementById('gameFrame');
+            
+            try {
+                const response = await fetch("https://fastly.jsdelivr.net/gh/NaoTomori1/AngryBirds2@main/index.html"); 
+                const htmlText = await response.text();
+                
+                const blob = new Blob([htmlText], { type: 'text/html' });
+                const blobUrl = URL.createObjectURL(blob);
+                
+                frame.src = blobUrl;
+                
+                frame.onload = () => {
+                    URL.revokeObjectURL(blobUrl);
+                };
+            } catch (error) {
+                console.error("Failed to load game frame:", error);
+            }
+        });
+    </script>
+</body>
+</html>
