@@ -207,7 +207,7 @@ body.taskbar-autohide #desktop{height:100vh}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes npEq{0%,100%{height:5px}50%{height:16px}}
 body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms!important}
-.os-window{position:absolute;pointer-events:all;background:transparent;border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(var(--win-blur));overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both;will-change:transform;transform:translateZ(0);contain:layout style paint}
+.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(var(--win-blur));overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both;will-change:transform;transform:translateZ(0);contain:layout style paint}
 .os-window.minimized{display:none}
 .os-window.maximized{top:0!important;left:0!important;width:100%!important;height:100%!important;border-radius:0;border-color:transparent;backdrop-filter:none!important;box-shadow:none!important}
 .os-window.focused{box-shadow:0 40px 100px rgba(0,0,0,0.75),0 0 0 1px rgba(var(--os-accent-rgb),0.28)}
@@ -221,10 +221,29 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .wnd-ctrl-btn{width:32px;height:var(--titlebar-h);background:transparent;border:none;color:var(--os-muted);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.12s,color 0.12s;flex-shrink:0}
 .wnd-ctrl-btn:hover{background:var(--os-surface2);color:var(--os-text)}
 .wnd-ctrl-btn.wnd-close:hover{background:var(--os-red);color:#fff}
-.os-window.maximized .wnd-titlebar{position:absolute;top:0;left:0;right:0;z-index:20;opacity:0;pointer-events:none;transform:translateY(-100%);transition:opacity 0.18s,transform 0.18s;border-bottom-color:var(--os-border);background:rgba(10,11,18,0.96);backdrop-filter:blur(20px)}
-.os-window.maximized .wnd-titlebar.tb-peek{opacity:1;pointer-events:all;transform:translateY(0)}
-.wnd-peek-zone{display:none;position:absolute;top:0;left:0;right:0;height:18px;z-index:21;cursor:default}
+.os-window.maximized .wnd-titlebar{position:absolute;top:0;left:0;right:0;z-index:200010;opacity:0;pointer-events:none;transform:translateY(-100%);transition:opacity 0.18s,transform 0.18s;border-bottom-color:var(--os-border);background:rgba(10,11,18,0.96);backdrop-filter:blur(20px)}
+.os-window.maximized .wnd-titlebar.tb-peek{opacity:1;pointer-events:auto;transform:translateY(0)}
+.os-window.maximized .wnd-titlebar.tb-peek .wnd-ctrl-btn{pointer-events:auto}
+.os-window.maximized .wnd-body{position:relative}
+.os-window.maximized .wnd-body::after{
+  content:'';
+  position:absolute;left:0;right:0;top:0;height:34px;
+  /* Shim that holds the hover while the cursor travels from the bar to the
+     buttons, and blocks the iframe from grabbing the mouse during peek. */
+  pointer-events:none;
+  z-index:200009;
+  background:transparent;
+}
+.os-window.maximized .wnd-titlebar.tb-peek ~ .wnd-body::after{pointer-events:auto}
+.os-window.maximized .wnd-body .wnd-iframe{pointer-events:auto}
+.os-window.maximized .wnd-titlebar.tb-peek ~ .wnd-body .wnd-iframe{pointer-events:none}
+
+.wnd-peek-zone{display:none;position:absolute;top:0;left:0;right:0;height:44px;z-index:200020;cursor:default}
 .os-window.maximized .wnd-peek-zone{display:block}
+/* Once the titlebar is peeked in, the peek zone must stop intercepting clicks
+   so they reach the control buttons sitting beneath it. The titlebar itself
+   re-triggers peek via its own onmouseenter, so hover state is preserved. */
+.os-window.maximized .wnd-titlebar.tb-peek ~ .wnd-peek-zone{pointer-events:none}
 .os-window.maximized .wnd-body{position:absolute;inset:0}
 .wnd-body{flex:1;overflow:hidden;position:relative}
 .wnd-iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:transparent;will-change:transform;transform:translateZ(0)}
@@ -277,8 +296,6 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 #ctxMenu.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all}
 .ctx-item{display:flex;align-items:center;gap:9px;padding:7px 11px;border-radius:6px;cursor:pointer;font-size:12.5px;color:var(--os-text);transition:background 0.1s,transform 0.1s}
 .ctx-item:hover{background:rgba(var(--os-accent-rgb),0.12);transform:translateX(2px)}
-.ctx-item{display:flex;align-items:center;gap:9px;padding:7px 11px;border-radius:6px;cursor:pointer;font-size:12.5px;color:var(--os-text);transition:background 0.1s}
-.ctx-item:hover{background:rgba(var(--os-accent-rgb),0.12)}
 .ctx-item.danger:hover{background:rgba(248,113,113,0.12);color:var(--os-red)}
 .ctx-sep{height:1px;background:var(--os-border);margin:4px 2px}
 .ctx-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim);padding:7px 11px 3px}
@@ -1215,8 +1232,8 @@ const DEFAULT_SHORTCUTS = {
     {name:"0k",url:"https://cdn.jsdelivr.net/gh/abndnce/b0k@main/jsdelivr/index.svg",icon:"https://avatars.githubusercontent.com/u/6191378?v=4",isDefault:true},
   ],
   games:[
-    {name:"Angry Birds Epic",url:"https://abwebports.vercel.app/Epic",icon:"https://i.imgur.com/ql7Gz9e.jpeg",isDefault:true},
-    {name:"Bad Piggies",url:"https://riaannn.github.io/Bad-Piggies/",icon:"https://preview.redd.it/which-of-these-app-icons-is-the-best-in-your-opinion-for-v0-eooqvsjlfb971.png?width=185&format=png&auto=webp&s=e8267058bec260d939d0bdc052bb1c9bc4516787",isDefault:true},
+    {name:"Angry Birds Epic",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Angry%20Birds%20Epic.html",url:"__rawhtml__",icon:"https://i.imgur.com/ql7Gz9e.jpeg",isDefault:true},
+    {name:"Bad Piggies",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Bad%20Piggies.html", url: "__rawhtml__",  icon:"https://preview.redd.it/which-of-these-app-icons-is-the-best-in-your-opinion-for-v0-eooqvsjlfb971.png?width=185&format=png&auto=webp&s=e8267058bec260d939d0bdc052bb1c9bc4516787",isDefault:true},
     {name:"Baldi's Basics",url:"https://riaannn.github.io/Baldis-Basics/",icon:"https://play-lh.googleusercontent.com/EPV1TB4So1lB0DGrdCVExDpNU8ML67nd8OqBeoOIM-s6sDicxmDdPvCXD6n7LKevFl0",isDefault:true},
     {name:"Celeste",url:"https://riaannn.github.io/CelesteGN/",icon:"https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA11235_00/1/i_1542763946643aa6b17c6232c30d581802f0a6fe00cc0ddd0493987857d9db0a/i/icon0.png",isDefault:true},
     {name:"Granny",url:"https://riaannn.github.io/Granny/",icon:"https://img.utdstc.com/icon/307/95f/30795f2ffbff795738108567ba5ae03cef007e0eaf3c73a5b7a7733b7518dc68:200",isDefault:true},
@@ -1266,6 +1283,55 @@ const DEFAULT_SHORTCUTS = {
 };
 
 const PVZ_URL='https://wszqkzqk.github.io/pvz-portable-wasm/pvz-portable.html';
+
+/* ═══════════════════════════════════════════════
+   GAME SOURCE LIBRARY — full HTML for each downloadable
+   game, embedded directly in the app (no network fetch,
+   no external link is ever loaded). Key = stable game id.
+   Paste each game's complete single-file HTML as the value.
+═══════════════════════════════════════════════ */
+const GAME_SOURCES={
+  // example_game_id: `<!doctype html>...</html>`,
+};
+
+/* ═══════════════════════════════════════════════
+   RAW HTML LAUNCHER — fetches game HTML from GitHub Pages
+   and opens it directly in the HTML Viewer, no link navigation.
+═══════════════════════════════════════════════ */
+const RAW_HTML={
+  async launch(app){
+    if(!app.rawUrl){OS.notify('Error','No raw URL defined for '+app.name);return;}
+    OS.notify('Loading',app.name+' is loading…');
+    try{
+      const res=await fetch(app.rawUrl,{cache:'no-store'});
+      if(!res.ok)throw new Error('HTTP '+res.status);
+      const html=await res.text();
+      const blob=new Blob([html],{type:'text/html'});
+      const fakeFile={
+        id:'rawhtml_'+Date.now(),
+        name:app.name,
+        size:blob.size,
+        type:'text/html',
+        dataUrl:await RAW_HTML._toDataUrl(blob),
+        dateAdded:new Date().toISOString(),
+        _appIcon:app.icon||'',
+        _isGame:true
+      };
+      VIEWERS.openHTML(fakeFile);
+    }catch(err){
+      OS.notify('Failed to load',app.name+': '+(err&&err.message||'Network error'));
+    }
+  },
+
+  _toDataUrl(blob){
+    return new Promise((resolve,reject)=>{
+      const r=new FileReader();
+      r.onload=()=>resolve(r.result);
+      r.onerror=()=>reject(new Error('Read failed'));
+      r.readAsDataURL(blob);
+    });
+  }
+};
 
 /* ═══════════════════════════════════════════════
    SETTINGS STORE
@@ -1499,6 +1565,82 @@ const FE={
 };
 
 /* ═══════════════════════════════════════════════
+   DOWNLOADS — gates games behind a "Download" step.
+   No network requests: this just copies the embedded
+   HTML string from GAME_SOURCES into the FE file store.
+═══════════════════════════════════════════════ */
+const DOWNLOADS={
+  load(){try{return JSON.parse(localStorage.getItem('novos_downloads')||'{}');}catch{return{};}},
+  save(map){localStorage.setItem('novos_downloads',JSON.stringify(map));},
+
+  // key = app.gameId (NOT app.url)
+  get(gameId){
+    const map=this.load();
+    const fid=map[gameId];
+    if(!fid)return null;
+    const files=FE.load();
+    const file=files.find(f=>f.id===fid);
+    return file||null;
+  },
+
+  isDownloaded(gameId){return!!this.get(gameId);},
+
+  // Copies the embedded source for `gameId` into the FE store as a real file.
+  // Synchronous and offline — no fetch, no link is ever touched.
+  download(app){
+    if(!app||!app.gameId)throw new Error('This app has no embedded source to download');
+    const html=GAME_SOURCES[app.gameId];
+    if(typeof html!=='string'||!html.length)throw new Error('No source registered for this game yet');
+
+    const blob=new Blob([html],{type:'text/html'});
+    const fileName=(app.name||'game').replace(/[^a-z0-9 _-]/gi,'')+'.html';
+
+    // Build a data URL synchronously via FileReader (kept async-friendly but
+    // resolves immediately since this is all in-memory, no I/O wait).
+    return new Promise((resolve,reject)=>{
+      const r=new FileReader();
+      r.onload=()=>{
+        const entry={
+          id:genId(),
+          name:fileName,
+          size:blob.size,
+          type:'text/html',
+          dataUrl:r.result,
+          dateAdded:new Date().toISOString()
+        };
+        const files=FE.load();
+        files.push(entry);
+        FE.save(files);
+
+        const map=this.load();
+        map[app.gameId]=entry.id;
+        this.save(map);
+
+        if(typeof FEW!=='undefined'){
+          Object.keys(FEW._state||{}).forEach(wid=>FEW.render(wid));
+        }
+        resolve(entry);
+      };
+      r.onerror=()=>reject(new Error('Failed to write file'));
+      r.readAsDataURL(blob);
+    });
+  },
+
+  forget(gameId,alsoDeleteFile){
+    const map=this.load();
+    const fid=map[gameId];
+    delete map[gameId];
+    this.save(map);
+    if(alsoDeleteFile&&fid){
+      const files=FE.load().filter(f=>f.id!==fid);
+      FE.save(files);
+      if(typeof FEW!=='undefined'){
+        Object.keys(FEW._state||{}).forEach(wid=>FEW.render(wid));
+      }
+    }
+  }
+};
+/* ═══════════════════════════════════════════════
    WINDOW MANAGER
 ═══════════════════════════════════════════════ */
 const WM={
@@ -1524,6 +1666,14 @@ const WM={
   },
 
   open(app){
+    // Raw-HTML games must never load their placeholder url as a real iframe src.
+    // Any path that reaches WM.open with __rawhtml__ (e.g. session restore) is
+    // rerouted through OS.launch, which resolves the real rawUrl and opens the
+    // HTML Viewer instead. Without this, the iframe loads the literal string
+    // "__rawhtml__" → the black "page not found" screen.
+    if(app&&(app.url==='__rawhtml__'||app.rawUrl)){
+      if(typeof OS!=='undefined'&&OS.launch){OS.launch(app);return;}
+    }
     const id=this.newId();
     const el=document.createElement('div');
     el.className='os-window focused';el.id=id;
@@ -1571,6 +1721,8 @@ const WM={
     if(OS._systemRealUrl)realUrl=OS._systemRealUrl(app.url);
     // Quick-prompt launches carry a pre-filled URL for the AI app.
     if(app._qpUrl)realUrl=app._qpUrl;
+    // Downloaded games load from their locally-stored data URL instead of the live URL.
+    if(app._localDataUrl)realUrl=app._localDataUrl;
     const frm=document.getElementById('frm_'+id);
     frm.addEventListener('load',()=>{
       if(WM._onIframeLoad)WM._onIframeLoad(frm);
@@ -1579,6 +1731,7 @@ const WM={
     });
     // Determine whether the target is cross-origin relative to this page.
     const _isCrossOrigin=(u)=>{
+      if(u&&u.startsWith('data:'))return false;
       try{return new URL(u,location.href).origin!==location.origin;}
       catch{return true;}
     };
@@ -1738,7 +1891,15 @@ const WM={
 
   peekTitlebar(id,show){
     const tb=document.getElementById('tb_'+id);if(!tb)return;
-    if(this.windows[id]&&this.windows[id].maximized)tb.classList.toggle('tb-peek',show);
+    if(this.windows[id]&&this.windows[id].maximized){
+      tb.classList.toggle('tb-peek',show);
+      // The peek zone overlays the top 44px at a higher z-index than the
+      // peeked titlebar, so while peeked it must stop swallowing clicks —
+      // otherwise the control buttons beneath it are unclickable.
+      const el=document.getElementById(id);
+      const pz=el&&el.querySelector('.wnd-peek-zone');
+      if(pz)pz.style.pointerEvents=show?'none':'';
+    }
   },
 
   // FIX: refresh now properly shows loader, waits for real load, then hides
@@ -1761,7 +1922,7 @@ const WM={
   },
 
   startDrag(id,e){
-    if(e.target.tagName==='BUTTON'||e.target.closest('.wnd-ctrl-btns'))return;
+    if(e.target.closest('.wnd-ctrl-btn')||e.target.closest('.wnd-ctrl-btns'))return;
     if(this.windows[id]&&this.windows[id].maximized)return;
     this.focus(id);
     const el=document.getElementById(id);
@@ -1906,9 +2067,20 @@ const TB={
   },
   savePinned(){localStorage.setItem('novos_pinned',JSON.stringify(this.pinned));},
   pin(app){
-    if(!this.pinned.find(p=>p.url===app.url)){
-      this.pinned.push({name:app.name,url:app.url,icon:app.icon});
-      this.savePinned();this.render();OS.notify('Pinned',app.name+' pinned to taskbar');
+    // A raw-HTML game opened through the HTML Viewer carries url:'__html__'.
+    // Pinning that transient identity can never relaunch (its content is a
+    // one-shot blob), so resolve the real __rawhtml__ shortcut by name first.
+    let pinApp=app;
+    if(app.url==='__html__'){
+      const all=[...(OS.shortcuts&&OS.shortcuts.games||[]),...(OS.shortcuts&&OS.shortcuts.web||[]),...(OS.shortcuts&&OS.shortcuts.apps||[])];
+      const real=all.find(a=>a.url==='__rawhtml__'&&a.name===app.name)
+               ||all.find(a=>a.url==='__rawhtml__'&&a.name&&app.name&&a.name.trim()===app.name.trim());
+      if(real){pinApp={name:real.name,url:real.url,icon:real.icon,rawUrl:real.rawUrl};}
+      else{OS.notify('Cannot pin','This view can\'t be pinned — pin it from the App Library instead.');return;}
+    }
+    if(!this.pinned.find(p=>p.url===pinApp.url&&p.name===pinApp.name)){
+      this.pinned.push({name:pinApp.name,url:pinApp.url,icon:pinApp.icon,rawUrl:pinApp.rawUrl});
+      this.savePinned();this.render();OS.notify('Pinned',pinApp.name+' pinned to taskbar');
     }
   },
   unpin(url){this.pinned=this.pinned.filter(p=>p.url!==url);this.savePinned();this.render();},
@@ -2003,7 +2175,8 @@ const TB={
         svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
           <polyline points="16 18 22 12 16 6"/>
           <polyline points="8 6 2 12 8 18"/>
-        </svg>`
+        </svg>`,
+        _skipIfIcon:true
       },
       '__tm__':{
         color:'#4ade80',
@@ -2034,8 +2207,10 @@ const TB={
     };
 
     if(systemIcons[app.url]){
-      const {color,svg}=systemIcons[app.url];
-      return `<div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:${color};filter:drop-shadow(0 0 6px ${color}44)">${svg}</div>`;
+      const si=systemIcons[app.url];
+      if(!si._skipIfIcon||!app.icon){
+        return `<div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:${si.color};filter:drop-shadow(0 0 6px ${si.color}44)">${si.svg}</div>`;
+      }
     }
 
     // For image icons — use a styled rounded square
@@ -2045,9 +2220,12 @@ const TB={
     }
     return `<div style="width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>`;
   },
-  // System URLs that always live on the right side of the taskbar
+  // System URLs that always live on the right side of the taskbar.
+  // Viewer windows (html/photo/video/audio) are intentionally excluded so that
+  // raw-HTML games opened through the HTML Viewer stay on the user (left) side,
+  // matching their pinned/desktop shortcut.
   _isSystemUrl(url){
-    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__photo__','__video__','__audio__','__html__','__music__','__ai__'].includes(url);
+    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__music__','__ai__'].includes(url);
   },
 
   _makeBtn(app,wid,isPinned){
@@ -2057,11 +2235,27 @@ const TB={
     btn.innerHTML=this._tbIconHtml(app);
     btn.title=app.name;
     btn.onclick=()=>{
-      const curWid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
+      // A raw-HTML game's running window carries url:'__html__' (stamped by the
+      // HTML Viewer), not the pinned entry's '__rawhtml__'. Match by url first,
+      // then fall back to name so we toggle the existing window instead of
+      // launching a duplicate.
+      let curWid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
+      if(!curWid&&(app.url==='__rawhtml__'||app.rawUrl)){
+        curWid=Object.keys(WM.windows).find(id=>{
+          const w=WM.windows[id];
+          return w&&w.app&&w.app.url==='__html__'&&w.app.name===app.name;
+        });
+      }
       if(curWid)WM.toggleWindow(curWid);else OS.launchFromTaskbar(app);
     };
     btn.addEventListener('mouseenter',()=>{
-      const curWid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
+      let curWid=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
+      if(!curWid&&(app.url==='__rawhtml__'||app.rawUrl)){
+        curWid=Object.keys(WM.windows).find(id=>{
+          const w=WM.windows[id];
+          return w&&w.app&&w.app.url==='__html__'&&w.app.name===app.name;
+        });
+      }
       if(curWid&&WM.windows[curWid]&&WM.windows[curWid].maximized&&!WM.windows[curWid].minimized){
         let x=btn.querySelector('.tb-exit-fs');
         if(!x){x=document.createElement('div');x.className='tb-exit-fs';x.title='Exit Fullscreen';x.textContent='⊠';x.onclick=(e)=>{e.stopPropagation();WM.restoreMax(curWid);};btn.appendChild(x);}
@@ -2094,7 +2288,17 @@ const TB={
 
     // Pinned apps — split by type
     this.pinned.forEach(app=>{
-      const runId=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
+      // A raw-HTML game's running window carries url:'__html__' (stamped by the
+      // HTML Viewer), not the pinned entry's '__rawhtml__'. Match by url first,
+      // then fall back to name so the pinned button binds to the existing
+      // window instead of being treated as not-running.
+      let runId=Object.keys(WM.windows).find(id=>WM.windows[id].app.url===app.url);
+      if(!runId&&(app.url==='__rawhtml__'||app.rawUrl)){
+        runId=Object.keys(WM.windows).find(id=>{
+          const w=WM.windows[id];
+          return w&&w.app&&w.app.url==='__html__'&&w.app.name===app.name;
+        });
+      }
       const btn=this._makeBtn(app,runId||null,true);
       if(this._isSystemUrl(app.url)){
         sysRight.appendChild(btn);
@@ -2105,7 +2309,14 @@ const TB={
 
     // Running but not pinned — user apps go left, system go right
     Object.entries(this.running).forEach(([id,{app,btnId}])=>{
-      if(!this.pinned.find(p=>p.url===app.url)){
+      // Skip if a pinned entry already covers this running window. A raw-HTML
+      // viewer window (url:'__html__') is covered by a pin with url:'__rawhtml__'
+      // and the same name, so it doesn't spawn a second running button.
+      const coveredByPin=this.pinned.some(p=>
+        p.url===app.url ||
+        (app.url==='__html__'&&p.url==='__rawhtml__'&&p.name===app.name)
+      );
+      if(!coveredByPin){
         let btn=document.getElementById(btnId);
         if(!btn){
           btn=this._makeBtn(app,id,false);
@@ -2711,7 +2922,7 @@ const OS={
         </div>
         <div class="folder-grid" id="fgrid_${id}" style="flex:1;overflow-y:auto"></div>
       </div>
-      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event,'se')"></div>`;
     document.getElementById('windowLayer').appendChild(el);
     WM.windows[id]={app:{name:folderItem.name,url:'__folder__',icon:''},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,{name:folderItem.name,url:'__folder__',icon:''});WM.makeDraggable(id);
@@ -2791,10 +3002,40 @@ const OS={
     OS.notify('Added',app.name+' added to '+folder.name);
   },
 
-  /* ─── Launch flow ───────────────────────────────────────────── */
+/* ─── Launch flow ───────────────────────────────────────────── */
   launch(app){
-    if(SETTINGS.get('launchConfirm'))this.showConfirm(app);
-    else this._doLaunch(app);
+    // Raw HTML games — fetch from GitHub Pages and open in HTML Viewer
+    if(app.url==='__rawhtml__'||app.rawUrl){
+      // If rawUrl is missing (e.g. launched from desktop icon or pinned taskbar),
+      // look up the full app entry from shortcuts to get the rawUrl.
+      if(!app.rawUrl){
+        const all=[...(this.shortcuts&&this.shortcuts.games||[]),...(this.shortcuts&&this.shortcuts.web||[]),...(this.shortcuts&&this.shortcuts.apps||[])];
+        // Match by name first; if that misses, match by url+name loosely.
+        const full=all.find(a=>a.url==='__rawhtml__'&&a.name===app.name)
+                 ||all.find(a=>a.url==='__rawhtml__'&&a.rawUrl&&app.name&&a.name&&a.name.trim()===app.name.trim());
+        if(full&&full.rawUrl){RAW_HTML.launch(full);return;}
+        OS.notify('Error','No raw URL found for '+app.name+'. Re-add it from the App Library.');
+        return;
+      }
+      RAW_HTML.launch(app);return;
+    }
+    // System apps, folders, and PVZ's own legacy flow bypass the download gate.
+    if(app.url&&app.url.startsWith('__')){this._doLaunch(app);return;}
+    if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
+
+    if(!app.gameId){
+      // No embedded source registered for this shortcut at all.
+      this.notify('Not downloadable',app.name+' has no local source registered.');
+      return;
+    }
+    const file=DOWNLOADS.get(app.gameId);
+    if(!file){
+      this.notify('Download required',app.name+' needs to be downloaded first. Use the Download button in the App Library.');
+      return;
+    }
+    // Launch by opening the downloaded file in the HTML Viewer — same as
+    // double-clicking it in File Explorer. No iframe-to-URL involved.
+    VIEWERS.openHTML(file);
   },
   showConfirm(app){
     document.getElementById('confirmMsg').textContent='Open '+app.name+' in a window?';
@@ -2803,8 +3044,10 @@ const OS={
     document.getElementById('confirmDialog').classList.add('open');
   },
   closeConfirm(){document.getElementById('confirmDialog').classList.remove('open');},
-  _doLaunch(app){if(app.isPVZ){PVZ.tryLaunch(app.name);return;}WM.open(app);},
-
+  _doLaunch(app){
+    if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
+    WM.open(app);
+  },
   launchFromTaskbar(app){
     const sysMap={
       '__settings__':()=>this.openSettings(),
@@ -2816,6 +3059,19 @@ const OS={
       '__ai__':()=>this.openAI(),
     };
     if(sysMap[app.url]){sysMap[app.url]();return;}
+    // Raw HTML games never go straight to WM.open — route them through OS.launch,
+    // which resolves the rawUrl (looking it up by name if the pinned/taskbar copy
+    // dropped it). A stale pin may carry url:'__html__' from an old viewer window;
+    // recover its real __rawhtml__ shortcut by name so it relaunches correctly.
+    if(app.url==='__rawhtml__'||app.rawUrl){this.launch(app);return;}
+    if(app.url==='__html__'){
+      const all=[...(this.shortcuts&&this.shortcuts.games||[]),...(this.shortcuts&&this.shortcuts.web||[]),...(this.shortcuts&&this.shortcuts.apps||[])];
+      const real=all.find(a=>a.url==='__rawhtml__'&&a.name===app.name)
+               ||all.find(a=>a.url==='__rawhtml__'&&a.name&&app.name&&a.name.trim()===app.name.trim());
+      if(real){this.launch(real);return;}
+      OS.notify('Cannot open','Re-pin this game from the App Library.');
+      return;
+    }
     if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
     if(SETTINGS.get('launchConfirm'))this.showConfirm(app);
     else WM.open(app);
@@ -3148,10 +3404,13 @@ const OS={
         const iconHtml=isEmoji
           ?`<div class="stlib-row-icon" style="display:flex;align-items:center;justify-content:center;font-size:15px">${app.icon}</div>`
           :`<img class="stlib-row-icon" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(app.url||'')}'" alt="">`;
+        const dlBadge=(app.gameId&&!DOWNLOADS.isDownloaded(app.gameId))
+          ?'<div class="stlib-row-time" style="color:var(--os-dim)">↓</div>'
+          :'';
         html+=`<div class="stlib-row${isActive?' active':''}${isPlaying?' playing':''}" onclick="OS.stlibSelect('${wid}',${esc})" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})">
           ${iconHtml}
           <div class="stlib-row-name">${app.name}</div>
-          ${timeStr?`<div class="stlib-row-time">${timeStr}</div>`:''}
+          ${timeStr?`<div class="stlib-row-time">${timeStr}</div>`:dlBadge}
         </div>`;
       });
     });
@@ -3196,10 +3455,7 @@ const OS={
             <div class="stlib-hero-meta"><span>${totalTime!=='Never played'?totalTime+' played':'Not played yet'}</span>${lastPlayed!=='—'?`<span>· Last played ${lastPlayed}</span>`:''}</div>
           </div>
           <div class="stlib-hero-actions">
-            <button class="stlib-play-btn" onclick="OS.launch(${escApp})">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              ${app.isPVZ?'Play':'Launch'}
-            </button>
+            ${OS._libActionBtnHTML(app,wid)}
             <button class="stlib-icon-btn" title="${isPinned?'Unpin from Taskbar':'Pin to Taskbar'}" onclick="OS.stlibTogglePin('${wid}',${escApp})">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="${isPinned?'currentColor':'none'}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.5 5.5L19 9l-4 3.5L16 18l-4-3-4 3 1-5.5L5 9l5.5-1.5z"/></svg>
             </button>
@@ -3389,6 +3645,59 @@ const OS={
     if(!WM.windows[wid])return;
     WM.windows[wid].libTab=tab;
     this._renderHome(wid);
+  },
+
+// Returns the HTML for the main action button in the library hero:
+  // "Download" if not yet downloaded, "Launch" once a local copy exists.
+  // System apps and PVZ skip the gate entirely.
+  _libActionBtnHTML(app,wid){
+    const escApp=JSON.stringify(app).replace(/"/g,'&quot;');
+    const isSystem=app.url&&app.url.startsWith('__');
+    if(app.url==='__rawhtml__'||isSystem||app.isPVZ){
+      return `<button class="stlib-play-btn" onclick="OS.launch(${escApp})">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        ${app.isPVZ?'Play':'Launch'}
+      </button>`;
+    }
+    if(!app.gameId){
+      return `<button class="stlib-play-btn" style="opacity:0.5;cursor:not-allowed" disabled>
+        Not Available
+      </button>`;
+    }
+    if(DOWNLOADS.isDownloaded(app.gameId)){
+      return `<button class="stlib-play-btn" onclick="OS.launch(${escApp})">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Launch
+      </button>
+      <button class="stlib-icon-btn" title="Remove downloaded copy" onclick="OS.libForgetDownload('${wid}',${escApp})">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+      </button>`;
+    }
+    return `<button class="stlib-play-btn" id="dlbtn_${wid}" onclick="OS.libDownload('${wid}',${escApp})">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+      Download
+    </button>`;
+  },
+
+  async libDownload(wid,app){
+    const btn=document.getElementById('dlbtn_'+wid);
+    if(btn){btn.disabled=true;btn.style.opacity='0.7';btn.innerHTML='<span style="font-size:12.5px">Downloading…</span>';}
+    try{
+      await DOWNLOADS.download(app);
+      this.notify('Downloaded',app.name+' is ready to play.');
+      this.stlibRenderMain(wid);
+      this.stlibRenderSidebar(wid,document.getElementById('stlibSearch_'+wid)?.value||'');
+    }catch(err){
+      this.notify('Download failed',app.name+': '+(err&&err.message||'Unknown error'));
+      this.stlibRenderMain(wid);
+    }
+  },
+
+  libForgetDownload(wid,app){
+    DOWNLOADS.forget(app.gameId,true);
+    this.notify('Removed',app.name+' download cleared.');
+    this.stlibRenderMain(wid);
+    this.stlibRenderSidebar(wid,document.getElementById('stlibSearch_'+wid)?.value||'');
   },
 
   stlibTogglePin(wid,app){
@@ -4058,8 +4367,15 @@ const OS={
     });
     document.addEventListener('click',e=>{
       CTX.hide();
-      if(!document.getElementById('startMenu').contains(e.target)&&!document.getElementById('startBtn').contains(e.target))this.closeStart();
-      if(!document.getElementById('appsGridBtn').contains(e.target)&&!document.getElementById('startBtn')?.contains(e.target))document.getElementById('quickMenu').classList.remove('open');
+      // Close Start Menu when clicking outside it
+      const sm=document.getElementById('startMenu');
+      if(sm&&!sm.contains(e.target))this.closeStart();
+      // Close Quick Menu unless the click is on a launcher toggle or inside the menu
+      const qm=document.getElementById('quickMenu');
+      const novBtn=document.getElementById('novosBtn');
+      const appsBtn=document.getElementById('appsGridBtn');
+      const clickedToggle=(novBtn&&novBtn.contains(e.target))||(appsBtn&&appsBtn.contains(e.target));
+      if(qm&&!clickedToggle&&!qm.contains(e.target))qm.classList.remove('open');
     });
     document.addEventListener('keydown',e=>{
       if(e.key==='Escape'){
@@ -4508,23 +4824,22 @@ const VIEWERS={
     el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
     let htmlContent='';
     try{if(file.dataUrl&&file.dataUrl.startsWith('data:'))htmlContent=atob(file.dataUrl.split(',')[1]);}catch(e){}
+    const _gameIconHtml=file._isGame&&file._appIcon
+      ?`<img src="${file._appIcon}" style="width:16px;height:16px;border-radius:4px;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'" alt="">`
+      :`<div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#60a5fa;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>`;
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
-      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)">
-        <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#60a5fa;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
+        ${_gameIconHtml}
         <div class="wnd-title">${file.name}</div>
         <div class="wnd-ctrl-btns">
+          <button class="wnd-ctrl-btn" onclick="document.getElementById('hvFrm_${id}').contentDocument&&document.getElementById('hvFrm_${id}').contentDocument.location.reload()" title="Refresh"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
           <button class="wnd-ctrl-btn" onclick="WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
           <button class="wnd-ctrl-btn" onclick="WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
           <button class="wnd-ctrl-btn wnd-close" onclick="WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
       </div>
       <div class="wnd-body" style="display:flex;flex-direction:column;overflow:hidden">
-        <div style="height:38px;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 10px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)">
-          <span style="font-size:11px;color:var(--os-muted)">HTML Viewer — ${file.name}</span>
-          <div style="flex:1"></div>
-          <button class="fe-btn" onclick="document.getElementById('hvFrm_${id}').contentDocument&&document.getElementById('hvFrm_${id}').contentDocument.location.reload()">↺ Reload</button>
-        </div>
         <div style="flex:1;overflow:hidden;background:#fff;position:relative">
           ${htmlContent
             ?`<iframe id="hvFrm_${id}" sandbox="allow-scripts allow-same-origin" style="position:absolute;inset:0;width:100%;height:100%;border:none" srcdoc="${htmlContent.replace(/"/g,'&quot;')}"></iframe>`
@@ -4533,8 +4848,9 @@ const VIEWERS={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
-    WM.windows[id]={app:{name:file.name,url:'__html__',icon:'🌐'},minimized:false,maximized:false,prevRect:null};
-    WM.focus(id);TB.addWindow(id,{name:file.name,url:'__html__',icon:'🌐'});WM.makeDraggable(id);
+    const _gameIcon=file._isGame&&file._appIcon?file._appIcon:'🌐';
+    WM.windows[id]={app:{name:file.name,url:'__html__',icon:_gameIcon},minimized:false,maximized:false,prevRect:null};
+    WM.focus(id);TB.addWindow(id,{name:file.name,url:'__html__',icon:_gameIcon});WM.makeDraggable(id);
   },
 
   openVideo(file){
@@ -4838,12 +5154,20 @@ const TBDrag={
     btn.addEventListener('drop',e=>{
       e.preventDefault();btn.style.outline='';
       if(!this._dragging||this._dragging===btn)return;
-      // Search ALL tb-app buttons across both containers
-      const allBtns=[...document.querySelectorAll('#taskbarUserApps .tb-app, #taskbarApps .tb-app')];
-      const fromIdx=allBtns.indexOf(this._dragging);
-      const toIdx=allBtns.indexOf(btn);
+      // Map the visual pinned order to TB.pinned indices by title, so the
+      // splice always targets the correct entries regardless of running windows.
+      const pinnedTitles=[
+        ...document.querySelectorAll('#taskbarUserApps .tb-app'),
+        ...document.querySelectorAll('#taskbarApps .tb-app')
+      ].filter(el=>{
+        const t=el.getAttribute('title')||'';
+        return TB.pinned.some(p=>p.name===t);
+      }).map(el=>el.getAttribute('title')||'');
+      const fromTitle=this._dragging.getAttribute('title')||'';
+      const toTitle=btn.getAttribute('title')||'';
+      const fromIdx=TB.pinned.findIndex(p=>p.name===fromTitle);
+      const toIdx=TB.pinned.findIndex(p=>p.name===toTitle);
       if(fromIdx===-1||toIdx===-1)return;
-      // Build the full ordered pinned list and reorder
       const moved=TB.pinned.splice(fromIdx,1)[0];
       if(moved){TB.pinned.splice(toIdx,0,moved);TB.savePinned();TB.render();}
     });
@@ -4854,14 +5178,17 @@ const TBDrag={
 const _origTBRender=TB.render.bind(TB);
 TB.render=function(){
   _origTBRender();
-  // Collect all tb-app buttons from BOTH containers in order (user-left first, then sys-right)
-  const allBtns=[
+  // Only pinned buttons are draggable. Match by title against TB.pinned so
+  // running-but-unpinned windows in the same containers are skipped — otherwise
+  // their presence shifts the indices and corrupts the reorder math.
+  const pinnedBtns=[
     ...document.querySelectorAll('#taskbarUserApps .tb-app'),
     ...document.querySelectorAll('#taskbarApps .tb-app')
-  ];
-  allBtns.forEach((btn,idx)=>{
-    TBDrag.attach(btn,idx);
+  ].filter(btn=>{
+    const title=btn.getAttribute('title')||'';
+    return TB.pinned.some(p=>p.name===title);
   });
+  pinnedBtns.forEach((btn,idx)=>{TBDrag.attach(btn,idx);});
 };
 
 /* ═══════════════════════════════════════════════
@@ -5423,7 +5750,7 @@ const SESSION={
   save(){
     try{
       const open=Object.values(WM.windows)
-        .filter(w=>w&&w.app&&w.app.url&&!w.app.url.startsWith('__folder__'))
+        .filter(w=>w&&w.app&&w.app.url&&!w.app.url.startsWith('__folder__')&&w.app.url!=='__rawhtml__'&&w.app.url!=='__html__')
         .map(w=>{const el=Object.keys(WM.windows).find(k=>WM.windows[k]===w);const dom=el&&document.getElementById(el);
           return {url:w.app.url,name:w.app.name,icon:w.app.icon||'',min:w.minimized,
             rect:dom?{t:dom.style.top,l:dom.style.left,w:dom.style.width,h:dom.style.height}:null};});
