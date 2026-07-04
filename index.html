@@ -4,6 +4,54 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NovOS</title>
+<link id="favicon" rel="icon" href="">
+<script>
+(function(){
+  // Cloak support: if launched with ?cloak=Name, override title/favicon
+  // immediately, before anything else loads. This runs on NovOS's real,
+  // persistent origin (unlike srcdoc/blob), so localStorage still works
+  // normally — cloaking and save-persistence are no longer mutually exclusive.
+  var CLOAKS = {
+    'Google':{title:'Google',icon:'https://www.google.com/favicon.ico'},
+    'Google Classroom':{title:'Classes',icon:'https://ssl.gstatic.com/classroom/favicon.png'},
+    'Google Docs':{title:'Untitled document - Google Docs',icon:'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico'},
+    'Google Drive':{title:'My Drive - Google Drive',icon:'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png'},
+    'Gmail':{title:'Inbox - Gmail',icon:'https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico'},
+    'Google Slides':{title:'Untitled presentation - Google Slides',icon:'https://ssl.gstatic.com/docs/presentations/images/favicon5.ico'},
+    'Google Sheets':{title:'Untitled spreadsheet - Google Sheets',icon:'https://ssl.gstatic.com/docs/spreadsheets/favicon3.ico'},
+    'Wikipedia':{title:'Wikipedia',icon:'https://www.wikipedia.org/static/favicon/wikipedia.ico'},
+    'Khan Academy':{title:'Khan Academy',icon:'https://cdn.kastatic.org/images/favicon.ico'},
+    'Clever':{title:'Clever | Portal',icon:'https://www.clever.com/wp-content/uploads/2023/06/cropped-Favicon-512px-192x192.png'},
+    'Canvas':{title:'Dashboard',icon:'https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico'},
+    'Quizlet':{title:'Quizlet',icon:'https://quizlet.com/favicon.ico'}
+  };
+  try{
+    var params=new URLSearchParams(location.search);
+    var cloakName=params.get('cloak');
+    var cloak=cloakName&&CLOAKS[cloakName];
+    if(cloak){
+      document.title=cloak.title;
+      var setIcon=function(){
+        var link=document.getElementById('favicon');
+        if(link)link.href=cloak.icon;
+      };
+      if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setIcon);
+      else setIcon();
+      // Re-assert after full load, and again a few times shortly after —
+      // NovOS's own init()/boot sequence/session restore can run asynchronously
+      // and may overwrite document.title after the initial load event fires.
+      window.addEventListener('load',function(){document.title=cloak.title;setIcon();});
+      [500,1500,3000].forEach(function(t){
+        setTimeout(function(){document.title=cloak.title;setIcon();},t);
+      });
+    }else{
+      document.title='NovOS';
+      var setDefault=function(){var link=document.getElementById('favicon');if(link)link.remove();};
+      if(document.readyState!=='loading')setDefault();
+    }
+  }catch(e){}
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -354,10 +402,11 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 #altTabTitle{font-size:11px;color:var(--os-muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;user-select:none}
 #altTabOverlay{pointer-events:all}
 #altTabList{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:90vw}
-.alt-tab-item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 16px;border-radius:var(--radius-lg);border:2px solid transparent;cursor:pointer;transition:all 0.15s;min-width:90px;max-width:110px}
+.alt-tab-item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 16px;border-radius:var(--radius-lg);border:2px solid transparent;cursor:pointer;transition:all 0.15s;min-width:120px;max-width:140px}
 .alt-tab-item.selected{background:rgba(var(--os-accent-rgb),0.18);border-color:rgba(var(--os-accent-rgb),0.5)}
 .alt-tab-item:hover{background:rgba(255,255,255,0.07)}
-.alt-tab-icon{width:40px;height:40px;border-radius:10px;object-fit:cover;font-size:22px;display:flex;align-items:center;justify-content:center}
+.alt-tab-icon{width:64px;height:64px;border-radius:14px;object-fit:cover;font-size:32px;display:flex;align-items:center;justify-content:center}
+.alt-tab-icon svg{width:40px;height:40px}
 .alt-tab-label{font-size:11px;color:var(--os-text);text-align:center;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* PVZ SETUP */
@@ -761,11 +810,7 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
         <div class="wp-picker-name">Calendar</div>
         <div class="wp-picker-desc">Current month view</div>
       </div>
-      <div class="wp-picker-item" onclick="WIDGETS.add('music');WIDGETS.closePicker()">
-        <div class="wp-picker-icon" style="background:rgba(244,114,182,0.12);color:#f472b6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" width="20" height="20"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.6"/></svg></div>
-        <div class="wp-picker-name">Now Playing</div>
-        <div class="wp-picker-desc">Monochrome music widget</div>
-      </div>
+      
       <div class="wp-picker-item" onclick="WIDGETS.add('vocab');WIDGETS.closePicker()">
         <div class="wp-picker-icon" style="background:rgba(74,222,128,0.12);color:#4ade80"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" width="20" height="20"><path d="M4 6h16M4 10h16M4 14h10"/></svg></div>
         <div class="wp-picker-name">Word of the Day</div>
@@ -859,7 +904,11 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
         </div>
         <div class="qm-item" onclick="OS.openBrowser()">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="10" cy="10" r="8"/><path d="M10 2a11.5 11.5 0 010 16M10 2a11.5 11.5 0 000 16M2 10h16"/></svg>
-          Aspen Browser
+          C0D Virtual Environment
+        </div>
+        <div class="qm-item" onclick="OS.openCompiler()">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="7 6 2 10 7 14"/><polyline points="13 6 18 10 13 14"/></svg>
+          NovCompiler
         </div>
       </div>
     </div>
@@ -1210,8 +1259,8 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
    DEFAULT DESKTOP APPS — keyed by URL so cache busting works
 ═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_DESKTOP_APPS = [
-  { name:"Aspen Browser", url:"__browser__", icon:"", isDefault:true, isSystem:true, systemAction:"openBrowser"},
-  { name:"Freefy Music", url:"__music__", icon:"", isDefault:true, isSystem:true, systemAction:"openMonochrome"},
+  { name:"C0D Virtual Environment", url:"__browser__", icon:"", isDefault:true, isSystem:true, systemAction:"openBrowser"},
+  { name:"NovCompiler", url:"__compiler__NOVCOMP", icon:"", isDefault:true, isSystem:true, systemAction:"openCompiler"},
   { name:"AI",           url:"__ai__",     icon:"", isDefault:true, isSystem:true, systemAction:"openAI" },
   { name:"File Explorer",    url:"__explorer__", icon:"", isDefault:true, isSystem:true, systemAction:"openFileExplorer" },
   { name:"Settings",         url:"__settings__", icon:"", isDefault:true, isSystem:true, systemAction:"openSettingsWindow" },
@@ -1300,12 +1349,13 @@ const RAW_HTML={
       if(!res.ok)throw new Error('HTTP '+res.status);
       const html=await res.text();
       const blob=new Blob([html],{type:'text/html'});
+      const blobUrl=URL.createObjectURL(blob);
       const fakeFile={
         id:'rawhtml_'+Date.now(),
         name:app.name,
         size:blob.size,
         type:'text/html',
-        dataUrl:await RAW_HTML._toDataUrl(blob),
+        blobUrl:blobUrl,
         dateAdded:new Date().toISOString(),
         _appIcon:app.icon||'',
         _isGame:true
@@ -1314,15 +1364,6 @@ const RAW_HTML={
     }catch(err){
       OS.notify('Failed to load',app.name+': '+(err&&err.message||'Network error'));
     }
-  },
-
-  _toDataUrl(blob){
-    return new Promise((resolve,reject)=>{
-      const r=new FileReader();
-      r.onload=()=>resolve(r.result);
-      r.onerror=()=>reject(new Error('Read failed'));
-      r.readAsDataURL(blob);
-    });
   }
 };
 
@@ -1332,8 +1373,8 @@ const RAW_HTML={
 const SETTINGS={
   def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true,customCursor:true},
   data:{},
-  load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
-  save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));},
+  load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||sessionStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
+  save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));try{sessionStorage.setItem('novos_cfg',JSON.stringify(this.data));}catch(e){}},
   get(k){return this.data[k]??this.def[k];},
   set(k,v){this.data[k]=v;this.save();}
 };
@@ -1645,8 +1686,10 @@ const WM={
   // Returns a 16px system SVG icon for a titlebar, or null for non-system apps.
   _sysTitlebarIcon(url){
     const map={
-      '__browser__':{c:'#60a5fa',s:`<circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/>`},
-      '__music__':{c:'#f472b6',s:`<path d="M9 17V5l10-2v12"/><circle cx="6.5" cy="17" r="2.6" fill="currentColor" stroke="none"/><circle cx="16.5" cy="15" r="2.6" fill="currentColor" stroke="none"/>`},
+      '__browser__':{c:'#4ade80',s:`<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>`},
+      '__compiler__':{c:'#7c6dfa',s:`<polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/><line x1="13" y1="4" x2="11" y2="20"/>`},
+      '__compiler__NOVCOMP':{c:'#7c6dfa',s:`<polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/><line x1="13" y1="4" x2="11" y2="20"/>`},
+      '__tm__':{c:'#4ade80',s:`<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M7 8v4M11 6v6M15 9v3M19 7v5"/>`},
       '__ai__':{c:'#3b5bdb',s:`<rect x="5" y="7" width="14" height="11" rx="2.5"/><path d="M12 3v4M9 12h.01M15 12h.01M9.5 15h5"/><path d="M3 11v3M21 11v3"/>`},
       '__explorer__':{c:'#fbbf24',s:`<path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>`},
       '__settings__':{c:'#94a3b8',s:`<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>`},
@@ -1710,7 +1753,7 @@ const WM={
     document.getElementById('windowLayer').appendChild(el);
 
     let realUrl=app.url==='__PVZ__'?PVZ_URL:app.url;
-    // Resolve system app identifiers (browser/music) to their real loadable URL.
+    // Resolve system app identifiers (browser) to their real loadable URL.
     if(OS._systemRealUrl)realUrl=OS._systemRealUrl(app.url);
     // Quick-prompt launches carry a pre-filled URL for the AI app.
     if(app._qpUrl)realUrl=app._qpUrl;
@@ -1719,12 +1762,10 @@ const WM={
     const frm=document.getElementById('frm_'+id);
     frm.addEventListener('load',()=>{
       if(WM._onIframeLoad)WM._onIframeLoad(frm);
-      // Do NOT inject into the cross-origin music frame — injection trips CF/CDN bot checks.
-      if(app.url==='__music__'){/* clean, no injection */}
     });
     // Determine whether the target is cross-origin relative to this page.
     const _isCrossOrigin=(u)=>{
-      if(u&&u.startsWith('data:'))return false;
+      if(u&&(u.startsWith('data:')||u.startsWith('blob:')))return false;
       try{return new URL(u,location.href).origin!==location.origin;}
       catch{return true;}
     };
@@ -1924,6 +1965,7 @@ const WM={
     let rafId=null;
     let lastX=e.clientX,lastY=e.clientY;
     const SNAP_THRESHOLD=14;
+    const EDGE_MARGIN=40; // how much of the window must stay visible/reachable
     const move=ev=>{
       lastX=ev.clientX;lastY=ev.clientY;
       // Snap zone detection (no RAF so ghost is instant)
@@ -1935,20 +1977,28 @@ const WM={
       if(rafId)return;
       rafId=requestAnimationFrame(()=>{
         rafId=null;
-        el.style.left=Math.max(0,Math.min(window.innerWidth-el.offsetWidth,lastX-sx))+'px';
-        el.style.top=Math.max(0,Math.min(window.innerHeight-48-40,lastY-sy))+'px';
+        const w=el.offsetWidth,h=el.offsetHeight;
+        el.style.left=Math.max(EDGE_MARGIN-w,Math.min(window.innerWidth-EDGE_MARGIN,lastX-sx))+'px';
+        el.style.top=Math.max(0,Math.min(window.innerHeight-EDGE_MARGIN,lastY-sy))+'px';
       });
     };
     const up=()=>{
       if(rafId){cancelAnimationFrame(rafId);rafId=null;}
       document.removeEventListener('mousemove',move,{capture:true});
       document.removeEventListener('mouseup',up,{capture:true});
+      document.removeEventListener('mouseleave',upIfOutside,{capture:true});
       const zone=this._snapZone;
       this._hideSnapGhost();
       if(zone)this._applySnap(id,zone);
     };
+    // Only stop the drag if the mouse actually leaves the browser window entirely
+    // (e.g. moved off-screen), not just when it drifts off the titlebar element.
+    const upIfOutside=ev=>{
+      if(!ev.relatedTarget&&ev.clientY<=0){up();}
+    };
     document.addEventListener('mousemove',move,{capture:true,passive:true});
     document.addEventListener('mouseup',up,{capture:true});
+    document.addEventListener('mouseleave',upIfOutside,{capture:true});
     e.preventDefault();
   },
 
@@ -2049,9 +2099,9 @@ const TB={
       // Default pinned apps on first run
       this.pinned=[
         {name:'Settings',url:'__settings__',icon:''},
-        {name:'Task Manager',url:'__tm__',icon:''},
         {name:'App Library',url:'__library__',icon:''},
-        {name:'Aspen Browser',url:'__browser__',icon:''},
+        {name:'C0D Virtual Environment',url:'__browser__',icon:''},
+        {name:'NovCompiler',url:'__compiler__NOVCOMP',icon:''},
         {name:'AI',url:'__ai__',icon:''},
       ];
       this.savePinned();
@@ -2063,7 +2113,7 @@ const TB={
     // A raw-HTML game opened through the HTML Viewer carries url:'__html__'.
     // Pinning that transient identity can never relaunch (its content is a
     // one-shot blob), so resolve the real __rawhtml__ shortcut by name first.
-    let pinApp=app;
+    let pinApp=this._resolvePinned(app);
     if(app.url==='__html__'){
       const all=[...(OS.shortcuts&&OS.shortcuts.games||[]),...(OS.shortcuts&&OS.shortcuts.web||[]),...(OS.shortcuts&&OS.shortcuts.apps||[])];
       const real=all.find(a=>a.url==='__rawhtml__'&&a.name===app.name)
@@ -2077,6 +2127,13 @@ const TB={
     }
   },
   unpin(url){this.pinned=this.pinned.filter(p=>p.url!==url);this.savePinned();this.render();},
+  _resolvePinned(app){
+    // NovCompiler is a system app (url starts with __), never routes through
+    // rawUrl/HTML-viewer logic — so a stale rawUrl on the pin object must be
+    // stripped, otherwise pin() and match logic can misidentify it.
+    if(app&&app.url==='__compiler__NOVCOMP')return{name:'NovCompiler',url:'__compiler__NOVCOMP',icon:''};
+    return app;
+  },
   updateAutoHide(){
     const setting=SETTINGS.get('hideTaskbarFullscreen'),hasMax=WM.hasMaximizedWindow();
     const taskbar=document.getElementById('taskbar');
@@ -2104,11 +2161,10 @@ const TB={
     // Clean, refined system icons — no emojis, consistent stroke style
     const systemIcons={
       '__browser__':{
-        color:'#60a5fa',
+        color:'#4ade80',
         svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-          <circle cx="12" cy="12" r="9.5" stroke-opacity="0.9"/>
-          <path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/>
-          <path d="M4 7.5h16M4 16.5h16" stroke-opacity="0.5"/>
+          <rect x="2" y="4" width="20" height="13" rx="2"/>
+          <path d="M8 21h8M12 17v4"/>
         </svg>`
       },
       '__explorer__':{
@@ -2187,6 +2243,12 @@ const TB={
           <circle cx="16.5" cy="15" r="2.6" fill="currentColor" stroke="none"/>
         </svg>`
       },
+      '__compiler__NOVCOMP':{
+        color:'#7c6dfa',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/><line x1="13" y1="4" x2="11" y2="20"/>
+        </svg>`
+      },
       '__ai__':{
         color:'#3b5bdb',
         svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
@@ -2218,7 +2280,7 @@ const TB={
   // raw-HTML games opened through the HTML Viewer stay on the user (left) side,
   // matching their pinned/desktop shortcut.
   _isSystemUrl(url){
-    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__music__','__ai__'].includes(url);
+    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__compiler__','__compiler__NOVCOMP','__ai__'].includes(url);
   },
 
   _makeBtn(app,wid,isPinned){
@@ -2352,9 +2414,10 @@ const ALT_TAB={
   _shiftHeld:false,
 
   getWindowList(){
+    const sysEmoji={'__browser__':'🌐','__explorer__':'📁','__settings__':'⚙️','__library__':'📚','__tm__':'📊','__compiler__':'💻','__compiler__NOVCOMP':'💻','__ai__':'🤖'};
     return Object.entries(WM.windows)
       .filter(([id,w])=>w&&w.app&&document.getElementById(id))
-      .map(([id,w])=>({id,app:w.app,minimized:w.minimized}));
+      .map(([id,w])=>({id,app:{...w.app,icon:w.app.icon||sysEmoji[w.app.url]||''},minimized:w.minimized}));
   },
 
   show(){
@@ -2375,12 +2438,18 @@ const ALT_TAB={
     const wins=this.getWindowList();
     const list=document.getElementById('altTabList');
     list.innerHTML=wins.map((w,i)=>{
-      const icon=w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`;
       const sel=this._ids[this._idx]===w.id?'selected':'';
-      const isEmoji=icon&&[...icon].length<=2&&!icon.startsWith('http')&&!icon.startsWith('data:');
-      const iconEl=isEmoji
-        ?`<div class="alt-tab-icon" style="font-size:24px;display:flex;align-items:center;justify-content:center">${icon}</div>`
-        :`<img class="alt-tab-icon" src="${icon}" onerror="this.outerHTML='<div class=alt-tab-icon style=font-size:22px>🖥</div>'" alt="">`;
+      const sysIcon=typeof WM!=='undefined'&&WM._sysTitlebarIcon?WM._sysTitlebarIcon(w.app.url):null;
+      let iconEl;
+      if(sysIcon){
+        iconEl=`<div class="alt-tab-icon" style="display:flex;align-items:center;justify-content:center">${sysIcon}</div>`;
+      }else{
+        const icon=w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`;
+        const isEmoji=icon&&[...icon].length<=2&&!icon.startsWith('http')&&!icon.startsWith('data:');
+        iconEl=isEmoji
+          ?`<div class="alt-tab-icon" style="font-size:24px;display:flex;align-items:center;justify-content:center">${icon}</div>`
+          :`<img class="alt-tab-icon" src="${icon}" onerror="this.outerHTML='<div class=alt-tab-icon></div>'" alt="">`;
+      }
       return `<div class="alt-tab-item ${sel}" data-altidx="${i}"
         onmouseenter="ALT_TAB.hoverSelect(${i})"
         onclick="ALT_TAB.selectById('${w.id}')">
@@ -2702,9 +2771,10 @@ const OS={
     // System icon SVGs for desktop — GNOME-style flat colored icons
     const systemSVGs={
       '__library__':{color:'#a78bfa',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>`},
+      '__compiler__NOVCOMP':{color:'#7c6dfa',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/><line x1="13" y1="4" x2="11" y2="20"/></svg>`},
       '__explorer__':{color:'#fbbf24',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><line x1="3" y1="12" x2="21" y2="12" opacity="0.4"/></svg>`},
       '__settings__':{color:'#94a3b8',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>`},
-      '__browser__':{color:'#60a5fa',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/><path d="M4 7.5h16M4 16.5h16" opacity="0.4"/></svg>`},
+      '__browser__':{color:'#4ade80',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`},
       '__folder__':{color:'#fbbf24',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>`},
       '__music__':{color:'#f472b6',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M9 17V5l10-2v12"/><circle cx="6.5" cy="17" r="2.6" fill="currentColor" stroke="none"/><circle cx="16.5" cy="15" r="2.6" fill="currentColor" stroke="none"/></svg>`},
       '__ai__':{color:'#3b5bdb',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><rect x="5" y="7" width="14" height="11" rx="2.5"/><path d="M12 3v4"/><path d="M9 12h.01M15 12h.01" stroke-width="2.4"/><path d="M9.5 15h5"/><path d="M3 11v3M21 11v3"/></svg>`},
@@ -2725,10 +2795,21 @@ const OS={
         const si=systemSVGs['__folder__'];
         el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;color:${si.color};background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.2)">${si.svg}</div><div class="desk-icon-label">${item.name}</div>`;
         el.addEventListener('dblclick',()=>this.openFolder(item));
-      }else if(isSystem&&systemSVGs[item.url]){
-        const si=systemSVGs[item.url];
+      }else if(isSystem&&(systemSVGs[item.url]||item.url==='__compiler__NOVCOMP')){
+        const si=systemSVGs[item.url]||systemSVGs['__compiler__NOVCOMP'];
         el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;color:${si.color};background:${si.color}18;border-color:${si.color}30">${si.svg}</div><div class="desk-icon-label">${item.name}</div>`;
-        el.addEventListener('dblclick',()=>this[item.systemAction]&&this[item.systemAction]());
+        el.addEventListener('dblclick',()=>{
+          const action=item.systemAction||(item.url==='__compiler__NOVCOMP'?'openCompiler':null);
+          if(action&&this[action])this[action]();
+        });
+      }else if(isSystem&&item.url&&item.url.startsWith('__')){
+        // System item with no matching SVG entry — still must not fall through
+        // to the generic icon/launch path (which treats url as a real link).
+        el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;color:#7c6dfa;background:rgba(124,109,250,0.1);border-color:rgba(124,109,250,0.2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><rect x="4" y="4" width="16" height="16" rx="3"/></svg></div><div class="desk-icon-label">${item.name}</div>`;
+        el.addEventListener('dblclick',()=>{
+          const action=item.systemAction||(item.url==='__compiler__NOVCOMP'?'openCompiler':null);
+          if(action&&this[action])this[action]();
+        });
       }else{
         const isEmoji=item.icon&&[...item.icon].length<=2&&!item.icon.startsWith('http')&&!item.icon.startsWith('data:');
         if(isEmoji){
@@ -3048,10 +3129,12 @@ const OS={
       '__library__':()=>this.openAppLibrary(),
       '__explorer__':()=>this.openFileExplorer(),
       '__browser__':()=>this.openBrowser(),
-      '__music__':()=>this.openMonochrome(),
+      '__compiler__':()=>this.openCompiler(),
+      '__compiler__NOVCOMP':()=>this.openCompiler(),
       '__ai__':()=>this.openAI(),
     };
     if(sysMap[app.url]){sysMap[app.url]();return;}
+    if(app.url&&app.url.startsWith('__')){WM.open(app);return;}
     // Raw HTML games never go straight to WM.open — route them through OS.launch,
     // which resolves the rawUrl (looking it up by name if the pinned/taskbar copy
     // dropped it). A stale pin may carry url:'__html__' from an old viewer window;
@@ -3076,20 +3159,27 @@ const OS={
   // the correct system icon and stays on the right side of the taskbar.
   _systemRealUrl(sysUrl){
     return {
-      '__browser__':'https://riaannn.github.io/site-v2-static/site.html',
-      '__music__':'https://freefy.app/',
       '__ai__':'https://unlimited.surf'
     }[sysUrl]||sysUrl;
   },
+  BROWSER_RAW_URL:'https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/COD.html',
   openBrowser(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__browser__');
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
-    WM.open({name:'Aspen Browser',url:'__browser__',icon:''});
+    OS._openBrowserWindow();
   },
-  openMonochrome(){
-    const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__music__');
-    if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
-    WM.open({name:'Freefy Music',url:'__music__',icon:''});
+  async _openBrowserWindow(){
+    OS.notify('Loading','C0D Virtual Environment is loading…');
+    try{
+      const res=await fetch(OS.BROWSER_RAW_URL,{cache:'no-store'});
+      if(!res.ok)throw new Error('HTTP '+res.status);
+      const html=await res.text();
+      const blob=new Blob([html],{type:'text/html'});
+      const blobUrl=URL.createObjectURL(blob);
+      WM.open({name:'C0D Virtual Environment',url:'__browser__',icon:'',_localDataUrl:blobUrl});
+    }catch(err){
+      OS.notify('Failed to load','C0D Virtual Environment: '+(err&&err.message||'Network error'));
+    }
   },
   openAI(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__ai__');
@@ -3097,6 +3187,13 @@ const OS={
     WM.open({name:'AI',url:'__ai__',icon:''});
   },
   openTM(){TM.open();},
+
+  // NovCompiler — opens a self-contained HTML/JS compiler window that lets
+  // the user paste code or a raw GitHub URL and runs it in a blob-URL iframe,
+  // using the exact same createObjectURL approach as raw-HTML game launches.
+  openCompiler(){
+    RAW_HTML.launch({name:'NovCompiler',rawUrl:'https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/NovCompiler.html',icon:''});
+  },
 
   // Shared helper: builds the maximize button HTML with both expand/compress icons
   _maxBtn(id){
@@ -3343,9 +3440,11 @@ const OS={
     this.stlibSelect(id,null);
   },
 
-  _findAppByUrl(url){
+  _findAppByUrl(url,name){
     const all=[...this.shortcuts.games,...this.shortcuts.web,...this.shortcuts.apps];
-    return all.find(a=>a.url===url);
+    let found=all.find(a=>a.url===url);
+    if(!found&&name)found=all.find(a=>(a.url==='__rawhtml__'||a.rawUrl)&&a.name===name);
+    return found;
   },
 
   libRandom(){
@@ -3497,7 +3596,7 @@ const OS={
     // Recently played rail (separate from main list, horizontal cards)
     const rail=document.getElementById('stlibRecentRail_'+wid);
     if(rail){
-      const recent=PLAYTIME.recent(10).map(p=>({...p,appRef:this._findAppByUrl(p.url)})).filter(p=>p.appRef);
+      const recent=PLAYTIME.recent(10).map(p=>({...p,appRef:this._findAppByUrl(p.url,p.name)})).filter(p=>p.appRef);
       if(!recent.length){
         rail.innerHTML='<div style="font-size:11.5px;color:var(--os-dim);padding:8px 0">No play history yet — launch something!</div>';
       }else{
@@ -3519,7 +3618,7 @@ const OS={
 
   _renderHome(wid){
     const main=document.getElementById('stlibMain_'+wid);if(!main)return;
-    const recent=PLAYTIME.recent(10).map(p=>({...p,appRef:this._findAppByUrl(p.url)})).filter(p=>p.appRef);
+    const recent=PLAYTIME.recent(10).map(p=>({...p,appRef:this._findAppByUrl(p.url,p.name)})).filter(p=>p.appRef);
     const allGames=this.shortcuts.games||[];
     const allWeb=this.shortcuts.web||[];
     const allApps=this.shortcuts.apps||[];
@@ -4474,49 +4573,7 @@ const OS={
       }catch(err){/* cross-origin iframe — cannot inject, expected */}
     };
 
-    // Inject a lightweight Now Playing reporter into the Monochrome iframe.
-    // DISABLED for the cross-origin music frame — injecting into it trips
-    // Cloudflare/Amazon bot checks. Kept for any same-origin media frames only.
-    WM._injectNowPlaying=(frm)=>{
-      try{
-        // Never inject into the music frame (it's cross-origin and CF-protected).
-        if(frm&&frm.id==='frm_'+(Object.keys(WM.windows).find(k=>WM.windows[k].app&&WM.windows[k].app.url==='__music__')||''))return;
-        const doc=frm.contentDocument||frm.contentWindow&&frm.contentWindow.document;
-        if(!doc)return;
-        const s=doc.createElement('script');
-        s.textContent=`(function(){
-          function report(){
-            var info=null;
-            try{
-              var ms=navigator.mediaSession&&navigator.mediaSession.metadata;
-              var media=document.querySelector('audio,video');
-              var playing=media?!media.paused:false;
-              if(ms&&ms.title){
-                var art='';
-                if(ms.artwork&&ms.artwork.length)art=ms.artwork[ms.artwork.length-1].src;
-                info={title:ms.title,artist:ms.artist||ms.album||'',artwork:art,playing:playing};
-              }else if(media&&(media.currentSrc||media.src)){
-                info={title:document.title||'Track',artist:'',artwork:'',playing:playing};
-              }
-            }catch(e){}
-            window.parent.postMessage({__novos_nowplaying:true,info:info},'*');
-          }
-          setInterval(report,1500);
-          document.addEventListener('play',report,true);
-          document.addEventListener('pause',report,true);
-          report();
-        })();`;
-        (doc.head||doc.body||doc.documentElement).appendChild(s);
-      }catch(err){/* cross-origin — expected, widget will show idle state */}
-    };
-
-    // Listen for Now Playing updates from the Monochrome iframe.
-    window.addEventListener('message',e=>{
-      if(e.data&&e.data.__novos_nowplaying){
-        WIDGETS.updateNowPlaying(e.data.info);
-      }
-    });
-  }
+    }
 };
 
 /* ═══════════════════════════════════════════════
@@ -4815,8 +4872,16 @@ const VIEWERS={
     el.className='os-window focused';el.id=id;
     const dw=Math.min(window.innerWidth*0.8,900),dh=Math.min(window.innerHeight*0.8,640);
     el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
-    let htmlContent='';
-    try{if(file.dataUrl&&file.dataUrl.startsWith('data:'))htmlContent=atob(file.dataUrl.split(',')[1]);}catch(e){}
+    let blobSrc=file.blobUrl||'';
+    if(!blobSrc&&file.dataUrl&&file.dataUrl.startsWith('data:')){
+      try{
+        const _b64=file.dataUrl.split(',')[1]||'';
+        let htmlContent='';
+        try{htmlContent=decodeURIComponent(escape(atob(_b64)));}catch(_e){htmlContent=atob(_b64);}
+        const _blob=new Blob([htmlContent],{type:'text/html'});
+        blobSrc=URL.createObjectURL(_blob);
+      }catch(e){}
+    }
     const _gameIconHtml=file._isGame&&file._appIcon
       ?`<img src="${file._appIcon}" style="width:16px;height:16px;border-radius:4px;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'" alt="">`
       :`<div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#60a5fa;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>`;
@@ -4834,8 +4899,8 @@ const VIEWERS={
       </div>
       <div class="wnd-body" style="display:flex;flex-direction:column;overflow:hidden">
         <div style="flex:1;overflow:hidden;background:#fff;position:relative">
-          ${htmlContent
-            ?`<iframe id="hvFrm_${id}" sandbox="allow-scripts allow-same-origin" style="position:absolute;inset:0;width:100%;height:100%;border:none" srcdoc="${htmlContent.replace(/"/g,'&quot;')}"></iframe>`
+          ${blobSrc
+            ?`<iframe id="hvFrm_${id}" sandbox="allow-scripts allow-same-origin" style="position:absolute;inset:0;width:100%;height:100%;border:none" src="${blobSrc}"></iframe>`
             :`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;color:#666;font-size:13px"><div style="font-size:36px">🌐</div><div>Cannot display this file</div></div>`}
         </div>
       </div>
@@ -5037,9 +5102,9 @@ const LAUNCHER={
       {name:'Settings',url:'__settings__',icon:'',isSystem:true,systemAction:'openSettings'},
       {name:'File Explorer',url:'__explorer__',icon:'',isSystem:true,systemAction:'openFileExplorer'},
       {name:'App Library',url:'__library__',icon:'',isSystem:true,systemAction:'openAppLibrary'},
-      {name:'Aspen Browser',url:'__browser__',icon:'',isSystem:true,systemAction:'openBrowser'},
+      {name:'C0D Virtual Environment',url:'__browser__',icon:'',isSystem:true,systemAction:'openBrowser'},
       {name:'Task Manager',url:'__tm__',icon:'',isSystem:true,systemAction:'openTM'},
-      {name:'Freefy Music',url:'__music__',icon:'',isSystem:true,systemAction:'openMonochrome'},
+      {name:'NovCompiler',url:'__compiler__',icon:'',isSystem:true,systemAction:'openCompiler'},
       {name:'AI',url:'__ai__',icon:'',isSystem:true,systemAction:'openAI'},
     ];
     const all=[...sysApps,...userApps];
@@ -5069,7 +5134,7 @@ const LAUNCHER={
   // Returns an inline SVG system icon (sized) for system urls, or null.
   _sysLauncherIcon(url,size){
     const map={
-      '__browser__':{c:'#60a5fa',s:`<circle cx="12" cy="12" r="9.5"/><path d="M12 2.5C9.5 6 8 9 8 12s1.5 6 4 9.5M12 2.5C14.5 6 16 9 16 12s-1.5 6-4 9.5M2.5 12h19"/>`},
+      '__browser__':{c:'#4ade80',s:`<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>`},
       '__music__':{c:'#f472b6',s:`<path d="M9 17V5l10-2v12"/><circle cx="6.5" cy="17" r="2.6" fill="currentColor" stroke="none"/><circle cx="16.5" cy="15" r="2.6" fill="currentColor" stroke="none"/>`},
       '__ai__':{c:'#3b5bdb',s:`<rect x="5" y="7" width="14" height="11" rx="2.5"/><path d="M12 3v4"/><path d="M9 12h.01M15 12h.01" stroke-width="2.4"/><path d="M9.5 15h5"/><path d="M3 11v3M21 11v3"/>`},
       '__explorer__':{c:'#fbbf24',s:`<path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><line x1="3" y1="12" x2="21" y2="12" opacity="0.4"/>`},
@@ -5188,29 +5253,7 @@ TB.render=function(){
    WIDGET ENGINE
 ═══════════════════════════════════════════════ */
 const WIDGETS={
-  _data:[],_timers:{},_musicWidgetIds:[],_nowPlaying:null,
-
-  // Called when Monochrome posts track info, or to clear when nothing is playing.
-  updateNowPlaying(info){
-    this._nowPlaying=info;
-    (this._musicWidgetIds||[]).forEach(id=>{
-      const trackEl=document.getElementById(id+'_track');
-      const artistEl=document.getElementById(id+'_artist');
-      const eqEl=document.getElementById(id+'_eq');
-      const artEl=document.getElementById(id+'_art');
-      if(!trackEl)return;
-      if(info&&info.title){
-        trackEl.textContent=info.title;
-        artistEl.textContent=info.artist||'Monochrome';
-        if(eqEl)eqEl.style.display=info.playing?'flex':'none';
-        if(artEl&&info.artwork){artEl.innerHTML=`<img src="${info.artwork}" style="width:100%;height:100%;object-fit:cover;border-radius:10px" alt="">`;}
-      }else{
-        trackEl.textContent='Nothing playing';
-        artistEl.textContent='Open Monochrome to play';
-        if(eqEl)eqEl.style.display='none';
-      }
-    });
-  },
+  _data:[],_timers:{},
 
   load(){
     try{this._data=JSON.parse(localStorage.getItem('novos_widgets')||'[]');}catch{this._data=[];}
@@ -5337,25 +5380,6 @@ const WIDGETS={
         return`<div class="widget-box widget-calendar"><div class="widget-cal-header"><span>${months[mo]} ${y}</span></div><div class="widget-cal-grid">${dayLabels}${cells}</div></div>`;
       };
       el.innerHTML=closeBtn+renderCal();
-
-    }else if(w.type==='music'){
-      el.innerHTML=`${closeBtn}<div class="widget-box widget-music">
-        <div style="display:flex;align-items:center;gap:12px">
-          <div class="widget-music-art" id="${w.id}_art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" width="24" height="24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.6"/></svg></div>
-          <div style="flex:1;min-width:0">
-            <div id="${w.id}_track" style="font-size:12.5px;font-weight:600;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Nothing playing</div>
-            <div id="${w.id}_artist" style="font-size:11px;color:var(--os-muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Open Monochrome to play</div>
-          </div>
-          <div id="${w.id}_eq" style="display:none;align-items:flex-end;gap:2px;height:16px;flex-shrink:0">
-            <span style="width:2.5px;background:#f472b6;border-radius:1px;animation:npEq 0.8s ease-in-out infinite"></span>
-            <span style="width:2.5px;background:#f472b6;border-radius:1px;animation:npEq 0.8s ease-in-out infinite 0.2s"></span>
-            <span style="width:2.5px;background:#f472b6;border-radius:1px;animation:npEq 0.8s ease-in-out infinite 0.4s"></span>
-          </div>
-        </div>
-        <button onclick="OS.openMonochrome()" style="width:100%;margin-top:10px;height:30px;border-radius:8px;background:rgba(244,114,182,0.12);border:1px solid rgba(244,114,182,0.25);color:#f472b6;font-family:var(--font);font-size:11.5px;font-weight:500;cursor:pointer;transition:all 0.13s" onmouseover="this.style.background='rgba(244,114,182,0.25)'" onmouseout="this.style.background='rgba(244,114,182,0.12)'">Open Monochrome</button>
-      </div>`;
-      WIDGETS._musicWidgetIds=WIDGETS._musicWidgetIds||[];
-      if(!WIDGETS._musicWidgetIds.includes(w.id))WIDGETS._musicWidgetIds.push(w.id);
 
     }else if(w.type==='vocab'){
       const words=[
@@ -5694,24 +5718,27 @@ const PLAYTIME={
   load(){try{this.log=JSON.parse(localStorage.getItem('novos_playtime')||'[]');}catch{this.log=[];}},
   save(){localStorage.setItem('novos_playtime',JSON.stringify(this.log));},
 
-  // Only track real game/app windows, not system utilities
-  _isGame(app){return app&&app.url&&!app.url.startsWith('__');},
+  // Only track real game/app windows, not system utilities. Raw-HTML games
+  // open as url:'__html__' with no stable url, so key those by name instead.
+  _isGame(app){return app&&((app.url&&!app.url.startsWith('__'))||app.url==='__html__');},
+  _key(app){return app.url==='__html__'?('name:'+app.name):app.url;},
 
   currentGame(){return this._active;},
 
   start(app){
     if(!this._isGame(app))return;
-    if(this._active&&this._active.url===app.url)return;
+    const key=this._key(app);
+    if(this._active&&this._active.key===key)return;
     this.stop();
-    this._active={url:app.url,name:app.name,icon:app.icon||'',start:Date.now()};
+    this._active={key,url:app.url,name:app.name,icon:app.icon||'',start:Date.now()};
   },
 
   stop(){
     if(!this._active)return;
     const elapsed=Date.now()-this._active.start;
-    const {url,name,icon}=this._active;
-    let entry=this.log.find(e=>e.url===url);
-    if(!entry){entry={url,name,icon,totalMs:0,lastPlayed:0};this.log.push(entry);}
+    const {key,url,name,icon}=this._active;
+    let entry=this.log.find(e=>e.key===key);
+    if(!entry){entry={key,url,name,icon,totalMs:0,lastPlayed:0};this.log.push(entry);}
     entry.totalMs+=elapsed;
     entry.lastPlayed=Date.now();
     entry.name=name;entry.icon=icon;
@@ -5724,6 +5751,7 @@ const PLAYTIME={
   syncFocus(id){
     const w=WM.windows[id];
     if(w&&this._isGame(w.app)&&!w.minimized){this.start(w.app);}
+    if(w&&w.app&&w.app.url!=='__html__'&&!this._isGame(w.app)){/* system window focused, keep prior active */}
   },
 
   fmt(ms){
@@ -5735,6 +5763,10 @@ const PLAYTIME={
 
   recent(n){
     return [...this.log].sort((a,b)=>b.lastPlayed-a.lastPlayed).slice(0,n||10);
+  },
+  _findAppByUrl(url,name){
+    if(typeof OS==='undefined')return null;
+    return OS._findAppByUrl(url,name);
   }
 };
 
@@ -5913,8 +5945,8 @@ const CMDK={
       {label:'Open File Explorer',hint:'Files',fn:()=>OS.openFileExplorer()},
       {label:'Open Settings',hint:'System',fn:()=>OS.openSettings()},
       {label:'Open Task Manager',hint:'System',fn:()=>TM.open()},
-      {label:'Open Aspen Browser',hint:'Web',fn:()=>OS.openBrowser()},
-      {label:'Open Freefy Music',hint:'Media',fn:()=>OS.openMonochrome()},
+      {label:'Open C0D Virtual Environment',hint:'Web',fn:()=>OS.openBrowser()},
+      {label:'Open NovCompiler',hint:'Development',fn:()=>OS.openCompiler()},
       {label:'Open AI',hint:'AI',fn:()=>OS.openAI()},
       {label:'Add Widget',hint:'Widgets',fn:()=>WIDGETS.openPicker()},
       {label:'Toggle Animations',hint:'Display',fn:()=>OS.setAnimations(!(SETTINGS.get('animations')!==false))},
