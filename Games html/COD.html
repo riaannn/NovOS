@@ -3,125 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovCompiler | Terminal Boot</title>
+    <title>Cod Environment Launcher</title>
+    <base href="https://esm.sh/gadidae@0.2.0/">
     <style>
         body, html {
             margin: 0;
             padding: 0;
-            background-color: #000;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
             color: #00ff00;
             font-family: 'Courier New', Courier, monospace;
-            height: 100vh;
-            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
-
-        #terminal-screen {
-            text-align: left;
-            width: 80%;
-            max-width: 600px;
+        #boot-screen {
+            text-align: center;
             text-shadow: 0 0 5px #00ff00;
         }
-
-        .command-line {
-            margin-bottom: 10px;
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: .15em solid #00ff00;
-            animation: typing 1s steps(40, end), blink-caret .75s step-end infinite;
+        .spinner {
+            margin: 20px auto;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(0, 255, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #00ff00;
+            animation: spin 1s ease-in-out infinite;
         }
-
-        .status-bar {
-            margin-top: 20px;
-            font-size: 1.2em;
-        }
-
-        /* CRT Flicker Effect */
-        body::after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 2;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
-
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: #00ff00 }
-        }
-
-        #app-root.hidden {
-            display: none;
+        @keyframes spin {
+            to { transform: rotate(3600deg); }
         }
     </style>
 </head>
 <body>
 
-    <div id="terminal-screen">
-        <div class="command-line">root@novos:~# init_boot_sequence</div>
-        <div class="command-line">ACCESSING NEURAL LINK... [OK]</div>
-        <div class="command-line">BYPASSING GATEWAY... [OK]</div>
-        <div class="status-bar" id="status-text">INITIATING CORE...</div>
+    <div id="boot-screen">
+        <div class="spinner"></div>
+        <div>MOUNTING VIRTUAL CORE...</div>
     </div>
 
-    <div id="app-root" class="hidden"></div>
-
-    <input type="text" id="moduleInput" value="await import('https://esm.sh/gadidae')" style="display: none;">
-
     <script type="module">
-        async function runHackerBoot() {
-            const statusText = document.getElementById('status-text');
-            
-            // Artificial delay to let the animations render properly
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            if (statusText) statusText.innerText = "INJECTING MODULE...";
-
-            const rawInput = document.getElementById('moduleInput').value.trim();
-            const script = document.createElement('script');
-            script.type = 'module';
-
-            script.textContent = `
-                async function launch() {
-                    try {
-                        ${rawInput};
-                        
-                        // Safely check if elements exist before changing properties
-                        const terminal = document.getElementById('terminal-screen');
-                        if (terminal) {
-                            terminal.style.display = 'none';
-                        }
-                        
-                        const appRoot = document.getElementById('app-root');
-                        if (appRoot) {
-                            appRoot.classList.remove('hidden');
-                        }
-                    } catch (err) {
-                        document.body.innerHTML = '<div style="color:#f87171; padding:20px; font-family:monospace; background:#000;">CRITICAL_ERROR: ' + err.message + '</div>';
-                        console.error(err);
-                    }
+        async function bootSystem() {
+            try {
+                // Import the specific version bundle with full dependency matching enabled
+                await import("https://esm.sh/gadidae@0.2.0?bundle");
+                
+                // Clear out loading visuals once runtime renders the workspace graphics
+                const bootScreen = document.getElementById('boot-screen');
+                if (bootScreen) {
+                    bootScreen.style.display = 'none';
                 }
-                launch();
-            `;
-
-            document.body.appendChild(script);
+            } catch (err) {
+                console.error("Boot failure:", err);
+                document.body.innerHTML = `
+                    <div style="color: #ff5555; padding: 20px; text-shadow: none; font-family: monospace;">
+                        <strong>SYSTEM_HALT: Failed to load environment dependencies.</strong><br>
+                        Detail: ${err.message}<br><br>
+                        <em>Tip: If modern asset protection policies block this file locally, serve the file directory via a local host interface (e.g., Live Server) to bypass local file restrictions.</em>
+                    </div>`;
+            }
         }
 
-        // Safe auto-run binding
+        // Initialize execution path
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', runHackerBoot);
+            document.addEventListener('DOMContentLoaded', bootSystem);
         } else {
-            runHackerBoot();
+            bootSystem();
         }
     </script>
 </body>
