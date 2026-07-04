@@ -275,7 +275,7 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .os-window.maximized .wnd-body{position:relative}
 .os-window.maximized .wnd-body::after{
   content:'';
-  position:absolute;left:0;right:0;top:0;height:34px;
+  position:absolute;left:0;right:0;top:0;height:14px;
   /* Shim that holds the hover while the cursor travels from the bar to the
      buttons, and blocks the iframe from grabbing the mouse during peek. */
   pointer-events:none;
@@ -1258,6 +1258,78 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 /* ═══════════════════════════════════════════════════════════════════
    DEFAULT DESKTOP APPS — keyed by URL so cache busting works
 ═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   PARENT-SYNCED STORAGE SHIM
+   Since this page can load inside a cloaked iframe with a non-persistent
+   origin, we mirror ALL localStorage writes to the parent tab (which has a
+   stable origin) and pull saved state from it on load, before anything else
+   in the app reads localStorage.
+═══════════════════════════════════════════════ */
+(function(){
+  var _restored=false;
+  var _origSetItem=Storage.prototype.setItem;
+  var _origRemoveItem=Storage.prototype.removeItem;
+  var _origClear=Storage.prototype.clear;
+
+  function pushToParent(){
+    try{
+      if(window.parent===window)return; // not embedded, nothing to sync
+      var dump={};
+      for(var i=0;i<localStorage.length;i++){
+        var k=localStorage.key(i);
+        dump[k]=localStorage.getItem(k);
+      }
+      window.parent.postMessage({__novos_save:true,data:JSON.stringify(dump)},'*');
+    }catch(e){}
+  }
+
+  Storage.prototype.setItem=function(k,v){
+    _origSetItem.call(this,k,v);
+    if(this===localStorage)pushToParent();
+  };
+  Storage.prototype.removeItem=function(k){
+    _origRemoveItem.call(this,k);
+    if(this===localStorage)pushToParent();
+  };
+  Storage.prototype.clear=function(){
+    _origClear.call(this);
+    if(this===localStorage)pushToParent();
+  };
+
+  // Receive restored state from the parent tab and hydrate localStorage
+  // BEFORE the rest of the app boots and reads its settings.
+  window.addEventListener('message',function(e){
+    if(e.data&&e.data.__novos_restore){
+      try{
+        if(e.data.data){
+          var dump=JSON.parse(e.data.data);
+          Object.keys(dump).forEach(function(k){
+            _origSetItem.call(localStorage,k,dump[k]);
+          });
+        }
+      }catch(err){}
+      _restored=true;
+      window.dispatchEvent(new Event('novos-storage-restored'));
+    }
+  });
+
+  // Ask the parent for saved state immediately.
+  try{
+    if(window.parent!==window){
+      window.parent.postMessage({__novos_request_restore:true},'*');
+    }else{
+      _restored=true; // no parent — plain localStorage works normally
+    }
+  }catch(e){_restored=true;}
+
+  window._novosWaitForRestore=function(cb){
+    if(_restored){cb();return;}
+    window.addEventListener('novos-storage-restored',cb,{once:true});
+    // Safety timeout in case parent never responds (e.g. opened directly)
+    setTimeout(function(){if(!_restored){_restored=true;cb();}},600);
+  };
+})();
+
 const DEFAULT_DESKTOP_APPS = [
   { name:"C0D Virtual Environment", url:"__browser__", icon:"", isDefault:true, isSystem:true, systemAction:"openBrowser"},
   { name:"NovCompiler", url:"__compiler__NOVCOMP", icon:"", isDefault:true, isSystem:true, systemAction:"openCompiler"},
@@ -1740,7 +1812,7 @@ const WM={
         </div>
       </div>
       <div class="wnd-body">
-        <iframe class="wnd-iframe" id="frm_${id}" loading="eager" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen referrerpolicy="no-referrer"></iframe>
+        <iframe class="wnd-iframe" id="frm_${id}" loading="eager" sandbox="${app.sandboxOverride||'allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads'}" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen referrerpolicy="no-referrer"></iframe>
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event,'se')"></div>
       <div class="wnd-edge wnd-edge-n" onmousedown="WM.startResize('${id}',event,'n')"></div>
@@ -3176,7 +3248,7 @@ const OS={
       const html=await res.text();
       const blob=new Blob([html],{type:'text/html'});
       const blobUrl=URL.createObjectURL(blob);
-      WM.open({name:'C0D Virtual Environment',url:'__browser__',icon:'',_localDataUrl:blobUrl});
+      WM.open({name:'C0D Virtual Environment',url:'__browser__',icon:'',_localDataUrl:blobUrl,sandboxOverride:'allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads allow-top-navigation-by-user-activation'});
     }catch(err){
       OS.notify('Failed to load','C0D Virtual Environment: '+(err&&err.message||'Network error'));
     }
@@ -3192,6 +3264,8 @@ const OS={
   // the user paste code or a raw GitHub URL and runs it in a blob-URL iframe,
   // using the exact same createObjectURL approach as raw-HTML game launches.
   openCompiler(){
+    const existing=Object.entries(WM.windows).find(([,w])=>w.app&&w.app.url==='__html__'&&w.app.name==='NovCompiler');
+    if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
     RAW_HTML.launch({name:'NovCompiler',rawUrl:'https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/NovCompiler.html',icon:''});
   },
 
@@ -5815,16 +5889,19 @@ const FALLBACK_DOCK={
 };
 
 window.addEventListener('load',()=>{
-  PLAYTIME.load();
-  OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init()
-  setTimeout(()=>SESSION.restore(),SETTINGS.get('showBoot')?2600:200);
+  window._novosWaitForRestore(()=>{
+    PLAYTIME.load();
+    OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init()
+    setTimeout(()=>SESSION.restore(),SETTINGS.get('showBoot')?2600:200);
+  });
 });
-window.addEventListener('beforeunload',(e)=>{
+window.addEventListener('pagehide',()=>{
   try{PLAYTIME.stop();}catch(_){}
   try{SESSION.save();}catch(_){}
-  e.preventDefault();
-  e.returnValue='Leave NovOS? Your session will be saved.';
-  return 'Leave NovOS? Your session will be saved.';
+});
+window.addEventListener('beforeunload',()=>{
+  try{PLAYTIME.stop();}catch(_){}
+  try{SESSION.save();}catch(_){}
 });
 
 /* ═══════════════════════════════════════════════
