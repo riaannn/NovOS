@@ -3,101 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovCompiler - Auto Launcher</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>NovCompiler | Terminal Boot</title>
     <style>
-        :root {
-            --bg-main: #0a0b0d;
-            --accent: #00b37e;
-            --text-muted: #858b9c;
-        }
-
-        * {
-            box-sizing: border-box;
-            font-family: 'Geist', sans-serif;
-        }
-
-        body, html { 
-            margin: 0; 
+        body, html {
+            margin: 0;
             padding: 0;
-            background: var(--bg-main); 
-            width: 100%;
-            height: 100%; 
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            height: 100vh;
             overflow: hidden;
             display: flex;
-            flex-direction: column;
-        }
-
-        #render-zone { 
-            flex: 1; 
-            width: 100%;
-            height: 100%;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #app-root {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 14px;
-            color: var(--text-muted);
-            font-size: 14px;
         }
 
-        .status-msg.error {
-            font-family: 'Geist Mono', monospace;
-            padding: 14px 20px;
-            border-radius: 8px;
-            font-size: 13px;
+        #terminal-screen {
+            text-align: left;
+            width: 80%;
             max-width: 600px;
-            width: 90%;
-            background: rgba(248, 113, 113, 0.06);
-            color: #f87171;
-            border: 1px solid rgba(248, 113, 113, 0.15);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .command-line {
+            margin-bottom: 10px;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: .15em solid #00ff00;
+            animation: typing 1s steps(40, end), blink-caret .75s step-end infinite;
+        }
+
+        .status-bar {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+
+        /* CRT Flicker Effect */
+        body::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #00ff00 }
+        }
+
+        #app-root.hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <div id="render-zone">
-        <div id="app-root">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" style="animation: spin 1s linear infinite;"><style>@keyframes spin {100%{transform:rotate(360deg);}}</style><circle cx="12" cy="12" r="10" stroke-dasharray="30 10"/></svg>
-            <span>Booting Environment...</span>
-        </div>
+    <div id="terminal-screen">
+        <div class="command-line">root@novos:~# init_boot_sequence</div>
+        <div class="command-line">ACCESSING NEURAL LINK... [OK]</div>
+        <div class="command-line">BYPASSING GATEWAY... [OK]</div>
+        <div class="status-bar" id="status-text">INITIATING CORE...</div>
     </div>
 
+    <div id="app-root" class="hidden"></div>
+
+    <input type="text" id="moduleInput" value="await import('https://esm.sh/gadidae')" style="display: none;">
+
     <script type="module">
-        async function launch() {
-            try {
-                // Instantly requests the module environment directly into the main context
-                await import('https://esm.sh/gadidae');
-                
-                // Clear the loading text once the module loads up the "Cod" graphic
-                const loadingText = document.getElementById('app-root');
-                if (loadingText && loadingText.innerText.includes('Booting Environment...')) {
-                    loadingText.innerHTML = '';
+        async function runHackerBoot() {
+            const statusText = document.getElementById('status-text');
+            
+            // Artificial delay to let the animations render properly
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            if (statusText) statusText.innerText = "INJECTING MODULE...";
+
+            const rawInput = document.getElementById('moduleInput').value.trim();
+            const script = document.createElement('script');
+            script.type = 'module';
+
+            script.textContent = `
+                async function launch() {
+                    try {
+                        ${rawInput};
+                        
+                        // Safely check if elements exist before changing properties
+                        const terminal = document.getElementById('terminal-screen');
+                        if (terminal) {
+                            terminal.style.display = 'none';
+                        }
+                        
+                        const appRoot = document.getElementById('app-root');
+                        if (appRoot) {
+                            appRoot.classList.remove('hidden');
+                        }
+                    } catch (err) {
+                        document.body.innerHTML = '<div style="color:#f87171; padding:20px; font-family:monospace; background:#000;">CRITICAL_ERROR: ' + err.message + '</div>';
+                        console.error(err);
+                    }
                 }
-            } catch (err) {
-                document.getElementById('render-zone').innerHTML = `
-                    <div id="app-root">
-                        <div class="status-msg error">
-                            <strong>Initialization Failure:</strong><br>${err.message}
-                        </div>
-                    </div>
-                `;
-                console.error(err);
-            }
+                launch();
+            `;
+
+            document.body.appendChild(script);
         }
-        
-        // Execute target instantly
-        launch();
+
+        // Safe auto-run binding
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', runHackerBoot);
+        } else {
+            runHackerBoot();
+        }
     </script>
 </body>
 </html>
