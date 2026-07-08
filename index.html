@@ -1258,78 +1258,6 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 /* ═══════════════════════════════════════════════════════════════════
    DEFAULT DESKTOP APPS — keyed by URL so cache busting works
 ═══════════════════════════════════════════════════════════════════ */
-/* ═══════════════════════════════════════════════
-   PARENT-SYNCED STORAGE SHIM
-   Since this page can load inside a cloaked iframe with a non-persistent
-   origin, we mirror ALL localStorage writes to the parent tab (which has a
-   stable origin) and pull saved state from it on load, before anything else
-   in the app reads localStorage.
-═══════════════════════════════════════════════ */
-(function(){
-  var _restored=false;
-  var _origSetItem=Storage.prototype.setItem;
-  var _origRemoveItem=Storage.prototype.removeItem;
-  var _origClear=Storage.prototype.clear;
-
-  function pushToParent(){
-    try{
-      if(window.parent===window)return; // not embedded, nothing to sync
-      var dump={};
-      for(var i=0;i<localStorage.length;i++){
-        var k=localStorage.key(i);
-        dump[k]=localStorage.getItem(k);
-      }
-      window.parent.postMessage({__novos_save:true,data:JSON.stringify(dump)},'*');
-    }catch(e){}
-  }
-
-  Storage.prototype.setItem=function(k,v){
-    _origSetItem.call(this,k,v);
-    if(this===localStorage)pushToParent();
-  };
-  Storage.prototype.removeItem=function(k){
-    _origRemoveItem.call(this,k);
-    if(this===localStorage)pushToParent();
-  };
-  Storage.prototype.clear=function(){
-    _origClear.call(this);
-    if(this===localStorage)pushToParent();
-  };
-
-  // Receive restored state from the parent tab and hydrate localStorage
-  // BEFORE the rest of the app boots and reads its settings.
-  window.addEventListener('message',function(e){
-    if(e.data&&e.data.__novos_restore){
-      try{
-        if(e.data.data){
-          var dump=JSON.parse(e.data.data);
-          Object.keys(dump).forEach(function(k){
-            _origSetItem.call(localStorage,k,dump[k]);
-          });
-        }
-      }catch(err){}
-      _restored=true;
-      window.dispatchEvent(new Event('novos-storage-restored'));
-    }
-  });
-
-  // Ask the parent for saved state immediately.
-  try{
-    if(window.parent!==window){
-      window.parent.postMessage({__novos_request_restore:true},'*');
-    }else{
-      _restored=true; // no parent — plain localStorage works normally
-    }
-  }catch(e){_restored=true;}
-
-  window._novosWaitForRestore=function(cb){
-    if(_restored){cb();return;}
-    window.addEventListener('novos-storage-restored',cb,{once:true});
-    // Safety timeout in case parent never responds (e.g. opened directly)
-    setTimeout(function(){if(!_restored){_restored=true;cb();}},600);
-  };
-})();
-
 const DEFAULT_DESKTOP_APPS = [
   { name:"C0D Virtual Environment", url:"__browser__", icon:"", isDefault:true, isSystem:true, systemAction:"openBrowser"},
   { name:"NovCompiler", url:"__compiler__NOVCOMP", icon:"", isDefault:true, isSystem:true, systemAction:"openCompiler"},
@@ -1413,29 +1341,70 @@ const GAME_SOURCES={
    and opens it directly in the HTML Viewer, no link navigation.
 ═══════════════════════════════════════════════ */
 const RAW_HTML={
+  _cache:{},
   async launch(app){
     if(!app.rawUrl){OS.notify('Error','No raw URL defined for '+app.name);return;}
-    OS.notify('Loading',app.name+' is loading…');
-    try{
-      const res=await fetch(app.rawUrl,{cache:'no-store'});
-      if(!res.ok)throw new Error('HTTP '+res.status);
-      const html=await res.text();
-      const blob=new Blob([html],{type:'text/html'});
+
+    if(this._cache[app.rawUrl]){
+      const blob=new Blob([this._cache[app.rawUrl]],{type:'text/html'});
       const blobUrl=URL.createObjectURL(blob);
-      const fakeFile={
-        id:'rawhtml_'+Date.now(),
-        name:app.name,
-        size:blob.size,
-        type:'text/html',
-        blobUrl:blobUrl,
-        dateAdded:new Date().toISOString(),
-        _appIcon:app.icon||'',
-        _isGame:true
-      };
-      VIEWERS.openHTML(fakeFile);
-    }catch(err){
-      OS.notify('Failed to load',app.name+': '+(err&&err.message||'Network error'));
+      VIEWERS.openHTML({id:'rawhtml_'+Date.now(),name:app.name,size:blob.size,type:'text/html',blobUrl,dateAdded:new Date().toISOString(),_appIcon:app.icon||'',_isGame:true});
+      return;
     }
+
+    OS.notify('Loading',app.name+' is loading…');
+    const maxRetries=8;
+    let attempt=0;
+    let lastErr=null;
+
+    while(attempt<maxRetries){
+      attempt++;
+      try{
+        const sep=app.rawUrl.includes('?')?'&':'?';
+        const bustUrl=app.rawUrl+sep+'_cb='+Date.now();
+        const res=await fetch(bustUrl,{cache:'no-store'});
+
+        if(res.status===429){
+          const retryAfter=res.headers.get('Retry-After');
+          const wait=retryAfter?parseInt(retryAfter,10)*1000:Math.min(1000*Math.pow(2,attempt-1),15000);
+          if(attempt<maxRetries){
+            OS.notify('Rate limited','Retrying '+app.name+'… (attempt '+attempt+'/'+maxRetries+')');
+            await new Promise(r=>setTimeout(r,wait));
+            continue;
+          }
+          throw new Error('HTTP 429 — rate limited after '+maxRetries+' attempts');
+        }
+
+        if(!res.ok)throw new Error('HTTP '+res.status);
+
+        const html=await res.text();
+        this._cache[app.rawUrl]=html;
+        const blob=new Blob([html],{type:'text/html'});
+        const blobUrl=URL.createObjectURL(blob);
+        const fakeFile={
+          id:'rawhtml_'+Date.now(),
+          name:app.name,
+          size:blob.size,
+          type:'text/html',
+          blobUrl:blobUrl,
+          dateAdded:new Date().toISOString(),
+          _appIcon:app.icon||'',
+          _isGame:true
+        };
+        VIEWERS.openHTML(fakeFile);
+        return;
+      }catch(err){
+        lastErr=err;
+        if(err&&err.message&&err.message.includes('429'))break;
+        if(attempt<maxRetries){
+          const wait=Math.min(800*Math.pow(1.6,attempt-1),8000);
+          await new Promise(r=>setTimeout(r,wait));
+          continue;
+        }
+      }
+    }
+
+    OS.notify('Failed to load',app.name+': '+(lastErr&&lastErr.message||'Network error')+' after '+maxRetries+' attempts');
   }
 };
 
@@ -5889,11 +5858,9 @@ const FALLBACK_DOCK={
 };
 
 window.addEventListener('load',()=>{
-  window._novosWaitForRestore(()=>{
-    PLAYTIME.load();
-    OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init()
-    setTimeout(()=>SESSION.restore(),SETTINGS.get('showBoot')?2600:200);
-  });
+  PLAYTIME.load();
+  OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init()
+  setTimeout(()=>SESSION.restore(),SETTINGS.get('showBoot')?2600:200);
 });
 window.addEventListener('pagehide',()=>{
   try{PLAYTIME.stop();}catch(_){}
