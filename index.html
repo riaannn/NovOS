@@ -912,6 +912,7 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
         </div>
       </div>
     </div>
+    <!-- __QM_MARKER__ -->
     <div class="tb-divider" id="tbSysDivider"></div>
     <div id="taskbarApps"></div>
   </div>
@@ -1235,20 +1236,11 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 
 
 
-<!-- AI QUICK PROMPT -->
-<div id="quickPrompt" class="qp-hidden" onclick="if(event.target===this)QP.close()">
-  <div id="quickPromptBox">
-    <div id="qpModelRow">
-      <div id="qpTitle">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="5" y="7" width="14" height="11" rx="2.5"/><path d="M12 3v4"/><path d="M9 12h.01M15 12h.01" stroke-width="2.4"/><path d="M9.5 15h5"/><path d="M3 11v3M21 11v3"/></svg>
-        <span>Ask AI<span class="qp-sub">— prompt copies to clipboard</span></span>
-      </div>
-    </div>
-    <textarea id="qpInput" rows="1" placeholder="Ask anything…   (Enter to send · Esc to close)"></textarea>
-    <div id="qpFooter">
-      <span id="qpHint" data-kb-action="quickPrompt">Ctrl + Alt + Space</span>
-      <button id="qpSend" type="button" onclick="QP.send()">Send →</button>
-    </div>
+<!-- IDENTITY REFRESH TOAST (was AI Quick Prompt) -->
+<div id="quickPrompt" class="qp-hidden" style="pointer-events:none">
+  <div id="quickPromptBox" style="display:flex;align-items:center;gap:10px;padding:10px 16px">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    <span style="font-size:13px;color:var(--os-text)">Tab identity refreshed</span>
   </div>
 </div>
 
@@ -1261,7 +1253,6 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 const DEFAULT_DESKTOP_APPS = [
   { name:"C0D Virtual Environment", url:"__browser__", icon:"", isDefault:true, isSystem:true, systemAction:"openBrowser"},
   { name:"NovCompiler", url:"__compiler__NOVCOMP", icon:"", isDefault:true, isSystem:true, systemAction:"openCompiler"},
-  { name:"AI",           url:"__ai__",     icon:"", isDefault:true, isSystem:true, systemAction:"openAI" },
   { name:"File Explorer",    url:"__explorer__", icon:"", isDefault:true, isSystem:true, systemAction:"openFileExplorer" },
   { name:"Settings",         url:"__settings__", icon:"", isDefault:true, isSystem:true, systemAction:"openSettingsWindow" },
   { name:"App Library",      url:"__library__",  icon:"", isDefault:true, isSystem:true, systemAction:"openAppLibrary" },
@@ -1731,11 +1722,9 @@ const WM={
       '__compiler__':{c:'#7c6dfa',s:`<polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/><line x1="13" y1="4" x2="11" y2="20"/>`},
       '__compiler__NOVCOMP':{c:'#7c6dfa',s:`<polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/><line x1="13" y1="4" x2="11" y2="20"/>`},
       '__tm__':{c:'#4ade80',s:`<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M7 8v4M11 6v6M15 9v3M19 7v5"/>`},
-      '__ai__':{c:'#3b5bdb',s:`<rect x="5" y="7" width="14" height="11" rx="2.5"/><path d="M12 3v4M9 12h.01M15 12h.01M9.5 15h5"/><path d="M3 11v3M21 11v3"/>`},
       '__explorer__':{c:'#fbbf24',s:`<path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>`},
       '__settings__':{c:'#94a3b8',s:`<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>`},
       '__library__':{c:'#a78bfa',s:`<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>`},
-      '__tm__':{c:'#4ade80',s:`<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M7 8v4M11 6v6M15 9v3M19 7v5"/>`},
     };
     const m=map[url];
     if(!m)return null;
@@ -2143,7 +2132,6 @@ const TB={
         {name:'App Library',url:'__library__',icon:''},
         {name:'C0D Virtual Environment',url:'__browser__',icon:''},
         {name:'NovCompiler',url:'__compiler__NOVCOMP',icon:''},
-        {name:'AI',url:'__ai__',icon:''},
       ];
       this.savePinned();
     }
@@ -2598,6 +2586,38 @@ const CTX={
 /* ═══════════════════════════════════════════════
    PVZ
 ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   PLACEHOLDER MODAL — shown when launching a plain link shortcut
+═══════════════════════════════════════════════ */
+const PLACEHOLDER_MODAL={
+  show(){
+    if(localStorage.getItem('novos_placeholder_hide')==='1')return;
+    if(document.getElementById('placeholderModal'))return;
+    const el=document.createElement('div');
+    el.id='placeholderModal';
+    el.className='overlay-modal open';
+    el.innerHTML=`
+      <div class="modal-box narrow">
+        <div class="modal-header"><h3>LINK GAME</h3></div>
+        <div class="modal-body">
+          <div class="modal-actions">
+            <button class="m-btn" onclick="PLACEHOLDER_MODAL.neverShow()">Never Show Again</button>
+            <button class="m-btn primary" onclick="PLACEHOLDER_MODAL.close()">Okay</button>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(el);
+  },
+  close(){
+    const el=document.getElementById('placeholderModal');
+    if(el)el.remove();
+  },
+  neverShow(){
+    localStorage.setItem('novos_placeholder_hide','1');
+    this.close();
+  }
+};
+
 const PVZ={
   tryLaunch(name){
     if(localStorage.getItem('novos_pvz')==='1')
@@ -3138,9 +3158,9 @@ const OS={
     if(app.url&&app.url.startsWith('__')){this._doLaunch(app);return;}
     if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
 
+    // Plain link shortcut (no rawUrl, no gameId) — show the placeholder modal.
     if(!app.gameId){
-      // No embedded source registered for this shortcut at all.
-      this.notify('Not downloadable',app.name+' has no local source registered.');
+      PLACEHOLDER_MODAL.show();
       return;
     }
     const file=DOWNLOADS.get(app.gameId);
@@ -3172,7 +3192,6 @@ const OS={
       '__browser__':()=>this.openBrowser(),
       '__compiler__':()=>this.openCompiler(),
       '__compiler__NOVCOMP':()=>this.openCompiler(),
-      '__ai__':()=>this.openAI(),
     };
     if(sysMap[app.url]){sysMap[app.url]();return;}
     if(app.url&&app.url.startsWith('__')){WM.open(app);return;}
@@ -3221,11 +3240,6 @@ const OS={
     }catch(err){
       OS.notify('Failed to load','C0D Virtual Environment: '+(err&&err.message||'Network error'));
     }
-  },
-  openAI(){
-    const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__ai__');
-    if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
-    WM.open({name:'AI',url:'__ai__',icon:''});
   },
   openTM(){TM.open();},
 
@@ -5852,8 +5866,6 @@ const FALLBACK_DOCK={
   // behavior automatically — no floating dock, no drag state needed.
   run(action){
     if(action==='launcher')LAUNCHER.toggle();
-    
-    else if(action==='ai')QP.toggle();
   }
 };
 
@@ -6042,99 +6054,62 @@ const CMDK={
 };
 
 const QP={
-  _open:false,
+  _toastTimer:null,
 
   init(){
-    const input=document.getElementById('qpInput');
-    if(input){
-      // Auto-grow textarea
-      input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,240)+'px';});
-      input.addEventListener('keydown',e=>{
-        if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();this.send();}
-        if(e.key==='Escape'){e.preventDefault();this.close();}
-      });
-    }
     // Global shortcut (page-focused only — browsers block true OS-level hotkeys)
     document.addEventListener('keydown',e=>{
       if(KEYBINDS.matches('quickPrompt',e)){
         e.preventDefault();
-        this.toggle();
+        this.refreshIdentity();
       }
     });
   },
 
-  toggle(){this._open?this.close():this.open();},
+  toggle(){this.refreshIdentity();},
 
-  open(){
-    this._open=true;
-    document.getElementById('quickPrompt').classList.remove('qp-hidden');
-    const input=document.getElementById('qpInput');
-    if(input){input.value='';input.style.height='auto';setTimeout(()=>input.focus(),60);}
-  },
-
-  close(){
-    this._open=false;
-    document.getElementById('quickPrompt').classList.add('qp-hidden');
-  },
-
-  async send(){
-    const input=document.getElementById('qpInput');
-    const prompt=(input&&input.value||'').trim();
-    if(!prompt){input&&input.focus();return;}
-    this.close();
-
-    // Cross-origin reality: we cannot type into unlimited.surf's textbox from a
-    // sandboxed iframe. The clipboard is the only bridge that works without the
-    // target site cooperating. So: copy the prompt, open the app, and tell the
-    // user to paste (Ctrl/Cmd+V) — the cursor lands in the AI input on load.
-    let copied=false;
+  // Re-runs the cloak logic from the top of <head> — refreshes document.title
+  // and the favicon based on the current ?cloak= param (or resets to NovOS
+  // defaults if none is set). Also flashes a small confirmation toast.
+  refreshIdentity(){
     try{
-      await navigator.clipboard.writeText(prompt);
-      copied=true;
-    }catch(_){
-      copied=this._fallbackCopy(prompt);
-    }
-
-    // Still try hash + query deep-linking in case the app ever honors it.
-    const base=OS._systemRealUrl('__ai__');
-    const sep=base.includes('?')?'&':'?';
-    const targetUrl=base+sep+'q='+encodeURIComponent(prompt)+'#q='+encodeURIComponent(prompt);
-
-    // The srcdoc shell also posts the prompt — harmless if nothing listens,
-    // and ready to work the moment the app adds a listener.
-    const _u=JSON.stringify(targetUrl);
-    const _p=JSON.stringify(prompt);
-    const shell=`<!doctype html><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:transparent;color:#6b6f85;font:12px system-ui,sans-serif;display:flex;align-items:center;justify-content:center}</style><script>(function(){var u=${_u},p=${_p};try{window.name=JSON.stringify({__novos_prompt:true,text:p});}catch(e){}try{setTimeout(function(){window.location.replace(u);},30);}catch(e){window.location.href=u;}})();<\/script><div></div>`;
-
-    const existing=Object.entries(WM.windows).find(([,w])=>w.app&&w.app.url==='__ai__');
-    if(existing){
-      const [wid]=existing;
-      if(WM.windows[wid].minimized)WM.restore(wid);else WM.focus(wid);
-      const frm=document.getElementById('frm_'+wid);
-      if(frm){frm.removeAttribute('src');frm.srcdoc=shell;}
-    }else{
-      WM.open({name:'AI',url:'__ai__',icon:'',_qpUrl:targetUrl});
-    }
-
-    if(copied){
-      OS.notify('Prompt copied','Press Ctrl+V (Cmd+V on Mac) in the AI window to paste it.');
-    }else{
-      OS.notify('AI opened','Couldn\'t auto-copy — re-type your prompt in the AI window.');
-    }
+      const CLOAKS = {
+        'Google':{title:'Google',icon:'https://www.google.com/favicon.ico'},
+        'Google Classroom':{title:'Classes',icon:'https://ssl.gstatic.com/classroom/favicon.png'},
+        'Google Docs':{title:'Untitled document - Google Docs',icon:'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico'},
+        'Google Drive':{title:'My Drive - Google Drive',icon:'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png'},
+        'Gmail':{title:'Inbox - Gmail',icon:'https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico'},
+        'Google Slides':{title:'Untitled presentation - Google Slides',icon:'https://ssl.gstatic.com/docs/presentations/images/favicon5.ico'},
+        'Google Sheets':{title:'Untitled spreadsheet - Google Sheets',icon:'https://ssl.gstatic.com/docs/spreadsheets/favicon3.ico'},
+        'Wikipedia':{title:'Wikipedia',icon:'https://www.wikipedia.org/static/favicon/wikipedia.ico'},
+        'Khan Academy':{title:'Khan Academy',icon:'https://cdn.kastatic.org/images/favicon.ico'},
+        'Clever':{title:'Clever | Portal',icon:'https://www.clever.com/wp-content/uploads/2023/06/cropped-Favicon-512px-192x192.png'},
+        'Canvas':{title:'Dashboard',icon:'https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico'},
+        'Quizlet':{title:'Quizlet',icon:'https://quizlet.com/favicon.ico'}
+      };
+      const params=new URLSearchParams(location.search);
+      const cloakName=params.get('cloak');
+      const cloak=cloakName&&CLOAKS[cloakName];
+      if(cloak){
+        document.title=cloak.title;
+        let link=document.getElementById('favicon');
+        if(!link){link=document.createElement('link');link.id='favicon';link.rel='icon';document.head.appendChild(link);}
+        link.href=cloak.icon;
+      }else{
+        document.title='NovOS';
+        const link=document.getElementById('favicon');
+        if(link)link.remove();
+      }
+    }catch(e){}
+    this._showToast();
   },
 
-  // Legacy clipboard fallback for when navigator.clipboard is unavailable.
-  _fallbackCopy(text){
-    try{
-      const ta=document.createElement('textarea');
-      ta.value=text;
-      ta.style.cssText='position:fixed;top:-9999px;left:-9999px;opacity:0';
-      document.body.appendChild(ta);
-      ta.focus();ta.select();
-      const ok=document.execCommand('copy');
-      ta.remove();
-      return ok;
-    }catch(_){return false;}
+  _showToast(){
+    const el=document.getElementById('quickPrompt');
+    if(!el)return;
+    clearTimeout(this._toastTimer);
+    el.classList.remove('qp-hidden');
+    this._toastTimer=setTimeout(()=>el.classList.add('qp-hidden'),1600);
   }
 };
 
