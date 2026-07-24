@@ -453,14 +453,23 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .f-input:focus{border-color:rgba(var(--os-accent-rgb),0.45)}
 .f-select{width:100%;height:36px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:7px;padding:0 11px;color:var(--os-text);font-family:var(--font);font-size:12.5px;outline:none;margin-bottom:12px;cursor:pointer;-webkit-appearance:none}
 .f-select option{background:var(--os-bg)}
-.f-check-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:8px 10px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:7px;cursor:pointer}
-.f-check-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--os-accent);cursor:pointer;flex-shrink:0}
-.f-check-row label{font-size:12.5px;color:var(--os-text);cursor:pointer;flex:1}
+.f-check-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:9px 11px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:9px;cursor:pointer;transition:all 0.14s}
+.f-check-row:hover{background:var(--os-surface2);border-color:rgba(var(--os-accent-rgb),0.3)}
+.f-check-row label{font-size:12.5px;color:var(--os-text);cursor:pointer;flex:1;user-select:none}
+.nov-checkbox{position:relative;width:18px;height:18px;flex-shrink:0}
+.nov-checkbox input[type=checkbox]{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:pointer;z-index:1}
+.nov-checkbox-box{position:absolute;inset:0;border-radius:5px;border:1.5px solid var(--os-border2);background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;transition:all 0.15s;pointer-events:none}
+.nov-checkbox-box svg{width:11px;height:11px;opacity:0;transform:scale(0.5);transition:all 0.15s;color:#fff}
+.nov-checkbox input[type=checkbox]:checked~.nov-checkbox-box{background:var(--os-accent);border-color:var(--os-accent)}
+.nov-checkbox input[type=checkbox]:checked~.nov-checkbox-box svg{opacity:1;transform:scale(1)}
+.nov-checkbox input[type=checkbox]:hover~.nov-checkbox-box{border-color:rgba(var(--os-accent-rgb),0.6)}
 .modal-actions{display:flex;gap:7px;margin-top:4px}
 .m-btn{flex:1;height:34px;border-radius:7px;font-family:var(--font);font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-muted);transition:all 0.13s}
 .m-btn:hover{background:var(--os-surface2);color:var(--os-text)}
 .m-btn.primary{background:rgba(var(--os-accent-rgb),0.1);border-color:rgba(var(--os-accent-rgb),0.3);color:var(--os-accent)}
 .m-btn.primary:hover{background:var(--os-accent);color:#fff;border-color:var(--os-accent)}
+.m-btn.green-btn{background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.3);color:var(--os-green)}
+.m-btn.green-btn:hover{background:var(--os-green);color:#fff;border-color:var(--os-green)}
 .m-btn.danger{background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.2);color:var(--os-red)}
 .m-btn.danger:hover{background:var(--os-red);color:#fff;border-color:var(--os-red)}
 
@@ -1029,11 +1038,6 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
         <label class="toggle"><input type="checkbox" id="tog-boot" checked onchange="OS.setSetting('showBoot',this.checked)"><span class="tog-slider"></span></label>
       </div>
       <div class="sp-row" style="margin-top:5px">
-        <div><div class="sp-row-label">Launch Confirm</div><div class="sp-row-sub">Show "open in window?" dialog</div></div>
-        <label class="toggle"><input type="checkbox" id="tog-confirm" checked onchange="OS.setSetting('launchConfirm',this.checked)"><span class="tog-slider"></span></label>
-      </div>
-
-      <div class="sp-row" style="margin-top:5px">
         <div><div class="sp-row-label">Hide Taskbar in Fullscreen</div><div class="sp-row-sub">Auto-hide when a window is maximized</div></div>
         <label class="toggle"><input type="checkbox" id="tog-taskbarhide" checked onchange="OS.setSetting('hideTaskbarFullscreen',this.checked);TB.updateAutoHide()"><span class="tog-slider"></span></label>
       </div>
@@ -1073,6 +1077,47 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
   </div>
 </div>
 
+<!-- OPEN VIA PICKER MODAL -->
+<div id="openViaModal" class="overlay-modal">
+  <div class="modal-box narrow">
+    <div class="modal-header"><h3>How would you like to launch this game?</h3></div>
+    <div class="modal-body">
+      <div style="font-size:12.5px;line-height:1.6;color:var(--os-muted);margin-bottom:14px">Choose how to open this shortcut.</div>
+      <img src="" alt="" style="display:block;width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-bottom:14px;background:var(--os-surface);border:1px dashed var(--os-border)">
+      <div class="modal-actions" style="flex-direction:column;gap:8px">
+        <button class="m-btn primary" id="openViaHtmlBtn" onclick="OS.openViaChoose('html')" style="height:40px">Raw HTML <span style="opacity:0.6;font-weight:400">— fetch &amp; embed source</span></button>
+        <button class="m-btn green-btn" id="openViaLinkBtn" onclick="OS.openViaChoose('link')" style="height:40px">Link <span style="opacity:0.7;font-weight:400">— load URL directly</span></button>
+      </div>
+      <div class="modal-actions">
+        <button class="m-btn" onclick="OS.openViaCancel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LINK OPEN WARNING MODAL -->
+<div id="linkWarnModal" class="overlay-modal">
+  <div class="modal-box narrow">
+    <div class="modal-header"><h3>⚠BLOCKABLE BY SECURLY⚠</h3></div>
+    <div class="modal-body">
+      <div style="font-size:12.5px;line-height:1.65;color:var(--os-text);margin-bottom:14px">Securly can block games via URL.</div>
+      <!-- INSERT GIF HERE -->
+      <img src="https://static.wixstatic.com/media/613e71_e3eaf6d23f164fcd87b69d96028857cf~mv2.gif/v1/fill/w_266,h_216,q_86,enc_avif,quality_auto/613e71_e3eaf6d23f164fcd87b69d96028857cf~mv2.gif" alt="" style="display:block;width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-bottom:14px;background:var(--os-surface);border:1px dashed var(--os-border)">
+      <label class="f-check-row" for="lw-dontshow">
+        <span class="nov-checkbox">
+          <input type="checkbox" id="lw-dontshow">
+          <span class="nov-checkbox-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </span>
+        Do not show again
+      </label>
+      <div class="modal-actions">
+        <button class="m-btn primary" onclick="OS.linkWarnConfirm()">Okay</button>
+        <button class="m-btn" onclick="OS.linkWarnCancel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ADD SHORTCUT MODAL -->
 <div id="addShortcutModal" class="overlay-modal">
   <div class="modal-box">
@@ -1083,8 +1128,18 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
     <div class="modal-body">
       <div class="f-label">Name</div>
       <input type="text" class="f-input" id="sc-name" placeholder="My App">
-      <div class="f-label">URL</div>
+      <div class="f-label">Raw HTML Source URL (optional)</div>
+      <input type="text" class="f-input" id="sc-rawurl" placeholder="https://raw.githubusercontent.com/.../game.html">
+      <div class="f-label">Link URL (optional)</div>
       <input type="text" class="f-input" id="sc-url" placeholder="https://...">
+      <div style="font-size:10.5px;color:var(--os-dim);margin:-6px 0 12px;line-height:1.5">Fill in either or both. Launching always asks how to open it.</div>
+      <label class="f-check-row" for="sc-supportshtml">
+        <span class="nov-checkbox">
+          <input type="checkbox" id="sc-supportshtml" checked>
+          <span class="nov-checkbox-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </span>
+        Supports HTML launch
+      </label>
       <div class="f-label">Icon — URL or Emoji</div>
       <div style="display:flex;gap:6px;margin-bottom:12px">
         <input type="text" class="f-input" id="sc-icon" placeholder="https://... or paste an emoji 🎮" style="margin-bottom:0;flex:1">
@@ -1098,10 +1153,13 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
         <option value="games" selected>Games</option>
         <option value="apps">Apps</option>
       </select>
-      <div class="f-check-row" onclick="document.getElementById('sc-desktop').click()">
-        <input type="checkbox" id="sc-desktop" checked>
-        <label for="sc-desktop">Show on Desktop</label>
-      </div>
+      <label class="f-check-row" for="sc-desktop">
+        <span class="nov-checkbox">
+          <input type="checkbox" id="sc-desktop" checked>
+          <span class="nov-checkbox-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+        </span>
+        Show on Desktop
+      </label>
       <div class="modal-actions">
         <button class="m-btn primary" onclick="OS.addShortcutSave()">Save</button>
         <button class="m-btn danger" id="scDeleteBtn" onclick="OS.deleteShortcut()" style="display:none">Delete</button>
@@ -1272,60 +1330,51 @@ const DEFAULT_SHORTCUTS = {
     {name:"0k",url:"https://cdn.jsdelivr.net/gh/abndnce/b0k@main/jsdelivr/index.svg",icon:"https://avatars.githubusercontent.com/u/6191378?v=4",isDefault:true},
   ],
   games:[
-    {name:"Angry Birds Epic",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Angry%20Birds%20Epic.html",url:"__rawhtml__",icon:"https://i.imgur.com/ql7Gz9e.jpeg",isDefault:true},
-    {name:"Bad Piggies",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Bad%20Piggies.html", url: "__rawhtml__",  icon:"https://preview.redd.it/which-of-these-app-icons-is-the-best-in-your-opinion-for-v0-eooqvsjlfb971.png?width=185&format=png&auto=webp&s=e8267058bec260d939d0bdc052bb1c9bc4516787",isDefault:true},
-    {name:"Baldi's Basics",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Baldi's%20Basics.html",url: "__rawhtml__", icon:"https://play-lh.googleusercontent.com/EPV1TB4So1lB0DGrdCVExDpNU8ML67nd8OqBeoOIM-s6sDicxmDdPvCXD6n7LKevFl0",isDefault:true},
-    {name:"Celeste",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Celeste%20(1).html",url:"__rawhtml__",icon:"https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA11235_00/1/i_1542763946643aa6b17c6232c30d581802f0a6fe00cc0ddd0493987857d9db0a/i/icon0.png",isDefault:true},
-    {name:"Granny",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Granny%20(2).html", url:"__rawhtml__",icon:"https://img.utdstc.com/icon/307/95f/30795f2ffbff795738108567ba5ae03cef007e0eaf3c73a5b7a7733b7518dc68:200",isDefault:true},
-    {name:"TABS",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Totally%20Accurate%20Battle%20Simulator%20(TABS).html", url:"__rawhtml__",icon:"https://img.tapimg.net/market/images/501346ca4110ebc74df303bdab4590a2.png/appicon?t=1",isDefault:true},
-    {name:"Plague Inc",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Plague%20Inc.html", url:"__rawhtml__",icon:"https://play-lh.googleusercontent.com/qLgeusnY6S6JC_qB7s1qz5rPzrzMIuiXDvQN2R9qZhuQb3xTw4adMD0-Ktk12LrLwFB_wn_ftNVvLDsixSBeGQ",isDefault:true},
-    {name:"Vampire Survivors",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Vampire%20Survivors.html", url:"__rawhtml__",icon:"https://play-lh.googleusercontent.com/R1dShZj1HNBQzrHhsAD9_F8BRc2FU-nlDMU7OIAIwnMge04QWvNZR-clnXnEd_v30Qo",isDefault:true},
-    {name:"Stardew Valley",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Stardew%20Valley.html", url:"__rawhtml__",icon:"https://assets.nintendo.eu/image/upload/f_auto,c_limit,w_992,q_auto:low/MNS/NOE/70010000001802/SQ_NSwitchDS_StardewValley",isDefault:true},
-    {name:"Terraria",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Terraria.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/669.png",isDefault:true},
-    {name:"Half Life 2",url:"https://riaannn.github.io/Half-Life-2/",icon:"https://supermath.salavat.ru/png/games/hl2.webp",isDefault:true},
-    {name:"Clover Pit",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Clover%20Pit.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/716.png",isDefault:true},
-    {name:"PVZ GOTY Edition",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/PVZ%20GOTY.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png",isDefault:true,isPVZ:true},
-    {name:"PVZ Fusion",url:"https://riaannn.github.io/FAKE-PVZ-Fusion-attempt/",icon:"https://cdn2.steamgriddb.com/icon_thumb/043555cbce9685a223341da753a18198.png",isDefault:true},
-    {name:"Balatro",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/balatro.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/066e25a0712b306a9b95230f6ec4a051.ico",isDefault:true},
-    {name:"Poly Bridge",url:"https://riaannn.github.io/poly-bridge-optimized-test/",icon:"https://cdn2.steamgriddb.com/icon/7503cfacd12053d309b6bed5c89de212/32/256x256.png",isDefault:true},
-    {name:"Dadish",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/357.png",isDefault:true},
-    {name:"Dadish 2",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish%202.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/355.png",isDefault:true},
-    {name:"Dadish 3",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish%203.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/356.png",isDefault:true},
-    {name:"Apes vs Helium",url:"https://riaannn.github.io/Apez-vz-Helium/",icon:"https://cdn2.steamgriddb.com/icon/96ede18295a1258ffbe1dca74eed34d0.png",isDefault:true},
-    {name:"Five Nights at Frickbears 3",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/frickbears.html", url:"__rawhtml__",icon:"https://i.imgur.com/dIIAThP.png",isDefault:true},
-    {name:"PVZ Garden Warfare 2D",url:"https://riaannn.github.io/PVZ-GW-2D/",icon:"https://img.itch.zone/aW1nLzIxNzU5MjE1LnBuZw==/315x250%23c/sljD0g.png",isDefault:true},
-    {name:"Ages of Conflict",url:"https://wasm.rip/files/aoc/index.html",icon:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2186320/header.jpg?t=1779429676",isDefault:true},
-    {name:"Plants vs Zombies Botanic Warfare",url:"https://riaannn.github.io/Plants-vs-Zombies-Botanical-Warfare/",icon:"https://i.imgur.com/phey2av.jpeg",isDefault:true},
-    {name:"Plants vs Zombies Roguelike",url:"https://riaannn.github.io/PVZ-Roguelike/",icon:"https://i.imgur.com/VAYyuwP.png",isDefault:true},
-    {name:"Geometry Dash",rawUrl: "https://github.com/riaannn/NovOS/raw/refs/heads/main/Games%20html/Geometry%20Dash.html", url:"__rawhtml__",icon:"https://images3.alphacoders.com/120/thumb-1920-1202615.jpg",isDefault:true},
-    {name:"Angry Birds 2",rawUrl: "https://github.com/riaannn/NovOS/raw/refs/heads/main/Games%20html/Angry%20Birds%202.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/65c6f9e287ec3396a9f06843e46e26f8/32/512x512.png",isDefault:true},
-    {name:"Worldbox",url:"https://nostaligafun.pages.dev/games/games-accualy/OTHER/WorldBox_Data/index.html",icon:"https://play-lh.googleusercontent.com/XD7-X-5qk_37o2OyLeOPuPjuY1rD0O4COKX-TOh_efoHoVQkmSzk00fSUB6a7FU7a_E",isDefault:true},
-    {name:"Smash Karts",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Smash%20Karts.html", url:"__rawhtml__",icon:"https://play-lh.googleusercontent.com/cM1CXOuBIy0kjGfoCTOKNa812iuVX6X2DDop8xNH4mNyjuM-oj3wVqZ7wiAOizq_TA",isDefault:true},
-    {name:"bonk.io",url:"https://bonk.io",icon:"https://b.thumbs.redditmedia.com/9p8-wn2_KPdgjPTaR9fx-NIVgFhvsgBL0WPdbv5GMkA.png",isDefault:true},
-    {name:"Granny 3",url:"https://wasm.rip/files/granny/granny3.html",icon:"https://play-lh.googleusercontent.com/QvKhAg9SyqVZ24DdjJCkuwPVpO4kz7cdbNO3bUxGALrlaeVTxJLLL9zHyaFq-NJ6eLg7",isDefault:true},
-    {name:"Dice A Million",url:"https://wasm.rip/files/diceAmillion/diceamillion.html",icon:"https://img.succesone.fr/2026/02/Dice-A-Million-SuccesOneFR-microsoft-220x300.jpg",isDefault:true},
-    {name:"Granny 2",url:"https://nostaligafun.pages.dev/games/games-accualy/ANDROID/Granny2_Data/index.html",icon:"https://play-lh.googleusercontent.com/iZ7NP-56YenT2dpgKEAw3n7IKFyu-S_9Iu3ayo28XYTgZpFtxsK_HXltV36pysSJqq8",isDefault:true},
-    {name:"Among Us",url:"https://nostaligafun.pages.dev/games/games-accualy/ANDROID/AmongUs_Data/index.html",icon:"https://upload.wikimedia.org/wikipedia/en/9/9a/Among_Us_cover_art.jpg",isDefault:true},
+    {name:"Angry Birds Epic",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Angry%20Birds%20Epic.html",url:"__rawhtml__",launchUrl:"https://abwebports.vercel.app/Epic",icon:"https://i.imgur.com/ql7Gz9e.jpeg",isDefault:true,SupportsHTML:true},
+    {name:"Bad Piggies",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Bad%20Piggies.html", url: "__rawhtml__", launchUrl: "https://supermath.salavat.ru/gamefile/piggies.html",  icon:"https://preview.redd.it/which-of-these-app-icons-is-the-best-in-your-opinion-for-v0-eooqvsjlfb971.png?width=185&format=png&auto=webp&s=e8267058bec260d939d0bdc052bb1c9bc4516787",isDefault:true,SupportsHTML:true},
+    {name:"Baldi's Basics",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Baldi's%20Basics.html",url: "__rawhtml__", icon:"https://play-lh.googleusercontent.com/EPV1TB4So1lB0DGrdCVExDpNU8ML67nd8OqBeoOIM-s6sDicxmDdPvCXD6n7LKevFl0",launchUrl: "https://riaannn.github.io/Baldis-Basics/", isDefault:true,SupportsHTML:true},
+    {name:"Celeste",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Celeste%20(1).html",url:"__rawhtml__",icon:"https://image.api.playstation.com/gs2-sec/appkgo/prod/CUSA11235_00/1/i_1542763946643aa6b17c6232c30d581802f0a6fe00cc0ddd0493987857d9db0a/i/icon0.png",launchUrl:"https://riaannn.github.io/CelesteGN/", isDefault:true,SupportsHTML:true},
+    {name:"Granny",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Granny%20(2).html", url:"__rawhtml__",icon:"https://img.utdstc.com/icon/307/95f/30795f2ffbff795738108567ba5ae03cef007e0eaf3c73a5b7a7733b7518dc68:200", launchUrl:"https://riaannn.github.io/Granny/", isDefault:true,SupportsHTML:true},
+    {name:"TABS",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Totally%20Accurate%20Battle%20Simulator%20(TABS).html", url:"__rawhtml__",icon:"https://img.tapimg.net/market/images/501346ca4110ebc74df303bdab4590a2.png/appicon?t=1", launchUrl: "https://riaannn.github.io/TABS/", isDefault:true,SupportsHTML:true},
+    {name:"Plague Inc",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Plague%20Inc.html", url:"__rawhtml__",icon:"https://play-lh.googleusercontent.com/qLgeusnY6S6JC_qB7s1qz5rPzrzMIuiXDvQN2R9qZhuQb3xTw4adMD0-Ktk12LrLwFB_wn_ftNVvLDsixSBeGQ", launchUrl:"https://riaannn.github.io/Plague-Inc/", isDefault:true,SupportsHTML:true},
+    {name:"Vampire Survivors",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Vampire%20Survivors.html", url:"__rawhtml__",icon:"https://play-lh.googleusercontent.com/R1dShZj1HNBQzrHhsAD9_F8BRc2FU-nlDMU7OIAIwnMge04QWvNZR-clnXnEd_v30Qo",launchUrl: "https://riaannn.github.io/Vampire-Survivors/", isDefault:true,SupportsHTML:true},
+    {name:"Stardew Valley",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Stardew%20Valley.html", url:"__rawhtml__",icon:"https://assets.nintendo.eu/image/upload/f_auto,c_limit,w_992,q_auto:low/MNS/NOE/70010000001802/SQ_NSwitchDS_StardewValley", launchUrl:"https://riaannn.github.io/Stardew-Valley1/", isDefault:true,SupportsHTML:true},
+    {name:"Terraria",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Terraria.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/669.png", launchUrl:"https://riaannn.github.io/Terraria/", isDefault:true,SupportsHTML:true},
+    {name:"Half Life 2",url:"https://riaannn.github.io/Half-Life-2/",icon:"https://supermath.salavat.ru/png/games/hl2.webp",isDefault:true, launchUrl:"https://hl2.slqnt.dev", SupportsHTML:false},
+    {name:"Clover Pit",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Clover%20Pit.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/716.png",isDefault:true, launchUrl:"https://riaannn.github.io/Clover-Pit/", SupportsHTML:false},
+    {name:"PVZ GOTY Edition",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/PVZ%20GOTY.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png", launchUrl:"https://riaannn.github.io/PVZ-GOTY/", isDefault:true,SupportsHTML:true},
+    {name:"PVZ Fusion",url:"https://riaannn.github.io/FAKE-PVZ-Fusion-attempt/",icon:"https://cdn2.steamgriddb.com/icon_thumb/043555cbce9685a223341da753a18198.png",isDefault:true,SupportsHTML:false},
+    {name:"Balatro",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/balatro.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/066e25a0712b306a9b95230f6ec4a051.ico",isDefault:true,SupportsHTML:true},
+    {name:"Poly Bridge",url:"https://riaannn.github.io/poly-bridge-optimized-test/",icon:"https://cdn2.steamgriddb.com/icon/7503cfacd12053d309b6bed5c89de212/32/256x256.png",isDefault:true,SupportsHTML:false},
+    {name:"Dadish",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/357.png",isDefault:true,SupportsHTML:true},
+    {name:"Dadish 2",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish%202.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/355.png",isDefault:true,SupportsHTML:true},
+    {name:"Dadish 3",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish%203.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/356.png",isDefault:true,SupportsHTML:true},
+    {name:"Apes vs Helium",url:"https://riaannn.github.io/Apez-vz-Helium/",icon:"https://cdn2.steamgriddb.com/icon/96ede18295a1258ffbe1dca74eed34d0.png",isDefault:true,SupportsHTML:false},
+    {name:"Five Nights at Frickbears 3",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/frickbears.html", url:"__rawhtml__",icon:"https://i.imgur.com/dIIAThP.png",isDefault:true,SupportsHTML:true},
+    {name:"PVZ Garden Warfare 2D",url:"https://riaannn.github.io/PVZ-GW-2D/",icon:"https://img.itch.zone/aW1nLzIxNzU5MjE1LnBuZw==/315x250%23c/sljD0g.png",isDefault:true,SupportsHTML:false},
+    {name:"Ages of Conflict",url:"https://wasm.rip/files/aoc/index.html",icon:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2186320/header.jpg?t=1779429676",isDefault:true,SupportsHTML:false},
+    {name:"Plants vs Zombies Botanic Warfare",url:"https://riaannn.github.io/Plants-vs-Zombies-Botanical-Warfare/",icon:"https://i.imgur.com/phey2av.jpeg",isDefault:true,SupportsHTML:false},
+    {name:"Plants vs Zombies Roguelike",url:"https://riaannn.github.io/PVZ-Roguelike/",icon:"https://i.imgur.com/VAYyuwP.png",isDefault:true,SupportsHTML:false},
+    {name:"Geometry Dash",rawUrl: "https://github.com/riaannn/NovOS/raw/refs/heads/main/Games%20html/Geometry%20Dash.html", url:"__rawhtml__",icon:"https://images3.alphacoders.com/120/thumb-1920-1202615.jpg",isDefault:true,SupportsHTML:true},
+    {name:"Angry Birds 2",rawUrl: "https://github.com/riaannn/NovOS/raw/refs/heads/main/Games%20html/Angry%20Birds%202.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/65c6f9e287ec3396a9f06843e46e26f8/32/512x512.png",isDefault:true,SupportsHTML:true},
+    {name:"Worldbox",url:"https://nostaligafun.pages.dev/games/games-accualy/OTHER/WorldBox_Data/index.html",icon:"https://play-lh.googleusercontent.com/XD7-X-5qk_37o2OyLeOPuPjuY1rD0O4COKX-TOh_efoHoVQkmSzk00fSUB6a7FU7a_E",isDefault:true,SupportsHTML:false},
+    {name:"Smash Karts",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Smash%20Karts.html", url:"__rawhtml__",icon:"https://play-lh.googleusercontent.com/cM1CXOuBIy0kjGfoCTOKNa812iuVX6X2DDop8xNH4mNyjuM-oj3wVqZ7wiAOizq_TA",isDefault:true,SupportsHTML:false},
+    {name:"bonk.io",url:"https://bonk.io",icon:"https://b.thumbs.redditmedia.com/9p8-wn2_KPdgjPTaR9fx-NIVgFhvsgBL0WPdbv5GMkA.png",isDefault:true,SupportsHTML:false},
+    {name:"Granny 3",url:"https://wasm.rip/files/granny/granny3.html",icon:"https://play-lh.googleusercontent.com/QvKhAg9SyqVZ24DdjJCkuwPVpO4kz7cdbNO3bUxGALrlaeVTxJLLL9zHyaFq-NJ6eLg7",isDefault:true,SupportsHTML:false},
+    {name:"Dice A Million",url:"https://wasm.rip/files/diceAmillion/diceamillion.html",icon:"https://img.succesone.fr/2026/02/Dice-A-Million-SuccesOneFR-microsoft-220x300.jpg",isDefault:true,SupportsHTML:false},
+    {name:"Granny 2",url:"https://nostaligafun.pages.dev/games/games-accualy/ANDROID/Granny2_Data/index.html",icon:"https://play-lh.googleusercontent.com/iZ7NP-56YenT2dpgKEAw3n7IKFyu-S_9Iu3ayo28XYTgZpFtxsK_HXltV36pysSJqq8",isDefault:true,SupportsHTML:false},
+    {name:"Among Us",url:"https://nostaligafun.pages.dev/games/games-accualy/ANDROID/AmongUs_Data/index.html",icon:"https://upload.wikimedia.org/wikipedia/en/9/9a/Among_Us_cover_art.jpg",isDefault:true,SupportsHTML:false},
     
   ],
   apps:[
     {name:"WatchParty",url:"https://watchparty.me",icon:"https://www.watchparty.me/favicon.ico",isDefault:true},
-    {name:"Rammerhead",url:"https://direct2.rammerhead.org/",icon:"https://demo-opensource.rammerhead.org/logo.png",isDefault:true},
-    {name:"Code Editor",url:"https://riaannn.github.io/Code-Editor/",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/429.png",isDefault:true},
+    {name:"Roblox Studio",url:"https://studio.nodium.lol/",icon:"https://upload.wikimedia.org/wikipedia/commons/b/b5/ROBLOX_Studio_icon.png",isDefault:true,supportsHTML:false},
   ]
 };
 
 const PVZ_URL='https://wszqkzqk.github.io/pvz-portable-wasm/pvz-portable.html';
 
-/* ═══════════════════════════════════════════════
-   GAME SOURCE LIBRARY — full HTML for each downloadable
-   game, embedded directly in the app (no network fetch,
-   no external link is ever loaded). Key = stable game id.
-   Paste each game's complete single-file HTML as the value.
-═══════════════════════════════════════════════ */
-const GAME_SOURCES={
-  // example_game_id: `<!doctype html>...</html>`,
-};
+
 
 /* ═══════════════════════════════════════════════
    RAW HTML LAUNCHER — fetches game HTML from GitHub Pages
@@ -1339,7 +1388,7 @@ const RAW_HTML={
     if(this._cache[app.rawUrl]){
       const blob=new Blob([this._cache[app.rawUrl]],{type:'text/html'});
       const blobUrl=URL.createObjectURL(blob);
-      VIEWERS.openHTML({id:'rawhtml_'+Date.now(),name:app.name,size:blob.size,type:'text/html',blobUrl,dateAdded:new Date().toISOString(),_appIcon:app.icon||'',_isGame:true});
+      VIEWERS.openHTML({id:'rawhtml_'+Date.now(),name:app.name,size:blob.size,type:'text/html',blobUrl,dateAdded:new Date().toISOString(),_appIcon:app.icon||'',_isGame:true,_forceSysIcon:app._forceSysIcon});
       return;
     }
 
@@ -1380,7 +1429,8 @@ const RAW_HTML={
           blobUrl:blobUrl,
           dateAdded:new Date().toISOString(),
           _appIcon:app.icon||'',
-          _isGame:true
+          _isGame:true,
+          _forceSysIcon:app._forceSysIcon
         };
         VIEWERS.openHTML(fakeFile);
         return;
@@ -1630,82 +1680,7 @@ const FE={
   }
 };
 
-/* ═══════════════════════════════════════════════
-   DOWNLOADS — gates games behind a "Download" step.
-   No network requests: this just copies the embedded
-   HTML string from GAME_SOURCES into the FE file store.
-═══════════════════════════════════════════════ */
-const DOWNLOADS={
-  load(){try{return JSON.parse(localStorage.getItem('novos_downloads')||'{}');}catch{return{};}},
-  save(map){localStorage.setItem('novos_downloads',JSON.stringify(map));},
 
-  // key = app.gameId (NOT app.url)
-  get(gameId){
-    const map=this.load();
-    const fid=map[gameId];
-    if(!fid)return null;
-    const files=FE.load();
-    const file=files.find(f=>f.id===fid);
-    return file||null;
-  },
-
-  isDownloaded(gameId){return!!this.get(gameId);},
-
-  // Copies the embedded source for `gameId` into the FE store as a real file.
-  // Synchronous and offline — no fetch, no link is ever touched.
-  download(app){
-    if(!app||!app.gameId)throw new Error('This app has no embedded source to download');
-    const html=GAME_SOURCES[app.gameId];
-    if(typeof html!=='string'||!html.length)throw new Error('No source registered for this game yet');
-
-    const blob=new Blob([html],{type:'text/html'});
-    const fileName=(app.name||'game').replace(/[^a-z0-9 _-]/gi,'')+'.html';
-
-    // Build a data URL synchronously via FileReader (kept async-friendly but
-    // resolves immediately since this is all in-memory, no I/O wait).
-    return new Promise((resolve,reject)=>{
-      const r=new FileReader();
-      r.onload=()=>{
-        const entry={
-          id:genId(),
-          name:fileName,
-          size:blob.size,
-          type:'text/html',
-          dataUrl:r.result,
-          dateAdded:new Date().toISOString()
-        };
-        const files=FE.load();
-        files.push(entry);
-        FE.save(files);
-
-        const map=this.load();
-        map[app.gameId]=entry.id;
-        this.save(map);
-
-        if(typeof FEW!=='undefined'){
-          Object.keys(FEW._state||{}).forEach(wid=>FEW.render(wid));
-        }
-        resolve(entry);
-      };
-      r.onerror=()=>reject(new Error('Failed to write file'));
-      r.readAsDataURL(blob);
-    });
-  },
-
-  forget(gameId,alsoDeleteFile){
-    const map=this.load();
-    const fid=map[gameId];
-    delete map[gameId];
-    this.save(map);
-    if(alsoDeleteFile&&fid){
-      const files=FE.load().filter(f=>f.id!==fid);
-      FE.save(files);
-      if(typeof FEW!=='undefined'){
-        Object.keys(FEW._state||{}).forEach(wid=>FEW.render(wid));
-      }
-    }
-  }
-};
 /* ═══════════════════════════════════════════════
    WINDOW MANAGER
 ═══════════════════════════════════════════════ */
@@ -1737,7 +1712,11 @@ const WM={
     // rerouted through OS.launch, which resolves the real rawUrl and opens the
     // HTML Viewer instead. Without this, the iframe loads the literal string
     // "__rawhtml__" → the black "page not found" screen.
-    if(app&&(app.url==='__rawhtml__'||app.rawUrl)){
+    // NOTE: a link-launch app (url already resolved to a real http(s) URL by
+    // openViaChoose) must NOT be rerouted back into the picker just because it
+    // still carries a leftover rawUrl field — only reroute if url itself is
+    // still the literal placeholder.
+    if(app&&app.url==='__rawhtml__'){
       if(typeof OS!=='undefined'&&OS.launch){OS.launch(app);return;}
     }
     const id=this.newId();
@@ -2586,37 +2565,7 @@ const CTX={
 /* ═══════════════════════════════════════════════
    PVZ
 ═══════════════════════════════════════════════ */
-/* ═══════════════════════════════════════════════
-   PLACEHOLDER MODAL — shown when launching a plain link shortcut
-═══════════════════════════════════════════════ */
-const PLACEHOLDER_MODAL={
-  show(){
-    if(localStorage.getItem('novos_placeholder_hide')==='1')return;
-    if(document.getElementById('placeholderModal'))return;
-    const el=document.createElement('div');
-    el.id='placeholderModal';
-    el.className='overlay-modal open';
-    el.innerHTML=`
-      <div class="modal-box narrow">
-        <div class="modal-header"><h3>LINK GAME</h3></div>
-        <div class="modal-body">
-          <div class="modal-actions">
-            <button class="m-btn" onclick="PLACEHOLDER_MODAL.neverShow()">Never Show Again</button>
-            <button class="m-btn primary" onclick="PLACEHOLDER_MODAL.close()">Okay</button>
-          </div>
-        </div>
-      </div>`;
-    document.body.appendChild(el);
-  },
-  close(){
-    const el=document.getElementById('placeholderModal');
-    if(el)el.remove();
-  },
-  neverShow(){
-    localStorage.setItem('novos_placeholder_hide','1');
-    this.close();
-  }
-};
+
 
 const PVZ={
   tryLaunch(name){
@@ -2675,7 +2624,6 @@ const OS={
     if(animEl)animEl.checked=animsOn;
     if(!animsOn)document.body.classList.add('no-anims');
     document.getElementById('tog-boot').checked=SETTINGS.get('showBoot');
-    document.getElementById('tog-confirm').checked=SETTINGS.get('launchConfirm');
     document.getElementById('tog-taskbarhide').checked=SETTINGS.get('hideTaskbarFullscreen');
     document.getElementById('tog-icons').checked=SETTINGS.get('showIcons');
 
@@ -3139,38 +3087,98 @@ const OS={
 
 /* ─── Launch flow ───────────────────────────────────────────── */
   launch(app){
-    // Raw HTML games — fetch from GitHub Pages and open in HTML Viewer
-    if(app.url==='__rawhtml__'||app.rawUrl){
-      // If rawUrl is missing (e.g. launched from desktop icon or pinned taskbar),
-      // look up the full app entry from shortcuts to get the rawUrl.
-      if(!app.rawUrl){
-        const all=[...(this.shortcuts&&this.shortcuts.games||[]),...(this.shortcuts&&this.shortcuts.web||[]),...(this.shortcuts&&this.shortcuts.apps||[])];
-        // Match by name first; if that misses, match by url+name loosely.
-        const full=all.find(a=>a.url==='__rawhtml__'&&a.name===app.name)
-                 ||all.find(a=>a.url==='__rawhtml__'&&a.rawUrl&&app.name&&a.name&&a.name.trim()===app.name.trim());
-        if(full&&full.rawUrl){RAW_HTML.launch(full);return;}
+    // System apps, folders, and PVZ's own legacy flow bypass everything.
+    if(app.url&&app.url.startsWith('__')&&app.url!=='__rawhtml__'){this._doLaunch(app);return;}
+    if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
+
+    // Resolve the full shortcut entry (by name) so we have both rawUrl and
+    // launchUrl available, regardless of which identity this app object carries.
+    let resolved=app;
+    if(app.url==='__rawhtml__'||app.url==='__html__'||app.rawUrl){
+      const all=[...(this.shortcuts&&this.shortcuts.games||[]),...(this.shortcuts&&this.shortcuts.web||[]),...(this.shortcuts&&this.shortcuts.apps||[])];
+      const full=all.find(a=>a.name===app.name&&(a.rawUrl||a.url==='__rawhtml__'));
+      if(full)resolved=full;
+    }
+
+    // Launch NEVER opens a game directly anymore — it always shows the
+    // Open Via popup (HTML vs Link), unless it's a plain non-game shortcut
+    // with neither rawUrl nor launchUrl (falls through to system launch below).
+    this._showOpenVia(resolved);
+  },
+
+  _showOpenVia(app){
+    const modal=document.getElementById('openViaModal');
+    modal._pendingApp=app;
+    const htmlBtn=document.getElementById('openViaHtmlBtn');
+    if(htmlBtn){
+      const notSupported=app.SupportsHTML===false;
+      htmlBtn.disabled=notSupported;
+      htmlBtn.style.opacity=notSupported?'0.45':'';
+      htmlBtn.style.cursor=notSupported?'not-allowed':'';
+      htmlBtn.innerHTML='Raw HTML <span style="opacity:0.6;font-weight:400">— fetch &amp; embed source</span>'+(notSupported?' <span style="color:var(--os-red);font-weight:700">NOT SUPPORTED</span>':'');
+    }
+    const linkBtn=document.getElementById('openViaLinkBtn');
+    if(linkBtn){
+      const hasLink=!!(app.launchUrl||(app.url&&!app.url.startsWith('__')&&app.url!=='__rawhtml__'));
+      linkBtn.disabled=!hasLink;
+      linkBtn.style.opacity=hasLink?'':'0.45';
+      linkBtn.style.cursor=hasLink?'':'not-allowed';
+      linkBtn.innerHTML='Link <span style="opacity:0.7;font-weight:400">— load URL directly</span>'+(hasLink?'':' <span style="color:var(--os-red);font-weight:700">NOT SUPPORTED</span>');
+    }
+    const gifImg=modal.querySelector('.modal-body > img');
+    if(gifImg){
+      // Blank placeholder — replace this src with your own gif URL per app if desired
+      gifImg.src=app._previewGif||'';
+      gifImg.style.display=app._previewGif?'block':'none';
+    }
+    modal.classList.add('open');
+  },
+  openViaChoose(mode){
+    const modal=document.getElementById('openViaModal');
+    const app=modal._pendingApp;
+    if(mode==='html'&&app&&app.SupportsHTML===false)return;
+    if(mode==='link'&&app){
+      const hasLink=!!(app.launchUrl||(app.url&&!app.url.startsWith('__')&&app.url!=='__rawhtml__'));
+      if(!hasLink)return;
+    }
+    modal.classList.remove('open');
+    if(!app)return;
+    if(mode==='html'){
+      if(!app.rawUrl&&app.url!=='__rawhtml__'){
         OS.notify('Error','No raw URL found for '+app.name+'. Re-add it from the App Library.');
         return;
       }
-      RAW_HTML.launch(app);return;
+      RAW_HTML.launch(app);
+    }else{
+      const linkUrl=app.launchUrl||(app.url&&!app.url.startsWith('__')&&app.url!=='__rawhtml__'?app.url:null);
+      if(!linkUrl){
+        OS.notify('Error','No link URL found for '+app.name+'. Re-add it from the App Library.');
+        return;
+      }
+      const linkApp={...app,url:linkUrl};
+      if(localStorage.getItem('novos_linkwarn_hide')==='1')this._doLaunch(linkApp);
+      else this._showLinkWarning(linkApp);
     }
-    // System apps, folders, and PVZ's own legacy flow bypass the download gate.
-    if(app.url&&app.url.startsWith('__')){this._doLaunch(app);return;}
-    if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
+  },
+  openViaCancel(){
+    document.getElementById('openViaModal').classList.remove('open');
+  },
 
-    // Plain link shortcut (no rawUrl, no gameId) — show the placeholder modal.
-    if(!app.gameId){
-      PLACEHOLDER_MODAL.show();
-      return;
-    }
-    const file=DOWNLOADS.get(app.gameId);
-    if(!file){
-      this.notify('Download required',app.name+' needs to be downloaded first. Use the Download button in the App Library.');
-      return;
-    }
-    // Launch by opening the downloaded file in the HTML Viewer — same as
-    // double-clicking it in File Explorer. No iframe-to-URL involved.
-    VIEWERS.openHTML(file);
+  _showLinkWarning(app){
+    const modal=document.getElementById('linkWarnModal');
+    modal._pendingApp=app;
+    modal.classList.add('open');
+  },
+  linkWarnConfirm(){
+    const modal=document.getElementById('linkWarnModal');
+    const dontShow=document.getElementById('lw-dontshow').checked;
+    if(dontShow)localStorage.setItem('novos_linkwarn_hide','1');
+    const app=modal._pendingApp;
+    modal.classList.remove('open');
+    if(app)this._doLaunch(app);
+  },
+  linkWarnCancel(){
+    document.getElementById('linkWarnModal').classList.remove('open');
   },
   showConfirm(app){
     document.getElementById('confirmMsg').textContent='Open '+app.name+' in a window?';
@@ -3209,8 +3217,7 @@ const OS={
       return;
     }
     if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
-    if(SETTINGS.get('launchConfirm'))this.showConfirm(app);
-    else WM.open(app);
+    WM.open(app);
   },
 
   /* ─── System app launchers ──────────────────────────────────── */
@@ -3247,9 +3254,9 @@ const OS={
   // the user paste code or a raw GitHub URL and runs it in a blob-URL iframe,
   // using the exact same createObjectURL approach as raw-HTML game launches.
   openCompiler(){
-    const existing=Object.entries(WM.windows).find(([,w])=>w.app&&w.app.url==='__html__'&&w.app.name==='NovCompiler');
+    const existing=Object.entries(WM.windows).find(([,w])=>w.app&&(w.app.url==='__compiler__NOVCOMP'||(w.app.url==='__html__'&&w.app.name==='NovCompiler')));
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
-    RAW_HTML.launch({name:'NovCompiler',rawUrl:'https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/NovCompiler.html',icon:''});
+    RAW_HTML.launch({name:'NovCompiler',rawUrl:'https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/NovCompiler.html',icon:'',_forceSysIcon:'__compiler__NOVCOMP'});
   },
 
   // Shared helper: builds the maximize button HTML with both expand/compress icons
@@ -3499,9 +3506,11 @@ const OS={
 
   _findAppByUrl(url,name){
     const all=[...this.shortcuts.games,...this.shortcuts.web,...this.shortcuts.apps];
-    let found=all.find(a=>a.url===url);
-    if(!found&&name)found=all.find(a=>(a.url==='__rawhtml__'||a.rawUrl)&&a.name===name);
-    return found;
+    if(name){
+      const byName=all.find(a=>a.name===name);
+      if(byName)return byName;
+    }
+    return all.find(a=>a.url===url);
   },
 
   libRandom(){
@@ -3543,23 +3552,22 @@ const OS={
       if(!sec.apps.length)return;
       html+=`<div class="stlib-side-section">${sec.label}</div>`;
       sec.apps.forEach(app=>{
-        const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
+        const icon=app.icon||(app.url&&!app.url.startsWith('__')?`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`:'');
         const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
-        const isActive=sel&&sel.url===app.url;
-        const isPlaying=PLAYTIME._active&&PLAYTIME._active.url===app.url;
-        const entry=PLAYTIME.log.find(e=>e.url===app.url);
+        const isActive=sel&&sel.name===app.name&&sel.url===app.url;
+        const isPlaying=PLAYTIME._active&&PLAYTIME._active.name===app.name;
+        const entry=PLAYTIME.log.find(e=>e.key===PLAYTIME._key(app));
         const timeStr=entry&&entry.totalMs?PLAYTIME.fmt(entry.totalMs):'';
         const esc=JSON.stringify(app).replace(/"/g,'&quot;');
         const iconHtml=isEmoji
           ?`<div class="stlib-row-icon" style="display:flex;align-items:center;justify-content:center;font-size:15px">${app.icon}</div>`
-          :`<img class="stlib-row-icon" src="${icon}" loading="lazy" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(app.url||'')}'" alt="">`;
-        const dlBadge=(app.gameId&&!DOWNLOADS.isDownloaded(app.gameId))
-          ?'<div class="stlib-row-time" style="color:var(--os-dim)">↓</div>'
-          :'';
+          :icon
+            ?`<img class="stlib-row-icon" src="${icon}" loading="lazy" onerror="this.style.visibility='hidden'" alt="">`
+            :`<div class="stlib-row-icon" style="display:flex;align-items:center;justify-content:center;background:rgba(96,165,250,0.12);color:#60a5fa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>`;
         html+=`<div class="stlib-row${isActive?' active':''}${isPlaying?' playing':''}" onclick="OS.stlibSelect('${wid}',${esc})" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})">
           ${iconHtml}
           <div class="stlib-row-name">${app.name}</div>
-          ${timeStr?`<div class="stlib-row-time">${timeStr}</div>`:dlBadge}
+          ${timeStr?`<div class="stlib-row-time">${timeStr}</div>`:''}
         </div>`;
       });
     });
@@ -3569,7 +3577,7 @@ const OS={
 
   stlibSelect(wid,app){
     if(!WM.windows[wid])return;
-    WM.windows[wid].libSelected=app||null;
+    WM.windows[wid].libSelected=app?{...app}:null;
     this.stlibRenderSidebar(wid,document.getElementById('stlibSearch_'+wid)?.value||'');
     this.stlibRenderMain(wid);
   },
@@ -3583,7 +3591,8 @@ const OS={
     }
     const icon=app.icon||`https://www.google.com/s2/favicons?sz=128&domain=${app.url}`;
     const isEmoji=app.icon&&[...app.icon].length<=2&&!app.icon.startsWith('http')&&!app.icon.startsWith('data:');
-    const entry=PLAYTIME.log.find(e=>e.url===app.url);
+    const isGameCat=(app._cat?app._cat==='games':(this.shortcuts.games||[]).some(g=>g.name===app.name));
+    const entry=isGameCat?PLAYTIME.log.find(e=>e.name===app.name):null;
     const totalTime=entry&&entry.totalMs?PLAYTIME.fmt(entry.totalMs):'Never played';
     const lastPlayed=entry&&entry.lastPlayed?new Date(entry.lastPlayed).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
     const note=this._getGameNote(app.url);
@@ -3601,7 +3610,7 @@ const OS={
             :`<img class="stlib-hero-icon" src="${icon}" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(app.url||'')}'" alt="">`}
           <div class="stlib-hero-text">
             <div class="stlib-hero-title">${app.name}</div>
-            <div class="stlib-hero-meta"><span>${totalTime!=='Never played'?totalTime+' played':'Not played yet'}</span>${lastPlayed!=='—'?`<span>· Last played ${lastPlayed}</span>`:''}</div>
+            <div class="stlib-hero-meta">${isGameCat?`<span>${totalTime!=='Never played'?totalTime+' played':'Not played yet'}</span>${lastPlayed!=='—'?`<span>· Last played ${lastPlayed}</span>`:''}`:''}</div>
           </div>
           <div class="stlib-hero-actions">
             ${OS._libActionBtnHTML(app,wid)}
@@ -3619,8 +3628,8 @@ const OS={
       </div>
       <div class="stlib-body">
         <div class="stlib-stats-row">
-          <div class="stlib-stat"><div class="stlib-stat-label">Total Playtime</div><div class="stlib-stat-val">${totalTime}</div></div>
-          <div class="stlib-stat"><div class="stlib-stat-label">Last Played</div><div class="stlib-stat-val" style="font-size:13px">${lastPlayed}</div></div>
+          ${isGameCat?`<div class="stlib-stat"><div class="stlib-stat-label">Total Playtime</div><div class="stlib-stat-val">${totalTime}</div></div>
+          <div class="stlib-stat"><div class="stlib-stat-label">Last Played</div><div class="stlib-stat-val" style="font-size:13px">${lastPlayed}</div></div>`:''}
           <div class="stlib-stat"><div class="stlib-stat-label">Category</div><div class="stlib-stat-val" style="font-size:13px">${this._libSeriesKey(app.name)}</div></div>
         </div>
         <div class="stlib-section-title">Notes <span style="font-size:10px;color:var(--os-dim);font-weight:400">walkthroughs, codes, seeds…</span></div>
@@ -3628,8 +3637,8 @@ const OS={
           <div class="stlib-note-text" id="stlibNote_${wid}" contenteditable="true" data-ph="Click to add a note for this game…">${note?note.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}</div>
           <div class="stlib-note-status" id="stlibNoteStat_${wid}">Saved</div>
         </div>
-        <div class="stlib-section-title">Recently Played</div>
-        <div class="stlib-recent-rail" id="stlibRecentRail_${wid}"></div>
+        ${isGameCat?`<div class="stlib-section-title">Recently Played</div>
+        <div class="stlib-recent-rail" id="stlibRecentRail_${wid}"></div>`:''}
       </div>`;
 
     // Note autosave
@@ -3650,10 +3659,11 @@ const OS={
       });
     }
 
-    // Recently played rail (separate from main list, horizontal cards)
+    // Recently played rail (separate from main list, horizontal cards) — games only
     const rail=document.getElementById('stlibRecentRail_'+wid);
-    if(rail){
+    if(rail&&isGameCat){
       const recent=PLAYTIME.recent(10).map(p=>({...p,appRef:this._findAppByUrl(p.url,p.name)})).filter(p=>p.appRef);
+      // (uses PLAYTIME.log entries keyed by name for raw-html games)
       if(!recent.length){
         rail.innerHTML='<div style="font-size:11.5px;color:var(--os-dim);padding:8px 0">No play history yet — launch something!</div>';
       }else{
@@ -3693,9 +3703,9 @@ const OS={
       sortedGames=[...tabItems].reverse();
     }
     else if(sortMode==='alpha')sortedGames.sort((a,b)=>a.name.localeCompare(b.name));
-    else if(sortMode==='playtime'){
+    else if(sortMode==='playtime'&&activeTab==='games'){
       sortedGames.sort((a,b)=>{
-        const ea=_entry(a.url),eb=_entry(b.url);
+        const ea=PLAYTIME.log.find(e=>e.name===a.name),eb=PLAYTIME.log.find(e=>e.name===b.name);
         return (eb&&eb.totalMs||0)-(ea&&ea.totalMs||0);
       });
     }
@@ -3768,14 +3778,17 @@ const OS={
         grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--os-dim);font-size:12px">No games in your library.</div>';
       }else{
         grid.innerHTML=sortedGames.map(a=>{
-          const icon=a.icon||`https://www.google.com/s2/favicons?sz=128&domain=${a.url}`;
-          const entry=PLAYTIME.log.find(e=>e.url===a.url);
+          const icon=a.icon||(a.url&&!a.url.startsWith('__')?`https://www.google.com/s2/favicons?sz=128&domain=${a.url}`:'');
+          const entry=activeTab==='games'?PLAYTIME.log.find(e=>e.name===a.name):null;
           const timeStr=entry&&entry.totalMs?PLAYTIME.fmt(entry.totalMs):'Not played';
           const esc=JSON.stringify(a).replace(/"/g,'&quot;');
+          const imgHtml=icon
+            ?`<img class="stlib-cap-img" src="${icon}" onerror="this.style.visibility='hidden'" alt="">`
+            :`<div class="stlib-cap-img" style="display:flex;align-items:center;justify-content:center;background:rgba(96,165,250,0.12);color:#60a5fa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="34" height="34"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>`;
           return `<div class="stlib-cap-card" onclick="OS.stlibSelect('${wid}',${esc})" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})">
             <div class="stlib-cap-img-wrap">
-              <img class="stlib-cap-img" src="${icon}" onerror="this.src='https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(a.url||'')}'" alt="">
-              <div class="stlib-cap-playtime">${timeStr}</div>
+              ${imgHtml}
+              ${activeTab==='games'?`<div class="stlib-cap-playtime">${timeStr}</div>`:''}
             </div>
             <div class="stlib-cap-info"><div class="stlib-cap-name">${a.name}</div></div>
           </div>`;
@@ -3796,57 +3809,14 @@ const OS={
     this._renderHome(wid);
   },
 
-// Returns the HTML for the main action button in the library hero:
-  // "Download" if not yet downloaded, "Launch" once a local copy exists.
-  // System apps and PVZ skip the gate entirely.
+// All shortcuts launch directly through OS.launch, which itself decides
+  // whether to prompt for Open Via (html vs link) based on what's set.
   _libActionBtnHTML(app,wid){
     const escApp=JSON.stringify(app).replace(/"/g,'&quot;');
-    const isSystem=app.url&&app.url.startsWith('__');
-    if(app.url==='__rawhtml__'||isSystem||app.isPVZ){
-      return `<button class="stlib-play-btn" onclick="OS.launch(${escApp})">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        ${app.isPVZ?'Play':'Launch'}
-      </button>`;
-    }
-    if(!app.gameId){
-      return `<button class="stlib-play-btn" style="opacity:0.5;cursor:not-allowed" disabled>
-        Not Available
-      </button>`;
-    }
-    if(DOWNLOADS.isDownloaded(app.gameId)){
-      return `<button class="stlib-play-btn" onclick="OS.launch(${escApp})">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        Launch
-      </button>
-      <button class="stlib-icon-btn" title="Remove downloaded copy" onclick="OS.libForgetDownload('${wid}',${escApp})">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
-      </button>`;
-    }
-    return `<button class="stlib-play-btn" id="dlbtn_${wid}" onclick="OS.libDownload('${wid}',${escApp})">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-      Download
+    return `<button class="stlib-play-btn" onclick="OS.launch(${escApp})">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      ${app.isPVZ?'Play':'Launch'}
     </button>`;
-  },
-
-  async libDownload(wid,app){
-    const btn=document.getElementById('dlbtn_'+wid);
-    if(btn){btn.disabled=true;btn.style.opacity='0.7';btn.innerHTML='<span style="font-size:12.5px">Downloading…</span>';}
-    try{
-      await DOWNLOADS.download(app);
-      this.notify('Downloaded',app.name+' is ready to play.');
-      this.stlibRenderMain(wid);
-      this.stlibRenderSidebar(wid,document.getElementById('stlibSearch_'+wid)?.value||'');
-    }catch(err){
-      this.notify('Download failed',app.name+': '+(err&&err.message||'Unknown error'));
-      this.stlibRenderMain(wid);
-    }
-  },
-
-  libForgetDownload(wid,app){
-    DOWNLOADS.forget(app.gameId,true);
-    this.notify('Removed',app.name+' download cleared.');
-    this.stlibRenderMain(wid);
-    this.stlibRenderSidebar(wid,document.getElementById('stlibSearch_'+wid)?.value||'');
   },
 
   stlibTogglePin(wid,app){
@@ -4282,10 +4252,7 @@ const OS={
                   <div><div class="sp2-row-label">Boot Intro</div><div class="sp2-row-sub">Show boot sequence on load</div></div>
                   <label class="toggle"><input type="checkbox" id="sp2tog-boot_${id}" ${SETTINGS.get('showBoot')?'checked':''} onchange="SETTINGS.set('showBoot',this.checked)"><span class="tog-slider"></span></label>
                 </div>
-                <div class="sp2-row">
-                  <div><div class="sp2-row-label">Launch Confirm Dialog</div><div class="sp2-row-sub">Show confirmation before opening apps</div></div>
-                  <label class="toggle"><input type="checkbox" id="sp2tog-confirm_${id}" ${SETTINGS.get('launchConfirm')?'checked':''} onchange="SETTINGS.set('launchConfirm',this.checked)"><span class="tog-slider"></span></label>
-                </div>
+                
               </div>
             </div>
 
@@ -4379,25 +4346,31 @@ const OS={
     this.editingApp=app||null;
     document.getElementById('shortcutModalTitle').textContent=app?'Edit App':'Add App';
     document.getElementById('sc-name').value=app?app.name:'';
-    document.getElementById('sc-url').value=app?app.url:'';
+    document.getElementById('sc-rawurl').value=app&&app.rawUrl?app.rawUrl:'';
+    document.getElementById('sc-url').value=app&&app.launchUrl?app.launchUrl:(app&&!app.rawUrl&&app.url&&!app.url.startsWith('__')?app.url:'');
     document.getElementById('sc-icon').value=app?app.icon||'':'';
-    document.getElementById('sc-cat').value='games';
+    document.getElementById('sc-cat').value=app&&app._cat?app._cat:'games';
     document.getElementById('sc-desktop').checked=!app;
+    document.getElementById('sc-supportshtml').checked=app?app.SupportsHTML!==false:true;
     document.getElementById('scDeleteBtn').style.display=app&&!app.isDefault?'block':'none';
     document.getElementById('addShortcutModal').classList.add('open');this.closeStart();
   },
 
   addShortcutSave(){
     const name=document.getElementById('sc-name').value.trim();
-    const url=document.getElementById('sc-url').value.trim();
+    const rawUrl=document.getElementById('sc-rawurl').value.trim();
+    const launchUrl=document.getElementById('sc-url').value.trim();
     const icon=document.getElementById('sc-icon').value.trim();
     const cat=document.getElementById('sc-cat').value;
     const showOnDesktop=document.getElementById('sc-desktop').checked;
-    if(!name||!url){alert('Name and URL required.');return;}
+    const supportsHtml=document.getElementById('sc-supportshtml').checked;
+    if(!name||(!rawUrl&&!launchUrl)){alert('Name and at least one URL (Raw HTML or Link) required.');return;}
     if(this.editingApp&&!this.editingApp.isDefault){
       ['web','games','apps'].forEach(c=>this.shortcuts[c]=this.shortcuts[c].filter(s=>s!==this.editingApp));
     }
-    const newApp={name,url,icon};
+    const newApp={name,icon,_cat:cat,SupportsHTML:supportsHtml};
+    if(rawUrl){newApp.rawUrl=rawUrl;newApp.url='__rawhtml__';}
+    if(launchUrl){newApp.launchUrl=launchUrl;if(!rawUrl)newApp.url=launchUrl;}
     this.shortcuts[cat].push(newApp);
     saveShortcuts(this.shortcuts);
     if(showOnDesktop)this.addToDesktop(newApp);
@@ -4939,9 +4912,10 @@ const VIEWERS={
         blobSrc=URL.createObjectURL(_blob);
       }catch(e){}
     }
-    const _gameIconHtml=file._isGame&&file._appIcon
+    const _sysForceIcon=file._forceSysIcon&&WM._sysTitlebarIcon?WM._sysTitlebarIcon(file._forceSysIcon):null;
+    const _gameIconHtml=_sysForceIcon?_sysForceIcon:(file._isGame&&file._appIcon
       ?`<img src="${file._appIcon}" style="width:16px;height:16px;border-radius:4px;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'" alt="">`
-      :`<div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#60a5fa;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>`;
+      :`<div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#60a5fa;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>`);
     el.innerHTML=`
       <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
       <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)">
@@ -4963,9 +4937,11 @@ const VIEWERS={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
-    const _gameIcon=file._isGame&&file._appIcon?file._appIcon:'🌐';
-    WM.windows[id]={app:{name:file.name,url:'__html__',icon:_gameIcon},minimized:false,maximized:false,prevRect:null};
-    WM.focus(id);TB.addWindow(id,{name:file.name,url:'__html__',icon:_gameIcon});WM.makeDraggable(id);
+    const _gameIcon=file._forceSysIcon?'':(file._isGame&&file._appIcon?file._appIcon:'🌐');
+    const _winUrl=file._forceSysIcon||'__html__';
+    const _tbAppEntry={name:file.name,url:_winUrl,icon:file._forceSysIcon?'':_gameIcon};
+    WM.windows[id]={app:{name:file.name,url:_winUrl,icon:file._forceSysIcon?'':_gameIcon,_forceSysIcon:file._forceSysIcon,_isHtmlViewer:true},minimized:false,maximized:false,prevRect:null};
+    WM.focus(id);TB.addWindow(id,_tbAppEntry);WM.makeDraggable(id);
   },
 
   openVideo(file){
@@ -5775,10 +5751,12 @@ const PLAYTIME={
   load(){try{this.log=JSON.parse(localStorage.getItem('novos_playtime')||'[]');}catch{this.log=[];}},
   save(){localStorage.setItem('novos_playtime',JSON.stringify(this.log));},
 
-  // Only track real game/app windows, not system utilities. Raw-HTML games
-  // open as url:'__html__' with no stable url, so key those by name instead.
+  // Only track real game/app windows, not system utilities. Both raw-HTML
+  // launches (url:'__html__') and link launches (url resolved to a real
+  // http(s) URL) must merge into the SAME playtime entry per game — so key
+  // everything by name, not by whichever URL variant happened to launch it.
   _isGame(app){return app&&((app.url&&!app.url.startsWith('__'))||app.url==='__html__');},
-  _key(app){return app.url==='__html__'?('name:'+app.name):app.url;},
+  _key(app){return 'name:'+app.name;},
 
   currentGame(){return this._active;},
 
@@ -5798,7 +5776,12 @@ const PLAYTIME={
     if(!entry){entry={key,url,name,icon,totalMs:0,lastPlayed:0};this.log.push(entry);}
     entry.totalMs+=elapsed;
     entry.lastPlayed=Date.now();
-    entry.name=name;entry.icon=icon;
+    entry.name=name;
+    // Prefer keeping a real (non-system, non-placeholder) url/icon on the merged
+    // entry so lookups like _findAppByUrl still work regardless of which launch
+    // mode (html vs link) most recently updated this game's playtime.
+    if(icon)entry.icon=icon;
+    if(url&&url!=='__html__')entry.url=url;
     this.save();
     this._active=null;
     if(typeof OS!=='undefined'&&OS.stlibRefreshAllOpen)OS.stlibRefreshAllOpen();
