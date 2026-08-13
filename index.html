@@ -152,7 +152,7 @@ body.has-maximized #topBarPeekZone{display:none!important;pointer-events:none!im
 #taskbar{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:9999;height:var(--taskbar-h);border:1px solid rgba(255,255,255,0.10);border-radius:18px;backdrop-filter:blur(60px) saturate(2.8) brightness(1.0);-webkit-backdrop-filter:blur(60px) saturate(2.8) brightness(1.0);display:flex;align-items:center;gap:0;padding:0 10px;transition:transform 0.28s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease;box-shadow:0 20px 60px rgba(0,0,0,0.8),0 1px 0 rgba(255,255,255,0.07) inset,inset 0 0 0 0.5px rgba(255,255,255,0.03)}
 #taskbar::before{content:'';position:absolute;inset:0;border-radius:inherit;background:rgba(var(--taskbar-bg-color),var(--taskbar-opacity));z-index:-1;transition:background 0.4s ease}
 #taskbar.taskbar-hidden{transform:translateX(-50%) translateY(120%);opacity:0;pointer-events:none}
-#taskbarPeekZone{position:fixed;bottom:0;left:0;right:0;height:6px;z-index:9998;display:none}
+#taskbarPeekZone{position:fixed;bottom:0;left:0;right:0;height:var(--taskbar-peek-size,6px);z-index:9998;display:none}
 body.taskbar-autohide #taskbarPeekZone{display:block}
 body.taskbar-autohide #desktop{height:100vh}
 #startBtn{width:50px;height:58px;border-radius:16px;background:transparent;border:1px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-right:0;transition:all 0.2s cubic-bezier(0.34,1.5,0.64,1);position:relative}
@@ -286,7 +286,7 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .os-window.maximized .wnd-body .wnd-iframe{pointer-events:auto}
 .os-window.maximized .wnd-titlebar.tb-peek ~ .wnd-body .wnd-iframe{pointer-events:none}
 
-.wnd-peek-zone{display:none;position:absolute;top:0;left:0;right:0;height:44px;z-index:200020;cursor:default}
+.wnd-peek-zone{display:none;position:absolute;top:0;left:0;right:0;height:var(--topbar-peek-size,44px);z-index:200020;cursor:default}
 .os-window.maximized .wnd-peek-zone{display:block}
 /* Once the titlebar is peeked in, the peek zone must stop intercepting clicks
    so they reach the control buttons sitting beneath it. The titlebar itself
@@ -1343,30 +1343,30 @@ const DEFAULT_SHORTCUTS = {
     {name:"Vampire Survivors",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Vampire%20Survivors.html", url:"__rawhtml__",icon:"https://play-lh.googleusercontent.com/R1dShZj1HNBQzrHhsAD9_F8BRc2FU-nlDMU7OIAIwnMge04QWvNZR-clnXnEd_v30Qo",launchUrl: "https://sharemyhtml.com/p/7wJNbhd4R0", isDefault:true,SupportsHTML:true},
     {name:"Stardew Valley",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Stardew%20Valley.html", url:"__rawhtml__",icon:"https://assets.nintendo.eu/image/upload/f_auto,c_limit,w_992,q_auto:low/MNS/NOE/70010000001802/SQ_NSwitchDS_StardewValley", launchUrl:"https://sharemyhtml.com/p/yB05XTzH4x", isDefault:true,SupportsHTML:true},
     {name:"Terraria",launchUrl:"https://sharemyhtml.com/p/YN6J0nhfGY", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Terraria.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/669.png", launchUrl:"https://sharemyhtml.com/p/YN6J0nhfGY", isDefault:true,SupportsHTML:true},
-    {name:"Half Life 2",url:"https://riaannn.github.io/Half-Life-2/",icon:"https://supermath.salavat.ru/png/games/hl2.webp",isDefault:true, launchUrl:"https://hl2.slqnt.dev", SupportsHTML:false},
+    {name:"Half Life 2",url:"https://riaannn.github.io/Half-Life-2/",icon:"https://supermath.salavat.ru/png/games/hl2.webp",isDefault:true, launchUrl:"https://hl2.slqnt.dev", SupportsHTML:false, notAvailable:true},
     {name:"Clover Pit",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Clover%20Pit.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/716.png",isDefault:true, launchUrl:"https://sharemyhtml.com/p/Js_shJA1EM", SupportsHTML:false},
-    {name:"PVZ GOTY Edition",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/PVZ%20GOTY.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png", launchUrl:"https://sharemyhtml.com/p/kEjJCNwE3i", isDefault:true,SupportsHTML:true},
-    {name:"PVZ Fusion",url:"https://riaannn.github.io/FAKE-PVZ-Fusion-attempt/",icon:"https://cdn2.steamgriddb.com/icon_thumb/043555cbce9685a223341da753a18198.png",isDefault:true,SupportsHTML:false},
+    {name:"PVZ GOTY Edition",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/PVZ%20GOTY.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png", launchUrl:"https://sharemyhtml.com/p/e4b-clqsEw", isDefault:true,SupportsHTML:true},
+    {name:"PVZ Fusion",url:"https://riaannn.github.io/FAKE-PVZ-Fusion-attempt/",icon:"https://cdn2.steamgriddb.com/icon_thumb/043555cbce9685a223341da753a18198.png",isDefault:true,SupportsHTML:false, notAvailable:true},
     {name:"Balatro",launchUrl: "https://sharemyhtml.com/p/qyOTzogYpH", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/balatro.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/066e25a0712b306a9b95230f6ec4a051.ico",isDefault:true,SupportsHTML:true},
-    {name:"Poly Bridge",url:"https://riaannn.github.io/poly-bridge-optimized-test/",icon:"https://cdn2.steamgriddb.com/icon/7503cfacd12053d309b6bed5c89de212/32/256x256.png",isDefault:true,SupportsHTML:false},
+    {name:"Poly Bridge",url:"https://riaannn.github.io/poly-bridge-optimized-test/",icon:"https://cdn2.steamgriddb.com/icon/7503cfacd12053d309b6bed5c89de212/32/256x256.png",isDefault:true,SupportsHTML:false, notAvailable:true},
     {name:"Dadish",launchUrl:"https://sharemyhtml.com/p/2_5FJwGNx9", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/357.png",isDefault:true,SupportsHTML:true},
     {name:"Dadish 2",launchUrl:"https://sharemyhtml.com/p/Ak8NZHtctn", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish%202.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/355.png",isDefault:true,SupportsHTML:true},
     {name:"Dadish 3",launchUrl:"https://sharemyhtml.com/p/z3PW-zUmfD", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish%203.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/356.png",isDefault:true,SupportsHTML:true},
-    {name:"Apes vs Helium",url:"https://riaannn.github.io/Apez-vz-Helium/",icon:"https://cdn2.steamgriddb.com/icon/96ede18295a1258ffbe1dca74eed34d0.png",isDefault:true,SupportsHTML:false},
+    {name:"Apes vs Helium",url:"https://riaannn.github.io/Apez-vz-Helium/",icon:"https://cdn2.steamgriddb.com/icon/96ede18295a1258ffbe1dca74eed34d0.png",isDefault:true,SupportsHTML:false, notAvailable:true},
     {name:"Five Nights at Frickbears 3",launchUrl:"https://sharemyhtml.com/p/ErxpekoHPl", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/frickbears.html", url:"__rawhtml__",icon:"https://i.imgur.com/dIIAThP.png",isDefault:true,SupportsHTML:true},
-    {name:"PVZ Garden Warfare 2D",url:"https://riaannn.github.io/PVZ-GW-2D/",icon:"https://img.itch.zone/aW1nLzIxNzU5MjE1LnBuZw==/315x250%23c/sljD0g.png",isDefault:true,SupportsHTML:false},
-    {name:"Ages of Conflict",url:"https://wasm.rip/files/aoc/index.html",icon:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2186320/header.jpg?t=1779429676",isDefault:true,SupportsHTML:false},
-    {name:"Plants vs Zombies Botanic Warfare",url:"https://riaannn.github.io/Plants-vs-Zombies-Botanical-Warfare/",icon:"https://i.imgur.com/phey2av.jpeg",isDefault:true,SupportsHTML:false},
-    {name:"Plants vs Zombies Roguelike",url:"https://riaannn.github.io/PVZ-Roguelike/",icon:"https://i.imgur.com/VAYyuwP.png",isDefault:true,SupportsHTML:false},
-    {name:"Geometry Dash",rawUrl: "https://github.com/riaannn/NovOS/raw/refs/heads/main/Games%20html/Geometry%20Dash.html", url:"__rawhtml__",icon:"https://images3.alphacoders.com/120/thumb-1920-1202615.jpg",isDefault:true,SupportsHTML:true},
+    {name:"PVZ Garden Warfare 2D",url:"https://riaannn.github.io/PVZ-GW-2D/",icon:"https://img.itch.zone/aW1nLzIxNzU5MjE1LnBuZw==/315x250%23c/sljD0g.png",isDefault:true,SupportsHTML:false, notAvailable:true},
+    {name:"Ages of Conflict",url:"https://wasm.rip/files/aoc/index.html",icon:"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2186320/header.jpg?t=1779429676",isDefault:true,SupportsHTML:false, notAvailable:true},
+    {name:"Plants vs Zombies Botanic Warfare",url:"https://riaannn.github.io/Plants-vs-Zombies-Botanical-Warfare/",icon:"https://i.imgur.com/phey2av.jpeg",isDefault:true,SupportsHTML:false, notAvailable:true},
+    {name:"Plants vs Zombies Roguelike",url:"https://riaannn.github.io/PVZ-Roguelike/",icon:"https://i.imgur.com/VAYyuwP.png",isDefault:true,SupportsHTML:false, notAvailable:true},
+    {name:"Geometry Dash",rawUrl: "https://github.com/riaannn/NovOS/raw/refs/heads/main/Games%20html/Geometry%20Dash.html", url:"__rawhtml__",icon:"https://images3.alphacoders.com/120/thumb-1920-1202615.jpg",isDefault:true,SupportsHTML:true, notAvailable:true},
     {name:"Angry Birds 2",launchUrl:"https://sharemyhtml.com/p/sRserHYTjk", rawUrl: "https://raw.githubusercontent.com/riaannn/angry-birds-2/refs/heads/main/index.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/65c6f9e287ec3396a9f06843e46e26f8/32/512x512.png",isDefault:true,SupportsHTML:true},
-    {name:"Worldbox",url:"https://nostaligafun.pages.dev/games/games-accualy/OTHER/WorldBox_Data/index.html",icon:"https://play-lh.googleusercontent.com/XD7-X-5qk_37o2OyLeOPuPjuY1rD0O4COKX-TOh_efoHoVQkmSzk00fSUB6a7FU7a_E",isDefault:true,SupportsHTML:false},
-    {name:"Smash Karts",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Smash%20Karts.html", url:"__rawhtml__",icon:"https://play-lh.googleusercontent.com/cM1CXOuBIy0kjGfoCTOKNa812iuVX6X2DDop8xNH4mNyjuM-oj3wVqZ7wiAOizq_TA",isDefault:true,SupportsHTML:false},
+    {name:"Worldbox",url:"https://nostaligafun.pages.dev/games/games-accualy/OTHER/WorldBox_Data/index.html",icon:"https://play-lh.googleusercontent.com/XD7-X-5qk_37o2OyLeOPuPjuY1rD0O4COKX-TOh_efoHoVQkmSzk00fSUB6a7FU7a_E",isDefault:true,SupportsHTML:false, notAvailable:true},
+    {name:"Smash Karts",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Smash%20Karts.html", url:"__rawhtml__",icon:"https://play-lh.googleusercontent.com/cM1CXOuBIy0kjGfoCTOKNa812iuVX6X2DDop8xNH4mNyjuM-oj3wVqZ7wiAOizq_TA",isDefault:true,SupportsHTML:false, notAvailable:true},
     {name:"bonk.io",url:"https://bonk.io",icon:"https://b.thumbs.redditmedia.com/9p8-wn2_KPdgjPTaR9fx-NIVgFhvsgBL0WPdbv5GMkA.png",isDefault:true,SupportsHTML:false},
-    {name:"Granny 3",url:"https://wasm.rip/files/granny/granny3.html",icon:"https://play-lh.googleusercontent.com/QvKhAg9SyqVZ24DdjJCkuwPVpO4kz7cdbNO3bUxGALrlaeVTxJLLL9zHyaFq-NJ6eLg7",isDefault:true,SupportsHTML:false},
-    {name:"Dice A Million",url:"https://wasm.rip/files/diceAmillion/diceamillion.html",icon:"https://img.succesone.fr/2026/02/Dice-A-Million-SuccesOneFR-microsoft-220x300.jpg",isDefault:true,SupportsHTML:false},
-    {name:"Granny 2",url:"https://nostaligafun.pages.dev/games/games-accualy/ANDROID/Granny2_Data/index.html",icon:"https://play-lh.googleusercontent.com/iZ7NP-56YenT2dpgKEAw3n7IKFyu-S_9Iu3ayo28XYTgZpFtxsK_HXltV36pysSJqq8",isDefault:true,SupportsHTML:false},
-    {name:"Among Us",launchUrl:"https://sharemyhtml.com/p/BPn-2nVaLU",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/amongus.html", url: "__rawhtml__",  icon:"https://upload.wikimedia.org/wikipedia/en/9/9a/Among_Us_cover_art.jpg",isDefault:true,SupportsHTML:true},
+    {name:"Granny 3",url:"https://wasm.rip/files/granny/granny3.html",icon:"https://play-lh.googleusercontent.com/QvKhAg9SyqVZ24DdjJCkuwPVpO4kz7cdbNO3bUxGALrlaeVTxJLLL9zHyaFq-NJ6eLg7",isDefault:true,SupportsHTML:false, notAvailable:true},
+    {name:"Dice A Million",url:"https://wasm.rip/files/diceAmillion/diceamillion.html",icon:"https://img.succesone.fr/2026/02/Dice-A-Million-SuccesOneFR-microsoft-220x300.jpg",isDefault:true,SupportsHTML:false, notAvailable:true},
+    {name:"Granny 2",url:"https://nostaligafun.pages.dev/games/games-accualy/ANDROID/Granny2_Data/index.html",icon:"https://play-lh.googleusercontent.com/iZ7NP-56YenT2dpgKEAw3n7IKFyu-S_9Iu3ayo28XYTgZpFtxsK_HXltV36pysSJqq8",isDefault:true,SupportsHTML:false, notAvailable:true},
+    {name:"Among Us",launchUrl:"https://sharemyhtml.com/p/BPn-2nVaLU",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/amongus.html", url: "__rawhtml__",  icon:"https://upload.wikimedia.org/wikipedia/en/9/9a/Among_Us_cover_art.jpg",isDefault:true,SupportsHTML:true, notAvailable:true},
     
   ],
   apps:[
@@ -1455,7 +1455,7 @@ const RAW_HTML={
    SETTINGS STORE
 ═══════════════════════════════════════════════ */
 const SETTINGS={
-  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true,customCursor:true},
+  def:{showBoot:true,launchConfirm:true,wallpaper:'aurora',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true,customCursor:true,autoFullscreenGames:true,topBarPeekSize:44,taskbarPeekSize:6},
   data:{},
   load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||sessionStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
   save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));try{sessionStorage.setItem('novos_cfg',JSON.stringify(this.data));}catch(e){}},
@@ -2659,6 +2659,8 @@ const OS={
     document.documentElement.style.setProperty('--taskbar-opacity',(SETTINGS.get('taskbarOpacity')??0.86).toString());
     document.documentElement.style.setProperty('--widget-bg-color',SETTINGS.get('widgetColor')||'13,15,22');
     document.documentElement.style.setProperty('--widget-opacity',(SETTINGS.get('widgetOpacity')??0.82).toString());
+    document.documentElement.style.setProperty('--topbar-peek-size',(SETTINGS.get('topBarPeekSize')??44)+'px');
+    document.documentElement.style.setProperty('--taskbar-peek-size',(SETTINGS.get('taskbarPeekSize')??6)+'px');
     const wp=SETTINGS.get('wallpaper')||'aurora';
     const wEl=document.getElementById('wallpaper');
     wEl.className='';wEl.classList.add('wp-'+wp);
@@ -2751,6 +2753,18 @@ const OS={
   _hexToRgb(hex){
     const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return m?`${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)}`:null;
+  },
+
+  setAutoFullscreenGames(on){
+    SETTINGS.set('autoFullscreenGames',on);
+  },
+  setTopBarPeekSize(v){
+    v=+v;SETTINGS.set('topBarPeekSize',v);
+    document.documentElement.style.setProperty('--topbar-peek-size',v+'px');
+  },
+  setTaskbarPeekSize(v){
+    v=+v;SETTINGS.set('taskbarPeekSize',v);
+    document.documentElement.style.setProperty('--taskbar-peek-size',v+'px');
   },
 
   setIconSize(v){
@@ -3089,6 +3103,7 @@ const OS={
 
 /* ─── Launch flow ───────────────────────────────────────────── */
   launch(app){
+    if(app.notAvailable){this.notify('Not Available','This game is not available right now.');return;}
     // System apps, folders, and PVZ's own legacy flow bypass everything.
     if(app.url&&app.url.startsWith('__')&&app.url!=='__rawhtml__'){this._doLaunch(app);return;}
     if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
@@ -3189,9 +3204,22 @@ const OS={
     document.getElementById('confirmDialog').classList.add('open');
   },
   closeConfirm(){document.getElementById('confirmDialog').classList.remove('open');},
+  // Returns true if this shortcut belongs to the Games section of the App Library.
+  _isGameShortcut(app){
+    if(!app)return false;
+    if(app._cat==='games')return true;
+    return (this.shortcuts&&this.shortcuts.games||[]).some(g=>g.name===app.name);
+  },
   _doLaunch(app){
     if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
-    WM.open(app);
+    const id=WM.open(app);
+    // Auto-fullscreen: games launch straight into fullscreen unless disabled in Settings.
+    if(id&&this._isGameShortcut(app)&&SETTINGS.get('autoFullscreenGames')!==false){
+      setTimeout(()=>{
+        if(WM.windows[id]&&!WM.windows[id].maximized)WM.maximize(id);
+      },60);
+    }
+    return id;
   },
   launchFromTaskbar(app){
     const sysMap={
@@ -3814,6 +3842,12 @@ const OS={
   // whether to prompt for Open Via (html vs link) based on what's set.
   _libActionBtnHTML(app,wid){
     const escApp=JSON.stringify(app).replace(/"/g,'&quot;');
+    if(app.notAvailable){
+      return `<button class="stlib-play-btn" disabled style="opacity:0.45;cursor:not-allowed" title="This game is not available right now">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.9" y1="4.9" x2="19.1" y2="19.1"/></svg>
+        Not Available
+      </button>`;
+    }
     return `<button class="stlib-play-btn" onclick="OS.launch(${escApp})">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
       ${app.isPVZ?'Play':'Launch'}
@@ -4099,6 +4133,21 @@ const OS={
                 <div class="sp2-row">
                   <div><div class="sp2-row-label">Auto-hide in Fullscreen</div><div class="sp2-row-sub">Hides taskbar and top bar when a window is maximized</div></div>
                   <label class="toggle"><input type="checkbox" id="sp2tog-taskbarhide_${id}" ${SETTINGS.get('hideTaskbarFullscreen')?'checked':''} onchange="SETTINGS.set('hideTaskbarFullscreen',this.checked);TB.updateAutoHide()"><span class="tog-slider"></span></label>
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Auto-Fullscreen Games</div><div class="sp2-row-sub">Games section shortcuts automatically enter fullscreen on launch</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-autofsgames_${id}" ${SETTINGS.get('autoFullscreenGames')!==false?'checked':''} onchange="OS.setAutoFullscreenGames(this.checked)"><span class="tog-slider"></span></label>
+                </div>
+              </div>
+              <div class="sp2-card">
+                <div class="sp2-card-header">Fullscreen Peek Zones</div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Top Bar Reveal Distance</div><div class="sp2-row-sub">How far your mouse must reach the top edge before the window's title bar peeks in</div></div>
+                  <input type="range" class="sp2-slider" min="4" max="120" value="${SETTINGS.get('topBarPeekSize')??44}" oninput="OS.setTopBarPeekSize(this.value)" style="width:130px">
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Taskbar Reveal Distance</div><div class="sp2-row-sub">How far your mouse must reach the bottom edge before the taskbar peeks in</div></div>
+                  <input type="range" class="sp2-slider" min="2" max="60" value="${SETTINGS.get('taskbarPeekSize')??6}" oninput="OS.setTaskbarPeekSize(this.value)" style="width:130px">
                 </div>
               </div>
               <div class="sp2-card">
