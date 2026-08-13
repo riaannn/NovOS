@@ -1,77 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cod Environment Launcher</title>
-    <base href="https://esm.sh/gadidae@0.2.0/">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000000;
-            color: #00ff00;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        #boot-screen {
-            text-align: center;
-            text-shadow: 0 0 5px #00ff00;
-        }
-        .spinner {
-            margin: 20px auto;
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(0, 255, 0, 0.1);
-            border-radius: 50%;
-            border-top-color: #00ff00;
-            animation: spin 1s ease-in-out infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(3600deg); }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module Loader Test</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #89b4fa;
+      color: #111;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #b4befe;
+    }
+    #status {
+      margin-top: 15px;
+      color: #aaa;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
 
-    <div id="boot-screen">
-        <div class="spinner"></div>
-        <div>MOUNTING VIRTUAL CORE...</div>
-    </div>
+  <button id="loadBtn">Launch Module</button>
+  <div id="status">Click the button to fetch and execute.</div>
 
-    <script type="module">
-        async function bootSystem() {
-            try {
-                // Import the specific version bundle with full dependency matching enabled
-                await import("https://esm.sh/gadidae@0.2.0?bundle");
-                
-                // Clear out loading visuals once runtime renders the workspace graphics
-                const bootScreen = document.getElementById('boot-screen');
-                if (bootScreen) {
-                    bootScreen.style.display = 'none';
-                }
-            } catch (err) {
-                console.error("Boot failure:", err);
-                document.body.innerHTML = `
-                    <div style="color: #ff5555; padding: 20px; text-shadow: none; font-family: monospace;">
-                        <strong>SYSTEM_HALT: Failed to load environment dependencies.</strong><br>
-                        Detail: ${err.message}<br><br>
-                        <em>Tip: If modern asset protection policies block this file locally, serve the file directory via a local host interface (e.g., Live Server) to bypass local file restrictions.</em>
-                    </div>`;
-            }
-        }
+  <!-- Note: script type="module" allows top-level await and dynamic imports -->
+  <script type="module">
+    const btn = document.getElementById('loadBtn');
+    const status = document.getElementById('status');
 
-        // Initialize execution path
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', bootSystem);
-        } else {
-            bootSystem();
+    btn.addEventListener('click', async () => {
+      status.textContent = "Fetching module from esm.sh...";
+      
+      try {
+        // Dynamically import the module directly from the CDN
+        const module = await import("https://esm.sh/gadidae");
+        
+        status.textContent = "Module loaded successfully!";
+        console.log("Loaded module output:", module);
+
+        // If the module exports a default function or setup method, call it here
+        if (typeof module.default === 'function') {
+          module.default();
         }
-    </script>
+      } catch (err) {
+        console.error("Failed to load module:", err);
+        status.textContent = "Error: " + err.message;
+      }
+    });
+  </script>
 </body>
 </html>
