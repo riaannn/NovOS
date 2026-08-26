@@ -238,15 +238,16 @@ body.taskbar-autohide #desktop{height:100vh}
 #windowLayer{position:absolute;inset:0;z-index:100;pointer-events:none;transform:translateZ(0);isolation:isolate}
 @keyframes wndOpen{from{opacity:0;transform:scale(0.93) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes wndClose{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(0.9)}}
-@keyframes wndMinimize{from{opacity:1;transform:scale(1) translateY(0)}to{opacity:0;transform:scale(0.75) translateY(48px)}}
-@keyframes wndRestore{from{opacity:0;transform:scale(0.75) translateY(48px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
 @keyframes notifSlideIn{from{transform:translateX(24px) scale(0.96);opacity:0}to{transform:translateX(0) scale(1);opacity:1}}
 @keyframes notifSlideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(24px)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes npEq{0%,100%{height:5px}50%{height:16px}}
 body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms!important}
-.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(var(--win-blur));overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both;will-change:transform;transform:translateZ(0);contain:layout style paint}
+.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(var(--win-blur));overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;will-change:transform;transform:translateZ(0);contain:layout style paint}
+.os-window.wnd-first-open{animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both}
 .os-window.minimized{display:none}
+.os-window.no-min-anim{transition:none!important}
 .os-window.maximized{top:0!important;left:0!important;width:100%!important;height:100%!important;border-radius:0;border-color:transparent;backdrop-filter:none!important;box-shadow:none!important}
 .os-window.focused{box-shadow:0 40px 100px rgba(0,0,0,0.75),0 0 0 1px rgba(var(--os-accent-rgb),0.28)}
 .os-window.focused .wnd-titlebar{background:linear-gradient(180deg,rgba(var(--os-accent-rgb),0.16),rgba(255,255,255,0.03));border-bottom-color:rgba(var(--os-accent-rgb),0.22)}
@@ -312,7 +313,7 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .os-window.maximized .wnd-body .wnd-iframe{pointer-events:auto}
 .os-window.maximized .wnd-titlebar.tb-peek ~ .wnd-body .wnd-iframe{pointer-events:none}
 
-.wnd-peek-zone{display:none;position:absolute;top:0;left:0;width:var(--topbar-peek-size,44px);height:var(--topbar-peek-size,44px);z-index:200020;cursor:default}
+.wnd-peek-zone{display:none;position:absolute;top:0;left:0;right:0;height:var(--topbar-peek-size,44px);z-index:200020;cursor:default}
 .os-window.maximized .wnd-peek-zone{display:block}
 /* Once the titlebar is peeked in, the peek zone must stop intercepting clicks
    so they reach the control buttons sitting beneath it. The titlebar itself
@@ -971,7 +972,6 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 </div>
 <div id="continueDock" style="position:fixed;bottom:calc(var(--taskbar-h) + 18px);left:50%;transform:translateX(-50%);z-index:9997;display:none;align-items:center;gap:8px;padding:8px 12px;background:rgba(13,14,22,0.92);border:1px solid var(--os-border2);border-radius:16px;backdrop-filter:blur(28px) saturate(1.6);box-shadow:0 12px 40px rgba(0,0,0,0.6);max-width:88vw;overflow-x:auto;scrollbar-width:none"></div>
 <div id="taskbarPeekZone" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()"></div>
-<div id="topBarPeekZone" onmouseenter="TB.topPeekShow()" style="position:fixed;top:0;left:0;right:0;height:var(--topbar-peek-size,44px);z-index:10000;display:none"></div>
 
 
 
@@ -1007,8 +1007,8 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
           File Explorer
         </div>
         <div class="qm-item" onclick="OS.openBrowser()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#ff4d6d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="9.5"/><path d="M12 7l2.6 4.4L19 14l-4.4 2.6L12 21l-2.6-4.4L5 14l4.4-2.6z"/></svg>
-          Cherri Browser
+          <svg viewBox="0 0 24 24" fill="none" stroke="#4d9eff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="9.5"/><line x1="2.5" y1="12" x2="21.5" y2="12"/><path d="M12 2.5c2.6 2.6 4 6 4 9.5s-1.4 6.9-4 9.5c-2.6-2.6-4-6-4-9.5s1.4-6.9 4-9.5z"/></svg>
+          Browser
         </div>
         <div class="qm-item" onclick="OS.openCompiler()">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="7 6 2 10 7 14"/><polyline points="13 6 18 10 13 14"/></svg>
@@ -1426,7 +1426,7 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
    DEFAULT DESKTOP APPS — keyed by URL so cache busting works
 ═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_DESKTOP_APPS = [
-  { name:"Cherri Browser", url:"__browser__", icon:"", isDefault:true, isSystem:true, systemAction:"openBrowser"},
+  { name:"Browser", url:"__browser__", icon:"", isDefault:true, isSystem:true, systemAction:"openBrowser"},
   { name:"NovCompiler", url:"__compiler__NOVCOMP", icon:"", isDefault:true, isSystem:true, systemAction:"openCompiler"},
   { name:"File Explorer",    url:"__explorer__", icon:"", isDefault:true, isSystem:true, systemAction:"openFileExplorer" },
   { name:"Recycle Bin",    url:"__recyclebin__", icon:"", isDefault:true, isSystem:true, systemAction:"openRecycleBin" },
@@ -1483,6 +1483,8 @@ const DEFAULT_SHORTCUTS = {
     {name:"Dice A Million",url:"https://wasm.rip/files/diceAmillion/diceamillion.html",icon:"https://img.succesone.fr/2026/02/Dice-A-Million-SuccesOneFR-microsoft-220x300.jpg",isDefault:true,SupportsHTML:false, notAvailable:true},
     {name:"Granny 2",url:"https://nostaligafun.pages.dev/games/games-accualy/ANDROID/Granny2_Data/index.html",icon:"https://play-lh.googleusercontent.com/iZ7NP-56YenT2dpgKEAw3n7IKFyu-S_9Iu3ayo28XYTgZpFtxsK_HXltV36pysSJqq8",isDefault:true,SupportsHTML:false, notAvailable:true},
     {name:"Among Us",launchUrl:"https://sharemyhtml.com/p/BPn-2nVaLU",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/amongus.html", url: "__rawhtml__",  icon:"https://upload.wikimedia.org/wikipedia/en/9/9a/Among_Us_cover_art.jpg",isDefault:true,SupportsHTML:true, notAvailable:true},
+    {name:"Minecraft 1.12 OFFLINE", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Eaglercraft_1.12_Offline_en_US.html", url: "__rawhtml__",  icon:"https://i.imgur.com/Ex59Ghl.png",isDefault:true,SupportsHTML:true, notAvailable:false},
+
 
     
   ],
@@ -1574,7 +1576,7 @@ const RAW_HTML={
    SETTINGS STORE
 ═══════════════════════════════════════════════ */
 const SETTINGS={
-  def:{showBoot:true,launchConfirm:true,wallpaper:'obsidian',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true,customCursor:true,autoFullscreenGames:true,topBarPeekSize:44,taskbarPeekSize:6,bgThrottle:true,smartGlass:true,lowPowerMode:false,reduceIframeFx:false,disableWidgetsInGame:true,noiseTextureOff:false,showChangelogOnUpdate:true,autoFallbackLaunch:true,win11Taskbar:false,taskbarPosition:'bottom',thinGameTitlebars:true},
+  def:{showBoot:true,launchConfirm:true,wallpaper:'obsidian',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true,customCursor:true,autoFullscreenGames:true,topBarPeekSize:44,taskbarPeekSize:6,bgThrottle:true,smartGlass:true,lowPowerMode:false,reduceIframeFx:false,disableWidgetsInGame:true,noiseTextureOff:false,showChangelogOnUpdate:true,autoFallbackLaunch:true,win11Taskbar:false,taskbarPosition:'bottom',thinGameTitlebars:true,desktopGridSnap:true,desktopGridSize:88},
   data:{},
   load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||sessionStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
   save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));try{sessionStorage.setItem('novos_cfg',JSON.stringify(this.data));}catch(e){}},
@@ -1722,62 +1724,15 @@ const KEYBINDS={
    ENTRIES whenever you ship user-facing changes.
 ═══════════════════════════════════════════════ */
 const CHANGELOG={
-  CURRENT_VERSION:'4.26',
+  CURRENT_VERSION:'4.27',
   ENTRIES:[
     {
-      version:'4.26',
-      date:'2026-08-22',
+      version:'4.27',
+      date:'2026-08-23',
       items:[
-        'NovMusic: the mini-player and Now Playing panel show the actual track (or a title tile) instead of always defaulting to a generic music-note icon.',
-        'NovMusic upload now asks for the artist name per track instead of always labeling it "Unknown Artist".',
-        'Fixed NovMusic playback race that could leave a track stuck on "loading" with no sound — play now waits for the browser to actually be ready before calling play().',
-        'Fixed NovMusic uploads silently failing to persist — storage errors are now reported instead of swallowed, and a failed save no longer blocks playback of the current track.',
-        'Added a search bar to NovMusic\'s window (via existing sidebar search) and to the App Library sidebar.',
-        'Merged window controls (minimize, fullscreen, close) directly into File Explorer, Task Manager, App Library, Recycle Bin, and Settings — matching NovMusic\'s merged toolbar style — for every first-party system app except Cherri Browser.',
-        'Fixed the fullscreen top bar being unreachable while a window is maximized — hovering the very top edge now reliably peeks it back in.',
-      ]
-    },
-    {
-      version:'4.25',
-      date:'2026-08-21',
-      items:[
-        'NovMusic now merges its window controls (minimize, fullscreen, close) directly into its own toolbar row instead of using a separate OS titlebar, removing one full row of chrome.',
-        'Added a thin, full-width drag strip for game/website windows — hover the top edge to reveal the title and window controls, keeping the whole strip easy to grab while saving vertical space when not hovered.',
-        'Added a "Thin Game Titlebars" setting to toggle this behavior (on by default).',
-      ]
-    },
-    {
-      version:'4.24',
-      date:'2026-08-20',
-      items:[
-        'Fixed rubber-band multi-select drag — moving a selected desktop icon now moves every selected icon together, preserving their relative positions.',
-        'Pinned games now resolve to a single taskbar instance regardless of whether they were launched via Raw HTML or Link — no more duplicate icons.',
-        'Redesigned the Cherri Browser icon with a compass/sparkle mark, keeping the original red color scheme.',
-        'Added "Always launch as Raw HTML" per-game toggle in the App Library, so the launch picker is skipped for that game going forward.',
-        'Added an Auto-Fallback Launch Mode setting — games that only support one launch method (HTML or Link) launch that way automatically instead of prompting.',
-        'Added a Windows 11-style taskbar option in Settings — a centered, compact bar with square icons (off by default).',
-        'Added a Taskbar Position setting — move the taskbar to the top, left, right, or bottom of the screen.',
-        'Added Recycle Bin — deleted files and games now go here first instead of vanishing immediately, with Restore and Empty Bin options.',
-        'Added rubber-band multi-select on the desktop — click-drag on empty desktop to select multiple icons at once for batch move, hide, or delete.',
-        'Added corner quadrant window snapping (top-left, top-right, bottom-left, bottom-right) alongside the existing left/right/max snap zones.',
-        'Added a NovMusic mini-player widget — a compact floating "now playing" widget that keeps background playback visible without the full NovMusic window open.',
-        'Added taskbar jump lists — right-click a pinned game in the taskbar for quick actions like "Launch Fullscreen" and "View in App Library".',
-        'Unified App Library search with the global launcher search index for more consistent results.',
-        'Fixed the taskbar preview LED glow animation not appearing around the previewed window.',
-        'Closing NovMusic now stops playback instead of letting it keep playing in the background.',
-        'Redesigned the NovMusic icon (headphones instead of a music note) across the taskbar, desktop, and window titlebars.',
-        'Taskbar previews now match Windows 1:1: the big live preview only appears while hovering the mini-preview thumbnail itself, not the taskbar button.',
-        'Removed the screen-dimming overlay behind the live preview.',
-        'Added a flowing LED-style glow animation around the previewed window\'s edges that plays briefly then fades.',
-        'Live preview now works on minimized windows too, showing them in place without restoring them.',
-        'While previewing, every other open window is fully hidden — only the previewed window and the desktop behind it remain visible.',
-        'Taskbar preview now only brings a window to the front when you click it — hovering alone no longer leaves it stuck on top.',
-        'Added a short delay before the taskbar mini-preview appears on hover.',
-        '"Open in Browser Tab" now opens a clean, unbranded new tab instead of copying the game/site\'s title and icon.',
-        'Removed the non-functional per-window audio mute button.',
-        'NovMusic now detects embedded cover art (ID3 tags) on uploaded MP3s automatically.',
-        'NovMusic: you can now set a custom cover image for any track or playlist.',
-        'Added this Changelog page to Settings.',
+        'Reworked window open/close/minimize/restore animations: opening and closing a window now always plays its animation, including system windows like Settings, App Library, File Explorer, NovMusic, Task Manager, and Recycle Bin.',
+        'Minimizing a window and restoring it from the taskbar no longer plays an animation — it now snaps instantly, matching real OS behavior.',
+        'Fixed clicking a taskbar icon for a background (non-focused) window incorrectly minimizing it instead of bringing it to the front — clicking a taskbar icon now only minimizes the window if it is already the focused, topmost window.',
       ]
     },
   ],
@@ -1993,7 +1948,7 @@ const WM={
   // Returns a 16px system SVG icon for a titlebar, or null for non-system apps.
   _sysTitlebarIcon(url){
     const map={
-      '__browser__':{c:'#ff4d6d',s:`<circle cx="12" cy="12" r="9.5"/><path d="M12 7l2.6 4.4L19 14l-4.4 2.6L12 21l-2.6-4.4L5 14l4.4-2.6z"/>`},
+      '__browser__':{c:'#4d9eff',s:`<circle cx="12" cy="12" r="9.5"/><line x1="2.5" y1="12" x2="21.5" y2="12"/><path d="M12 2.5c2.6 2.6 4 6 4 9.5s-1.4 6.9-4 9.5c-2.6-2.6-4-6-4-9.5s1.4-6.9 4-9.5z"/>`},
       '__compiler__':{c:'#7c6dfa',s:`<polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/><line x1="13" y1="4" x2="11" y2="20"/>`},
       '__compiler__NOVCOMP':{c:'#7c6dfa',s:`<polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/><line x1="13" y1="4" x2="11" y2="20"/>`},
       '__tm__':{c:'#4ade80',s:`<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M7 8v4M11 6v6M15 9v3M19 7v5"/>`},
@@ -2023,7 +1978,11 @@ const WM={
     }
     const id=this.newId();
     const el=document.createElement('div');
-    el.className='os-window focused';el.id=id;
+    el.className='os-window focused wnd-first-open';el.id=id;
+    requestAnimationFrame(()=>{
+      el.addEventListener('animationend',()=>el.classList.remove('wnd-first-open'),{once:true});
+      setTimeout(()=>el.classList.remove('wnd-first-open'),400);
+    });
     const dw=Math.min(window.innerWidth*0.82,1060);
     const dh=Math.min(window.innerHeight*0.8,680);
     const x=Math.max(20,(window.innerWidth-dw)*0.5+(Math.random()*40-20));
@@ -2043,9 +2002,9 @@ const WM={
     const _thinHover=_useThinBar?`onmouseenter="this.classList.add('thin-hover');clearTimeout(this._thinLeaveT)" onmouseleave="this._thinLeaveT=setTimeout(()=>this.classList.remove('thin-hover'),180)"`:'';
     const _topHoverStripDisplay=_useThinBar?'position:absolute;left:0;right:0;top:0;height:22px;z-index:49;':'display:none;';
     el.innerHTML=`
-      <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)"></div>
+      <div class="wnd-peek-zone" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)" onmousemove="WM.peekTitlebar('${id}',true)"></div>
       <div class="wnd-top-hover-strip" onmouseenter="document.getElementById('tb_${id}').classList.add('thin-hover');clearTimeout(document.getElementById('tb_${id}')._thinLeaveT)" onmouseleave="const _t=document.getElementById('tb_${id}');_t._thinLeaveT=setTimeout(()=>_t.classList.remove('thin-hover'),180)" style="${_topHoverStripDisplay}"></div>
-      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)" ${_thinHover}>
+      <div class="wnd-titlebar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" onmouseenter="WM.peekTitlebar('${id}',true)" onmouseleave="WM.peekTitlebar('${id}',false)" onmousemove="WM.peekTitlebar('${id}',true)" ${_thinHover}>
         ${_iconHtml}
         <div class="wnd-title">${app.name}</div>
         <div class="wnd-ctrl-btns">
@@ -2184,23 +2143,40 @@ const WM={
   closeWindow(id){
     const el=document.getElementById(id);
     if(el){
-      el.style.animation='wndClose 0.18s ease forwards';
-      el.style.pointerEvents='none';
-      setTimeout(()=>{
+      const skipAnim=SETTINGS.get('animations')===false;
+      if(skipAnim){
         const frm=document.getElementById('frm_'+id);if(frm)frm.src='about:blank';
         el.remove();
-      },180);
+      }else{
+        el.style.animation='wndClose 0.18s ease forwards';
+        el.style.pointerEvents='none';
+        setTimeout(()=>{
+          const frm=document.getElementById('frm_'+id);if(frm)frm.src='about:blank';
+          el.remove();
+        },180);
+      }
     }
     if(typeof PLAYTIME!=='undefined'&&this.windows[id]&&PLAYTIME._active&&PLAYTIME._active.url===this.windows[id].app.url)PLAYTIME.stop();
     delete this.windows[id];TB.removeWindow(id);TB.updateAutoHide();
+  },
+  // Applies the "just opened" animation to a window element that was built
+  // outside WM.open() (Settings, App Library, File Explorer, NovMusic, Task
+  // Manager, Recycle Bin, folders, viewers) — call right after appending it
+  // to #windowLayer so system windows get the same open animation as games.
+  playOpenAnim(el){
+    if(!el||SETTINGS.get('animations')===false)return;
+    el.classList.add('wnd-first-open');
+    requestAnimationFrame(()=>{
+      el.addEventListener('animationend',()=>el.classList.remove('wnd-first-open'),{once:true});
+      setTimeout(()=>el.classList.remove('wnd-first-open'),400);
+    });
   },
 
   minimize(id){
     const el=document.getElementById(id);if(!el)return;
     this.windows[id].minimized=true;
-    el.style.animation='wndMinimize 0.22s cubic-bezier(0.4,0,1,1) forwards';
-    el.style.pointerEvents='none';
-    setTimeout(()=>{el.classList.add('minimized');el.style.animation='';el.style.pointerEvents='';},220);
+    el.classList.add('minimized');
+    el.style.pointerEvents='';
     const f=document.getElementById('frm_'+id);
     if(f){f.style.opacity='0.0001';f.style.pointerEvents='none';f.style.willChange='auto';f.style.visibility='hidden';f.style.contentVisibility='hidden';}
     this._updateGlassLoad();
@@ -2211,13 +2187,19 @@ const WM={
     const el=document.getElementById(id);if(!el)return;
     this.windows[id].minimized=false;
     el.classList.remove('minimized');
-    el.style.animation='wndRestore 0.22s cubic-bezier(0.34,1.3,0.64,1) both';
-    setTimeout(()=>{el.style.animation='';},220);
     const f=document.getElementById('frm_'+id);
     if(f){f.style.opacity='';f.style.pointerEvents='';f.style.visibility='';f.style.contentVisibility='';}
     this.focus(id);TB.updateAutoHide();
   },
-  toggleWindow(id){if(!this.windows[id])return;if(this.windows[id].minimized)this.restore(id);else this.minimize(id);},
+  toggleWindow(id){
+    if(!this.windows[id])return;
+    if(this.windows[id].minimized){this.restore(id);return;}
+    // Only minimize on taskbar click if this window is currently the
+    // focused/topmost window — otherwise the click should bring it to front.
+    const el=document.getElementById(id);
+    if(el&&el.classList.contains('focused'))this.minimize(id);
+    else this.focus(id);
+  },
 
   maximize(id){
     const el=document.getElementById(id);if(!el)return;
@@ -2269,14 +2251,24 @@ const WM={
   // iframe's audio — we notify the user honestly instead of pretending it worked.
   peekTitlebar(id,show){
     const tb=document.getElementById('tb_'+id);if(!tb)return;
-    if(this.windows[id]&&this.windows[id].maximized){
-      tb.classList.toggle('tb-peek',show);
-      // The peek zone overlays the top 44px at a higher z-index than the
+    if(!(this.windows[id]&&this.windows[id].maximized))return;
+    clearTimeout(this._peekLeaveTimers&&this._peekLeaveTimers[id]);
+    this._peekLeaveTimers=this._peekLeaveTimers||{};
+    const el=document.getElementById(id);
+    const pz=el&&el.querySelector('.wnd-peek-zone');
+    if(show){
+      tb.classList.add('tb-peek');
+      // The peek zone overlays the top edge at a higher z-index than the
       // peeked titlebar, so while peeked it must stop swallowing clicks —
       // otherwise the control buttons beneath it are unclickable.
-      const el=document.getElementById(id);
-      const pz=el&&el.querySelector('.wnd-peek-zone');
-      if(pz)pz.style.pointerEvents=show?'none':'';
+      if(pz)pz.style.pointerEvents='none';
+    }else{
+      // Small grace period so moving from the hover strip to the titlebar
+      // itself (or to its buttons) doesn't cause a flicker-out in between.
+      this._peekLeaveTimers[id]=setTimeout(()=>{
+        tb.classList.remove('tb-peek');
+        if(pz)pz.style.pointerEvents='';
+      },160);
     }
   },
 
@@ -2488,7 +2480,7 @@ const TB={
       this.pinned=[
         {name:'Settings',url:'__settings__',icon:''},
         {name:'App Library',url:'__library__',icon:''},
-        {name:'Cherri Browser',url:'__browser__',icon:''},
+        {name:'Browser',url:'__browser__',icon:''},
         {name:'NovMusic',url:'__music__',icon:''},
       ];
       this.savePinned();
@@ -2563,10 +2555,11 @@ const TB={
     // Clean, refined system icons — no emojis, consistent stroke style
     const systemIcons={
       '__browser__':{
-        color:'#ff4d6d',
+        color:'#4d9eff',
         svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
           <circle cx="12" cy="12" r="9.5"/>
-          <path d="M12 7l2.6 4.4L19 14l-4.4 2.6L12 21l-2.6-4.4L5 14l4.4-2.6z"/>
+          <line x1="2.5" y1="12" x2="21.5" y2="12"/>
+          <path d="M12 2.5c2.6 2.6 4 6 4 9.5s-1.4 6.9-4 9.5c-2.6-2.6-4-6-4-9.5s1.4-6.9 4-9.5z"/>
         </svg>`
       },
       '__explorer__':{
@@ -3219,6 +3212,12 @@ const OS={
   },
   applyIconSize(v){document.documentElement.style.setProperty('--desk-icon-size',v+'px');},
 
+  _gridSnap(x,y){
+    if(!SETTINGS.get('desktopGridSnap'))return{x,y};
+    const cell=SETTINGS.get('desktopGridSize')||88;
+    return{x:Math.round(x/cell)*cell,y:Math.round(y/cell)*cell};
+  },
+
   setIconVisibility(show){
     SETTINGS.set('showIcons',show);
     document.getElementById('desktopIcons').style.visibility=show?'':'hidden';
@@ -3245,7 +3244,7 @@ const OS={
       '__compiler__NOVCOMP':{color:'#7c6dfa',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/><line x1="13" y1="4" x2="11" y2="20"/></svg>`},
       '__explorer__':{color:'#fbbf24',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><line x1="3" y1="12" x2="21" y2="12" opacity="0.4"/></svg>`},
       '__settings__':{color:'#94a3b8',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>`},
-      '__browser__':{color:'#ff4d6d',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="9.5"/><path d="M12 7l2.6 4.4L19 14l-4.4 2.6L12 21l-2.6-4.4L5 14l4.4-2.6z"/></svg>`},
+      '__browser__':{color:'#4d9eff',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="9.5"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2c2.6 2.6 4 6.3 4 10s-1.4 7.4-4 10c-2.6-2.6-4-6.3-4-10s1.4-7.4 4-10z"/></svg>`},
       '__folder__':{color:'#fbbf24',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>`},
       '__music__':{color:'#f472b6',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M4 15v-3a8 8 0 0116 0v3"/><rect x="2.5" y="14" width="5" height="7" rx="2"/><rect x="16.5" y="14" width="5" height="7" rx="2"/></svg>`},
       '__recyclebin__':{color:'#94a3b8',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`},
@@ -3333,7 +3332,9 @@ const OS={
           if(it)this._dragGroupStart[id]={x:it.x||0,y:it.y||0};
         });
       }
+      document.body.style.userSelect='none';
       e.preventDefault();
+      e.stopPropagation();
     });
   },
 
@@ -3353,6 +3354,7 @@ const OS={
     let startX=0,startY=0,active=false;
     desktop.addEventListener('mousedown',e=>{
       if(e.button!==0)return;
+      if(this._dragItem)return;
       if(e.target.closest('.desk-icon')||e.target.closest('.os-window')||e.target.closest('#taskbar')||e.target.closest('#topBar'))return;
       if(!e.ctrlKey&&!e.metaKey)this.clearSelection();
       active=true;
@@ -3442,10 +3444,27 @@ const OS={
       if(_rafId){cancelAnimationFrame(_rafId);_rafId=null;}
       _contRect=null;
       document.querySelectorAll('.desk-icon.dragging').forEach(e=>e.classList.remove('dragging'));
-      if(hasMoved)saveDesktopItems(this.desktopItems);
+      if(hasMoved){
+        const snapped=this._gridSnap(this._dragItem.x||0,this._dragItem.y||0);
+        this._dragItem.x=snapped.x;this._dragItem.y=snapped.y;
+        const mainEl=document.getElementById('desk_'+this._dragItem.id);
+        if(mainEl){mainEl.style.left=snapped.x+'px';mainEl.style.top=snapped.y+'px';}
+        if(this._dragGroupStart){
+          Object.keys(this._dragGroupStart).forEach(gid=>{
+            const it=this.desktopItems.find(d=>d.id===gid);
+            if(!it)return;
+            const gs=this._gridSnap(it.x||0,it.y||0);
+            it.x=gs.x;it.y=gs.y;
+            const gel=document.getElementById('desk_'+gid);
+            if(gel){gel.style.left=gs.x+'px';gel.style.top=gs.y+'px';}
+          });
+        }
+        saveDesktopItems(this.desktopItems);
+      }
       hasMoved=false;
       this._dragItem=null;
       this._dragGroupStart=null;
+      document.body.style.userSelect='';
     });
   },
 
@@ -3592,6 +3611,7 @@ const OS={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event,'se')"></div>`;
     document.getElementById('windowLayer').appendChild(el);
+    WM.playOpenAnim(el);
     WM.windows[id]={app:{name:folderItem.name,url:'__folder__',icon:''},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,{name:folderItem.name,url:'__folder__',icon:''});WM.makeDraggable(id);
     this._renderFolderContents(id,folderItem);
@@ -3855,10 +3875,10 @@ const OS={
   },
   _openBrowserWindow(){
     if(!OS.BROWSER_IFRAME_URL){
-      OS.notify('Not configured','Cherri Browser has no link set.');
+      OS.notify('Not configured','Browser has no link set.');
       return;
     }
-    WM.open({name:'Cherri Browser',url:'__browser__',icon:'',_localDataUrl:OS.BROWSER_IFRAME_URL,sandboxOverride:'allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads allow-top-navigation-by-user-activation'});
+    WM.open({name:'Browser',url:'__browser__',icon:'',_localDataUrl:OS.BROWSER_IFRAME_URL,sandboxOverride:'allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads allow-top-navigation-by-user-activation'});
   },
   openTM(){TM.open();},
 
@@ -3890,6 +3910,7 @@ const OS={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
+    WM.playOpenAnim(el);
     WM.windows[id]={app:{name:'Recycle Bin',url:'__recyclebin__',icon:''},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,{name:'Recycle Bin',url:'__recyclebin__',icon:''});WM.makeDraggable(id);
     RECYCLEBIN_UI.render(id);
@@ -4044,6 +4065,7 @@ const OS={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event,'se')"></div>`;
     document.getElementById('windowLayer').appendChild(el);
+    WM.playOpenAnim(el);
     WM.windows[id]={app:{name:'NovMusic',url:'__music__',icon:'',_noOsTitlebar:true},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,{name:'NovMusic',url:'__music__',icon:''});WM.makeDraggable(id);
     NOVMUSIC.load();
@@ -4289,6 +4311,7 @@ const OS={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
+    WM.playOpenAnim(el);
     WM.windows[id]={app:{name:'App Library',url:'__library__',icon:''},minimized:false,maximized:false,prevRect:null,libSelected:null,libSort:'category'};
     WM.focus(id);TB.addWindow(id,{name:'App Library',url:'__library__',icon:''});WM.makeDraggable(id);
     this.stlibRenderSidebar(id,'');
@@ -5080,6 +5103,14 @@ const OS={
                   <div><div class="sp2-row-label">Manage Hidden Icons</div><div class="sp2-row-sub">Restore icons that were hidden</div></div>
                   <button class="sp2-action-btn" onclick="OS.openHiddenManager()">Manage</button>
                 </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Snap to Grid</div><div class="sp2-row-sub">Icons snap into place when dropped</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-gridsnap_${id}" ${SETTINGS.get('desktopGridSnap')!==false?'checked':''} onchange="SETTINGS.set('desktopGridSnap',this.checked)"><span class="tog-slider"></span></label>
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Grid Size</div><div class="sp2-row-sub">Spacing between grid snap points</div></div>
+                  <input type="range" class="sp2-slider" min="60" max="140" value="${SETTINGS.get('desktopGridSize')||88}" oninput="SETTINGS.set('desktopGridSize',+this.value)" style="width:130px">
+                </div>
               </div>
               <div class="sp2-card">
                 <div class="sp2-card-header">Widgets</div>
@@ -5262,6 +5293,7 @@ const OS={
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event,'se')"></div>`;
 
     document.getElementById('windowLayer').appendChild(el);
+    WM.playOpenAnim(el);
     WM.windows[id]={app:{name:'Settings',url:'__settings__',icon:''},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,{name:'Settings',url:'__settings__',icon:''});WM.makeDraggable(id);
 
@@ -5388,6 +5420,7 @@ const OS={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
+    WM.playOpenAnim(el);
     WM.windows[id]={app:{name:'File Explorer',url:'__explorer__',icon:'',_noOsTitlebar:true},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,{name:'File Explorer',url:'__explorer__',icon:''});WM.makeDraggable(id);
     FEW.init(id);
@@ -5827,6 +5860,7 @@ const VIEWERS={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
+    WM.playOpenAnim(el);
     WM.windows[id]={app:{name:file.name,url:'__photo__',icon:'🖼'},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,{name:file.name,url:'__photo__',icon:'🖼'});WM.makeDraggable(id);
     this._pvState[id]={zoom:1,rotate:0,file};
@@ -5900,6 +5934,7 @@ const VIEWERS={
     const _gameIcon=file._forceSysIcon?'':(file._isGame&&file._appIcon?file._appIcon:'🌐');
     const _winUrl=file._forceSysIcon||'__html__';
     const _tbAppEntry={name:file.name,url:_winUrl,icon:file._forceSysIcon?'':_gameIcon};
+    WM.playOpenAnim(el);
     WM.windows[id]={app:{name:file.name,url:_winUrl,icon:file._forceSysIcon?'':_gameIcon,_forceSysIcon:file._forceSysIcon,_isHtmlViewer:true,rawUrl:file._rawUrl||''},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,_tbAppEntry);WM.makeDraggable(id);
     if(file._isGame&&!file._forceSysIcon&&SETTINGS.get('autoFullscreenGames')!==false){
@@ -5935,6 +5970,7 @@ const VIEWERS={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
+    WM.playOpenAnim(el);
     WM.windows[id]={app:{name:file.name,url:'__video__',icon:'🎬'},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,{name:file.name,url:'__video__',icon:'🎬'});WM.makeDraggable(id);
   },
@@ -5964,6 +6000,7 @@ const VIEWERS={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
+    WM.playOpenAnim(el);
     WM.windows[id]={app:{name:file.name,url:'__audio__',icon:'🎵'},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,{name:file.name,url:'__audio__',icon:'🎵'});WM.makeDraggable(id);
   }
@@ -6015,6 +6052,20 @@ const NOVMUSIC_DB={
   }
 };
 
+// Default track(s) that are always present in NovMusic without any upload.
+// dataUrl/coverUrl point at hosted files — swap these for your own hosted
+// MP3 and cover image URLs. id must stay stable across reloads so it isn't
+// re-seeded/duplicated every launch.
+const DEFAULT_TRACKS=[
+  {
+    id:'default_track_1',
+    name:'Expository Essay [PHONK] prod. rian',
+    artist:'Gabi Sanders',
+    mp3Url:'https://raw.githubusercontent.com/riaannn/sus/main/expositoryFUNK.mp3',
+    coverUrl:'https://i.imgur.com/imxuU96.png'
+  }
+];
+
 const NOVMUSIC={
   tracks:[],       // {id,name,artist,dataUrl,duration,dateAdded,liked} — dataUrl/artUrl live in IndexedDB
   playlists:[],    // {id,name,trackIds:[]}
@@ -6026,8 +6077,62 @@ const NOVMUSIC={
   shuffle:false,
   layoutMode:'list', // 'list' | 'grid'
   _wins:{},        // wid -> true, so we can refresh every open music window
+  _defaultsSeeded:false,
 
   setLayout(wid,mode){this.layoutMode=mode;this._refreshLib(wid);},
+
+  // Fetches each DEFAULT_TRACKS entry (if not already stored), converts to a
+  // data: URL, and stores it in IndexedDB exactly like an uploaded track —
+  // so it plays, shows art, and behaves identically, with zero user action.
+  async _seedDefaults(){
+    const seenIds=new Set((JSON.parse(localStorage.getItem('novmusic_seeded')||'[]')));
+    for(const def of DEFAULT_TRACKS){
+      if(seenIds.has(def.id))continue;
+      try{
+        const [mp3Res,coverRes]=await Promise.all([
+          fetch(def.mp3Url),
+          def.coverUrl?fetch(def.coverUrl).catch(()=>null):Promise.resolve(null)
+        ]);
+        const mp3Blob=await mp3Res.blob();
+        const dataUrl=await new Promise((res,rej)=>{
+          const r=new FileReader();
+          r.onload=()=>res(r.result);
+          r.onerror=rej;
+          r.readAsDataURL(mp3Blob);
+        });
+        let artUrl='';
+        if(coverRes&&coverRes.ok){
+          const coverBlob=await coverRes.blob();
+          artUrl=await new Promise((res,rej)=>{
+            const r=new FileReader();
+            r.onload=()=>res(r.result);
+            r.onerror=rej;
+            r.readAsDataURL(coverBlob);
+          });
+        }
+        const tmpAudio=new Audio();
+        tmpAudio.src=dataUrl;
+        const duration=await new Promise(res=>{
+          tmpAudio.addEventListener('loadedmetadata',()=>res(tmpAudio.duration));
+          tmpAudio.addEventListener('error',()=>res(0));
+        });
+        const trackObj={
+          id:def.id,name:def.name,artist:def.artist,dataUrl,
+          duration:duration||0,dateAdded:new Date().toISOString(),liked:false,
+          artUrl
+        };
+        await NOVMUSIC_DB.putTrack(trackObj);
+        this.tracks.unshift(trackObj);
+        seenIds.add(def.id);
+      }catch(err){
+        console.warn('Failed to seed default track',def.id,err);
+        if(typeof OS!=='undefined'&&OS.notify)OS.notify('NovMusic seed failed',def.name+': '+(err&&err.message||'fetch error'));
+      }
+    }
+    localStorage.setItem('novmusic_seeded',JSON.stringify([...seenIds]));
+    this.saveTracks();
+    this._refreshAll();
+  },
 
   // Loads track metadata immediately from localStorage (fast, small), then
   // asynchronously hydrates dataUrl/artUrl from IndexedDB (large, slow) and
@@ -6046,6 +6151,12 @@ const NOVMUSIC={
         if(full){t.dataUrl=full.dataUrl;t.artUrl=full.artUrl||t.artUrl||'';}
       });
       this._refreshAll();
+      const seenIds=new Set((JSON.parse(localStorage.getItem('novmusic_seeded')||'[]')));
+      const missing=DEFAULT_TRACKS.some(d=>!seenIds.has(d.id));
+      if(missing&&!this._defaultsSeeded){
+        this._defaultsSeeded=true;
+        this._seedDefaults();
+      }
     }).catch(()=>{});
   },
   // Saves lightweight metadata (name/artist/duration/liked/artUrl-flag) to
@@ -6716,6 +6827,7 @@ const TM={
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
     document.getElementById('windowLayer').appendChild(el);
+    WM.playOpenAnim(el);
     WM.windows[id]={app:{name:'Task Manager',url:'__tm__',icon:'📊'},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,{name:'Task Manager',url:'__tm__',icon:'📊'});WM.makeDraggable(id);
     this._render(id);
@@ -6820,7 +6932,7 @@ const LAUNCHER={
       {name:'Settings',url:'__settings__',icon:'',isSystem:true,systemAction:'openSettings'},
       {name:'File Explorer',url:'__explorer__',icon:'',isSystem:true,systemAction:'openFileExplorer'},
       {name:'App Library',url:'__library__',icon:'',isSystem:true,systemAction:'openAppLibrary'},
-      {name:'Cherri Browser',url:'__browser__',icon:'',isSystem:true,systemAction:'openBrowser'},
+      {name:'Browser',url:'__browser__',icon:'',isSystem:true,systemAction:'openBrowser'},
       {name:'Task Manager',url:'__tm__',icon:'',isSystem:true,systemAction:'openTM'},
       {name:'NovCompiler',url:'__compiler__',icon:'',isSystem:true,systemAction:'openCompiler'},
       {name:'NovMusic',url:'__music__',icon:'',isSystem:true,systemAction:'openMusic'},
@@ -6852,7 +6964,7 @@ const LAUNCHER={
   // Returns an inline SVG system icon (sized) for system urls, or null.
   _sysLauncherIcon(url,size){
     const map={
-      '__browser__':{c:'#ff4d6d',s:`<circle cx="12" cy="12" r="9.5"/><path d="M12 7l2.6 4.4L19 14l-4.4 2.6L12 21l-2.6-4.4L5 14l4.4-2.6z"/>`},
+      '__browser__':{c:'#4d9eff',s:`<circle cx="12" cy="12" r="9.5"/><line x1="2.5" y1="12" x2="21.5" y2="12"/><path d="M12 2.5c2.6 2.6 4 6 4 9.5s-1.4 6.9-4 9.5c-2.6-2.6-4-6-4-9.5s1.4-6.9 4-9.5z"/>`},
       '__music__':{c:'#f472b6',s:`<path d="M4 15v-3a8 8 0 0116 0v3"/><rect x="2.5" y="14" width="5" height="7" rx="2"/><rect x="16.5" y="14" width="5" height="7" rx="2"/>`},
       '__explorer__':{c:'#fbbf24',s:`<path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><line x1="3" y1="12" x2="21" y2="12" opacity="0.4"/>`},
       '__settings__':{c:'#94a3b8',s:`<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>`},
