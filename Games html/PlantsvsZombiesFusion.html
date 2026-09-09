@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Plants vs. Zombies Fusion</title>
+  <title>Plants vs Zombies Fusion</title>
   <style>
     * {
       box-sizing: border-box;
@@ -16,7 +16,7 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background: #0d0e12;
+      background: #000;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
@@ -27,135 +27,104 @@
       display: block;
     }
 
-    /* Fullscreen Container showing complete SteamGrid image */
+    /* Fullscreen NovOS Transition Overlay */
     #loader-overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-color: #0c0d10;
       background-image: url("https://cdn2.steamgriddb.com/hero_thumb/19316b8689a5a7fa2a496ffa49c81862.jpg");
-      background-size: contain; /* Displays full image without cropping */
-      background-repeat: no-repeat;
+      background-size: cover;
       background-position: center;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: center;
-      padding-bottom: 5vh;
       z-index: 10;
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      transition: opacity 0.5s ease;
     }
 
-    /* Desktop Application Launcher Box */
-    .app-window {
-      width: 460px;
-      max-width: 90vw;
-      background: rgba(18, 20, 26, 0.88);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      padding: 24px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(76, 175, 80, 0.15);
-      text-align: left;
-    }
-
-    .app-header {
+    /* Centered NovOS Splash Layout */
+    .splash-container {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
+      justify-content: center;
+      text-align: center;
     }
 
-    .app-title-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .app-badge {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #4caf50;
-      box-shadow: 0 0 8px #4caf50;
-    }
-
-    .app-title {
-      color: #ffffff;
-      font-size: 1.1rem;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-    }
-
-    .app-version {
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 0.75rem;
-      font-family: monospace;
-    }
-
-    /* Custom Progress Bar */
-    .progress-track {
-      width: 100%;
-      height: 8px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 6px;
+    /* App Icon Styling */
+    .app-icon {
+      width: 110px;
+      height: 110px;
+      border-radius: 24px;
+      background: #1e1e24;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 16px;
       overflow: hidden;
-      margin-bottom: 12px;
-      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .progress-fill {
+    .app-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* App Label */
+    .app-name {
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 600;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      margin-bottom: 16px;
+      letter-spacing: 0.2px;
+    }
+
+    /* Minimalist NovOS Progress Bar */
+    .progress-bar-container {
+      width: 180px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      backdrop-filter: blur(4px);
+    }
+
+    .progress-bar-fill {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #388e3c, #66bb6a);
-      border-radius: 6px;
-      box-shadow: 0 0 12px rgba(102, 187, 106, 0.6);
-      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+      transition: width 0.2s ease;
     }
 
-    .app-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.85rem;
-    }
-
-    .status-label {
+    .status-text {
+      margin-top: 10px;
       color: rgba(255, 255, 255, 0.75);
-      font-weight: 400;
-    }
-
-    .percentage-label {
-      color: #81c784;
-      font-weight: 600;
+      font-size: 0.75rem;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
       font-family: monospace;
-      font-size: 0.95rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- Game Application Launcher UI -->
+  <!-- Seamless NovOS Loader -->
   <div id="loader-overlay">
-    <div class="app-window">
-      <div class="app-header">
-        <div class="app-title-group">
-          <div class="app-badge" id="status-badge"></div>
-          <div class="app-title">Plants vs. Zombies Fusion</div>
-        </div>
-        <div class="app-version">v1.0.0</div>
+    <div class="splash-container">
+      <div class="app-icon">
+        <img src="https://cdn2.steamgriddb.com/icon_thumb/043555cbce9685a223341da753a18198.png" alt="Plants vs Zombies Fusion Icon">
       </div>
-
-      <div class="progress-track">
-        <div id="progress-fill" class="progress-fill"></div>
+      <div class="app-name">Plants vs Zombies Fusion</div>
+      <div class="progress-bar-container">
+        <div id="progress-fill" class="progress-bar-fill"></div>
       </div>
-
-      <div class="app-footer">
-        <div id="status-label" class="status-label">Initializing system environment...</div>
-        <div id="percentage-label" class="percentage-label">0%</div>
-      </div>
+      <div id="status-text" class="status-text">0%</div>
     </div>
   </div>
 
@@ -171,25 +140,10 @@
     const TOTAL_SYSTEM_PARTS = 14;
     let currentGlobalPart = 0;
 
-    // Friendly application status phases
-    const STATUS_MESSAGES = [
-      "Verifying core game components...",
-      "Loading game graphics and textures...",
-      "Preparing audio engine and resources...",
-      "Allocating WebGL execution memory...",
-      "Finalizing launch dependencies..."
-    ];
-
-    function updateAppProgress(customMessage = null) {
+    function updateProgress() {
       const percentage = Math.round((currentGlobalPart / TOTAL_SYSTEM_PARTS) * 100);
-      
-      // Select status message based on progress bracket
-      let phaseIndex = Math.min(Math.floor((percentage / 100) * STATUS_MESSAGES.length), STATUS_MESSAGES.length - 1);
-      let statusText = customMessage || STATUS_MESSAGES[phaseIndex];
-
-      document.getElementById('status-label').innerText = statusText;
-      document.getElementById('percentage-label').innerText = `${percentage}%`;
       document.getElementById('progress-fill').style.width = `${percentage}%`;
+      document.getElementById('status-text').innerText = `${percentage}%`;
     }
 
     async function fetchAndMergeParts(baseFileName, totalParts, useZeroPadding = true) {
@@ -199,17 +153,15 @@
         const partNumber = useZeroPadding ? String(i).padStart(2, '0') : i;
         const partUrl = `${buildUrl}${baseFileName}.part${partNumber}`;
         
-        updateAppProgress();
-        
         const response = await fetch(partUrl);
         if (!response.ok) {
-          throw new Error(`System resource load error: ${partUrl}`);
+          throw new Error(`Failed to fetch ${partUrl} (Status: ${response.status})`);
         }
         const arrayBuffer = await response.arrayBuffer();
         buffers.push(arrayBuffer);
 
         currentGlobalPart++;
-        updateAppProgress();
+        updateProgress();
       }
 
       const mergedBlob = new Blob(buffers);
@@ -220,8 +172,6 @@
       try {
         const dataBlobUrl = await fetchAndMergeParts("build.data", 12, true); 
         const wasmBlobUrl = await fetchAndMergeParts("build.wasm", 2, false);
-
-        updateAppProgress("Launching Plants vs. Zombies Fusion...");
 
         var config = {
           dataUrl: dataBlobUrl,
@@ -240,12 +190,14 @@
 
         script.onload = () => {
           createUnityInstance(canvas, config, (progress) => {
-            // Smoothly reflect Unity engine initialization
+            const unityPercentage = Math.round(progress * 100);
+            if (unityPercentage > 0) {
+              document.getElementById('status-text').innerText = `Starting... ${unityPercentage}%`;
+            }
           }).then(() => {
             const overlay = document.getElementById('loader-overlay');
             overlay.style.opacity = '0';
-            overlay.style.transform = 'scale(1.02)';
-            setTimeout(() => { overlay.style.display = 'none'; }, 600);
+            setTimeout(() => { overlay.style.display = 'none'; }, 500);
           }).catch((err) => {
             console.error("Unity Initialization Error:", err);
           });
@@ -253,12 +205,9 @@
 
         document.body.appendChild(script);
       } catch (err) {
-        console.error("Application launch failed:", err);
-        document.getElementById('status-label').innerText = "Launch failed. Check browser logs.";
-        document.getElementById('status-label').style.color = "#ef5350";
-        document.getElementById('status-badge').style.background = "#ef5350";
-        document.getElementById('status-badge').style.boxShadow = "0 0 8px #ef5350";
-        document.getElementById('progress-fill').style.background = "#ef5350";
+        console.error("Failed to load game assets:", err);
+        document.getElementById('status-text').innerText = "Load failed";
+        document.getElementById('status-text').style.color = "#ff6b6b";
       }
     }
 
