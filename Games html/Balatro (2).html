@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Balatro</title>
+<script>
+// Silence internal Love.js error popups (like missing save meta files)
+window.alert = function(msg) {
+  console.warn("[Love.js Alert Suppressed]:", msg);
+};
+
+const PREFIX = "Balatro_vanilla_";
+const originalOpen = indexedDB.open;
+const originalDeleteDatabase = indexedDB.deleteDatabase;
+indexedDB.open = function(name, version) {
+const prefixedName = PREFIX + name;
+return version !== undefined?originalOpen.call(this, prefixedName, version):originalOpen.call(this, prefixedName);
+};
+indexedDB.deleteDatabase = function(name) {
+const prefixedName = PREFIX + name;
+return originalDeleteDatabase.call(this, prefixedName);
+};
+</script>
+<script src="https://huggingface.co/spaces/Katsugachi/Balatro/resolve/main/love.min.js"></script>
+<style>
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0px;
+  overflow: hidden;
+  background: #000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+#canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+
+/* Seamless NovOS Transition Overlay */
+#loader-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("https://cdn2.steamgriddb.com/hero_thumb/e25c8f3b6421b1795ba83b623d1d82c0.jpg");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: opacity 0.5s ease;
+}
+
+/* Centered NovOS Splash Layout */
+.splash-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* App Icon Styling */
+.app-icon {
+  width: 110px;
+  height: 110px;
+  border-radius: 24px;
+  background: rgba(30, 30, 36, 0.6);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin-bottom: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
+
+.app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* App Label */
+.app-name {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  margin-bottom: 16px;
+  letter-spacing: 0.2px;
+}
+
+/* Minimalist NovOS Progress Bar */
+.progress-bar-container {
+  width: 180px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  backdrop-filter: blur(4px);
+}
+
+.progress-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  transition: width 0.2s ease;
+}
+
+.status-text {
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.75rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  font-family: monospace;
+}
+</style>
+</head>
+<body>
+
+  <script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+  </script>
+
+  <div id="loader-overlay">
+    <div class="splash-container">
+      <div class="app-icon">
+        <img src="https://cdn2.steamgriddb.com/icon/066e25a0712b306a9b95230f6ec4a051/32/256x256.png" alt="Balatro Icon">
+      </div>
+      <div class="app-name">Balatro</div>
+      <div class="progress-bar-container">
+        <div id="progress-fill" class="progress-bar-fill"></div>
+      </div>
+      <div id="status-text" class="status-text">Loading... 0%</div>
+    </div>
+  </div>
+
+  <canvas id="canvas"></canvas>
+
+  <script src="https://huggingface.co/spaces/Katsugachi/Balatro/resolve/main/module.js"></script>
+  <script>
+  (async()=>{
+    const updateProgress = (percentage, text) => {
+      document.getElementById('progress-fill').style.width = `${percentage}%`;
+      document.getElementById('status-text').innerText = text || `Loading... ${percentage}%`;
+    };
+
+    updateProgress(20, "Fetching game package...");
+    const d = await getSource();
+    updateProgress(60, "Initializing Love.js engine...");
+
+    Module = {
+      INITIAL_MEMORY: 2**28,
+      canvas: canvas,
+      printErr: console.error,
+      arguments: ["game.love"]
+    };
+
+    Module.preRun = [function(){
+      Module.addRunDependency("fp game.love");
+      var ptr = Module.getMemory(d.length);
+      Module['HEAPU8'].set(d, ptr);
+      Module.FS_createDataFile('/', "game.love", d, true, true, true);
+      Module.removeRunDependency("fp game.love");
+    }];
+
+    Module.postRun = [function(){
+      updateProgress(100, "Ready!");
+      const overlay = document.getElementById('loader-overlay');
+      overlay.style.opacity = '0';
+      setTimeout(() => { overlay.style.display = 'none'; }, 500);
+    }];
+
+    Love(Module);
+  })();
+  </script>
+</body>
+</html>
