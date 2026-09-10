@@ -97,6 +97,7 @@ body.has-maximized #windowLayer>.os-window:not(.maximized){pointer-events:all}
 /* TOP BAR */
 #topBar{position:absolute;top:0;left:0;right:0;z-index:2;height:28px;background:linear-gradient(180deg,rgba(var(--os-accent-rgb),0.16),rgba(14,14,20,0.92) 65%);border-bottom:1px solid rgba(var(--os-accent-rgb),0.18);backdrop-filter:blur(24px) saturate(1.8);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-family:var(--font);font-size:12px;color:rgba(255,255,255,0.92);letter-spacing:0.01em;transition:transform 0.3s ease,opacity 0.3s ease,visibility 0.3s,background 0.4s ease,border-color 0.4s ease}
 #topBar.topbar-hidden{transform:translateY(-100%);opacity:0;pointer-events:none;visibility:hidden}
+#topBar.topbar-instant-hide{transition:none!important}
 /* In fullscreen/maximized: top bar starts hidden but CAN be peeked back in
    via #topBarPeekZone — the !important visibility/pointer-events lock has
    been removed so JS-driven .topbar-hidden toggling (see TB.topPeekShow)
@@ -1319,7 +1320,6 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
       <input type="text" class="f-input" id="sc-bannerimg" placeholder="https://... image or .gif">
       <div class="f-label">Category</div>
       <select class="f-select" id="sc-cat">
-        <option value="web">Web</option>
         <option value="games" selected>Games</option>
         <option value="apps">Other</option>
       </select>
@@ -1518,10 +1518,10 @@ const DEFAULT_SHORTCUTS = {
     {name:"Suggestions Form",url:"https://forms.gle/irbKFW3VbFhczJXs5",icon:"https://i.imgur.com/GfmMMZj.png",isDefault:true,SupportsHTML:false,openInNewTab:true},
   ],
   web:[
-    {name:"Truffled", url:"https://supermath.salavat.ru",icon:"https://supermath.salavat.ru/png/logo.png",isDefault:true, SupportsHTML:false},
-    {name:"opium",url:"https://cdn.statically.io/gh/OpiumBest/svg@main/index.svg",icon:"https://i.imgur.com/ssjsMbX.png",isDefault:true,SupportsHTML:false},
-    {name:"Arctic",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/arctic.html", url: "__rawhtml__", launchUrl:"https://storage.googleapis.com/arctic-games/arctic.html",icon:"https://arctic.lat/favicon.svg",isDefault:true,SupportsHTML:true},
-    {name:"YukiOS",launchUrl: "https://yukios.netlify.app/", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/yukiosShort.html", url:"__rawhtml__",icon:"https://yukios.netlify.app/favicon.ico",isDefault:true,SupportsHTML:true},
+    //{name:"Truffled", url:"https://supermath.salavat.ru",icon:"https://supermath.salavat.ru/png/logo.png",isDefault:true, SupportsHTML:false},
+    //{name:"opium",url:"https://cdn.statically.io/gh/OpiumBest/svg@main/index.svg",icon:"https://i.imgur.com/ssjsMbX.png",isDefault:true,SupportsHTML:false},
+    {name:"TikTok",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/0ae9e6ebb3f4246d8a09479d00ba2731.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/30acbc6ff8034551580d1d73d9b3958c.jpg", url: "__rawhtml__", launchUrl:"https://cdn.statically.io/gh/OpiumBest/svg@main/~/83rmou6x/w9c7t9jr/otpYdDTx6MNA3RVKzoNKtk-AbOObbj9teP5Ax6w",icon:"https://cdn2.steamgriddb.com/icon/094b7cd1111ed23f5b64a54744cb25b7/32/512x512.png",isDefault:true,SupportsHTML:true},
+    {name:"Youtube",gridImage:"https://cdn2.steamgriddb.com/thumb/20038c10911f531345dc4992157263fb.jpg", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/8910f41d3f22b34450934ea4c13eacf5.jpg", launchUrl: "https://cdn.statically.io/gh/OpiumBest/svg@main/~/83rmou6x/w9c7t9jr/otpYdDTx6MNA3RVKw4VUtlWJJ66XbH0k?%24io=https%3A%2F%2Fyoutube.com&%24rfs=", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/1b19b065aa1cbff9f24d818246adb139/32/512x512.png",isDefault:true,SupportsHTML:true},
   ],
   games:[
     {name:"Angry Birds Epic",gridImage:"https://cdn2.steamgriddb.com/thumb/ac59323d5db1e846b88232a194286b26.jpg", bannerImage: "https://cdn2.steamgriddb.com/hero_thumb/6ea3a17abd40cbefedd8c506c0f4e0fd.jpg",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Angry%20Birds%20Epic.html",url:"__rawhtml__",launchUrl:"https://sharemyhtml.com/p/HfP0TSxFke",icon:"https://i.imgur.com/ql7Gz9e.jpeg",isDefault:true,SupportsHTML:true},
@@ -1536,7 +1536,7 @@ const DEFAULT_SHORTCUTS = {
     {name:"Terraria",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/38dadc9fae7b5a4415d01986ee4907fe.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/9bc661e8362657d8cbbe4bb41d17c7f3.jpg",launchUrl:"https://sharemyhtml.com/p/YN6J0nhfGY", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Terraria.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/669.png", launchUrl:"https://sharemyhtml.com/p/YN6J0nhfGY", isDefault:true,SupportsHTML:true},
     {name:"Clover Pit",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/52075d4bdac6f71fdb7613f470ca2a86.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/e79333b088968399d736de65d5f0222c.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Clover%20Pit.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/078f65312167d70e83297ca2fbb8761c/32/256x256.png",isDefault:true, launchUrl:"https://sharemyhtml.com/p/Js_shJA1EM", SupportsHTML:false},
     {name:"Plants vs Zombies GOTY Edition",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/9ede8c9dd8c41578d8b7096426a2c828.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/ee7aa4daa3d20f02cbe3d9d68bbd869a.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/PVZ%20GOTY.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/c724bedfba9b4aeb92b446fbb6baf31c.png", launchUrl:"https://sharemyhtml.com/p/e4b-clqsEw", isDefault:true,SupportsHTML:true},
-    {name:"Plants vs Zombies Fusion",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/19316b8689a5a7fa2a496ffa49c81862.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/7ad10ff61745a1e6f12f8ff703e0d157.jpg",url:"https://riaannn.github.io/FAKE-PVZ-Fusion-attempt/",icon:"https://cdn2.steamgriddb.com/icon_thumb/043555cbce9685a223341da753a18198.png",isDefault:true,SupportsHTML:false, notAvailable:true},
+    {name:"Plants vs Zombies Fusion",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/19316b8689a5a7fa2a496ffa49c81862.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/7ad10ff61745a1e6f12f8ff703e0d157.jpg",url:"__rawhtml__",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/PlantsvsZombiesFusion.html",icon:"https://cdn2.steamgriddb.com/icon_thumb/043555cbce9685a223341da753a18198.png",isDefault:true,SupportsHTML:false, notAvailable:false},
     {name:"Balatro",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/e25c8f3b6421b1795ba83b623d1d82c0.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/704f72562168940fbfa7e9f01e0f84aa.jpg",launchUrl: "https://sharemyhtml.com/p/qyOTzogYpH", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/balatro.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/066e25a0712b306a9b95230f6ec4a051.ico",isDefault:true,SupportsHTML:true},
     {name:"Dadish",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/b384cf1e04c25c0cd4c0194e16117be2.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/ae66880d9336a9fde9ec34472f49f397.jpg",launchUrl:"https://sharemyhtml.com/p/2_5FJwGNx9", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/357.png",isDefault:true,SupportsHTML:true},
     {name:"Dadish 2",bannerImage:"https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1525320/capsule_616x353.jpg?t=1614538233",gridImage:"https://cdn2.steamgriddb.com/thumb/d22ee0196e941e806131587dfe38802f.png",launchUrl:"https://sharemyhtml.com/p/Ak8NZHtctn", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish%202.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/355.png",isDefault:true,SupportsHTML:true},
@@ -1573,11 +1573,10 @@ const PVZ_URL='https://wszqkzqk.github.io/pvz-portable-wasm/pvz-portable.html';
 const RAW_HTML={
   _cache:{},
   async launchInNewTab(app){
-    if(!app.rawUrl){OS.notify('Error','No raw URL defined for '+app.name);return;}
+    if(!app.rawUrl)return;
     try{
       let html=this._cache[app.rawUrl];
       if(!html){
-        OS.notify('Loading',app.name+' is loading…');
         const res=await fetch(app.rawUrl,{cache:'no-store'});
         if(!res.ok)throw new Error('HTTP '+res.status);
         html=await res.text();
@@ -1585,9 +1584,7 @@ const RAW_HTML={
       }
       const blob=new Blob([html],{type:'text/html'});
       window.open(URL.createObjectURL(blob),'_blank');
-    }catch(err){
-      OS.notify('Failed to load',app.name+': '+(err&&err.message||'Network error'));
-    }
+    }catch(err){}
   },
   async launch(app){
     if(!app.rawUrl){OS.notify('Error','No raw URL defined for '+app.name);return;}
@@ -1599,7 +1596,6 @@ const RAW_HTML={
       return;
     }
 
-    OS.notify('Loading',app.name+' is loading…');
     const maxRetries=8;
     let attempt=0;
     let lastErr=null;
@@ -1615,7 +1611,6 @@ const RAW_HTML={
           const retryAfter=res.headers.get('Retry-After');
           const wait=retryAfter?parseInt(retryAfter,10)*1000:Math.min(1000*Math.pow(2,attempt-1),15000);
           if(attempt<maxRetries){
-            OS.notify('Rate limited','Retrying '+app.name+'… (attempt '+attempt+'/'+maxRetries+')');
             await new Promise(r=>setTimeout(r,wait));
             continue;
           }
@@ -1653,7 +1648,6 @@ const RAW_HTML={
       }
     }
 
-    OS.notify('Failed to load',app.name+': '+(lastErr&&lastErr.message||'Network error')+' after '+maxRetries+' attempts');
   }
 };
 
@@ -1661,7 +1655,7 @@ const RAW_HTML={
    SETTINGS STORE
 ═══════════════════════════════════════════════ */
 const SETTINGS={
-  def:{showBoot:true,launchConfirm:true,wallpaper:'obsidian',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true,customCursor:true,autoFullscreenGames:true,topBarPeekSize:44,taskbarPeekSize:6,bgThrottle:true,smartGlass:true,lowPowerMode:false,reduceIframeFx:false,disableWidgetsInGame:true,noiseTextureOff:false,showChangelogOnUpdate:true,autoFallbackLaunch:true,win11Taskbar:false,taskbarPosition:'bottom',desktopGridSnap:true,desktopGridSize:88,forceRawHtmlLaunch:true},
+  def:{showBoot:true,launchConfirm:true,wallpaper:'obsidian',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true,customCursor:true,autoFullscreenGames:true,topBarPeekSize:44,taskbarPeekSize:6,bgThrottle:true,smartGlass:true,lowPowerMode:false,reduceIframeFx:false,disableWidgetsInGame:true,noiseTextureOff:false,showChangelogOnUpdate:true,autoFallbackLaunch:true,win11Taskbar:false,taskbarPosition:'bottom',desktopGridSnap:true,desktopGridSize:88,forceRawHtmlLaunch:true,shortcutLaunchAnim:true},
   data:{},
   load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||sessionStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
   save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));try{sessionStorage.setItem('novos_cfg',JSON.stringify(this.data));}catch(e){}},
@@ -1809,22 +1803,21 @@ const KEYBINDS={
    ENTRIES whenever you ship user-facing changes.
 ═══════════════════════════════════════════════ */
 const CHANGELOG={
-  CURRENT_VERSION:'5.0',
+  CURRENT_VERSION:'5.1',
   ENTRIES:[
     {
-      version:'5.0',
-      date:'2026-09-05',
+      version:'5.1',
+      date:'2026-09-08',
       items:[
-        'Massive boot screen & App Library overhaul',
-        'Removed the Raw HTML vs Link launch picker entirely — Games always launch via Raw HTML, Web/Other always launch via their Link URL',
-        'Removed "Force Raw HTML Launch" and "Auto-Fallback Launch Mode" settings (no longer needed)',
-        'App Library now defaults to sorting by Newest instead of Category; Category sort removed',
-        'Minecraft 1.12 OFFLINE now opens automatically in a new browser tab instead of an OS window for better performance',
-        'Removed Peak, Bendy and the Ink Machine, Among Us, bonk.io, Plants vs Zombies Botanical Warfare, Smash Karts, PVZ Garden Warfare 2D, Poly Bridge, and Apes vs Helium — all removed for being glitched, broken, or not running at all',
-        'App Library completely redesigned with a top-navigation, grid-first layout (featured carousel, shelves, and a full-page game detail view) instead of the old sidebar layout — now themed using your accent color',
-        'Added separate image fields per shortcut: Icon (desktop & taskbar only), Grid Image (App Library grid tiles), and Banner Image (App Library game detail page) — each accepts an image or GIF URL and falls back to the others if left blank',
-        'Playtime no longer accrues while the tab is hidden, unfocused, or the device is asleep',
-        'Web and Other shortcuts no longer track or display playtime',
+        'PVZ Fusion now avaliable',
+        'Website shortcuts temporarily made unavaliable',
+        'Fixed Dadish 1 not running',
+        'Replaced Cherri Browser for Opium Browser',
+        'Lethal Company now runs in a separate tab to avoid fullscreen bug',
+        'Shortcut Launch Animation reworked slightly',
+        'New setting to disable shortcut launch animation',
+        'Shortcut launching notifications removed',
+        'Report bugs and make suggestions using the forms found in Other',
       ]
     },
   ],
@@ -2610,13 +2603,29 @@ const TB={
     const setting=SETTINGS.get('hideTaskbarFullscreen'),hasMax=WM.hasMaximizedWindow();
     const taskbar=document.getElementById('taskbar');
     const topBar=document.getElementById('topBar');
+    const wasHidden=this._hidden;
     document.body.classList.toggle('has-maximized',hasMax);
     const topPeek=document.getElementById('topBarPeekZone');
     if(setting&&hasMax){
       document.body.classList.add('taskbar-autohide');
       taskbar.classList.add('taskbar-hidden');
       this._hidden=true;
-      if(topBar)topBar.classList.add('topbar-hidden');
+      if(topBar){
+        // First transition into fullscreen: hide the top bar with NO
+        // animation so it never visibly flashes/slides during game boot.
+        // Only the very first hide is instant — later hover-peeks (which
+        // remove/re-add topbar-hidden) still animate normally.
+        if(!wasHidden){
+          topBar.classList.add('topbar-instant-hide');
+          topBar.classList.add('topbar-hidden');
+          void topBar.offsetHeight; // force reflow so the instant hide applies
+          requestAnimationFrame(()=>{
+            requestAnimationFrame(()=>topBar.classList.remove('topbar-instant-hide'));
+          });
+        }else{
+          topBar.classList.add('topbar-hidden');
+        }
+      }
       // The OS top bar must never reappear over a fullscreened window — that
       // window's own titlebar peek zone (wnd-peek-zone) handles top-hover now.
       if(topPeek)topPeek.style.display='none';
@@ -3788,6 +3797,10 @@ const OS={
       OS._launchMinecraftInBrowserTab();
       return;
     }
+    if(app.name==='Lethal Company'){
+      OS._launchLethalCompanyInBrowserTab();
+      return;
+    }
     // Resolve the full shortcut by name up front so any launch path (pinned,
     // taskbar, session-restored, folder-stored) recovers fields like
     // _openInNewBlobTab even if the object passed in is a stripped copy.
@@ -3806,10 +3819,15 @@ const OS={
     if(app.url&&app.url.startsWith('__')&&app.url!=='__rawhtml__'){this._doLaunch(app);return;}
     if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
 
-    // Games always launch via Raw HTML. Web/Other shortcuts always launch
-    // via their URL directly. No picker, no per-app preference needed.
-    if(resolved.rawUrl||resolved.url==='__rawhtml__'){
+    // Games always launch via Raw HTML. App/Other shortcuts always launch
+    // via their link URL directly. No picker, no per-app preference needed.
+    const isGameCategory=this._isGameShortcut(resolved);
+    if(isGameCategory&&(resolved.rawUrl||resolved.url==='__rawhtml__')){
       RAW_HTML.launch(resolved);
+      return;
+    }
+    if(!isGameCategory&&resolved.launchUrl){
+      this._doLaunch({...resolved,url:resolved.launchUrl});
       return;
     }
     this._doLaunch(resolved);
@@ -3819,21 +3837,25 @@ const OS={
   // fetch (or reuse cached) rawUrl HTML, then hand it to WM._openBlobTab,
   // which builds the blob: URL and opens it via window.open in a new tab.
   async _launchMinecraftInBrowserTab(){
-    const rawUrl='https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Eaglercraft_1.12_Offline_en_US.html';
+    return OS._launchGameInBrowserTab('https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Eaglercraft_1.12_Offline_en_US.html');
+  },
+  async _launchLethalCompanyInBrowserTab(){
+    return OS._launchGameInBrowserTab('https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/lethalcompany.html');
+  },
+  // Shared logic: fetch (or reuse cached) rawUrl HTML and open it via
+  // WM._openBlobTab in a real new browser tab. No toasts on load or failure.
+  async _launchGameInBrowserTab(rawUrl){
     try{
       if(RAW_HTML._cache[rawUrl]){
         WM._openBlobTab({htmlSource:RAW_HTML._cache[rawUrl]});
         return;
       }
-      OS.notify('Loading','Minecraft 1.12 OFFLINE is loading…');
       const res=await fetch(rawUrl,{cache:'no-store'});
       if(!res.ok)throw new Error('HTTP '+res.status);
       const html=await res.text();
       RAW_HTML._cache[rawUrl]=html;
       WM._openBlobTab({htmlSource:html});
-    }catch(err){
-      OS.notify('Failed to load','Minecraft 1.12 OFFLINE: '+(err&&err.message||'Network error'));
-    }
+    }catch(err){}
   },
   // Returns true if this shortcut belongs to the Games section of the App Library.
   _isGameShortcut(app){
@@ -3868,6 +3890,7 @@ const OS={
     };
     if(sysMap[app.url]){sysMap[app.url]();return;}
     if(app.name==='Minecraft 1.12 OFFLINE'){OS._launchMinecraftInBrowserTab();return;}
+    if(app.name==='Lethal Company'){OS._launchLethalCompanyInBrowserTab();return;}
     if(app.url&&app.url.startsWith('__')){WM.open(app);return;}
     // Raw HTML games never go straight to WM.open — route them through OS.launch,
     // which resolves the rawUrl (looking it up by name if the pinned/taskbar copy
@@ -3900,7 +3923,7 @@ const OS={
   _systemRealUrl(sysUrl){
     return sysUrl;
   },
-  BROWSER_IFRAME_URL:'https://storage.googleapis.com/mathlearning/links/svg-main_1/index.svg',
+  BROWSER_IFRAME_URL:'https://cdn.statically.io/gh/OpiumBest/svg@main/index.svg',
   openBrowser(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__browser__');
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
@@ -4150,6 +4173,7 @@ const OS={
         .stlib-feat-tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(var(--slb),1);background:rgba(var(--slb),0.16);border:1px solid rgba(var(--slb),0.4);padding:3px 9px;border-radius:20px;margin-bottom:10px}
         .stlib-feat-title{font-size:28px;font-weight:800;color:#fff;letter-spacing:-0.02em;text-shadow:0 2px 16px rgba(0,0,0,0.6);margin-bottom:12px}
         .stlib-feat-btn{height:38px;padding:0 22px;border-radius:10px;background:rgba(var(--slb),1);border:none;color:#fff;font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 6px 18px rgba(var(--slb),0.4);transition:transform .12s}
+        body.stlib-light-accent .stlib-feat-btn{color:#0b0c10}
         .stlib-feat-btn:hover{transform:translateY(-1px)}
         .stlib-feat-dots{position:absolute;right:20px;bottom:20px;display:flex;gap:6px}
         .stlib-feat-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);cursor:pointer;transition:all .15s}
@@ -4192,11 +4216,11 @@ const OS={
         .stlib-detail-title{font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.01em}
         .stlib-detail-meta{font-size:12px;color:#9aa0ab;margin-top:4px}
         .stlib-detail-actions{display:flex;gap:10px;margin-left:auto;flex-shrink:0}
-        .stlib-detail-play{height:42px;padding:0 24px;border-radius:10px;background:rgb(var(--slb));border:none;color:#0b0c10;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .12s}
+        .stlib-detail-play{height:42px;padding:0 24px;border-radius:10px;background:rgb(var(--os-accent-rgb));border:none;color:#0b0c10;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .12s}
         .stlib-detail-play svg{color:inherit}
         body:not(.stlib-light-accent) .stlib-detail-play{color:#fff}
         .stlib-detail-play:hover{opacity:0.88}
-        .stlib-launch-overlay{position:absolute;inset:0;z-index:200;display:none;overflow:hidden;background:#000;transition:opacity .6s ease}
+        .stlib-launch-overlay{position:fixed;inset:0;z-index:900000;display:none;overflow:hidden;background:#000;transition:opacity .6s ease}
         .stlib-launch-overlay.active{display:block}
         .stlib-launch-overlay.fadeout{opacity:0;pointer-events:none}
         .stlib-launch-banner{position:absolute;left:0;right:0;top:0;height:320px;overflow:hidden;transition:height 1.1s cubic-bezier(.4,0,.2,1),opacity 1.1s cubic-bezier(.4,0,.2,1);opacity:1}
@@ -4204,8 +4228,10 @@ const OS={
         .stlib-launch-banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
         .stlib-launch-icon{position:absolute;top:50%;left:50%;width:96px;height:96px;border-radius:20px;object-fit:cover;background:#181a20;border:2px solid rgba(255,255,255,0.15);box-shadow:0 10px 30px rgba(0,0,0,0.6);transform:translate(-50%,-50%) scale(1);opacity:0;transition:opacity .5s ease,transform 1.1s cubic-bezier(.34,1.2,.4,1)}
         .stlib-launch-icon.pop{opacity:1;transform:translate(-50%,-50%) scale(2.4)}
-        .stlib-launch-title{position:absolute;top:calc(50% + 76px);left:50%;transform:translate(-50%,6px);color:#fff;font-weight:800;font-size:16px;letter-spacing:-0.01em;opacity:0;transition:opacity .5s ease,transform .5s cubic-bezier(.34,1.2,.4,1);text-shadow:0 2px 10px rgba(0,0,0,0.7);white-space:nowrap}
-        .stlib-launch-title.show{opacity:1;transform:translate(-50%,0)}
+        .stlib-launch-title{position:absolute;top:calc(50% + 130px);left:50%;transform:translate(-50%,0);display:flex;color:#fff;font-weight:800;font-size:22px;letter-spacing:-0.01em;text-shadow:0 2px 10px rgba(0,0,0,0.7);white-space:nowrap}
+        .stlib-launch-title .stlib-launch-char{display:inline-block;opacity:0;transform:translateY(14px);transition:opacity .38s ease,transform .38s cubic-bezier(.34,1.3,.4,1)}
+        .stlib-launch-title .stlib-launch-char.show{opacity:1;transform:translateY(0)}
+        .stlib-launch-title .stlib-launch-char.space{width:0.32em}
         .stlib-detail-iconbtn{width:42px;height:42px;border-radius:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .13s}
         .stlib-detail-iconbtn:hover{background:rgba(255,255,255,0.16)}
         .stlib-detail-iconbtn.danger:hover{background:rgba(220,38,38,0.3);border-color:rgba(220,38,38,0.5)}
@@ -4225,7 +4251,6 @@ const OS={
             <div class="stlib-brand" style="pointer-events:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>Library</div>
             <div class="stlib-navtabs" onmousedown="event.stopPropagation()">
               <button class="stlib-navtab active" id="stlibNav_games_${id}" onclick="OS.stlibNavSet('${id}','games')">Games</button>
-              <button class="stlib-navtab" id="stlibNav_web_${id}" onclick="OS.stlibNavSet('${id}','web')">Web</button>
               <button class="stlib-navtab" id="stlibNav_apps_${id}" onclick="OS.stlibNavSet('${id}','apps')">Other</button>
             </div>
             <div class="stlib-draghandle"></div>
@@ -4242,7 +4267,8 @@ const OS={
         </div>
         <div class="stlib-detail-ov" id="stlibDetail_${id}"></div>
       </div>
-      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>
+      `;
     document.getElementById('windowLayer').appendChild(el);
     WM.playOpenAnim(el);
     WM.windows[id]={app:{name:'App Library',url:'__library__',icon:''},minimized:false,maximized:false,prevRect:null,libTab2:'games',libFeatIdx:0};
@@ -4254,7 +4280,7 @@ const OS={
     if(!WM.windows[wid])return;
     WM.windows[wid].libTab2=tab;
     WM.windows[wid].libFeatIdx=0;
-    ['games','web','apps'].forEach(t=>{
+    ['games','apps'].forEach(t=>{
       const b=document.getElementById('stlibNav_'+t+'_'+wid);
       if(b)b.classList.toggle('active',t===tab);
     });
@@ -4298,9 +4324,9 @@ const OS={
               <img class="stlib-feat-img" src="${img}" onerror="this.style.opacity=0" alt="">
               <div class="stlib-feat-grad"></div>
               <div class="stlib-feat-info">
-                <div class="stlib-feat-tag">${isGames?'Featured':tab==='web'?'Web':'Other'}</div>
+                <div class="stlib-feat-tag">${isGames?'Featured':'Other'}</div>
                 <div class="stlib-feat-title">${a.name}</div>
-                <button class="stlib-feat-btn" onclick="event.stopPropagation();OS.launch(${esc})"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Launch</button>
+                <button class="stlib-feat-btn" onclick="event.stopPropagation();OS.stlibLaunchWithAnim('${wid}',${esc})" style="background:rgba(var(--os-accent-rgb),1)"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Launch</button>
               </div>
             </div>`;
           }).join('')}
@@ -4329,7 +4355,7 @@ const OS={
     })():'';
 
     const gridHtml=`<div class="stlib-section2">
-        <div class="stlib-section2-head"><div class="stlib-section2-title">${isGames?'All Games':tab==='web'?'All Web Shortcuts':'All Other Shortcuts'}</div><div class="stlib-section2-sub">${list.length} total</div></div>
+        <div class="stlib-section2-head"><div class="stlib-section2-title">${isGames?'All Games':'All Other Shortcuts'}</div><div class="stlib-section2-sub">${list.length} total</div></div>
         <div class="stlib-fullgrid">
           ${list.map(a=>{
             const img=this._gridImg(a)||`https://www.google.com/s2/favicons?sz=256&domain=${a.url}`;
@@ -4468,52 +4494,70 @@ const OS={
   // as the "main attraction", then the game actually launches. Once launched,
   // the App Library resets back to its default Games view for next time.
   stlibLaunchWithAnim(wid,app){
-    const win=document.getElementById(wid);
-    if(!win){OS.launch(app);return;}
-    let overlay=win.querySelector('.stlib-launch-overlay');
+    if(SETTINGS.get('shortcutLaunchAnim')===false){
+      OS.launch(app);
+      if(WM.windows[wid]){
+        WM.windows[wid].libTab2='games';
+        WM.windows[wid].libQuery='';
+        WM.windows[wid].libFeatIdx=0;
+      }
+      const searchInp=document.getElementById('stlibSearch_'+wid);
+      if(searchInp)searchInp.value='';
+      OS.stlibNavSet(wid,'games');
+      OS.stlibCloseDetail(wid);
+      return;
+    }
+    let overlay=document.getElementById('stlibGlobalLaunchOverlay');
     if(!overlay){
       overlay=document.createElement('div');
+      overlay.id='stlibGlobalLaunchOverlay';
       overlay.className='stlib-launch-overlay';
-      const body=win.querySelector('.wnd-body')||win;
-      body.appendChild(overlay);
+      document.body.appendChild(overlay);
     }
     const banner=this._bannerImg(app)||`https://www.google.com/s2/favicons?sz=256&domain=${app.url}`;
     const icon=app.icon||`https://www.google.com/s2/favicons?sz=128&domain=${app.url}`;
+    const chars=[...app.name].map(ch=>ch===' '
+      ?`<span class="stlib-launch-char space"> </span>`
+      :`<span class="stlib-launch-char">${ch}</span>`).join('');
     overlay.innerHTML=`
-      <div class="stlib-launch-banner" id="stlibLaunchBanner_${wid}"><img src="${banner}" onerror="this.style.opacity=0" alt=""></div>
-      <img class="stlib-launch-icon" id="stlibLaunchIcon_${wid}" src="${icon}" onerror="this.style.opacity=0" alt="">
-      <div class="stlib-launch-title" id="stlibLaunchTitle_${wid}">${app.name}</div>`;
+      <div class="stlib-launch-banner" id="stlibLaunchBanner_global"><img src="${banner}" onerror="this.style.opacity=0" alt=""></div>
+      <img class="stlib-launch-icon" id="stlibLaunchIcon_global" src="${icon}" onerror="this.style.opacity=0" alt="">
+      <div class="stlib-launch-title" id="stlibLaunchTitle_global">${chars}</div>`;
     overlay.classList.add('active');
     overlay.classList.remove('fadeout');
 
-    const bannerEl=document.getElementById('stlibLaunchBanner_'+wid);
-    const iconEl=document.getElementById('stlibLaunchIcon_'+wid);
-    const titleEl=document.getElementById('stlibLaunchTitle_'+wid);
+    const bannerEl=document.getElementById('stlibLaunchBanner_global');
+    const iconEl=document.getElementById('stlibLaunchIcon_global');
+    const titleEl=document.getElementById('stlibLaunchTitle_global');
+    const charEls=titleEl?[...titleEl.querySelectorAll('.stlib-launch-char')]:[];
 
     // Step 1: banner expands to fill and fades
     requestAnimationFrame(()=>{
       bannerEl.classList.add('expand');
     });
-    // Step 2: title rises into view, then icon pops forward as the main attraction
-    setTimeout(()=>{
-      titleEl.classList.add('show');
-    },350);
+    // Step 2: icon pops forward as the main attraction
     setTimeout(()=>{
       iconEl.classList.add('pop');
-    },550);
-    // Step 3: actually launch the game — the overlay stays put, covering the
-    // App Library window, so the transition visually continues right up to
+    },450);
+    // Step 3: title animates in character by character
+    setTimeout(()=>{
+      charEls.forEach((el,i)=>{
+        setTimeout(()=>el.classList.add('show'),i*28);
+      });
+    },650);
+    // Step 4: actually launch the game — the overlay stays put, covering
+    // the whole screen, so the transition visually continues right up to
     // the moment the game window appears underneath it.
     setTimeout(()=>{
       OS.launch(app);
-    },1250);
-    // Step 4: once the game window exists, fade the overlay away to reveal
+    },1450);
+    // Step 5: once the game window exists, fade the overlay away to reveal
     // it — this is what makes the transition feel like it continues onto
     // the actual game rather than just cutting away.
     setTimeout(()=>{
       overlay.classList.add('fadeout');
-    },1500);
-    // Step 5: after the fade completes, clean up and reset the App Library
+    },1700);
+    // Step 6: after the fade completes, clean up and reset the App Library
     // back to its default Games view for next time.
     setTimeout(()=>{
       overlay.classList.remove('active');
@@ -4528,7 +4572,7 @@ const OS={
       if(searchInp)searchInp.value='';
       OS.stlibNavSet(wid,'games');
       OS.stlibCloseDetail(wid);
-    },2100);
+    },2300);
   },
 
   _findAppByUrl(url,name){
@@ -4550,7 +4594,6 @@ const OS={
     const games=this.shortcuts.games||[];
     if(!games.length){OS.notify('No games','Your games library is empty.');return;}
     const pick=games[Math.floor(Math.random()*games.length)];
-    OS.notify('Random pick',pick.name+' — rolling the dice!');
     this.launch(pick);
   },
 
@@ -5041,6 +5084,10 @@ const OS={
                 <div class="sp2-row">
                   <div><div class="sp2-row-label">Boot Intro</div><div class="sp2-row-sub">Show boot sequence on load</div></div>
                   <label class="toggle"><input type="checkbox" id="sp2tog-boot_${id}" ${SETTINGS.get('showBoot')?'checked':''} onchange="SETTINGS.set('showBoot',this.checked)"><span class="tog-slider"></span></label>
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Shortcut Launch Animation</div><div class="sp2-row-sub">Fullscreen transition when launching an app from the App Library</div></div>
+                  <label class="toggle"><input type="checkbox" id="sp2tog-launchanim_${id}" ${SETTINGS.get('shortcutLaunchAnim')!==false?'checked':''} onchange="SETTINGS.set('shortcutLaunchAnim',this.checked)"><span class="tog-slider"></span></label>
                 </div>
 
               </div>
