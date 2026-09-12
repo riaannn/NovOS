@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <base href="https://cdn.jsdelivr.net/gh/riaannn/granny2@main/">
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | Granny: Chapter Two</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <script src="TemplateData/UnityProgress.js"></script>
+    <style>
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: system-ui, -apple-system, sans-serif; }
+      .webgl-content { position: fixed; inset: 0; width: 100vw; height: 100vh; margin: 0; transform: none !important; }
+      #unityContainer { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; }
+      #unityContainer canvas { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; display: block !important; }
+
+      /* Custom Splash Screen Overlay */
+      #customLoaderOverlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: url('https://cdn2.steamgriddb.com/hero_thumb/d38dbd48d274b662075848a4af06bb6f.jpg') center/cover no-repeat #000;
+        transition: opacity 0.5s ease;
+      }
+
+      /* Game Icon Box */
+      .app-icon-wrapper {
+        width: 100px;
+        height: 100px;
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1);
+        margin-bottom: 12px;
+      }
+      .app-icon-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* Game Title */
+      .app-title {
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.2px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        margin-bottom: 24px;
+      }
+
+      /* Progress Bar Component */
+      .progress-box {
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+      .progress-track {
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+        overflow: hidden;
+        backdrop-filter: blur(4px);
+      }
+      .progress-fill {
+        width: 0%;
+        height: 100%;
+        background: #ffffff;
+        border-radius: 3px;
+        transition: width 0.15s ease-out;
+      }
+      .progress-text {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      /* Hide default Unity progress bar elements */
+      #unityContainer > div:not(canvas), .footer, .fullscreen, .title, .webgl-logo { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <!-- Custom Loading Screen Overlay -->
+    <div id="customLoaderOverlay">
+      <div class="app-icon-wrapper">
+        <img src="https://cdn2.steamgriddb.com/icon_thumb/27669f3f141da48bfe5e6b7aa37c38f9.png" alt="Granny 2 Icon">
+      </div>
+      <div class="app-title">Granny 2</div>
+      <div class="progress-box">
+        <div class="progress-track">
+          <div id="progressBarFill" class="progress-fill"></div>
+        </div>
+        <div id="progressText" class="progress-text">0%</div>
+      </div>
+    </div>
+
+    <div class="webgl-content">
+      <div id="unityContainer"></div>
+    </div>
+    
+    <script>
+      var globalUnityInstance = null;
+
+      // Global function to update UI percentage cleanly
+      function updateLoaderUI(percent) {
+        var clamped = Math.min(100, Math.max(0, Math.round(percent)));
+        var fill = document.getElementById("progressBarFill");
+        var text = document.getElementById("progressText");
+        
+        if (fill) fill.style.width = clamped + "%";
+        if (text) text.innerText = clamped + "%";
+
+        if (clamped >= 100) {
+          var overlay = document.getElementById("customLoaderOverlay");
+          if (overlay && overlay.style.opacity !== "0") {
+            overlay.style.opacity = "0";
+            setTimeout(function() {
+              overlay.style.display = "none";
+            }, 500);
+          }
+        }
+      }
+
+      (function() {
+        var cdnBase = document.baseURI;
+        var nativeFetch = window.fetch.bind(window);
+
+        function getSplitUrls() {
+          var parts = [];
+          for (var i = 1; i <= 15; i++) {
+            var partNum = i < 10 ? "0" + i : "" + i;
+            parts.push(new URL("Build/Granny2WebGLPortByTSBuild2.data.unityweb.part" + partNum, cdnBase).href);
+          }
+          return parts;
+        }
+
+        function fetchWithProgress(url, onPartProgress) {
+          return nativeFetch(url).then(function(response) {
+            if (!response.ok) throw new Error("Failed part load: " + response.status);
+            
+            var contentLength = response.headers.get('Content-Length');
+            var total = contentLength ? parseInt(contentLength, 10) : 0;
+            var loaded = 0;
+
+            if (!response.body || !total) {
+              return response.arrayBuffer().then(function(buf) {
+                onPartProgress(buf.byteLength, buf.byteLength);
+                return buf;
+              });
+            }
+
+            var reader = response.body.getReader();
+            var chunks = [];
+
+            function read() {
+              return reader.read().then(function(result) {
+                if (result.done) {
+                  var blob = new Blob(chunks);
+                  return blob.arrayBuffer();
+                }
+                loaded += result.value.length;
+                chunks.push(result.value);
+                onPartProgress(loaded, total);
+                return read();
+              });
+            }
+            return read();
+          });
+        }
+
+        function downloadAndMergeParts() {
+          var urls = getSplitUrls();
+          var progressMap = new Array(urls.length).fill(0);
+
+          function updateOverallProgress() {
+            var totalProgress = progressMap.reduce(function(a, b) { return a + b; }, 0) / urls.length;
+            // Map file downloads across 0% - 80% total progress range
+            updateLoaderUI(totalProgress * 80);
+          }
+
+          return Promise.all(urls.map(function(url, index) {
+            return fetchWithProgress(url, function(loaded, total) {
+              progressMap[index] = loaded / total;
+              updateOverallProgress();
+            });
+          })).then(function(buffers) {
+            var totalLength = buffers.reduce(function(acc, b) { return acc + b.byteLength; }, 0);
+            var merged = new Uint8Array(totalLength);
+            var offset = 0;
+            buffers.forEach(function(b) {
+              merged.set(new Uint8Array(b), offset);
+              offset += b.byteLength;
+            });
+
+            updateLoaderUI(85);
+            return merged.buffer;
+          });
+        }
+
+        // Intercept XMLHttpRequest
+        var origOpen = XMLHttpRequest.prototype.open;
+        var origSend = XMLHttpRequest.prototype.send;
+
+        XMLHttpRequest.prototype.open = function(method, url) {
+          this._targetUrl = url;
+          return origOpen.apply(this, arguments);
+        };
+
+        XMLHttpRequest.prototype.send = function() {
+          var self = this;
+          if (this._targetUrl && this._targetUrl.includes("Granny2WebGLPortByTSBuild2.data.unityweb")) {
+            downloadAndMergeParts().then(function(buffer) {
+              Object.defineProperty(self, "status", { value: 200, writable: true });
+              Object.defineProperty(self, "readyState", { value: 4, writable: true });
+              Object.defineProperty(self, "response", { value: buffer, writable: true });
+              Object.defineProperty(self, "responseText", { value: "", writable: true });
+
+              if (typeof self.onreadystatechange === "function") self.onreadystatechange();
+              if (typeof self.onload === "function") self.onload();
+            }).catch(function(err) {
+              Object.defineProperty(self, "status", { value: 404, writable: true });
+              if (typeof self.onerror === "function") self.onerror(err);
+            });
+            return;
+          }
+          return origSend.apply(this, arguments);
+        };
+
+        // Intercept Fetch API
+        window.fetch = function(input, init) {
+          var url = typeof input === "string" ? input : input.url;
+          if (url.includes("Granny2WebGLPortByTSBuild2.data.unityweb")) {
+            return downloadAndMergeParts().then(function(buffer) {
+              return new Response(buffer, {
+                status: 200,
+                headers: { "Content-Type": "application/octet-stream" }
+              });
+            });
+          }
+          return nativeFetch(input, init);
+        };
+      })();
+
+      function fit() {
+        var c = document.querySelector("#unityContainer canvas");
+        if (!c) return;
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+        c.style.width = "100vw";
+        c.style.height = "100vh";
+      }
+
+      var loaderScript = document.createElement("script");
+      loaderScript.src = "Build/UnityLoader.js";
+      loaderScript.onload = function () {
+        globalUnityInstance = UnityLoader.instantiate("unityContainer", "Build/Granny2WebGLPortByTSBuild2.json", {
+          onProgress: function (instance, progress) {
+            // Unity initialization phase covers 80% to 100%
+            var calculatedPercent = 80 + (progress * 20);
+            updateLoaderUI(calculatedPercent);
+            fit();
+            if (progress === 1) { setTimeout(fit, 0); setTimeout(fit, 200); }
+          }
+        });
+        new MutationObserver(fit).observe(document.getElementById("unityContainer"), { childList: true, subtree: true });
+        window.addEventListener("resize", fit);
+      };
+      document.body.appendChild(loaderScript);
+    </script>
+  </body>
+</html>
