@@ -1,272 +1,441 @@
 <!DOCTYPE html>
+
 <html lang="en-us">
+
   <head>
+
     <meta charset="utf-8">
+
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
     <title>Unity WebGL Player | WorldBox</title>
+
     
+
     <!-- Base URL points directly to your jsDelivr repo root -->
+
     <base href="https://cdn.jsdelivr.net/gh/riaannn/wbox@main/" />
+
     
+
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
+
     <link rel="stylesheet" href="TemplateData/style.css">
-    
-    <style>
-      html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: system-ui, -apple-system, sans-serif; }
-      #unity-container { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; }
-      #unity-canvas { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; display: block !important; }
 
-      /* Custom Splash Screen Overlay */
-      #customLoaderOverlay {
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: url('https://cdn2.steamgriddb.com/hero_thumb/29ac2cd8c9463697d28f46c7af743395.jpg') center/cover no-repeat #000;
-        transition: opacity 0.5s ease;
-      }
-
-      /* App Icon Frame */
-      .app-icon-wrapper {
-        width: 100px;
-        height: 100px;
-        border-radius: 22px;
-        overflow: hidden;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1);
-        margin-bottom: 12px;
-      }
-      .app-icon-wrapper img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      /* Game Title */
-      .app-title {
-        color: #ffffff;
-        font-size: 15px;
-        font-weight: 600;
-        letter-spacing: -0.2px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        margin-bottom: 24px;
-      }
-
-      /* Progress Bar Component */
-      .progress-box {
-        width: 200px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-      }
-      .progress-track {
-        width: 100%;
-        height: 6px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 3px;
-        overflow: hidden;
-        backdrop-filter: blur(4px);
-      }
-      .progress-fill {
-        width: 0%;
-        height: 100%;
-        background: #ffffff;
-        border-radius: 3px;
-        transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      .progress-text {
-        color: rgba(255, 255, 255, 0.75);
-        font-size: 13px;
-        font-weight: 500;
-      }
-
-      #unity-loading-bar { display: none !important; }
-    </style>
   </head>
+
   <body>
-    <!-- Custom Loading Overlay -->
-    <div id="customLoaderOverlay">
-      <div class="app-icon-wrapper">
-        <img src="https://cdn2.steamgriddb.com/icon_thumb/32c3215de8110a85d451202e083fe156.png" alt="WorldBox Icon">
-      </div>
-      <div class="app-title">WorldBox</div>
-      <div class="progress-box">
-        <div class="progress-track">
-          <div id="progressBarFill" class="progress-fill"></div>
-        </div>
-        <div id="progressText" class="progress-text">0%</div>
-      </div>
-    </div>
 
     <div id="unity-container">
+
       <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+
+      <div id="unity-loading-bar">
+
+        <div id="unity-logo"></div>
+
+        <div id="unity-progress-bar-empty">
+
+          <div id="unity-progress-bar-full"></div>
+
+        </div>
+
+      </div>
+
       <div id="unity-warning"> </div>
+
     </div>
 
     <script>
+
       window.addEventListener("load", function () {
+
         if ("serviceWorker" in navigator) {
+
           navigator.serviceWorker.getRegistrations().then(function (registrations) {
+
             registrations.forEach(function (registration) {
+
               registration.unregister();
+
             });
-          }).catch(function() {});
+
+          });
+
         }
+
       });
 
+
+
       var container = document.querySelector("#unity-container");
+
       var canvas = document.querySelector("#unity-canvas");
+
+      var loadingBar = document.querySelector("#unity-loading-bar");
+
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+
       var warningBanner = document.querySelector("#unity-warning");
 
-      var currentProgress = 0;
-      function updateLoaderUI(percent) {
-        if (percent < currentProgress && percent < 100) return;
-        currentProgress = Math.min(100, Math.max(0, Math.round(percent)));
 
-        var fill = document.getElementById("progressBarFill");
-        var text = document.getElementById("progressText");
-        
-        if (fill) fill.style.width = currentProgress + "%";
-        if (text) text.innerText = currentProgress + "%";
-
-        if (currentProgress >= 100) {
-          var overlay = document.getElementById("customLoaderOverlay");
-          if (overlay && overlay.style.opacity !== "0") {
-            overlay.style.opacity = "0";
-            setTimeout(function() {
-              overlay.style.display = "none";
-            }, 500);
-          }
-        }
-      }
 
       function unityShowBanner(msg, type) {
+
         function updateBannerVisibility() {
+
           warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+
         }
+
         var div = document.createElement('div');
+
         div.innerHTML = msg;
+
         warningBanner.appendChild(div);
+
         if (type == 'error') div.style = 'background: red; padding: 10px;';
+
         else {
+
           if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+
           setTimeout(function() {
+
             warningBanner.removeChild(div);
+
             updateBannerVisibility();
+
           }, 5000);
+
         }
+
         updateBannerVisibility();
+
       }
 
-      var cdnBase = "https://cdn.jsdelivr.net/gh/riaannn/wbox@main/";
+
+
+      var cdnBase = document.baseURI;
+
       var buildUrl = cdnBase + "Build";
+
       var loaderUrl = buildUrl + "/WorldFox.loader.js";
 
       var config = {
+
         dataUrl: buildUrl + "/WorldFox.data",
+
         frameworkUrl: buildUrl + "/WorldFox.framework.js",
+
         codeUrl: buildUrl + "/WorldFox.wasm",
+
         streamingAssetsUrl: cdnBase + "StreamingAssets",
+
         companyName: "mkarpenko",
+
         productName: "WorldBox",
+
         productVersion: "0.51.2",
+
         showBanner: unityShowBanner,
-        // Disable Unity Cache and IndexedDB fallback checks
-        decompressByServer: false,
-        cacheControl: function (url) {
-          return "no-store";
-        },
+
       };
 
+
+
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+
         var meta = document.createElement('meta');
+
         meta.name = 'viewport';
+
         meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+
         document.getElementsByTagName('head')[0].appendChild(meta);
+
       }
+
+
 
       function installSplitFileLoader(manifest) {
+
         var originalFetch = window.fetch.bind(window);
+
         var rootUrl = new URL(cdnBase);
 
+
+
         function normalizeSplitPath(input) {
+
           var url = new URL(typeof input === "string" ? input : input.url, cdnBase);
+
           var path = decodeURIComponent(url.pathname);
+
           var rootPath = rootUrl.pathname;
+
           if (path.indexOf(rootPath) === 0) {
+
             path = path.substring(rootPath.length);
+
           } else {
+
             path = path.replace(/^\/+/, "");
+
           }
+
           return path.replace(/\\/g, "/");
+
         }
+
+
 
         function contentTypeFor(path) {
+
           if (path.endsWith(".wasm")) return "application/wasm";
+
           if (path.endsWith(".js")) return "application/javascript";
+
           if (path.endsWith(".data") || path.endsWith(".bank")) return "application/octet-stream";
+
           return "application/octet-stream";
+
         }
 
+
+
         window.fetch = function (input, init) {
+
           var splitPath = normalizeSplitPath(input);
+
           var entry = manifest[splitPath];
+
           if (!entry) {
+
             return originalFetch(input, init);
+
           }
 
-          var loadedParts = 0;
-          var totalParts = entry.parts.length;
-
           return Promise.all(entry.parts.map(function (part) {
+
             return originalFetch(new URL(part, rootUrl).href, init).then(function (response) {
+
               if (!response.ok) {
+
                 throw new Error("Failed to load split part " + part + ": " + response.status);
+
               }
-              loadedParts++;
-              var splitProgress = 10 + Math.round((loadedParts / totalParts) * 75);
-              updateLoaderUI(splitProgress);
+
               return response.arrayBuffer();
+
             });
+
           })).then(function (buffers) {
+
             return new Response(new Blob(buffers, { type: contentTypeFor(splitPath) }), {
+
               status: 200,
+
               statusText: "OK",
+
               headers: {
+
                 "Content-Type": contentTypeFor(splitPath),
+
                 "Content-Length": String(entry.size)
+
               }
+
             });
+
           });
+
         };
+
       }
 
-      updateLoaderUI(5);
 
-      fetch(buildUrl + "/split-files.json").then(function (response) {
-        return response.ok ? response.json() : {};
-      }).catch(function () { 
-        return {}; 
+
+      var CACHE_NAME = "worldbox-cache-v1";
+
+      var CACHE_URLS = [
+
+        buildUrl + "/WorldFox.data",
+
+        buildUrl + "/WorldFox.framework.js",
+
+        buildUrl + "/WorldFox.wasm",
+
+        loaderUrl
+
+      ];
+
+
+
+      function cachedFetch(input, init) {
+
+        var url = typeof input === "string" ? input : input.url;
+
+        return caches.open(CACHE_NAME).then(function (cache) {
+
+          return cache.match(url).then(function (cached) {
+
+            if (cached) return cached;
+
+            return fetch(url, init).then(function (response) {
+
+              if (response.ok) {
+
+                cache.put(url, response.clone());
+
+              }
+
+              return response;
+
+            });
+
+          });
+
+        });
+
+      }
+
+
+
+      function preCacheAssets() {
+
+        return caches.open(CACHE_NAME).then(function (cache) {
+
+          var total = CACHE_URLS.length;
+
+          var done = 0;
+
+          return Promise.all(CACHE_URLS.map(function (url) {
+
+            return cache.match(url).then(function (cached) {
+
+              if (cached) {
+
+                done++;
+
+                progressBarFull.style.width = (done / total * 30) + "%";
+
+                return;
+
+              }
+
+              return fetch(url).then(function (response) {
+
+                if (response.ok) {
+
+                  cache.put(url, response.clone());
+
+                }
+
+                done++;
+
+                progressBarFull.style.width = (done / total * 30) + "%";
+
+              });
+
+            });
+
+          }));
+
+        });
+
+      }
+
+
+
+      function installCacheFetchInterceptor() {
+
+        var prev = window.fetch.bind(window);
+
+        window.fetch = function (input, init) {
+
+          var url = typeof input === "string" ? input : input.url;
+
+          var isBuildAsset = CACHE_URLS.some(function (u) { return url === u; });
+
+          if (isBuildAsset) {
+
+            return caches.open(CACHE_NAME).then(function (cache) {
+
+              return cache.match(url).then(function (cached) {
+
+                if (cached) return cached;
+
+                return prev(input, init).then(function (response) {
+
+                  if (response.ok) cache.put(url, response.clone());
+
+                  return response;
+
+                });
+
+              });
+
+            });
+
+          }
+
+          return prev(input, init);
+
+        };
+
+      }
+
+
+
+      loadingBar.style.display = "block";
+
+      progressBarFull.style.width = "0%";
+
+
+
+      preCacheAssets().then(function () {
+
+        return fetch(buildUrl + "/split-files.json").then(function (response) {
+
+          return response.ok ? response.json() : {};
+
+        }).catch(function () { return {}; });
+
       }).then(function (manifest) {
+
         installSplitFileLoader(manifest || {});
 
+        installCacheFetchInterceptor();
+
         var script = document.createElement("script");
+
         script.src = loaderUrl;
+
         script.onload = function () {
+
           createUnityInstance(canvas, config, function (progress) {
-            var engineProgress = 85 + (progress * 14);
-            updateLoaderUI(engineProgress);
+
+            progressBarFull.style.width = (30 + 70 * progress) + "%";
+
           }).then(function (unityInstance) {
-            updateLoaderUI(100);
+
+            loadingBar.style.display = "none";
+
           }).catch(function (message) {
-            console.error("Unity Instance Error:", message);
+
+            alert(message);
+
           });
+
         };
+
         document.body.appendChild(script);
+
       });
+
     </script>
+
   </body>
+
 </html>
