@@ -107,9 +107,6 @@
     </div>
 
     <script>
-      // Disable UnityCache IndexedDB globally to prevent iframe storage errors
-      window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
-
       window.addEventListener("load", function () {
         if ("serviceWorker" in navigator) {
           navigator.serviceWorker.getRegistrations().then(function (registrations) {
@@ -177,7 +174,8 @@
         productName: "WorldBox",
         productVersion: "0.51.2",
         showBanner: unityShowBanner,
-        // Disable Unity Cache explicitly to avoid iframe IndexedDB block
+        // Disable Unity Cache and IndexedDB fallback checks
+        decompressByServer: false,
         cacheControl: function (url) {
           return "no-store";
         },
@@ -258,26 +256,13 @@
         var script = document.createElement("script");
         script.src = loaderUrl;
         script.onload = function () {
-          // Provide custom WebAssembly instantiation to prevent dual-buffer memory allocation error inside iframes
-          config.instantiateWasm = function (imports, successCallback) {
-            fetch(config.codeUrl).then(function (response) {
-              return response.arrayBuffer();
-            }).then(function (bytes) {
-              return WebAssembly.instantiate(bytes, imports);
-            }).then(function (output) {
-              successCallback(output.instance, output.module);
-            }).catch(function (e) {
-              console.error("WASM Instantiation failed:", e);
-            });
-          };
-
           createUnityInstance(canvas, config, function (progress) {
             var engineProgress = 85 + (progress * 14);
             updateLoaderUI(engineProgress);
           }).then(function (unityInstance) {
             updateLoaderUI(100);
           }).catch(function (message) {
-            console.error(message);
+            console.error("Unity Instance Error:", message);
           });
         };
         document.body.appendChild(script);
