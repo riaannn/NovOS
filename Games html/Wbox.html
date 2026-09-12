@@ -114,7 +114,7 @@
             registrations.forEach(function (registration) {
               registration.unregister();
             });
-          });
+          }).catch(function() {});
         }
       });
 
@@ -159,7 +159,7 @@
         updateBannerVisibility();
       }
 
-      var cdnBase = document.baseURI;
+      var cdnBase = "https://cdn.jsdelivr.net/gh/riaannn/wbox@main/";
       var buildUrl = cdnBase + "Build";
       var loaderUrl = buildUrl + "/WorldFox.loader.js";
       var config = {
@@ -238,6 +238,9 @@
       ];
 
       function preCacheAssets() {
+        if (!("caches" in window)) {
+          return Promise.resolve();
+        }
         return caches.open(CACHE_NAME).then(function (cache) {
           var total = CACHE_URLS.length;
           var done = 0;
@@ -250,17 +253,24 @@
               }
               return fetch(url).then(function (response) {
                 if (response.ok) {
-                  cache.put(url, response.clone());
+                  cache.put(url, response.clone()).catch(function() {});
                 }
                 done++;
                 updateLoaderUI((done / total) * 30);
               });
+            }).catch(function() {
+              done++;
+              updateLoaderUI((done / total) * 30);
             });
           }));
+        }).catch(function(err) {
+          console.warn("CacheStorage blocked inside iframe, skipping pre-cache step:", err);
+          return Promise.resolve();
         });
       }
 
       function installCacheFetchInterceptor() {
+        if (!("caches" in window)) return;
         var prev = window.fetch.bind(window);
         window.fetch = function (input, init) {
           var url = typeof input === "string" ? input : input.url;
@@ -270,10 +280,12 @@
               return cache.match(url).then(function (cached) {
                 if (cached) return cached;
                 return prev(input, init).then(function (response) {
-                  if (response.ok) cache.put(url, response.clone());
+                  if (response.ok) cache.put(url, response.clone()).catch(function() {});
                   return response;
                 });
               });
+            }).catch(function() {
+              return prev(input, init);
             });
           }
           return prev(input, init);
@@ -293,7 +305,6 @@
         script.src = loaderUrl;
         script.onload = function () {
           createUnityInstance(canvas, config, function (progress) {
-            // Map asset precaching to 0-30% and engine setup to 30-100%
             updateLoaderUI(30 + (70 * progress));
           }).then(function (unityInstance) {
             updateLoaderUI(100);
