@@ -83,7 +83,6 @@
         font-weight: 500;
       }
 
-      /* Hide Default Loader Bar */
       #unity-loading-bar { display: none !important; }
     </style>
   </head>
@@ -108,6 +107,9 @@
     </div>
 
     <script>
+      // Disable UnityCache IndexedDB globally to prevent iframe storage errors
+      window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+
       window.addEventListener("load", function () {
         if ("serviceWorker" in navigator) {
           navigator.serviceWorker.getRegistrations().then(function (registrations) {
@@ -124,7 +126,6 @@
 
       var currentProgress = 0;
       function updateLoaderUI(percent) {
-        // Prevent loading bar from rewinding backwards
         if (percent < currentProgress && percent < 100) return;
         currentProgress = Math.min(100, Math.max(0, Math.round(percent)));
 
@@ -166,6 +167,7 @@
       var cdnBase = "https://cdn.jsdelivr.net/gh/riaannn/wbox@main/";
       var buildUrl = cdnBase + "Build";
       var loaderUrl = buildUrl + "/WorldFox.loader.js";
+
       var config = {
         dataUrl: buildUrl + "/WorldFox.data",
         frameworkUrl: buildUrl + "/WorldFox.framework.js",
@@ -175,6 +177,10 @@
         productName: "WorldBox",
         productVersion: "0.51.2",
         showBanner: unityShowBanner,
+        // Disable Unity Cache explicitly to avoid iframe IndexedDB block
+        cacheControl: function (url) {
+          return "no-store";
+        },
       };
 
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
@@ -223,8 +229,7 @@
                 throw new Error("Failed to load split part " + part + ": " + response.status);
               }
               loadedParts++;
-              // Map split file download progress smoothly into 20%-85% stage
-              var splitProgress = 20 + Math.round((loadedParts / totalParts) * 65);
+              var splitProgress = 10 + Math.round((loadedParts / totalParts) * 75);
               updateLoaderUI(splitProgress);
               return response.arrayBuffer();
             });
@@ -241,85 +246,38 @@
         };
       }
 
-      var CACHE_NAME = "worldbox-cache-v1";
-      var CACHE_URLS = [
-        buildUrl + "/WorldFox.data",
-        buildUrl + "/WorldFox.framework.js",
-        buildUrl + "/WorldFox.wasm",
-        loaderUrl
-      ];
+      updateLoaderUI(5);
 
-      function preCacheAssets() {
-        if (!("caches" in window)) {
-          return Promise.resolve();
-        }
-        return caches.open(CACHE_NAME).then(function (cache) {
-          var total = CACHE_URLS.length;
-          var done = 0;
-          return Promise.all(CACHE_URLS.map(function (url) {
-            return cache.match(url).then(function (cached) {
-              done++;
-              updateLoaderUI((done / total) * 20);
-              if (cached) return;
-              return fetch(url).then(function (response) {
-                if (response.ok) {
-                  cache.put(url, response.clone()).catch(function() {});
-                }
-              });
-            }).catch(function() {
-              done++;
-              updateLoaderUI((done / total) * 20);
-            });
-          }));
-        }).catch(function(err) {
-          return Promise.resolve();
-        });
-      }
-
-      function installCacheFetchInterceptor() {
-        if (!("caches" in window)) return;
-        var prev = window.fetch.bind(window);
-        window.fetch = function (input, init) {
-          var url = typeof input === "string" ? input : input.url;
-          var isBuildAsset = CACHE_URLS.some(function (u) { return url === u; });
-          if (isBuildAsset) {
-            return caches.open(CACHE_NAME).then(function (cache) {
-              return cache.match(url).then(function (cached) {
-                if (cached) return cached;
-                return prev(input, init).then(function (response) {
-                  if (response.ok) cache.put(url, response.clone()).catch(function() {});
-                  return response;
-                });
-              });
-            }).catch(function() {
-              return prev(input, init);
-            });
-          }
-          return prev(input, init);
-        };
-      }
-
-      updateLoaderUI(0);
-
-      preCacheAssets().then(function () {
-        return fetch(buildUrl + "/split-files.json").then(function (response) {
-          return response.ok ? response.json() : {};
-        }).catch(function () { return {}; });
+      fetch(buildUrl + "/split-files.json").then(function (response) {
+        return response.ok ? response.json() : {};
+      }).catch(function () { 
+        return {}; 
       }).then(function (manifest) {
         installSplitFileLoader(manifest || {});
-        installCacheFetchInterceptor();
+
         var script = document.createElement("script");
         script.src = loaderUrl;
         script.onload = function () {
+          // Provide custom WebAssembly instantiation to prevent dual-buffer memory allocation error inside iframes
+          config.instantiateWasm = function (imports, successCallback) {
+            fetch(config.codeUrl).then(function (response) {
+              return response.arrayBuffer();
+            }).then(function (bytes) {
+              return WebAssembly.instantiate(bytes, imports);
+            }).then(function (output) {
+              successCallback(output.instance, output.module);
+            }).catch(function (e) {
+              console.error("WASM Instantiation failed:", e);
+            });
+          };
+
           createUnityInstance(canvas, config, function (progress) {
-            // Smoothly bridge from 85% to 99% during engine initialization
             var engineProgress = 85 + (progress * 14);
             updateLoaderUI(engineProgress);
           }).then(function (unityInstance) {
-            // Force completion once instance resolves
             updateLoaderUI(100);
           }).catch(function (message) {
-            alert(message);
+            console.error(message);
           });
         };
         document.body.appendChild(script);
