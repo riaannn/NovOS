@@ -75,7 +75,7 @@
         height: 100%;
         background: #ffffff;
         border-radius: 3px;
-        transition: width 0.15s ease-out;
+        transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       }
       .progress-text {
         color: rgba(255, 255, 255, 0.75);
@@ -122,15 +122,19 @@
       var canvas = document.querySelector("#unity-canvas");
       var warningBanner = document.querySelector("#unity-warning");
 
+      var currentProgress = 0;
       function updateLoaderUI(percent) {
-        var clamped = Math.min(100, Math.max(0, Math.round(percent)));
+        // Prevent loading bar from rewinding backwards
+        if (percent < currentProgress && percent < 100) return;
+        currentProgress = Math.min(100, Math.max(0, Math.round(percent)));
+
         var fill = document.getElementById("progressBarFill");
         var text = document.getElementById("progressText");
         
-        if (fill) fill.style.width = clamped + "%";
-        if (text) text.innerText = clamped + "%";
+        if (fill) fill.style.width = currentProgress + "%";
+        if (text) text.innerText = currentProgress + "%";
 
-        if (clamped >= 100) {
+        if (currentProgress >= 100) {
           var overlay = document.getElementById("customLoaderOverlay");
           if (overlay && overlay.style.opacity !== "0") {
             overlay.style.opacity = "0";
@@ -209,11 +213,19 @@
           if (!entry) {
             return originalFetch(input, init);
           }
+
+          var loadedParts = 0;
+          var totalParts = entry.parts.length;
+
           return Promise.all(entry.parts.map(function (part) {
             return originalFetch(new URL(part, rootUrl).href, init).then(function (response) {
               if (!response.ok) {
                 throw new Error("Failed to load split part " + part + ": " + response.status);
               }
+              loadedParts++;
+              // Map split file download progress smoothly into 20%-85% stage
+              var splitProgress = 20 + Math.round((loadedParts / totalParts) * 65);
+              updateLoaderUI(splitProgress);
               return response.arrayBuffer();
             });
           })).then(function (buffers) {
@@ -246,25 +258,20 @@
           var done = 0;
           return Promise.all(CACHE_URLS.map(function (url) {
             return cache.match(url).then(function (cached) {
-              if (cached) {
-                done++;
-                updateLoaderUI((done / total) * 30);
-                return;
-              }
+              done++;
+              updateLoaderUI((done / total) * 20);
+              if (cached) return;
               return fetch(url).then(function (response) {
                 if (response.ok) {
                   cache.put(url, response.clone()).catch(function() {});
                 }
-                done++;
-                updateLoaderUI((done / total) * 30);
               });
             }).catch(function() {
               done++;
-              updateLoaderUI((done / total) * 30);
+              updateLoaderUI((done / total) * 20);
             });
           }));
         }).catch(function(err) {
-          console.warn("CacheStorage blocked inside iframe, skipping pre-cache step:", err);
           return Promise.resolve();
         });
       }
@@ -305,8 +312,11 @@
         script.src = loaderUrl;
         script.onload = function () {
           createUnityInstance(canvas, config, function (progress) {
-            updateLoaderUI(30 + (70 * progress));
+            // Smoothly bridge from 85% to 99% during engine initialization
+            var engineProgress = 85 + (progress * 14);
+            updateLoaderUI(engineProgress);
           }).then(function (unityInstance) {
+            // Force completion once instance resolves
             updateLoaderUI(100);
           }).catch(function (message) {
             alert(message);
