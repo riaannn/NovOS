@@ -6,7 +6,7 @@
     <title>Unity WebGL Player | WorldBox</title>
     
     <!-- Base URL points directly to your jsDelivr repo root -->
-    <base href="https://cdn.jsdelivr.net/gh/riaannn/wbox@main/" />
+    <base href="https://fastly.jsdelivr.net/gh/riaannn/wbox@main/" />
     
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
