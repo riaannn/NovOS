@@ -1072,9 +1072,6 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
       <span id="tbBatteryPct" style="font-size:11.5px;color:rgba(255,255,255,0.8)">100%</span>
     </div>
     <div class="tb-top-sep"></div>
-    <div class="tb-top-icon" title="Refresh tab identity" onclick="OS.refreshTabIdentity()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-    </div>
     <div class="tb-top-icon" title="WiFi">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>
     </div>
@@ -1447,6 +1444,11 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
       <button class="modal-close" onclick="OS.closeChangelogPopup()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
+      <div id="changelogPopupFilters" style="display:flex;gap:6px;margin-bottom:12px">
+        <button class="ctx-item" id="clPopupFilter_all" onclick="OS.setChangelogPopupFilter('all')" style="flex:1;justify-content:center;border:1px solid var(--os-border);border-radius:7px;background:rgba(var(--os-accent-rgb),0.12);color:var(--os-accent)">All</button>
+        <button class="ctx-item" id="clPopupFilter_os" onclick="OS.setChangelogPopupFilter('os')" style="flex:1;justify-content:center;border:1px solid var(--os-border);border-radius:7px;color:var(--os-muted)">OS</button>
+        <button class="ctx-item" id="clPopupFilter_games" onclick="OS.setChangelogPopupFilter('games')" style="flex:1;justify-content:center;border:1px solid var(--os-border);border-radius:7px;color:var(--os-muted)">Games</button>
+      </div>
       <ul id="changelogPopupList" style="margin:0 0 16px;padding-left:18px;font-size:12.5px;line-height:1.8;color:var(--os-text)"></ul>
       <div class="modal-actions">
         <button class="m-btn primary" onclick="OS.closeChangelogPopup()">Got it</button>
@@ -1502,6 +1504,7 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 ═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_DESKTOP_APPS = [
   { name:"Browser", url:"__browser__", icon:"", isDefault:true, isSystem:true, systemAction:"openBrowser"},
+  { name:"NovCloaker", url:"__cloak__", icon:"", isDefault:true, isSystem:true, systemAction:"openCloak"},
   { name:"NovCompiler", url:"__compiler__NOVCOMP", icon:"", isDefault:true, isSystem:true, systemAction:"openCompiler"},
   { name:"File Explorer",    url:"__explorer__", icon:"", isDefault:true, isSystem:true, systemAction:"openFileExplorer" },
   { name:"Recycle Bin",    url:"__recyclebin__", icon:"", isDefault:true, isSystem:true, systemAction:"openRecycleBin" },
@@ -1891,25 +1894,37 @@ const CHANGELOG={
       version:'5.12',
       date:'2026-09-12',
       items:[
-        'Added a version checker -- checks your version every 5 minutes and notifies you of any missing updates',
-        'Replaced blob:url cloaking with the old about:blank cloaking after I got caught on GoGuardian',
-        'New Refresh Tab Identity button in the top right --- refreshes icon & title if Securly tries to shut down the about:blank tab',
-        'Games rearranged categorically',
-        'Added Yume Nikki',
-        'Added 20 Minutes Till Dawn',
-        'Added Brotato',
-        'Added Slime Rancher',
-        'Added while True: learn()',
-        'Replaced Oneshot World Machine Edition with Oneshot (LEGACY)',
-        'Geometry Dash now avaliable',
-        'Worldbox now avalibale',
-        'Granny 2 now avaliable',
-        'Plants vs Zombies Roguelike now avaliable',
-        'Plants vs Zombies Roguelike grid icon changed',
+        {text:'Added a version checker -- checks your version every 5 minutes and notifies you of any missing updates',cat:'os'},
+        {text:'Replaced blob:url cloaking with the old about:blank cloaking after I got caught on GoGuardian',cat:'os'},
+        {text:'Games rearranged categorically',cat:'games'},
+        {text:'Added new NovCloaker System App -- lets you change your tab disguise within NovOS',cat:'os'},
+        {text:'Added Yume Nikki',cat:'games'},
+        {text:'Added 20 Minutes Till Dawn',cat:'games'},
+        {text:'Added Brotato',cat:'games'},
+        {text:'Added Slime Rancher',cat:'games'},
+        {text:'Added while True: learn()',cat:'games'},
+        {text:'Replaced Oneshot World Machine Edition with Oneshot (LEGACY)',cat:'games'},
+        {text:'Geometry Dash now avaliable',cat:'games'},
+        {text:'Worldbox now avalibale',cat:'games'},
+        {text:'Granny 2 now avaliable',cat:'games'},
+        {text:'Plants vs Zombies Roguelike now avaliable',cat:'games'},
+        {text:'Plants vs Zombies Roguelike grid icon changed',cat:'games'},
+        {text:'Fixed not being able to add multiple games to desktop (fixing taskbar soon)',cat:'os'},
+
       ]
     },
   ],
   get(){return this.ENTRIES;},
+  // Returns entries with their items filtered to the given category ('all'|'os'|'games'),
+  // dropping any entry left with zero items after filtering so empty version headers
+  // don't show up when a filter excludes everything in that version.
+  getFiltered(filter){
+    filter=filter||'all';
+    return this.ENTRIES.map(entry=>({
+      ...entry,
+      items:filter==='all'?entry.items:entry.items.filter(i=>i.cat===filter)
+    })).filter(entry=>entry.items.length);
+  },
   latestVersion(){return this.CURRENT_VERSION;},
   // True the first time this version runs on this device, or if the user has
   // never seen any changelog before (fresh install still gets a friendly intro).
@@ -2137,6 +2152,7 @@ const WM={
       '__library__':{c:'#a78bfa',s:`<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>`},
       '__music__':{c:'#f472b6',s:`<path d="M4 15v-3a8 8 0 0116 0v3"/><rect x="2.5" y="14" width="5" height="7" rx="2"/><rect x="16.5" y="14" width="5" height="7" rx="2"/>`},
       '__recyclebin__':{c:'#94a3b8',s:`<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>`},
+      '__cloak__':{c:'#a78bfa',s:`<path d="M12 2 L5 6 L4 20 L12 17 L20 20 L19 6 Z"/><path d="M12 2 L12 17"/>`},
     };
     const m=map[url];
     if(!m)return null;
@@ -2840,6 +2856,12 @@ const TB={
           <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>
         </svg>`
       },
+      '__cloak__':{
+        color:'#a78bfa',
+        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+          <path d="M12 2 L5 6 L4 20 L12 17 L20 20 L19 6 Z"/><path d="M12 2 L12 17"/>
+        </svg>`
+      },
     };
 
     if(systemIcons[app.url]){
@@ -2861,7 +2883,7 @@ const TB={
   // raw-HTML games opened through the HTML Viewer stay on the user (left) side,
   // matching their pinned/desktop shortcut.
   _isSystemUrl(url){
-    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__compiler__','__compiler__NOVCOMP','__ai__','__music__','__recyclebin__'].includes(url);
+    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__compiler__','__compiler__NOVCOMP','__ai__','__music__','__recyclebin__','__cloak__'].includes(url);
   },
 
   _makeBtn(app,wid,isPinned){
@@ -3226,16 +3248,33 @@ const OS={
   },
 
   /* ─── Changelog popup (first launch after an update) ────────── */
+  _changelogPopupFilter:'all',
   openChangelogPopup(){
     const modal=document.getElementById('changelogPopupModal');
     if(!modal)return;
-    const latest=CHANGELOG.get()[0];
-    const listEl=document.getElementById('changelogPopupList');
-    const verEl=document.getElementById('changelogPopupVersion');
-    if(verEl)verEl.textContent='NovOS '+latest.version;
-    if(listEl)listEl.innerHTML=latest.items.map(i=>`<li>${i}</li>`).join('');
+    this._changelogPopupFilter='all';
+    this._renderChangelogPopup();
     modal.classList.add('open');
     CHANGELOG.markSeen();
+  },
+  setChangelogPopupFilter(filter){
+    this._changelogPopupFilter=filter;
+    ['all','os','games'].forEach(f=>{
+      const btn=document.getElementById('clPopupFilter_'+f);
+      if(btn){
+        btn.style.background=f===filter?'rgba(var(--os-accent-rgb),0.12)':'transparent';
+        btn.style.color=f===filter?'var(--os-accent)':'var(--os-muted)';
+      }
+    });
+    this._renderChangelogPopup();
+  },
+  _renderChangelogPopup(){
+    const filtered=CHANGELOG.getFiltered(this._changelogPopupFilter);
+    const latest=filtered[0];
+    const listEl=document.getElementById('changelogPopupList');
+    const verEl=document.getElementById('changelogPopupVersion');
+    if(verEl)verEl.textContent='NovOS '+(CHANGELOG.latestVersion());
+    if(listEl)listEl.innerHTML=latest?latest.items.map(i=>`<li>${i.text}</li>`).join(''):'<li style="list-style:none;margin-left:-18px;color:var(--os-muted)">Nothing here for this filter.</li>';
   },
   closeChangelogPopup(){
     document.getElementById('changelogPopupModal')?.classList.remove('open');
@@ -3300,15 +3339,10 @@ const OS={
     this._applyCursor();
   },
 
-  refreshTabIdentity(){
-    document.title='NovOS';
-    const fav=document.getElementById('favicon');
-    if(fav){
-      const href=fav.getAttribute('href');
-      fav.setAttribute('href','');
-      setTimeout(()=>fav.setAttribute('href',href||''),10);
-    }
-    QP.toggle();
+  openCloak(){
+    const existing=Object.entries(WM.windows).find(([,w])=>w.app&&w.app.url==='__cloak__');
+    if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
+    CLOAK.open();
   },
 
   /* ─── Cursor ─────────────────────────────────────────────── */
@@ -3449,6 +3483,7 @@ const OS={
       '__folder__':{color:'#fbbf24',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>`},
       '__music__':{color:'#f472b6',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M4 15v-3a8 8 0 0116 0v3"/><rect x="2.5" y="14" width="5" height="7" rx="2"/><rect x="16.5" y="14" width="5" height="7" rx="2"/></svg>`},
       '__recyclebin__':{color:'#94a3b8',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`},
+      '__cloak__':{color:'#a78bfa',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M12 2 L5 6 L4 20 L12 17 L20 20 L19 6 Z"/><path d="M12 2 L12 17"/></svg>`},
     };
 
     this.desktopItems.forEach((item)=>{
@@ -3470,7 +3505,7 @@ const OS={
         const si=systemSVGs[item.url]||systemSVGs['__compiler__NOVCOMP'];
         el.innerHTML=`<div class="desk-icon-img" style="display:flex;align-items:center;justify-content:center;color:${si.color};background:${si.color}18;border-color:${si.color}30">${si.svg}</div><div class="desk-icon-label">${item.name}</div>`;
         el.addEventListener('dblclick',()=>{
-          const action=item.systemAction||(item.url==='__compiler__NOVCOMP'?'openCompiler':(item.url==='__music__'?'openMusic':null));
+          const action=item.systemAction||(item.url==='__compiler__NOVCOMP'?'openCompiler':(item.url==='__music__'?'openMusic':(item.url==='__cloak__'?'openCloak':null)));
           if(action&&this[action])this[action]();
         });
       }else if(isSystem&&item.url&&item.url.startsWith('__')){
@@ -3765,7 +3800,20 @@ const OS={
   },
 
   addToDesktop(app){
-    if(this.desktopItems.some(d=>d.url===app.url&&d.type==='app')){
+    // System apps (url starts with __ and isSystem) are singleton entries
+    // that legitimately share identity by url. Everything else — games,
+    // web shortcuts, "Other" shortcuts — must be matched by NAME, since
+    // many share placeholder urls like __rawhtml__ or can carry a
+    // previously-resolved link url that collides with another shortcut's
+    // resolved url from an earlier session.
+    const alreadyThere=this.desktopItems.some(d=>{
+      if(d.type!=='app')return false;
+      if(app.isSystem||(d.url&&d.url.startsWith('__')&&d.isSystem)){
+        return d.url===app.url;
+      }
+      return d.name===app.name;
+    });
+    if(alreadyThere){
       OS.notify('Already on Desktop',app.name+' is already on the desktop.');return;
     }
     const item={id:genId(),type:'app',name:app.name,url:app.url,icon:app.icon||'',
@@ -3993,6 +4041,7 @@ const OS={
       '__compiler__':()=>this.openCompiler(),
       '__compiler__NOVCOMP':()=>this.openCompiler(),
       '__music__':()=>this.openMusic(),
+      '__cloak__':()=>this.openCloak(),
     };
     if(sysMap[app.url]){sysMap[app.url]();return;}
     if(app.name==='Minecraft 1.12 OFFLINE'){OS._launchMinecraftInBrowserTab();return;}
@@ -5245,16 +5294,14 @@ const OS={
                   <label class="toggle"><input type="checkbox" id="sp2tog-changelogpopup_${id}" ${SETTINGS.get('showChangelogOnUpdate')!==false?'checked':''} onchange="SETTINGS.set('showChangelogOnUpdate',this.checked)"><span class="tog-slider"></span></label>
                 </div>
               </div>
-              ${CHANGELOG.get().map(entry=>`
               <div class="sp2-card">
-                <div class="sp2-card-header" style="display:flex;align-items:center;justify-content:space-between;text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;color:var(--os-text)">
-                  <span>Version ${entry.version}</span>
-                  <span style="font-size:10.5px;color:var(--os-dim);font-family:var(--mono);font-weight:400;text-transform:none">${entry.date}</span>
+                <div style="display:flex;gap:6px;padding:14px 16px">
+                  <button class="ctx-item" id="sp2clFilter_all_${id}" onclick="SP2.setChangelogFilter('${id}','all')" style="flex:1;justify-content:center;border:1px solid var(--os-border);border-radius:7px;background:rgba(var(--os-accent-rgb),0.12);color:var(--os-accent)">All</button>
+                  <button class="ctx-item" id="sp2clFilter_os_${id}" onclick="SP2.setChangelogFilter('${id}','os')" style="flex:1;justify-content:center;border:1px solid var(--os-border);border-radius:7px;color:var(--os-muted)">OS</button>
+                  <button class="ctx-item" id="sp2clFilter_games_${id}" onclick="SP2.setChangelogFilter('${id}','games')" style="flex:1;justify-content:center;border:1px solid var(--os-border);border-radius:7px;color:var(--os-muted)">Games</button>
                 </div>
-                <ul style="margin:0;padding:12px 16px 14px 32px;font-size:12.5px;line-height:1.8;color:var(--os-text)">
-                  ${entry.items.map(i=>`<li>${i}</li>`).join('')}
-                </ul>
-              </div>`).join('')}
+              </div>
+              <div id="sp2clList_${id}"></div>
             </div>
 
             <!-- ABOUT PAGE -->
@@ -5303,6 +5350,7 @@ const OS={
 
     // Sync wallpaper active state
     SP2.syncWp(id);
+    SP2.setChangelogFilter(id,'all');
 
     // Calc storage
     setTimeout(()=>{
@@ -6804,6 +6852,110 @@ const NOVMUSIC={
 };
 
 /* ═══════════════════════════════════════════════
+   CLOAK — customize tab favicon & title
+═══════════════════════════════════════════════ */
+const CLOAK={
+  PRESETS:[
+    {name:'Google Docs',title:'Untitled document - Google Docs',icon:'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico'},
+    {name:'Google Classroom',title:'Home',icon:'https://ssl.gstatic.com/classroom/favicon.png'},
+    {name:'Google Drive',title:'My Drive - Google Drive',icon:'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png'},
+    {name:'Gmail',title:'Inbox - Gmail',icon:'https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico'},
+    {name:'Canvas',title:'Dashboard',icon:'https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico'},
+    {name:'Khan Academy',title:'Khan Academy',icon:'https://cdn.kastatic.org/images/favicon.ico'},
+    {name:'Google Slides',title:'Untitled presentation - Google Slides',icon:'https://ssl.gstatic.com/docs/presentations/images/favicon-2026-v2.ico'},
+    {name:'Wikipedia',title:'Wikipedia',icon:'https://en.wikipedia.org/static/favicon/wikipedia.ico'},
+  ],
+
+  open(){
+    const id=WM.newId();const el=document.createElement('div');
+    el.className='os-window focused';el.id=id;
+    const dw=Math.min(window.innerWidth*0.6,520),dh=Math.min(window.innerHeight*0.72,560);
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
+    el.innerHTML=`
+      <div class="wnd-body" style="display:flex;flex-direction:column;overflow:hidden">
+        <div id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" style="cursor:move;height:34px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)">
+          <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#a78bfa;flex-shrink:0;pointer-events:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 2 L5 6 L4 20 L12 17 L20 20 L19 6 Z"/><path d="M12 2 L12 17"/></svg></div>
+          <div style="flex:1;font-size:12px;font-weight:500;color:var(--os-text);pointer-events:none">NovCloaker</div>
+          <div class="wnd-ctrl-btns">
+            <button class="wnd-ctrl-btn" onclick="event.stopPropagation();WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+            <button class="wnd-ctrl-btn wnd-close" onclick="event.stopPropagation();WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </div>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:18px 20px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--os-dim);margin-bottom:10px">Presets</div>
+          <div id="cloakPresetGrid_${id}" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:22px"></div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--os-dim);margin-bottom:10px">Custom</div>
+          <div class="f-label">Title</div>
+          <input type="text" class="f-input" id="cloakTitleInput_${id}" placeholder="Tab title...">
+          <div class="f-label">Favicon URL</div>
+          <input type="text" class="f-input" id="cloakIconInput_${id}" placeholder="https://.../favicon.ico">
+          <div class="modal-actions" style="margin-top:4px">
+            <button class="m-btn primary" onclick="CLOAK.applyCustom('${id}')">Apply</button>
+            <button class="m-btn" onclick="CLOAK.reset()">Reset to NovOS</button>
+          </div>
+          <div style="margin-top:18px;padding:12px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:9px;font-size:11px;color:var(--os-muted);line-height:1.6">
+            Cloak changes only the browser tab's title and icon — it does not affect anything inside NovOS itself.
+          </div>
+        </div>
+      </div>
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
+    document.getElementById('windowLayer').appendChild(el);
+    WM.playOpenAnim(el);
+    WM.windows[id]={app:{name:'NovCloaker',url:'__cloak__',icon:''},minimized:false,maximized:false,prevRect:null};
+    WM.focus(id);TB.addWindow(id,{name:'NovCloaker',url:'__cloak__',icon:''});WM.makeDraggable(id);
+    this._renderPresets(id);
+    const savedTitle=localStorage.getItem('novos_cloak_title')||'';
+    const savedIcon=localStorage.getItem('novos_cloak_icon')||'';
+    const tInp=document.getElementById('cloakTitleInput_'+id);
+    const iInp=document.getElementById('cloakIconInput_'+id);
+    if(tInp)tInp.value=savedTitle;
+    if(iInp)iInp.value=savedIcon;
+  },
+
+  _renderPresets(wid){
+    const grid=document.getElementById('cloakPresetGrid_'+wid);
+    if(!grid)return;
+    grid.innerHTML=this.PRESETS.map((p,i)=>`
+      <div onclick="CLOAK.applyPreset(${i})" style="display:flex;align-items:center;gap:8px;padding:9px 10px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;cursor:pointer;transition:all 0.13s" onmouseover="this.style.background='var(--os-surface2)';this.style.borderColor='rgba(var(--os-accent-rgb),0.3)'" onmouseout="this.style.background='var(--os-surface)';this.style.borderColor='var(--os-border)'">
+        <img src="${p.icon}" style="width:18px;height:18px;flex-shrink:0" onerror="this.style.opacity=0" alt="">
+        <span style="font-size:12px;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</span>
+      </div>`).join('');
+  },
+
+  applyPreset(idx){
+    const p=this.PRESETS[idx];
+    if(!p)return;
+    this._apply(p.title,p.icon);
+    OS.notify('Cloak applied',p.name+' tab identity set.');
+  },
+
+  applyCustom(wid){
+    const title=document.getElementById('cloakTitleInput_'+wid)?.value.trim();
+    const icon=document.getElementById('cloakIconInput_'+wid)?.value.trim();
+    if(!title&&!icon){OS.notify('Nothing to apply','Enter a title or favicon URL.');return;}
+    this._apply(title,icon);
+    OS.notify('Cloak applied','Custom tab identity set.');
+  },
+
+  reset(){
+    this._apply('NovOS','');
+    OS.notify('Cloak reset','Tab identity restored to NovOS.');
+  },
+
+  _apply(title,iconUrl){
+    if(title){
+      document.title=title;
+      localStorage.setItem('novos_cloak_title',title);
+    }
+    const fav=document.getElementById('favicon');
+    if(fav){
+      fav.setAttribute('href',iconUrl||'');
+      localStorage.setItem('novos_cloak_icon',iconUrl||'');
+    }
+  }
+};
+
+/* ═══════════════════════════════════════════════
    TASK MANAGER
 ═══════════════════════════════════════════════ */
 const TM={
@@ -6942,6 +7094,7 @@ const LAUNCHER={
       {name:'Task Manager',url:'__tm__',icon:'',isSystem:true,systemAction:'openTM'},
       {name:'NovCompiler',url:'__compiler__',icon:'',isSystem:true,systemAction:'openCompiler'},
       {name:'NovMusic',url:'__music__',icon:'',isSystem:true,systemAction:'openMusic'},
+      {name:'NovCloaker',url:'__cloak__',icon:'',isSystem:true,systemAction:'openCloak'},
     ];
     const all=[...sysApps,...userApps];
 
@@ -7370,6 +7523,28 @@ const SP2={
     const opacity=(+val/100).toFixed(2);
     SETTINGS.set('taskbarOpacity',+opacity);
     document.documentElement.style.setProperty('--taskbar-opacity',opacity);
+  },
+  setChangelogFilter(wid,filter){
+    ['all','os','games'].forEach(f=>{
+      const btn=document.getElementById('sp2clFilter_'+f+'_'+wid);
+      if(btn){
+        btn.style.background=f===filter?'rgba(var(--os-accent-rgb),0.12)':'transparent';
+        btn.style.color=f===filter?'var(--os-accent)':'var(--os-muted)';
+      }
+    });
+    const list=document.getElementById('sp2clList_'+wid);
+    if(!list)return;
+    const filtered=CHANGELOG.getFiltered(filter);
+    list.innerHTML=filtered.length?filtered.map(entry=>`
+      <div class="sp2-card">
+        <div class="sp2-card-header" style="display:flex;align-items:center;justify-content:space-between;text-transform:none;letter-spacing:0;font-size:13px;font-weight:600;color:var(--os-text)">
+          <span>Version ${entry.version}</span>
+          <span style="font-size:10.5px;color:var(--os-dim);font-family:var(--mono);font-weight:400;text-transform:none">${entry.date}</span>
+        </div>
+        <ul style="margin:0;padding:12px 16px 14px 32px;font-size:12.5px;line-height:1.8;color:var(--os-text)">
+          ${entry.items.map(i=>`<li>${i.text}</li>`).join('')}
+        </ul>
+      </div>`).join(''):`<div class="sp2-card"><div style="padding:20px;text-align:center;color:var(--os-muted);font-size:12.5px">Nothing here for this filter.</div></div>`;
   }
 };
 
