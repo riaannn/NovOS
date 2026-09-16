@@ -2685,24 +2685,47 @@ const TB={
     localStorage.setItem('novos_launchprefs',JSON.stringify(prefs));
   },
   pin(app){
-    // A raw-HTML game opened through the HTML Viewer carries url:'__html__'.
-    // Pinning that transient identity can never relaunch (its content is a
-    // one-shot blob), so resolve the real shortcut identity by name first —
-    // this keeps the pin bound to the game itself, not to whichever launch
-    // mode happened to be running when the user right-clicked it.
+    // A raw-HTML game opened through the HTML Viewer carries url:'__html__',
+    // and even a "resolved link" window can carry a stale/leftover launch-URL
+    // that doesn't match the canonical shortcut entry. Pinning either of
+    // those identities directly can bake in a stale copy (missing rawUrl,
+    // wrong url) that then fails or duplicates on relaunch. So: ALWAYS
+    // re-resolve to the canonical shortcut by NAME first for anything that
+    // looks like a game or a raw-HTML app — never trust the passed-in app
+    // object's url/rawUrl fields directly for those cases.
     let pinApp=this._resolvePinned(app);
-    if(app.url==='__html__'||(app.url&&!app.url.startsWith('__')&&(OS.shortcuts&&OS.shortcuts.games||[]).some(g=>g.name===app.name))){
+    const isGameByName=(OS.shortcuts&&OS.shortcuts.games||[]).some(g=>g.name===app.name);
+    const looksTransient=app.url==='__html__'||app.url==='__rawhtml__'||app.rawUrl||isGameByName||(app.url&&!app.url.startsWith('__'));
+    if(looksTransient){
       const all=[...(OS.shortcuts&&OS.shortcuts.games||[]),...(OS.shortcuts&&OS.shortcuts.web||[]),...(OS.shortcuts&&OS.shortcuts.apps||[])];
       const real=all.find(a=>a.name===app.name);
-      if(real){pinApp={name:real.name,url:real.url,icon:real.icon,rawUrl:real.rawUrl};}
-      else if(app.url==='__html__'){OS.notify('Cannot pin','This view can\'t be pinned — pin it from the App Library instead.');return;}
+      if(real){
+        pinApp={name:real.name,url:real.url,icon:real.icon,rawUrl:real.rawUrl,_openInNewBlobTab:real._openInNewBlobTab};
+      }else if(app.url==='__html__'){
+        OS.notify('Cannot pin','This view can\'t be pinned — pin it from the App Library instead.');
+        return;
+      }
+      // else: not found in shortcuts (e.g. a plain custom link the user added
+      // directly to desktop) — fall through and pin app as given.
     }
-    if(!this.pinned.find(p=>p.url===pinApp.url&&p.name===pinApp.name)){
-      this.pinned.push({name:pinApp.name,url:pinApp.url,icon:pinApp.icon,rawUrl:pinApp.rawUrl,_openInNewBlobTab:pinApp._openInNewBlobTab});
-      this.savePinned();this.render();OS.notify('Pinned',pinApp.name+' pinned to taskbar');
-    }
+    // Remove any existing pin for the SAME app by name (not just exact url
+    // match) before pushing — this is what clears out a stale cached pin
+    // left over from a previous launch mode/session instead of stacking a
+    // second, correct pin alongside a broken one.
+    this.pinned=this.pinned.filter(p=>p.name!==pinApp.name);
+    this.pinned.push({name:pinApp.name,url:pinApp.url,icon:pinApp.icon,rawUrl:pinApp.rawUrl,_openInNewBlobTab:pinApp._openInNewBlobTab});
+    this.savePinned();this.render();OS.notify('Pinned',pinApp.name+' pinned to taskbar');
   },
-  unpin(url){this.pinned=this.pinned.filter(p=>p.url!==url);this.savePinned();this.render();},
+  unpin(url,name){
+    // Match by name first for the same reason pin-status checks do — a
+    // shared placeholder url (e.g. '__rawhtml__') must never cause unpinning
+    // one game to also unpin an unrelated game that happens to share it.
+    this.pinned=this.pinned.filter(p=>{
+      if(name)return p.name!==name;
+      return p.url!==url;
+    });
+    this.savePinned();this.render();
+  },
   _resolvePinned(app){
     // NovCompiler is a system app (url starts with __), never routes through
     // rawUrl/HTML-viewer logic — so a stale rawUrl on the pin object must be
@@ -4552,7 +4575,12 @@ const OS={
     const banner=this._bannerImg(app)||`https://www.google.com/s2/favicons?sz=256&domain=${app.url}`;
     const iconImg=app.icon||`https://www.google.com/s2/favicons?sz=128&domain=${app.url}`;
     const note=this._getGameNote(app.url);
-    const isPinned=TB.pinned.some(p=>p.url===app.url);
+    // NEVER match pin status by url alone — raw-HTML games all share the
+    // placeholder url '__rawhtml__', which previously made pinning ANY one
+    // of them show every other raw-HTML game as pinned too. Match by name
+    // first (the stable identity for shortcuts); only fall back to url for
+    // apps with a real, non-placeholder url.
+    const isPinned=TB.pinned.some(p=>p.name===app.name||(app.url&&!app.url.startsWith('__')&&p.url===app.url));
     const escApp=JSON.stringify(app).replace(/"/g,'&quot;');
 
     ov.innerHTML=`
@@ -4628,7 +4656,8 @@ const OS={
   },
 
   stlibTogglePin2(wid,app){
-    if(TB.pinned.some(p=>p.url===app.url))TB.unpin(app.url);
+    const isPinned=TB.pinned.some(p=>p.name===app.name||(app.url&&!app.url.startsWith('__')&&p.url===app.url));
+    if(isPinned)TB.unpin(app.url,app.name);
     else TB.pin(app);
     this.stlibOpenDetail(wid,app);
   },
@@ -6943,15 +6972,41 @@ const CLOAK={
   },
 
   _apply(title,iconUrl){
+    // NovOS runs inside an about:blank tab via srcdoc — this document's own
+    // <title> and <link id="favicon"> are NOT what the browser tab shows.
+    // The real tab chrome belongs to window.top's document (srcdoc content
+    // is same-origin to its parent, so we can reach across safely). Fall
+    // back to the local document only if window.top is unreachable for
+    // some reason (e.g. NovOS loaded directly, not via the launcher).
+    let targetDoc;
+    try{
+      targetDoc=(window.top&&window.top.document)?window.top.document:document;
+    }catch(e){
+      targetDoc=document;
+    }
+
     if(title){
-      document.title=title;
+      targetDoc.title=title;
+      if(targetDoc!==document)document.title=title; // keep local copy in sync too
       localStorage.setItem('novos_cloak_title',title);
     }
-    const fav=document.getElementById('favicon');
-    if(fav){
-      fav.setAttribute('href',iconUrl||'');
-      localStorage.setItem('novos_cloak_icon',iconUrl||'');
+
+    // Favicon: find-or-create a <link rel="icon"> on the TOP document.
+    let fav=targetDoc.querySelector('link[rel~="icon"]');
+    if(!fav){
+      fav=targetDoc.createElement('link');
+      fav.rel='icon';
+      (targetDoc.head||targetDoc.documentElement).appendChild(fav);
     }
+    fav.type=iconUrl&&iconUrl.toLowerCase().endsWith('.png')?'image/png':'image/x-icon';
+    fav.href=iconUrl||'';
+
+    // Also update the local placeholder link so re-reads of #favicon inside
+    // this document stay consistent (harmless even though it's not visible).
+    const localFav=document.getElementById('favicon');
+    if(localFav)localFav.setAttribute('href',iconUrl||'');
+
+    localStorage.setItem('novos_cloak_icon',iconUrl||'');
   }
 };
 
@@ -7926,6 +7981,13 @@ window.addEventListener('load',()=>{
   PLAYTIME.load();
   NOVMUSIC.load();
   OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init()
+  // Reapply any saved NovCloaker identity to the real (top) document/tab,
+  // since srcdoc reloads wipe window.top's title/favicon each time.
+  try{
+    const savedTitle=localStorage.getItem('novos_cloak_title');
+    const savedIcon=localStorage.getItem('novos_cloak_icon');
+    if(savedTitle||savedIcon)CLOAK._apply(savedTitle||'NovOS',savedIcon||'');
+  }catch(e){}
   setTimeout(()=>SESSION.restore(),SETTINGS.get('showBoot')?2600:200);
   LIVE_UPDATE_CHECK.init();
 
