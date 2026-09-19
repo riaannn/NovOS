@@ -491,43 +491,67 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .welcome-btn-skip{height:40px;padding:0 16px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;font-family:var(--font);font-size:13px;font-weight:500;color:var(--os-muted);cursor:pointer;transition:all 0.15s;white-space:nowrap}
 .welcome-btn-skip:hover{background:var(--os-surface2);color:var(--os-text)}
 
-/* FILE EXPLORER */
-.fe-layout{display:flex;height:100%;overflow:hidden}
-.fe-sidebar{width:180px;flex-shrink:0;border-right:1px solid var(--os-border);overflow-y:auto;padding:8px;background:rgba(0,0,0,0.15)}
-.fe-sidebar-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--os-muted);transition:all 0.12s;border:1px solid transparent}
-.fe-sidebar-item:hover{background:var(--os-surface);color:var(--os-text)}
-.fe-sidebar-item.active{background:rgba(var(--os-accent-rgb),0.1);border-color:rgba(var(--os-accent-rgb),0.2);color:var(--os-accent)}
-.fe-sidebar-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim);padding:10px 8px 4px}
+/* FILE EXPLORER — Windows 11 (Mica) inspired, NovOS glass finish */
+.fe-layout{display:flex;height:100%;overflow:hidden;background:#0c0d11}
+.fe-sidebar{width:210px;flex-shrink:0;overflow-y:auto;padding:10px 8px;background:rgba(255,255,255,0.025);border-right:1px solid rgba(255,255,255,0.06);scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent}
+.fe-sidebar-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:12.5px;color:var(--os-muted);transition:all 0.11s;border:1px solid transparent;margin-bottom:1px}
+.fe-sidebar-item svg{flex-shrink:0;opacity:0.85}
+.fe-sidebar-item:hover{background:rgba(255,255,255,0.06);color:var(--os-text)}
+.fe-sidebar-item.active{background:rgba(var(--os-accent-rgb),0.16);color:var(--os-text);position:relative}
+.fe-sidebar-item.active::before{content:'';position:absolute;left:-8px;top:50%;transform:translateY(-50%);width:3px;height:16px;border-radius:3px;background:var(--os-accent)}
+.fe-sidebar-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--os-dim);padding:14px 10px 6px}
 .fe-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.fe-toolbar{height:40px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)}
-.fe-path{flex:1;height:26px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:6px;padding:0 10px;color:var(--os-muted);font-family:var(--mono);font-size:11px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+
+/* Command bar (W11-style: icon+label buttons, no borders until hover) */
+.fe-toolbar{height:44px;flex-shrink:0;display:flex;align-items:center;gap:2px;padding:0 10px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)}
+.fe-cmdbtn{height:32px;padding:0 12px;background:transparent;border:1px solid transparent;border-radius:6px;color:var(--os-text);font-family:var(--font);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all 0.1s;white-space:nowrap;flex-shrink:0}
+.fe-cmdbtn:hover{background:rgba(255,255,255,0.07)}
+.fe-cmdbtn.primary{color:var(--os-accent)}
+.fe-cmdbtn.primary:hover{background:rgba(var(--os-accent-rgb),0.14)}
+.fe-cmdbtn-sep{width:1px;height:20px;background:rgba(255,255,255,0.09);margin:0 4px;flex-shrink:0}
 .fe-btn{height:28px;padding:0 10px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:6px;color:var(--os-muted);font-family:var(--font);font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.12s;white-space:nowrap;flex-shrink:0}
 .fe-btn:hover{background:var(--os-surface2);color:var(--os-text)}
 .fe-btn.primary{background:rgba(var(--os-accent-rgb),0.1);border-color:rgba(var(--os-accent-rgb),0.25);color:var(--os-accent)}
 .fe-btn.primary:hover{background:var(--os-accent);color:#fff}
-.fe-content{flex:1;overflow-y:auto;padding:10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
-.fe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px}
-.fe-list{display:flex;flex-direction:column;gap:2px}
-.fe-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 6px;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:all 0.12s;position:relative}
-.fe-item:hover{background:var(--os-surface);border-color:var(--os-border)}
-.fe-item.selected{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.3)}
-.fe-item-icon{font-size:28px;line-height:1;margin-bottom:2px}
-.fe-item-img{width:52px;height:52px;border-radius:6px;object-fit:cover;border:1px solid rgba(255,255,255,0.07)}
-.fe-item-name{font-size:10.5px;color:var(--os-text);text-align:center;word-break:break-word;max-width:90px;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.fe-item-list{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:6px;cursor:pointer;border:1px solid transparent;transition:all 0.12s}
-.fe-item-list:hover{background:var(--os-surface)}
-.fe-item-list-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+
+/* Breadcrumb address bar (W11 pill-segmented style) */
+.fe-addressbar{flex:1;height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0 6px;display:flex;align-items:center;gap:2px;overflow:hidden;margin:0 8px}
+.fe-crumb{height:24px;padding:0 9px;border-radius:5px;display:flex;align-items:center;font-size:11.5px;color:var(--os-muted);cursor:default;white-space:nowrap;flex-shrink:0}
+.fe-crumb.current{color:var(--os-text);font-weight:500}
+.fe-crumb-sep{color:var(--os-dim);font-size:10px;flex-shrink:0}
+.fe-search-mini{width:180px;height:32px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0 10px;color:var(--os-text);font-family:var(--font);font-size:12px;outline:none;flex-shrink:0}
+.fe-search-mini::placeholder{color:var(--os-dim)}
+.fe-search-mini:focus{border-color:rgba(var(--os-accent-rgb),0.4)}
+
+.fe-content{flex:1;overflow-y:auto;padding:12px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
+.fe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:4px}
+.fe-list{display:flex;flex-direction:column;gap:1px}
+.fe-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px 8px;border-radius:6px;cursor:pointer;border:1px solid transparent;transition:all 0.1s;position:relative}
+.fe-item:hover{background:rgba(255,255,255,0.055)}
+.fe-item.selected{background:rgba(var(--os-accent-rgb),0.16);border-color:rgba(var(--os-accent-rgb),0.35)}
+.fe-item-icon{font-size:32px;line-height:1;margin-bottom:2px;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4))}
+.fe-item-img{width:52px;height:52px;border-radius:6px;object-fit:cover;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03)}
+.fe-item-name{font-size:11px;color:var(--os-text);text-align:center;word-break:break-word;max-width:88px;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+
+/* List view: W11-style column header row + zebra-free rows with hover ring */
+.fe-list-header{display:flex;align-items:center;gap:10px;padding:6px 10px;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--os-dim);border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:2px;position:sticky;top:0;background:#0c0d11;z-index:1}
+.fe-item-list{display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:5px;cursor:pointer;border:1px solid transparent;transition:all 0.1s}
+.fe-item-list:hover{background:rgba(255,255,255,0.055)}
+.fe-item-list.selected{background:rgba(var(--os-accent-rgb),0.16);border-color:rgba(var(--os-accent-rgb),0.3)}
+.fe-item-list-icon{font-size:17px;width:22px;text-align:center;flex-shrink:0}
 .fe-item-list-name{flex:1;font-size:12px;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fe-item-list-size{font-size:11px;color:var(--os-muted);font-family:var(--mono);flex-shrink:0}
-.fe-item-list-date{font-size:11px;color:var(--os-dim);flex-shrink:0;width:120px;text-align:right}
-.fe-statusbar{height:26px;flex-shrink:0;border-top:1px solid var(--os-border);display:flex;align-items:center;padding:0 12px;gap:12px;background:rgba(0,0,0,0.15)}
+.fe-item-list-size{font-size:11px;color:var(--os-muted);font-family:var(--mono);flex-shrink:0;width:80px}
+.fe-item-list-date{font-size:11px;color:var(--os-dim);flex-shrink:0;width:130px;text-align:right}
+
+/* Status bar (W11 has view toggles bottom-right, item count bottom-left) */
+.fe-statusbar{height:28px;flex-shrink:0;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;padding:0 12px;gap:12px;background:rgba(255,255,255,0.02)}
 .fe-status-text{font-size:11px;color:var(--os-muted);font-family:var(--mono)}
-.fe-drop-zone{border:2px dashed rgba(var(--os-accent-rgb),0.3);border-radius:8px;padding:24px;text-align:center;color:var(--os-muted);font-size:12px;margin:8px;transition:all 0.15s}
-.fe-drop-zone.drag-over{border-color:var(--os-accent);background:rgba(var(--os-accent-rgb),0.06);color:var(--os-accent)}
-.fe-view-toggle{display:flex;gap:2px}
-.fe-view-btn{width:26px;height:26px;border-radius:5px;background:transparent;border:1px solid transparent;cursor:pointer;color:var(--os-muted);display:flex;align-items:center;justify-content:center;transition:all 0.12s;font-size:12px}
-.fe-view-btn:hover{background:var(--os-surface);color:var(--os-text)}
-.fe-view-btn.active{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.25);color:var(--os-accent)}
+.fe-drop-zone{border:2px dashed rgba(var(--os-accent-rgb),0.35);border-radius:8px;padding:28px;text-align:center;color:var(--os-muted);font-size:12px;margin:8px;transition:all 0.15s;background:rgba(var(--os-accent-rgb),0.03)}
+.fe-drop-zone.drag-over{border-color:var(--os-accent);background:rgba(var(--os-accent-rgb),0.08);color:var(--os-accent)}
+.fe-view-toggle{display:flex;gap:2px;margin-left:auto}
+.fe-view-btn{width:24px;height:24px;border-radius:5px;background:transparent;border:1px solid transparent;cursor:pointer;color:var(--os-muted);display:flex;align-items:center;justify-content:center;transition:all 0.12s;font-size:12px}
+.fe-view-btn:hover{background:rgba(255,255,255,0.07);color:var(--os-text)}
+.fe-view-btn.active{background:rgba(var(--os-accent-rgb),0.16);color:var(--os-accent)}
 /* image preview in file explorer */
 .fe-preview{position:absolute;inset:0;background:rgba(0,0,0,0.9);z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
 .fe-preview img{max-width:90%;max-height:80%;border-radius:8px;object-fit:contain}
@@ -1588,6 +1612,9 @@ const DEFAULT_SHORTCUTS = {
     {name:"Brotato", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/33db1b4f46cf1ce80f1dd4a83c64d552.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/37a09fd3225f46c08a85e19a60195ae7.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Brotato.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon/2e904afa80a8ca949f187f64ff2d15b2/32/256x256.png",isDefault:true,SupportsHTML:true, notAvailable:false},
     {name:"Slime Rancher", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/e144a462bd73bd9637b37e09f0bc3b9d.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/475fadbe2153d029069c05befb0c4255.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Slime%20Rancher.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/d24fb9e15b6e0464c336856ec4c69cc0.png",isDefault:true,SupportsHTML:true, notAvailable:false},
     {name:"while True: learn()", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/879076927f643b14ada250ec07ef4a88.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/d5e6ed690bb51e3b03a670daeab1b8a4.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/whiletrue.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon/0f79c3f3e971e1af245a3551b53a8737/32/256x256.png",isDefault:true,SupportsHTML:true, notAvailable:false},
+    {name:"Retro Bowl", bannerImage:"https://games.gg/cdn-cgi/image/width=1920,quality=75,format=auto,fit=scale-down,metadata=none,onerror=redirect/https://assets.games.gg/NFL_Retro_Bowl_27_Coming_to_Apple_Arcade_with_Gauntlet_Mode_960f53caa9.jpg", gridImage:"https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co2mnn.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Retro%20Bowl.html", url: "__rawhtml__",  icon:"https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=314,height=314,fit=cover,f=auto/ee9ca3764ef4289a48a1ebf457ef605441ed1f35a0f2eb12707a70d609e53686/retro-bowl-logo.png",isDefault:true,SupportsHTML:true, notAvailable:false},
+
+
 
 
 
@@ -1888,28 +1915,15 @@ const LIVE_UPDATE_CHECK={
 };
 
 const CHANGELOG={
-  CURRENT_VERSION:'5.12',
+  CURRENT_VERSION:'5.13',
   ENTRIES:[
     {
-      version:'5.12',
-      date:'2026-09-12',
+      version:'5.13',
+      date:'2026-09-15',
       items:[
-        {text:'Added a version checker -- checks your version every 5 minutes and notifies you of any missing updates',cat:'os'},
-        {text:'Replaced blob:url cloaking with the old about:blank cloaking after I got caught on GoGuardian',cat:'os'},
-        {text:'Games rearranged categorically',cat:'games'},
-        {text:'Added new NovCloaker System App -- lets you change your tab disguise within NovOS (CURRENTLY BROKEN)',cat:'os'},
-        {text:'Added Yume Nikki',cat:'games'},
-        {text:'Added 20 Minutes Till Dawn',cat:'games'},
-        {text:'Added Brotato',cat:'games'},
-        {text:'Added Slime Rancher',cat:'games'},
-        {text:'Added while True: learn()',cat:'games'},
-        {text:'Replaced Oneshot World Machine Edition with Oneshot (LEGACY)',cat:'games'},
-        {text:'Geometry Dash now avaliable',cat:'games'},
-        {text:'Worldbox now avalibale',cat:'games'},
-        {text:'Granny 2 now avaliable',cat:'games'},
-        {text:'Plants vs Zombies Roguelike now avaliable',cat:'games'},
-        {text:'Plants vs Zombies Roguelike grid icon changed',cat:'games'},
-        {text:'Fixed not being able to add multiple games to desktop (fixing taskbar soon)',cat:'os'},
+        {text:'Fixed NovCloaker not working',cat:'os'},
+        {text:'Fixed pinning games to taskbar (you could only pin one before)',cat:'os'},
+        {text:'Added Retro Bowl',cat:'games'},
 
       ]
     },
@@ -2957,7 +2971,7 @@ const TB={
           }});
         }
         items.push({sep:true});
-        items.push({label:'Unpin from Taskbar',icon:'−',fn:()=>this.unpin(app.url)});
+        items.push({label:'Unpin from Taskbar',icon:'−',fn:()=>this.unpin(app.url,app.name)});
         CTX.show(ev.clientX,ev.clientY,items);
       });
     }else{
@@ -5456,35 +5470,42 @@ const OS={
   openFileExplorer(){
     const id=WM.newId();const el=document.createElement('div');
     el.className='os-window focused';el.id=id;
-    const dw=Math.min(window.innerWidth*0.78,860),dh=Math.min(window.innerHeight*0.75,580);
+    const dw=Math.min(window.innerWidth*0.8,940),dh=Math.min(window.innerHeight*0.78,620);
     el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
+    const navIcon=(color,path)=>`<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="${color}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
     el.innerHTML=`
       <div class="wnd-body" style="overflow:hidden">
         <div class="fe-layout">
           <div class="fe-sidebar">
             <div class="fe-sidebar-label">NovOS</div>
-            <div class="fe-sidebar-item active" id="feNav_all" onclick="FEW.nav('${id}','all')">📄 All Files</div>
-            <div class="fe-sidebar-item" id="feNav_images" onclick="FEW.nav('${id}','images')">🖼 Images</div>
-            <div class="fe-sidebar-item" id="feNav_videos" onclick="FEW.nav('${id}','videos')">🎬 Videos</div>
-            <div class="fe-sidebar-item" id="feNav_audio" onclick="FEW.nav('${id}','audio')">🎵 Audio</div>
-            <div class="fe-sidebar-item" id="feNav_html" onclick="FEW.nav('${id}','html')">🌐 HTML</div>
-            <div class="fe-sidebar-item" id="feNav_docs" onclick="FEW.nav('${id}','docs')">📃 Documents</div>
-            <div class="fe-sidebar-item" id="feNav_other" onclick="FEW.nav('${id}','other')">📦 Other</div>
-            <div class="fe-sidebar-label" style="margin-top:8px">Actions</div>
-            <div class="fe-sidebar-item" onclick="FEW.triggerUpload('${id}',false)">⬆ Upload Files</div>
-            <div class="fe-sidebar-item" onclick="FEW.triggerUpload('${id}',true)">📂 Upload Folder</div>
+            <div class="fe-sidebar-item active" id="feNav_all" onclick="FEW.nav('${id}','all')">${navIcon('#8aa0ff','<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/>')}All Files</div>
+            <div class="fe-sidebar-item" id="feNav_images" onclick="FEW.nav('${id}','images')">${navIcon('#34d399','<rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>')}Images</div>
+            <div class="fe-sidebar-item" id="feNav_videos" onclick="FEW.nav('${id}','videos')">${navIcon('#f87171','<rect x="2" y="5.5" width="14" height="13" rx="2"/><path d="M16 9.5l6-3.5v12l-6-3.5V9.5z"/>')}Videos</div>
+            <div class="fe-sidebar-item" id="feNav_audio" onclick="FEW.nav('${id}','audio')">${navIcon('#f472b6','<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>')}Audio</div>
+            <div class="fe-sidebar-item" id="feNav_html" onclick="FEW.nav('${id}','html')">${navIcon('#60a5fa','<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>')}HTML</div>
+            <div class="fe-sidebar-item" id="feNav_docs" onclick="FEW.nav('${id}','docs')">${navIcon('#e5e7eb','<path d="M14 3v5h5"/><path d="M5 3h9l5 5v13H5z"/><path d="M9 13h6M9 17h4"/>')}Documents</div>
+            <div class="fe-sidebar-item" id="feNav_other" onclick="FEW.nav('${id}','other')">${navIcon('#94a3b8','<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/>')}Other</div>
+            <div class="fe-sidebar-label">Actions</div>
+            <div class="fe-sidebar-item" onclick="FEW.triggerUpload('${id}',false)">${navIcon('#fbbf24','<path d="M12 3v12M7 8l5-5 5 5"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>')}Upload Files</div>
+            <div class="fe-sidebar-item" onclick="FEW.triggerUpload('${id}',true)">${navIcon('#fbbf24','<path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>')}Upload Folder</div>
             <input type="file" id="feUpload_${id}" multiple style="display:none" onchange="FEW.handleUpload('${id}',this)">
             <input type="file" id="feUploadDir_${id}" multiple webkitdirectory style="display:none" onchange="FEW.handleUpload('${id}',this)">
           </div>
           <div class="fe-main">
             <div class="fe-toolbar" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" style="cursor:move">
-              <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#fbbf24;flex-shrink:0;pointer-events:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><line x1="3" y1="12" x2="21" y2="12" opacity="0.4"/></svg></div>
-              <div class="fe-path" id="fePath_${id}">/ All Files</div>
-              <div class="fe-view-toggle">
-                <button class="fe-view-btn active" id="feViewGrid_${id}" onclick="FEW.setView('${id}','grid')" title="Grid">⊞</button>
-                <button class="fe-view-btn" id="feViewList_${id}" onclick="FEW.setView('${id}','list')" title="List">≡</button>
+              <button class="fe-cmdbtn primary" onclick="event.stopPropagation();FEW.triggerUpload('${id}')" onmousedown="event.stopPropagation()">${navIcon('currentColor','<path d="M12 3v12M7 8l5-5 5 5"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>')}Upload</button>
+              <div class="fe-cmdbtn-sep"></div>
+              <button class="fe-cmdbtn" onclick="event.stopPropagation();FEW.render('${id}')" onmousedown="event.stopPropagation()" title="Refresh">${navIcon('currentColor','<polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>')}</button>
+              <div class="fe-addressbar" onmousedown="event.stopPropagation()">
+                <div class="fe-crumb">${navIcon('var(--os-muted)','<path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/>')}</div>
+                <span class="fe-crumb-sep">›</span>
+                <div class="fe-crumb current" id="fePath_${id}">All Files</div>
               </div>
-              <button class="fe-btn primary" onclick="FEW.triggerUpload('${id}')">⬆ Upload</button>
+              <input type="text" class="fe-search-mini" id="feSearch_${id}" placeholder="Search" oninput="FEW.search('${id}',this.value)" onmousedown="event.stopPropagation()">
+              <div class="fe-view-toggle" onmousedown="event.stopPropagation()">
+                <button class="fe-view-btn active" id="feViewGrid_${id}" onclick="FEW.setView('${id}','grid')" title="Grid">${navIcon('currentColor','<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>')}</button>
+                <button class="fe-view-btn" id="feViewList_${id}" onclick="FEW.setView('${id}','list')" title="List">${navIcon('currentColor','<line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>')}</button>
+              </div>
               <div class="wnd-ctrl-btns" style="margin-left:6px">
                 <button class="wnd-ctrl-btn" onclick="event.stopPropagation();WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
                 <button class="wnd-ctrl-btn" onclick="event.stopPropagation();WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
@@ -5685,11 +5706,17 @@ const OS={
    FILE EXPLORER WINDOW CONTROLLER
 ═══════════════════════════════════════════════ */
 const FEW={
-  _state:{}, // wid -> {filter, view, files}
+  _state:{}, // wid -> {filter, view, files, query}
 
   init(wid){
-    this._state[wid]={filter:'all',view:'grid',files:FE.load()};
+    this._state[wid]={filter:'all',view:'grid',files:FE.load(),query:''};
     this._setupDrop(wid);
+    this.render(wid);
+  },
+
+  search(wid,q){
+    const state=this._state[wid];if(!state)return;
+    state.query=q;
     this.render(wid);
   },
 
@@ -5748,9 +5775,9 @@ const FEW={
       const el=document.getElementById('feNav_'+f);
       if(el)el.classList.toggle('active',f===filter);
     });
-    const pathMap={all:'/ All Files',images:'/ Images',videos:'/ Videos',audio:'/ Audio',html:'/ HTML Files',docs:'/ Documents',other:'/ Other'};
+    const pathMap={all:'All Files',images:'Images',videos:'Videos',audio:'Audio',html:'HTML Files',docs:'Documents',other:'Other'};
     const path=document.getElementById('fePath_'+wid);
-    if(path)path.textContent=pathMap[filter]||'/';
+    if(path)path.textContent=pathMap[filter]||'All Files';
     this.render(wid);
   },
 
@@ -5789,14 +5816,18 @@ const FEW={
     const state=this._state[wid];if(!state)return;
     // Refresh files from storage in case another explorer window updated them
     state.files=FE.load();
-    const files=this._filterFiles(state.files,state.filter);
+    let files=this._filterFiles(state.files,state.filter);
+    if(state.query&&state.query.trim()){
+      const q=state.query.trim().toLowerCase();
+      files=files.filter(f=>f.name.toLowerCase().includes(q));
+    }
     const cont=document.getElementById('feContent_'+wid);if(!cont)return;
     const status=document.getElementById('feStatus_'+wid);
     if(status)status.textContent=files.length+' item'+(files.length!==1?'s':'')+' · '+FE.formatSize(files.reduce((a,f)=>a+f.size,0));
 
     if(!files.length){
       cont.innerHTML=`<div style="text-align:center;padding:60px 20px;color:var(--os-muted);font-size:13px">
-        <div style="font-size:36px;margin-bottom:12px">📂</div>
+        <div style="font-size:36px;margin-bottom:12px;opacity:0.5">📂</div>
         <div>No files here yet.</div>
         <div style="font-size:11px;margin-top:6px;color:var(--os-dim)">Upload files using the button above or drag & drop them here.</div>
       </div>`;return;
@@ -5805,9 +5836,9 @@ const FEW={
     if(state.view==='grid'){
       cont.innerHTML=`<div class="fe-grid">${files.map(f=>this._fileCard(f)).join('')}</div>`;
     }else{
-      cont.innerHTML=`<div style="padding:4px 0">
-        <div style="display:flex;align-items:center;gap:10px;padding:4px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--os-dim);border-bottom:1px solid var(--os-border);margin-bottom:4px">
-          <span style="width:24px"></span><span style="flex:1">Name</span><span style="width:80px">Size</span><span style="width:130px;text-align:right">Date Added</span>
+      cont.innerHTML=`<div>
+        <div class="fe-list-header">
+          <span style="width:22px"></span><span style="flex:1">Name</span><span style="width:80px">Size</span><span style="width:130px;text-align:right">Date Added</span>
         </div>
         ${files.map(f=>this._fileRow(f)).join('')}
       </div>`;
