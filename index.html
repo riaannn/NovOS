@@ -1548,11 +1548,11 @@ const DEFAULT_SHORTCUTS = {
     {name:"Suggestions Form",url:"https://forms.gle/irbKFW3VbFhczJXs5",icon:"https://i.imgur.com/GfmMMZj.png",isDefault:true,SupportsHTML:false,openInNewTab:true},
   ],
   web:[
-    {name:"Movies",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/0ae9e6ebb3f4246d8a09479d00ba2731.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/30acbc6ff8034551580d1d73d9b3958c.jpg",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Movies.html",url:"__rawhtml__",icon:"https://i.imgur.com/Ov7xpiX.png",isDefault:true,SupportsHTML:true,notAvailable:false},
+    {name:"Movies",bannerImage:"https://upload.wikimedia.org/wikipedia/commons/7/71/Black.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",gridImage:"https://i.pinimg.com/736x/ea/8d/11/ea8d11f1ffc6355b8a440106ce61d0f3.jpg",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Movies.html",url:"__rawhtml__",icon:"https://i.pinimg.com/736x/ea/8d/11/ea8d11f1ffc6355b8a440106ce61d0f3.jpg",isDefault:true,SupportsHTML:true,notAvailable:false},
     //{name:"Truffled", url:"https://supermath.salavat.ru",icon:"https://supermath.salavat.ru/png/logo.png",isDefault:true, SupportsHTML:false},
     //{name:"opium",url:"https://cdn.statically.io/gh/OpiumBest/svg@main/index.svg",icon:"https://i.imgur.com/ssjsMbX.png",isDefault:true,SupportsHTML:false},
-    {name:"TikTok",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/0ae9e6ebb3f4246d8a09479d00ba2731.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/30acbc6ff8034551580d1d73d9b3958c.jpg", url: "__rawhtml__", launchUrl:"https://cdn.statically.io/gh/OpiumBest/svg@main/~/83rmou6x/w9c7t9jr/otpYdDTx6MNA3RVKzoNKtk-AbOObbj9teP5Ax6w",icon:"https://cdn2.steamgriddb.com/icon/094b7cd1111ed23f5b64a54744cb25b7/32/512x512.png",isDefault:true,SupportsHTML:true},
-    {name:"Youtube",gridImage:"https://cdn2.steamgriddb.com/thumb/20038c10911f531345dc4992157263fb.jpg", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/8910f41d3f22b34450934ea4c13eacf5.jpg", launchUrl: "https://cdn.statically.io/gh/OpiumBest/svg@main/~/83rmou6x/w9c7t9jr/otpYdDTx6MNA3RVKw4VUtlWJJ66XbH0k?%24io=https%3A%2F%2Fyoutube.com&%24rfs=", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/1b19b065aa1cbff9f24d818246adb139/32/512x512.png",isDefault:true,SupportsHTML:true},
+    //{name:"TikTok",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/0ae9e6ebb3f4246d8a09479d00ba2731.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/30acbc6ff8034551580d1d73d9b3958c.jpg", url: "__rawhtml__", launchUrl:"https://cdn.statically.io/gh/OpiumBest/svg@main/~/83rmou6x/w9c7t9jr/otpYdDTx6MNA3RVKzoNKtk-AbOObbj9teP5Ax6w",icon:"https://cdn2.steamgriddb.com/icon/094b7cd1111ed23f5b64a54744cb25b7/32/512x512.png",isDefault:true,SupportsHTML:true},
+    //{name:"Youtube",gridImage:"https://cdn2.steamgriddb.com/thumb/20038c10911f531345dc4992157263fb.jpg", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/8910f41d3f22b34450934ea4c13eacf5.jpg", launchUrl: "https://cdn.statically.io/gh/OpiumBest/svg@main/~/83rmou6x/w9c7t9jr/otpYdDTx6MNA3RVKw4VUtlWJJ66XbH0k?%24io=https%3A%2F%2Fyoutube.com&%24rfs=", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/1b19b065aa1cbff9f24d818246adb139/32/512x512.png",isDefault:true,SupportsHTML:true},
   ],
   games:[
     /* Angry Birds series */
@@ -4064,8 +4064,10 @@ const OS={
     if(app.url&&app.url.startsWith('__')&&app.url!=='__rawhtml__'){this._doLaunch(app);return;}
     if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
 
-    // Games always launch via Raw HTML. App/Other shortcuts always launch
-    // via their link URL directly. No picker, no per-app preference needed.
+    // Games always launch via Raw HTML. App/Other shortcuts prefer their link
+    // URL, but ANY shortcut that has a rawUrl must go through RAW_HTML —
+    // otherwise it reaches _doLaunch still carrying url:'__rawhtml__', which
+    // WM.open bounces straight back into OS.launch, and nothing ever opens.
     const isGameCategory=this._isGameShortcut(resolved);
     if(isGameCategory&&(resolved.rawUrl||resolved.url==='__rawhtml__')){
       RAW_HTML.launch(resolved);
@@ -4073,6 +4075,10 @@ const OS={
     }
     if(!isGameCategory&&resolved.launchUrl){
       this._doLaunch({...resolved,url:resolved.launchUrl});
+      return;
+    }
+    if(resolved.rawUrl||resolved.url==='__rawhtml__'){
+      RAW_HTML.launch(resolved);
       return;
     }
     this._doLaunch(resolved);
