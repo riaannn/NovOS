@@ -1637,6 +1637,7 @@ const DEFAULT_SHORTCUTS = {
     {name:"Crossy Road", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/d8baddc195497f70ed815daebf4aaac6.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/2b37dcb0e189f4886f1a934da4c5cc0f.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/clcrossyroad.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/d69bc0b1aeafcc63c7d99509a65e0492.png",isDefault:true,SupportsHTML:true, notAvailable:false},
     {name:"Escape Road", bannerImage:"https://img.magnific.com/free-photo/abstract-solid-shining-yellow-gradient-studio-wall-room-background_1258-70808.jpg?semt=ais_hybrid&w=740&q=80", gridImage:"https://i.imgur.com/uoov9mH.png",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Escape%20Road.html", url: "__rawhtml__",  icon:"https://avatars.githubusercontent.com/u/196004817?v=4",isDefault:true,SupportsHTML:true, notAvailable:false},
     {name:"Pressing Under Pressure", bannerImage:"https://i.imgur.com/dmtCtyw.png", gridImage:"https://play-lh.googleusercontent.com/2z8YneHAFLGYaW4Qef59BjKme-oNunhKbbR7wCfv-Yoaw2PqWKiGKn_594Q74b11lpNbG9ZRxsy2L2ULGrajw3g=w526-h296-rw",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/PressingUnderPressure.html", url: "__rawhtml__",  icon:"https://img.itch.zone/aW1nLzU5ODc0MjUucG5n/315x250%23c/KxjDTx.png",isDefault:true,SupportsHTML:true, notAvailable:false},
+    {name:"Among Us", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/c5136a36b0bdea61cf049154a776ecc2.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/09246ffb824ca2c5bc47a64cb302d3cb.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/amongus.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon/c1b782bc1cdd29464a9d0e7298a91678/32/512x512.png",isDefault:true,SupportsHTML:true, notAvailable:false},
 
 
 
@@ -1748,10 +1749,8 @@ const SETTINGS={
 const KEYBINDS={
   // Each action has: combo (canonical key descriptor), label (human display), desc
   def:{
-    launcher:      {combo:'Tab',            label:'Tab',            desc:'Open the app launcher'},
+    launcher:      {combo:'`',              label:'`',              desc:'Open the app launcher'},
     winSwitcher:   {combo:'Shift+Tab',      label:'Shift + Tab',    desc:'Hold to cycle, release to select'},
-    
-    quickPrompt:   {combo:'Ctrl+Alt+Space', label:'Ctrl + Alt + Space', desc:'Opens the quick AI prompt box'},
     closeCancel:   {combo:'Escape',         label:'Esc',            desc:'Closes overlays, menus, and dialogs'},
   },
   data:{},
@@ -1856,10 +1855,6 @@ const KEYBINDS={
 
   // Re-renders every on-screen label that displays a keybind, wherever it lives.
   _refreshAllDisplays(){
-    // Quick Prompt hint
-    const qpHint=document.getElementById('qpHint');
-    if(qpHint)qpHint.textContent=this.getLabel('quickPrompt');
-    
     // Alt-tab overlay title
     const atTitle=document.getElementById('altTabTitle');
     if(atTitle)atTitle.textContent=this.getLabel('winSwitcher').toUpperCase()+' — Window Switcher';
@@ -1950,31 +1945,14 @@ const LIVE_UPDATE_CHECK={
 };
 
 const CHANGELOG={
-  CURRENT_VERSION:'5.14',
+  CURRENT_VERSION:'5.15',
   ENTRIES:[
     {
-      version:'5.14',
-      date:'2026-09-20',
+      version:'5.15',
+      date:'2026-09-22',
       items:[
-        {text:'Updated Balatro html file',cat:'games'},
-        {text:'Updated Original Brotato - Brotato New Dawn',cat:'games'},
-        {text:'Updated Minecraft 1.12 to use a separate client for better performance',cat:'games'},
-        {text:'Added Brotato Paws & Claws update',cat:'games'},
-        {text:'Added Brotato All Pain no Gain update',cat:'games'},
-        {text:'Added Minecraft 26.2 (WILL RUN LIKE SHIT)',cat:'games'},
-        {text:'Added Minecraft 1.20.6 (WILL RUN LIKE SHIT)',cat:'games'},
-        {text:'Added Grand Theft Auto Vice City',cat:'games'},
-        {text:'Added Ages of Conflict',cat:'games'},
-        {text:'Added Cookie Clicker',cat:'games'},
-        {text:'Added Crossy Road',cat:'games'},
-        {text:'Added Escape Road',cat:'games'},
-        {text:'Added Pressing Under Pressure',cat:'games'},
-        {text:"Added new 'Apps' section",cat:'os'},
-        {text:"Added Movies under 'Apps'",cat:'os'},
-        {text:"Fixed New Version Avaliable notification not correctly refreshing page'",cat:'os'},
-        {text:"Fixed taskbar games preview only showing one game'",cat:'os'},
-
-
+        {text:'Added Among Us',cat:'games'},
+        {text:'Updated default App Launcher keybind from TAB to tilde (~)',cat:'os'},
       ]
     },
   ],
@@ -5312,11 +5290,6 @@ const OS={
                     <div><div class="kb-row-label">Window switcher</div><div class="kb-row-sub">Hold to cycle, release to select</div></div>
                     <button class="kb-capture-btn" onclick="KB_UI.startCapture('winSwitcher','${id}')" id="kbBtn_winSwitcher_${id}">${KEYBINDS.getLabel('winSwitcher')}</button>
                   </div>
-                  
-                  <div class="kb-row" data-kb-row="quickPrompt">
-                    <div><div class="kb-row-label">Ask AI quick prompt</div><div class="kb-row-sub">Opens the quick AI prompt box</div></div>
-                    <button class="kb-capture-btn" onclick="KB_UI.startCapture('quickPrompt','${id}')" id="kbBtn_quickPrompt_${id}">${KEYBINDS.getLabel('quickPrompt')}</button>
-                  </div>
                   <div class="kb-row" data-kb-row="closeCancel">
                     <div><div class="kb-row-label">Close / cancel</div><div class="kb-row-sub">Closes overlays, menus, and dialogs</div></div>
                     <button class="kb-capture-btn" onclick="KB_UI.startCapture('closeCancel','${id}')" id="kbBtn_closeCancel_${id}">${KEYBINDS.getLabel('closeCancel')}</button>
@@ -5428,8 +5401,6 @@ const OS={
                 </div>
                 <div class="sp2-row"><div><div class="sp2-row-label">App launcher</div><div class="sp2-row-sub">Open the app launcher</div></div><span class="kb-display-val" data-kb-action="launcher" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('launcher')}</span></div>
                 <div class="sp2-row"><div><div class="sp2-row-label">Window switcher</div><div class="sp2-row-sub">Hold to cycle, release to select</div></div><span class="kb-display-val" data-kb-action="winSwitcher" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('winSwitcher')}</span></div>
-                
-                <div class="sp2-row"><div><div class="sp2-row-label">Ask AI quick prompt</div><div class="sp2-row-sub">Opens the quick AI prompt box</div></div><span class="kb-display-val" data-kb-action="quickPrompt" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('quickPrompt')}</span></div>
                 <div class="sp2-row"><div><div class="sp2-row-label">Close / cancel</div><div class="sp2-row-sub">Closes overlays, menus, and dialogs</div></div><span class="kb-display-val" data-kb-action="closeCancel" style="font-size:11px;color:var(--os-accent);font-family:var(--mono)">${KEYBINDS.getLabel('closeCancel')}</span></div>
                 <div class="sp2-row-sub" style="padding:0 16px 12px;line-height:1.5">These shortcuts work globally — even while a game or app has keyboard focus — as long as that app runs same-origin inside its window frame. Go to the Keybinds page to remap any of them.</div>
               </div>
@@ -5679,7 +5650,6 @@ const OS={
       const tag=document.activeElement&&document.activeElement.tagName;
       if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
       ALT_TAB.handleKeydown(e);
-      if(KEYBINDS.matches('quickPrompt',e))QP.toggle();
       if(KEYBINDS.matches('closeCancel',e)){
         if(ALT_TAB.open)ALT_TAB.cancel();
         else if(LAUNCHER._open)LAUNCHER.close();
@@ -5703,7 +5673,6 @@ const OS={
         if(e.data.type==='keydown'){
           ALT_TAB.handleKeydown(synthetic);
           if(KEYBINDS.matches('launcher',synthetic)&&!synthetic.shiftKey)LAUNCHER.toggle();
-          if(KEYBINDS.matches('quickPrompt',synthetic))QP.toggle();
           if(KEYBINDS.matches('closeCancel',synthetic)){
             if(ALT_TAB.open)ALT_TAB.cancel();
             else if(LAUNCHER._open)LAUNCHER.close();
