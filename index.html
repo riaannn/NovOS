@@ -23,9 +23,10 @@
   --font:'Geist',system-ui,sans-serif; --mono:'Geist Mono',monospace;
   --radius:10px; --radius-lg:16px; --radius-xl:22px;
   --shadow-window:0 32px 80px rgba(0,0,0,0.65),0 0 0 1px rgba(255,255,255,0.06);
-  --desk-icon-size:76px;
+  --desk-icon-size:92px;
   --taskbar-bg-color:8,9,14;
   --taskbar-opacity:0.86;
+  --taskbar-blur:40px;
   --widget-bg-color:13,15,22;
   --widget-opacity:0.82;
   --lg-glow:rgba(255,255,255,0.18);
@@ -63,14 +64,23 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 #wallpaper.wp-graphite{background:linear-gradient(180deg,#0a0a0c 0%,#000000 100%)}
 #wallpaper.wp-charcoal{background:radial-gradient(ellipse at 50% 100%,#111114 0%,transparent 60%),#050506}
 #wallpaper.wp-slate-line{background:linear-gradient(160deg,#000 0%,#0b0c10 45%,#000 100%)}
+#wallpaper.wp-nova{background:radial-gradient(ellipse 60% 45% at 50% 38%,rgba(124,109,250,0.16),transparent 70%),radial-gradient(ellipse 90% 60% at 20% 85%,rgba(56,189,248,0.08),transparent 70%),radial-gradient(circle at 78% 22%,rgba(244,122,255,0.10),transparent 55%),linear-gradient(160deg,#0a0715 0%,#0d0e18 45%,#08090f 100%)}
 #wallpaper.wp-custom{background-size:cover;background-position:center;background-repeat:no-repeat}
+#wallpaper.wp-custom.fit-fill{background-size:cover;background-position:center;background-repeat:no-repeat}
+#wallpaper.wp-custom.fit-fit{background-size:contain;background-position:center;background-repeat:no-repeat}
+#wallpaper.wp-custom.fit-stretch{background-size:100% 100%;background-position:center;background-repeat:no-repeat}
+#wallpaper.wp-custom.fit-tile{background-size:auto;background-position:top left;background-repeat:repeat}
+#wallpaper.wp-custom.fit-center{background-size:auto;background-position:center;background-repeat:no-repeat}
 #desktop::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px}
+#wallpaper.wp-nova::before{content:'';position:absolute;inset:0;background-image:radial-gradient(1.5px 1.5px at 15% 25%,rgba(255,255,255,0.5),transparent),radial-gradient(1px 1px at 45% 60%,rgba(255,255,255,0.4),transparent),radial-gradient(1.5px 1.5px at 70% 15%,rgba(255,255,255,0.45),transparent),radial-gradient(1px 1px at 85% 70%,rgba(255,255,255,0.35),transparent),radial-gradient(1.5px 1.5px at 30% 85%,rgba(255,255,255,0.4),transparent),radial-gradient(1px 1px at 60% 40%,rgba(255,255,255,0.3),transparent);background-size:100% 100%;opacity:0.6}
 body.has-maximized #desktop::after{display:none}
 body.no-noise #desktop::after{display:none}
 body.low-power .os-window{backdrop-filter:none!important;box-shadow:none!important}
 body.low-power #taskbar,body.low-power #topBar,body.low-power .widget-box,body.low-power #startMenu,body.low-power #launcherPanel,body.low-power .modal-box{backdrop-filter:none!important}
 body.has-maximized #desktopIcons{pointer-events:none;visibility:hidden}
-body.has-maximized #wallpaper{pointer-events:none}
+body.has-maximized #wallpaper{pointer-events:none;visibility:hidden}
+body.has-maximized #widgetLayer{display:none}
+body.has-maximized #desktop{background:#000}
 body.has-maximized #windowLayer>.os-window:not(.maximized){pointer-events:all}
 
 /* DESKTOP ICONS */
@@ -95,14 +105,14 @@ body.has-maximized #windowLayer>.os-window:not(.maximized){pointer-events:all}
 .desk-icon.folder .desk-icon-img{background:rgba(var(--os-accent-rgb),0.12);border-color:rgba(var(--os-accent-rgb),0.25);font-size:calc(var(--desk-icon-size)*0.32)}
 
 /* TOP BAR */
-#topBar{position:absolute;top:0;left:0;right:0;z-index:2;height:28px;background:linear-gradient(180deg,rgba(var(--os-accent-rgb),0.16),rgba(14,14,20,0.92) 65%);border-bottom:1px solid rgba(var(--os-accent-rgb),0.18);backdrop-filter:blur(24px) saturate(1.8);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-family:var(--font);font-size:12px;color:rgba(255,255,255,0.92);letter-spacing:0.01em;transition:transform 0.3s ease,opacity 0.3s ease,visibility 0.3s,background 0.4s ease,border-color 0.4s ease}
+#topBar{position:absolute;top:0;left:0;right:0;z-index:2;height:24px;background:rgba(8,9,14,0.32);border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(14px) saturate(1.4);display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-family:var(--font);font-size:11.5px;color:rgba(255,255,255,0.82);letter-spacing:0.01em;transition:transform 0.3s ease,opacity 0.3s ease,visibility 0.3s,background 0.4s ease,border-color 0.4s ease}
 #topBar.topbar-hidden{transform:translateY(-100%);opacity:0;pointer-events:none;visibility:hidden}
 #topBar.topbar-instant-hide{transition:none!important}
 /* In fullscreen/maximized: top bar starts hidden but CAN be peeked back in
    via #topBarPeekZone — the !important visibility/pointer-events lock has
    been removed so JS-driven .topbar-hidden toggling (see TB.topPeekShow)
    can actually bring it back on hover. */
-#topBarCenter{position:absolute;left:50%;transform:translateX(-50%);font-weight:500;font-size:12.5px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+#topBarCenter{position:absolute;left:50%;transform:translateX(-50%);font-weight:500;font-size:11.5px;display:flex;align-items:center;gap:6px;white-space:nowrap;opacity:0.9}
 #topBarRight{display:flex;align-items:center;gap:8px;font-size:12px}
 .tb-stat{display:flex;align-items:center;gap:3px}
 .tb-batt-wrap{display:flex;align-items:center;gap:4px;font-size:11.5px;color:rgba(255,255,255,0.85)}
@@ -117,11 +127,10 @@ body.has-maximized #windowLayer>.os-window:not(.maximized){pointer-events:all}
 
 /* TASKBAR */
 :root{--taskbar-h:72px}
-#taskbar{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:9999;height:var(--taskbar-h);border:1px solid rgba(255,255,255,0.10);border-radius:18px;backdrop-filter:blur(60px) saturate(2.8) brightness(1.0);-webkit-backdrop-filter:blur(60px) saturate(2.8) brightness(1.0);display:flex;align-items:center;gap:0;padding:0 10px;transition:transform 0.28s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease;box-shadow:0 20px 60px rgba(0,0,0,0.8),0 1px 0 rgba(255,255,255,0.07) inset,inset 0 0 0 0.5px rgba(255,255,255,0.03)}
+#taskbar{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:9999;height:var(--taskbar-h);border:1px solid rgba(255,255,255,0.08);border-radius:18px;backdrop-filter:blur(var(--taskbar-blur,40px)) saturate(2.2) brightness(1.0);-webkit-backdrop-filter:blur(var(--taskbar-blur,40px)) saturate(2.2) brightness(1.0);display:flex;align-items:center;gap:0;padding:0 10px;transition:transform 0.28s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease;box-shadow:0 20px 60px rgba(0,0,0,0.65),0 1px 0 rgba(255,255,255,0.05) inset,inset 0 0 0 0.5px rgba(255,255,255,0.02)}
 #taskbar::before{content:'';position:absolute;inset:0;border-radius:inherit;background:rgba(var(--taskbar-bg-color),var(--taskbar-opacity));z-index:-1;transition:background 0.4s ease}
 #taskbar.taskbar-hidden{transform:translateX(-50%) translateY(120%);opacity:0;pointer-events:none}
-#taskbarPeekZone{position:fixed;bottom:0;left:0;right:0;height:var(--taskbar-peek-size,6px);z-index:9998;display:none}
-body.taskbar-autohide #taskbarPeekZone{display:block}
+#taskbarPeekZone,#taskbarPeekZoneTop{display:none!important}
 body.taskbar-autohide #desktop{height:100vh}
 #startBtn{width:50px;height:58px;border-radius:16px;background:transparent;border:1px solid transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-right:0;transition:all 0.2s cubic-bezier(0.34,1.5,0.64,1);position:relative}
 #startBtn:hover{background:rgba(255,255,255,0.10);border-color:rgba(255,255,255,0.12);transform:scale(1.15) translateY(-3px)}
@@ -245,14 +254,14 @@ body.taskbar-autohide #desktop{height:100vh}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes npEq{0%,100%{height:5px}50%{height:16px}}
 body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms!important}
-.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(var(--win-blur));overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;will-change:transform;transform:translateZ(0);contain:layout style paint}
+.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(var(--win-blur));overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;contain:layout style paint}
 .os-window.wnd-first-open{animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both}
 .os-window.minimized{display:none}
 .os-window.no-min-anim{transition:none!important}
-.os-window.maximized{top:0!important;left:0!important;width:100%!important;height:100%!important;border-radius:0;border-color:transparent;backdrop-filter:none!important;box-shadow:none!important}
+.os-window.maximized{top:0!important;left:0!important;width:100%!important;height:100%!important;border-radius:0;border-color:transparent;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;transition:none!important;background:#000!important;will-change:auto;transform:none}
 .os-window.focused{box-shadow:0 40px 100px rgba(0,0,0,0.75),0 0 0 1px rgba(var(--os-accent-rgb),0.28)}
 .os-window.focused .wnd-titlebar{background:linear-gradient(180deg,rgba(var(--os-accent-rgb),0.16),rgba(255,255,255,0.03));border-bottom-color:rgba(var(--os-accent-rgb),0.22)}
-.os-window:not(.focused){filter:brightness(0.88)}
+.os-window:not(.focused):not(.maximized){filter:brightness(0.88)}
 .os-window.maximized:not(.focused){filter:none!important}
 .wnd-titlebar{height:var(--titlebar-h);min-height:var(--titlebar-h);flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 6px 0 12px;background:linear-gradient(180deg,rgba(var(--os-accent-rgb),0.10),rgba(255,255,255,0.025));border-bottom:1px solid rgba(var(--os-accent-rgb),0.14);cursor:move;user-select:none;transition:background 0.4s ease,border-color 0.4s ease,height 0.15s ease}
 
@@ -264,9 +273,12 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .wnd-ctrl-btn:hover{background:var(--os-surface2);color:var(--os-text)}
 .wnd-ctrl-btn.wnd-close:hover{background:var(--os-red);color:#fff}
 .wnd-ctrl-btn.wnd-mute-btn{position:relative}
-.os-window.maximized .wnd-titlebar{position:absolute;top:0;left:0;right:0;z-index:200010;opacity:0;pointer-events:none;transform:translateY(-100%);transition:opacity 0.18s,transform 0.18s;border-bottom-color:var(--os-border);background:rgba(10,11,18,0.96);backdrop-filter:blur(20px)}
-.os-window.maximized .wnd-titlebar.tb-peek{opacity:1;pointer-events:auto;transform:translateY(0)}
-.os-window.maximized .wnd-titlebar.tb-peek .wnd-ctrl-btn{pointer-events:auto}
+/* A maximized game's own titlebar is now dead space visually — its buttons
+   are surfaced instead through the NovOverlay (Shift+`). The peek-in-on-hover
+   titlebar behavior is kept only for non-game maximized windows (apps like
+   File Explorer, Settings, etc. that the user maximizes) so they still have
+   a way to un-maximize without the overlay. */
+.os-window.maximized .wnd-titlebar{display:none!important}
 .os-window.maximized .wnd-body{position:relative}
 .os-window.maximized .wnd-body::after{
   content:'';
@@ -281,15 +293,14 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .os-window.maximized .wnd-body .wnd-iframe{pointer-events:auto}
 .os-window.maximized .wnd-titlebar.tb-peek ~ .wnd-body .wnd-iframe{pointer-events:none}
 
-.wnd-peek-zone{display:none;position:absolute;top:0;left:0;right:0;height:var(--topbar-peek-size,44px);z-index:200020;cursor:default}
-.os-window.maximized .wnd-peek-zone{display:block}
+.wnd-peek-zone{display:none!important}
 /* Once the titlebar is peeked in, the peek zone must stop intercepting clicks
    so they reach the control buttons sitting beneath it. The titlebar itself
    re-triggers peek via its own onmouseenter, so hover state is preserved. */
 .os-window.maximized .wnd-titlebar.tb-peek ~ .wnd-peek-zone{pointer-events:none}
 .os-window.maximized .wnd-body{position:absolute;inset:0}
 .wnd-body{flex:1;overflow:hidden;position:relative}
-.wnd-iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:transparent;will-change:transform;transform:translateZ(0)}
+.wnd-iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:transparent}
 .wnd-loader{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(8,9,14,0.97);transition:opacity 0.3s;pointer-events:none}
 .wnd-loader.hidden{opacity:0;pointer-events:none}
 .loader-ring{width:36px;height:36px;border:2px solid rgba(var(--os-accent-rgb),0.15);border-top-color:var(--os-accent);border-radius:50%;animation:spin 0.9s linear infinite}
@@ -425,7 +436,7 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .pvz-confirm-btn:hover{opacity:0.85}
 
 /* BOOT */
-#boot{position:fixed;inset:0;z-index:999999;background:#04040a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:opacity 0.7s ease,visibility 0.7s ease}
+#boot{position:fixed;inset:0;z-index:999999;background:radial-gradient(ellipse at 50% 40%,#1a1024 0%,#0e0a16 55%,#080610 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:opacity 0.6s ease,visibility 0.6s ease}
 #boot.hide{opacity:0;visibility:hidden;pointer-events:none}
 .boot-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px}
 .boot-logo-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(var(--os-accent-rgb),0.9),rgba(244,122,255,0.7));display:flex;align-items:center;justify-content:center}
@@ -744,6 +755,83 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 
 
 
+/* NOVOVERLAY — Steam-style in-game overlay, NovOS-themed */
+/* NOVOVERLAY — layout inspired by Steam's in-game overlay:
+   dimmed game behind, left-anchored app-nav rail, central content pane,
+   bottom-right system clock/hint. Original NovOS styling. */
+#novOverlay{position:fixed;inset:0;z-index:700000;display:none;background:rgba(2,3,8,0.72);backdrop-filter:blur(6px)}
+#novOverlay.open{display:block}
+.nov-ov-shell{position:absolute;inset:0;display:flex;animation:fadeIn 0.15s ease}
+.nov-ov-rail{width:250px;flex-shrink:0;display:flex;flex-direction:column;background:rgba(8,9,14,0.94);border-right:1px solid var(--os-border);padding:16px 12px}
+.nov-ov-gamecard{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--os-surface);border:1px solid var(--os-border);margin-bottom:14px}
+.nov-ov-header-icon{width:36px;height:36px;border-radius:8px;object-fit:cover;background:var(--os-surface2);flex-shrink:0}
+.nov-ov-header-title{font-size:12.5px;font-weight:600;color:var(--os-text);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px}
+.nov-ov-header-sub{font-size:10px;color:var(--os-green);margin-top:2px;font-family:var(--mono)}
+.nov-ov-navlabel{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--os-dim);padding:10px 10px 5px}
+.nov-ov-navitem{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--os-muted);border:1px solid transparent;transition:all 0.12s;background:transparent;font-family:var(--font);width:100%;text-align:left}
+.nov-ov-navitem svg{flex-shrink:0;opacity:0.9}
+.nov-ov-navitem:hover{background:var(--os-surface);color:var(--os-text)}
+.nov-ov-navitem.active{background:rgba(var(--os-accent-rgb),0.16);border-color:rgba(var(--os-accent-rgb),0.32);color:var(--os-text)}
+.nov-ov-navitem.danger:hover{background:rgba(248,113,113,0.12);color:var(--os-red)}
+.nov-ov-spacer{flex:1}
+.nov-ov-return{display:flex;align-items:center;justify-content:center;gap:8px;height:40px;border-radius:9px;background:var(--os-accent);border:none;color:#fff;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;margin-top:10px;transition:opacity .13s}
+.nov-ov-return:hover{opacity:0.88}
+.nov-ov-main{flex:1;position:relative;display:flex;flex-direction:column;min-width:0}
+.nov-ov-pagehead{flex-shrink:0;padding:22px 30px 14px}
+.nov-ov-pagetitle{font-size:20px;font-weight:600;color:var(--os-text);letter-spacing:-0.01em}
+.nov-ov-pagesub{font-size:12px;color:var(--os-muted);margin-top:3px}
+.nov-ov-body{flex:1;overflow:hidden;position:relative}
+.nov-ov-page{position:absolute;inset:0;display:none;overflow-y:auto;padding:6px 30px 30px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent}
+.nov-ov-page.active{display:block}
+.nov-ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;max-width:860px}
+.nov-ov-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:12px;cursor:pointer;transition:all 0.14s;color:var(--os-text);font-family:var(--font);font-size:13px;font-weight:500;text-align:left}
+.nov-ov-btn:hover{background:var(--os-surface2);border-color:rgba(var(--os-accent-rgb),0.35);transform:translateY(-1px)}
+.nov-ov-btn.danger:hover{background:rgba(248,113,113,0.12);border-color:rgba(248,113,113,0.3);color:var(--os-red)}
+.nov-ov-btn svg{flex-shrink:0;color:var(--os-accent)}
+.nov-ov-btn.danger svg{color:var(--os-red)}
+.nov-ov-corner{position:absolute;right:22px;bottom:16px;text-align:right;pointer-events:none}
+.nov-ov-clock{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--os-text)}
+.nov-ov-hint{font-size:10.5px;color:var(--os-dim);margin-top:2px}
+.nov-ov-libgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;max-width:900px}
+.nov-ov-libcard{cursor:pointer;border-radius:10px;overflow:hidden;background:var(--os-surface);border:1px solid var(--os-border);transition:all .13s}
+.nov-ov-libcard:hover{border-color:rgba(var(--os-accent-rgb),0.5);transform:translateY(-2px)}
+.nov-ov-libimg{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:#181a20}
+.nov-ov-libname{font-size:11.5px;font-weight:500;color:var(--os-text);padding:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nov-ov-libsearch{width:100%;max-width:320px;height:34px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;padding:0 12px;color:var(--os-text);font-family:var(--font);font-size:12.5px;outline:none;margin-bottom:16px}
+.nov-ov-setrow{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:10px;margin-bottom:8px;max-width:600px}
+.nov-ov-setlabel{font-size:13px;color:var(--os-text);font-weight:500}
+.nov-ov-setsub{font-size:11px;color:var(--os-muted);margin-top:2px}
+.nov-ov-wpgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;max-width:600px;margin-bottom:16px}
+.nov-ov-wpitem{height:44px;border-radius:8px;cursor:pointer;border:2px solid transparent}
+.nov-ov-wpitem.active{border-color:var(--os-accent)}
+.nov-ov-tasklist{display:flex;flex-direction:column;gap:6px;max-width:600px}
+.nov-ov-taskrow{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:10px;cursor:pointer;transition:all .12s}
+.nov-ov-taskrow:hover{border-color:rgba(var(--os-accent-rgb),0.35);background:var(--os-surface2)}
+.nov-ov-taskname{flex:1;font-size:12.5px;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nov-ov-taskstat{font-size:10px;font-family:var(--mono);color:var(--os-muted)}
+/* capture layer: swallows the mouse so a game can't keep pointer lock */
+#novOvCapture{position:absolute;inset:0;z-index:0;outline:none;cursor:default}
+.nov-ov-shell{z-index:1}
+/* embedded apps, rendered INSIDE the overlay like the App Library */
+.nov-ov-embedwrap{position:absolute;inset:0;display:flex;flex-direction:column;background:#0b0c10}
+.nov-ov-embedbar{flex-shrink:0;display:flex;align-items:center;gap:10px;padding:10px 30px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)}
+.nov-ov-embedback{height:30px;padding:0 12px;border-radius:8px;background:var(--os-surface);border:1px solid var(--os-border);color:var(--os-text);font-family:var(--font);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.nov-ov-embedback:hover{background:var(--os-surface2)}
+.nov-ov-embedtitle{font-size:13px;font-weight:600;color:var(--os-text)}
+.nov-ov-embedbody{flex:1;position:relative;overflow:hidden}
+.nov-ov-embedbody .fe-layout,.nov-ov-embedbody .stlib-root{height:100%}
+.nov-ov-tmlist{padding:14px 30px;overflow-y:auto;height:100%}
+/* widgets */
+.nov-ov-widgets{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;max-width:900px}
+.nov-ov-widget{background:var(--os-surface);border:1px solid var(--os-border);border-radius:18px;padding:18px}
+.nov-ov-wtitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--os-dim);margin-bottom:12px}
+.nov-ov-wtime{font-family:var(--mono);font-size:34px;font-weight:300;color:var(--os-text);letter-spacing:-0.02em;text-align:center}
+.nov-ov-wrow{display:flex;gap:6px;margin-top:12px}
+.nov-ov-wbtn{flex:1;height:32px;border-radius:12px;background:var(--os-surface2);border:1px solid var(--os-border);color:var(--os-text);font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;transition:all .12s}
+.nov-ov-wbtn:hover{background:rgba(var(--os-accent-rgb),0.18);border-color:rgba(var(--os-accent-rgb),0.4)}
+.nov-ov-wbtn.primary{background:rgba(var(--os-accent-rgb),0.2);border-color:rgba(var(--os-accent-rgb),0.45);color:var(--os-accent)}
+.nov-ov-wnote{width:100%;min-height:170px;background:transparent;border:none;outline:none;resize:vertical;color:var(--os-text);font-family:var(--font);font-size:13px;line-height:1.6}
+
 /* KEYBIND PICKER MODAL */
 .kb-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;margin-bottom:6px}
 .kb-row-label{font-size:12.5px;color:var(--os-text)}
@@ -761,259 +849,42 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 
 <!-- BOOT -->
 <div id="boot">
-  <canvas id="bootCanvas" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
-  <div id="bootInner" style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:0;position:relative;z-index:1;padding-bottom:9vh;pointer-events:none">
-    <div id="bootWordmark" style="font-size:2rem;font-weight:600;letter-spacing:-0.04em;color:#fff;opacity:0;transform:translateY(10px);transition:opacity 0.6s ease,transform 0.6s ease;margin-bottom:6px">NovOS</div>
-    <div id="bootTagline" style="font-size:12px;color:rgba(255,255,255,0.3);letter-spacing:0.18em;text-transform:uppercase;opacity:0;transition:opacity 0.6s ease 0.2s;margin-bottom:40px">Desktop Environment</div>
-    <div id="bootBar" style="width:200px;height:2px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;opacity:0;transition:opacity 0.4s ease 0.5s">
-      <div id="bootBarFill" style="height:100%;width:0%;background:linear-gradient(90deg,#7c6dfa,#f47aff);border-radius:2px;transition:width 0.08s linear;box-shadow:0 0 8px rgba(124,109,250,0.8)"></div>
+  <div id="bootInner" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;position:relative;z-index:1">
+    <div id="bootLogoWrap" style="opacity:0;transition:opacity 0.6s ease,transform 0.6s ease;transform:scale(0.9);position:relative;width:132px;height:132px;display:flex;align-items:center;justify-content:center">
+      <svg class="boot-ring" viewBox="0 0 132 132" width="132" height="132" style="position:absolute;inset:0"><circle cx="66" cy="66" r="62" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2"/><circle cx="66" cy="66" r="62" fill="none" stroke="#7c6dfa" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="90 300"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="96" height="96" style="filter:drop-shadow(0 0 20px rgba(124,109,250,0.55))">
+        <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.85)" stroke-width="1.5"/>
+        <path d="M12 2a10 10 0 0 1 0 20" stroke="#7c6dfa" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M2 12h20" stroke="rgba(255,255,255,0.85)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M12 2C9.5 5.5 8 8.6 8 12s1.5 6.5 4 10" stroke="#7c6dfa" stroke-width="1" stroke-linecap="round"/>
+        <path d="M4.5 7.5C6.8 8.7 9.3 9.3 12 9.3s5.2-.6 7.5-1.8M4.5 16.5C6.8 15.3 9.3 14.7 12 14.7s5.2.6 7.5 1.8" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="round" opacity="0.5"/>
+      </svg>
     </div>
-    <div id="bootStatus" style="font-family:'Geist Mono',monospace;font-size:10.5px;color:rgba(255,255,255,0.22);margin-top:12px;letter-spacing:0.04em;height:14px;opacity:0;transition:opacity 0.4s ease 0.6s"></div>
+    <div id="bootWordmark" style="font-size:1.3rem;font-weight:500;letter-spacing:0.02em;color:rgba(255,255,255,0.9);opacity:0;transition:opacity 0.6s ease">NovOS</div>
+    <div id="bootStatus" style="opacity:0;transition:opacity 0.6s ease;display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px">
+      <div style="width:150px;height:3px;border-radius:2px;background:rgba(255,255,255,0.1);overflow:hidden"><div class="boot-bar"></div></div>
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.45)">Loading<span class="boot-dots"></span></div>
+    </div>
   </div>
 </div>
+<style>
+.boot-ring{animation:bootSpin 1.1s linear infinite;transform-origin:center}
+@keyframes bootSpin{to{transform:rotate(360deg)}}
+.boot-bar{width:40%;height:100%;border-radius:2px;background:linear-gradient(90deg,transparent,#7c6dfa,#f47aff);animation:bootSlide 1.2s ease-in-out infinite}
+@keyframes bootSlide{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
+.boot-dots::after{content:'';animation:bootDots 1.4s steps(4,end) infinite}
+@keyframes bootDots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+</style>
 <script>
 (function(){
-  const steps=[
-    {pct:12,msg:'kernel v4.19 initializing…'},
-    {pct:28,msg:'mounting virtual filesystem…'},
-    {pct:44,msg:'loading display compositor…'},
-    {pct:61,msg:'starting session daemon…'},
-    {pct:77,msg:'applying user configuration…'},
-    {pct:90,msg:'launching desktop environment…'},
-    {pct:100,msg:'ready.'},
-  ];
-  let step=0;
-  function nextStep(){
-    if(step>=steps.length)return;
-    const s=steps[step++];
-    const fill=document.getElementById('bootBarFill');
-    const status=document.getElementById('bootStatus');
-    if(fill)fill.style.width=s.pct+'%';
-    if(status)status.textContent=s.msg;
-    if(step<steps.length)setTimeout(nextStep,step===1?320:260+Math.random()*120);
-  }
-
-  // ── Canvas 2D boot scene: glowing planet + neon rings + orbiting light ──
-  const canvas=document.getElementById('bootCanvas');
-  let ctx,af,dpr=1,W=0,H=0,startT=0;
-  let stars=[];
-
-  function getAccentRGB(){
-    try{
-      const raw=getComputedStyle(document.documentElement).getPropertyValue('--os-accent-rgb').trim();
-      if(raw){
-        const parts=raw.split(',').map(n=>parseInt(n.trim(),10));
-        if(parts.length===3&&parts.every(n=>!isNaN(n)))return parts;
-      }
-    }catch(e){}
-    return [124,109,250];
-  }
-
-  function resize(){
-    if(!canvas)return;
-    dpr=Math.min(window.devicePixelRatio||1,2);
-    W=window.innerWidth;H=window.innerHeight;
-    canvas.width=W*dpr;canvas.height=H*dpr;
-    canvas.style.width=W+'px';canvas.style.height=H+'px';
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-  }
-
-  function initScene(){
-    if(!canvas)return;
-    ctx=canvas.getContext('2d');
-    if(!ctx)return;
-    resize();
-
-    // Starfield — fixed random points, twinkle via sine offset
-    const starCount=140;
-    for(let i=0;i<starCount;i++){
-      stars.push({
-        x:Math.random(),y:Math.random(),
-        r:Math.random()*1.3+0.3,
-        phase:Math.random()*Math.PI*2,
-        speed:0.5+Math.random()*1.2
-      });
-    }
-
-    window.addEventListener('resize',resize);
-    startT=performance.now();
-    animate();
-  }
-
-  function drawStars(t){
-    ctx.save();
-    stars.forEach(s=>{
-      const tw=0.4+0.6*Math.abs(Math.sin(t*0.001*s.speed+s.phase));
-      ctx.globalAlpha=tw*0.55;
-      ctx.fillStyle='#ffffff';
-      ctx.beginPath();
-      ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);
-      ctx.fill();
-    });
-    ctx.restore();
-  }
-
-  function drawPlanet(t,cx,cy,radius,accent){
-    const [r,g,b]=accent;
-    const bob=Math.sin(t*0.0006)*6;
-    const py=cy+bob;
-
-    // Soft outer glow shell
-    const glowR=radius*2.2;
-    const glow=ctx.createRadialGradient(cx,py,radius*0.6,cx,py,glowR);
-    glow.addColorStop(0,`rgba(${r},${g},${b},0.35)`);
-    glow.addColorStop(0.5,`rgba(${r},${g},${b},0.12)`);
-    glow.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.save();
-    ctx.fillStyle=glow;
-    ctx.beginPath();
-    ctx.arc(cx,py,glowR,0,Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-
-    // Planet body — radial shaded sphere, light source upper-left
-    const bodyGrad=ctx.createRadialGradient(cx-radius*0.35,py-radius*0.35,radius*0.1,cx,py,radius*1.05);
-    bodyGrad.addColorStop(0,`rgba(${Math.min(255,r+70)},${Math.min(255,g+70)},${Math.min(255,b+70)},1)`);
-    bodyGrad.addColorStop(0.45,`rgba(${r},${g},${b},1)`);
-    bodyGrad.addColorStop(1,`rgba(${Math.round(r*0.35)},${Math.round(g*0.3)},${Math.round(b*0.45)},1)`);
-    ctx.save();
-    ctx.fillStyle=bodyGrad;
-    ctx.beginPath();
-    ctx.arc(cx,py,radius,0,Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-
-    // Terminator shading (darker crescent on lower-right)
-    ctx.save();
-    ctx.globalCompositeOperation='multiply';
-    const shade=ctx.createRadialGradient(cx+radius*0.5,py+radius*0.5,radius*0.1,cx,py,radius*1.1);
-    shade.addColorStop(0,'rgba(0,0,0,0.55)');
-    shade.addColorStop(0.6,'rgba(0,0,0,0.15)');
-    shade.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=shade;
-    ctx.beginPath();
-    ctx.arc(cx,py,radius,0,Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-
-    // Rim light
-    ctx.save();
-    ctx.strokeStyle=`rgba(${Math.min(255,r+100)},${Math.min(255,g+100)},${Math.min(255,b+100)},0.5)`;
-    ctx.lineWidth=1.5;
-    ctx.beginPath();
-    ctx.arc(cx,py,radius-0.75,0,Math.PI*2);
-    ctx.stroke();
-    ctx.restore();
-
-    return py;
-  }
-
-  function drawRing(cx,cy,radiusX,radiusY,rot,color,alpha,glowAmt,lineW){
-    ctx.save();
-    ctx.translate(cx,cy);
-    ctx.rotate(rot);
-    ctx.scale(1,radiusY/radiusX);
-    ctx.beginPath();
-    ctx.arc(0,0,radiusX,0,Math.PI*2);
-    ctx.restore();
-    ctx.save();
-    ctx.translate(cx,cy);
-    ctx.rotate(rot);
-    ctx.globalAlpha=alpha;
-    ctx.shadowColor=color;
-    ctx.shadowBlur=glowAmt;
-    ctx.strokeStyle=color;
-    ctx.lineWidth=lineW;
-    ctx.beginPath();
-    ctx.ellipse(0,0,radiusX,radiusY,0,0,Math.PI*2);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  function drawOrbitLight(cx,cy,radiusX,radiusY,rot,angle,color){
-    const lx=Math.cos(angle)*radiusX;
-    const ly=Math.sin(angle)*radiusY;
-    const cosr=Math.cos(rot),sinr=Math.sin(rot);
-    const px=cx+lx*cosr-ly*sinr;
-    const py=cy+lx*sinr+ly*cosr;
-    // behind-planet dimming handled by draw order in animate()
-    ctx.save();
-    const grad=ctx.createRadialGradient(px,py,0,px,py,14);
-    grad.addColorStop(0,color);
-    grad.addColorStop(0.4,color.replace(/[\d.]+\)$/,'0.6)'));
-    grad.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=grad;
-    ctx.beginPath();
-    ctx.arc(px,py,14,0,Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle='#ffffff';
-    ctx.beginPath();
-    ctx.arc(px,py,2.4,0,Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-    return {x:px,y:py};
-  }
-
-  function animate(){
-    af=requestAnimationFrame(animate);
-    if(!ctx)return;
-    const t=performance.now()-startT;
-
-    ctx.clearRect(0,0,W,H);
-    drawStars(t);
-
-    const [ar,ag,ab]=getAccentRGB();
-    const accentStr=`rgba(${ar},${ag},${ab},1)`;
-    const cx=W*0.5,cy=H*0.44;
-    const radius=Math.min(W,H)*0.11;
-
-    const py=drawPlanet(t,cx,cy,radius,[ar,ag,ab]);
-
-    // Ring behind planet (back half) — draw full ellipse dimmed first,
-    // then planet already drawn on top gives the "through" look; we
-    // approximate depth with two passes: back ring faint, front ring bright.
-    const ringDefs=[
-      {rx:radius*1.9,ry:radius*0.55,rot:-0.28,speed:0.00035,w:1.6,glow:10,alphaMul:1},
-      {rx:radius*1.55,ry:radius*0.4,rot:0.34,speed:-0.0005,w:1.2,glow:8,alphaMul:0.85},
-      {rx:radius*2.25,ry:radius*0.62,rot:0.05,speed:0.0002,w:1,glow:12,alphaMul:0.65},
-    ];
-
-    ringDefs.forEach((d,i)=>{
-      drawRing(cx,py,d.rx,d.ry,d.rot,accentStr,0.5*d.alphaMul,d.glow,d.w);
-    });
-
-    // Orbiting light — travels around the primary ring, brighter pass in front
-    const orbitAngle=t*0.0009;
-    const mainRing=ringDefs[0];
-    drawOrbitLight(cx,py,mainRing.rx,mainRing.ry,mainRing.rot,orbitAngle,accentStr);
-
-    // Secondary faster light on the smaller ring for extra motion
-    const secondRing=ringDefs[1];
-    const orbitAngle2=-t*0.0015+1.4;
-    drawOrbitLight(cx,py,secondRing.rx,secondRing.ry,secondRing.rot,orbitAngle2,`rgba(${Math.min(255,ar+60)},${Math.min(255,ag+60)},${Math.min(255,ab+60)},1)`);
-  }
-
-  function destroyScene(){
-    cancelAnimationFrame(af);
-    window.removeEventListener('resize',resize);
-  }
-
-  initScene();
-  const obs=new MutationObserver(()=>{if(document.getElementById('boot').classList.contains('hide')){destroyScene();}});
-  obs.observe(document.getElementById('boot'),{attributes:true,attributeFilter:['class']});
-
-  // Animate in
   setTimeout(()=>{
+    const logo=document.getElementById('bootLogoWrap');
+    if(logo){logo.style.opacity='1';logo.style.transform='scale(1)';}
     const wm=document.getElementById('bootWordmark');
-    const tl=document.getElementById('bootTagline');
-    const bar=document.getElementById('bootBar');
+    if(wm)wm.style.opacity='1';
     const st=document.getElementById('bootStatus');
-    if(wm){wm.style.opacity='1';wm.style.transform='translateY(0)';}
-    if(tl)tl.style.opacity='1';
-    if(bar)bar.style.opacity='1';
     if(st)st.style.opacity='1';
-    setTimeout(nextStep,400);
-  },180);
+  },150);
 })();
 </script>
 
@@ -1119,12 +990,12 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
   </button>
 </div>
 <div id="continueDock" style="position:fixed;bottom:calc(var(--taskbar-h) + 18px);left:50%;transform:translateX(-50%);z-index:9997;display:none;align-items:center;gap:8px;padding:8px 12px;background:rgba(13,14,22,0.92);border:1px solid var(--os-border2);border-radius:16px;backdrop-filter:blur(28px) saturate(1.6);box-shadow:0 12px 40px rgba(0,0,0,0.6);max-width:88vw;overflow-x:auto;scrollbar-width:none"></div>
-<div id="taskbarPeekZone" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()"></div>
+
 
 
 
 <!-- TASKBAR -->
-<div id="taskbar" onmouseenter="TB.peekShow()" onmouseleave="TB.peekHide()">
+<div id="taskbar">
   <div id="taskbarLeft" style="display:flex;align-items:center;gap:2px;flex:1;justify-content:flex-start">
     <div id="taskbarUserApps" style="display:flex;align-items:center;gap:2px"></div>
   </div>
@@ -1237,7 +1108,8 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
     <div class="sp-section">
       <div class="sp-section-title">Wallpaper</div>
       <div class="wp-grid">
-        <div class="wp-item wp-item-aurora active" id="wp-aurora" onclick="OS.setWallpaper('aurora')" title="Aurora"></div>
+        <div class="wp-item" id="wp-nova" onclick="OS.setWallpaper('nova')" title="Nova" style="background:radial-gradient(ellipse 60% 45% at 50% 38%,rgba(124,109,250,0.4),transparent 70%),radial-gradient(circle at 78% 22%,rgba(244,122,255,0.3),transparent 55%),linear-gradient(160deg,#0a0715,#0d0e18,#08090f)"></div>
+        <div class="wp-item wp-item-aurora" id="wp-aurora" onclick="OS.setWallpaper('aurora')" title="Aurora"></div>
         <div class="wp-item wp-item-sunset" id="wp-sunset" onclick="OS.setWallpaper('sunset')" title="Sunset"></div>
         <div class="wp-item wp-item-ocean" id="wp-ocean" onclick="OS.setWallpaper('ocean')" title="Ocean"></div>
         <div class="wp-item wp-item-forest" id="wp-forest" onclick="OS.setWallpaper('forest')" title="Forest"></div>
@@ -1252,6 +1124,16 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
           <span style="font-size:16px">🖼</span><span>Your Image</span>
         </div>
         <button class="sp-btn" onclick="OS.openWallpaperPicker()" style="margin-top:6px">📁 Upload via File Explorer</button>
+        <div style="margin-top:10px">
+          <div class="sp-row-sub" style="margin-bottom:6px">Custom Image Fit</div>
+          <select class="f-select" style="margin:0" onchange="OS.setWallpaperFit(this.value)">
+            <option value="fill" ${SETTINGS.get('wallpaperFit')==='fill'||!SETTINGS.get('wallpaperFit')?'selected':''}>Fill</option>
+            <option value="fit" ${SETTINGS.get('wallpaperFit')==='fit'?'selected':''}>Fit</option>
+            <option value="stretch" ${SETTINGS.get('wallpaperFit')==='stretch'?'selected':''}>Stretch</option>
+            <option value="tile" ${SETTINGS.get('wallpaperFit')==='tile'?'selected':''}>Tile</option>
+            <option value="center" ${SETTINGS.get('wallpaperFit')==='center'?'selected':''}>Center</option>
+          </select>
+        </div>
       </div>
     </div>
     <div class="sp-section">
@@ -1306,6 +1188,85 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 <div id="altTabOverlay">
   <div id="altTabTitle">SHIFT + TAB — Window Switcher</div>
   <div id="altTabList"></div>
+</div>
+
+<!-- NOVOVERLAY (layout inspired by Steam's in-game overlay; original NovOS design) -->
+<div id="novOverlay">
+  <div id="novOvCapture" tabindex="-1"></div>
+  <div class="nov-ov-shell">
+    <div class="nov-ov-rail">
+      <div class="nov-ov-gamecard">
+        <img id="novOvIcon" class="nov-ov-header-icon" src="" alt="">
+        <div style="min-width:0">
+          <div class="nov-ov-header-title" id="novOvTitle">Game</div>
+          <div class="nov-ov-header-sub" id="novOvSub">● Now playing</div>
+        </div>
+      </div>
+      <div class="nov-ov-navlabel">Overlay</div>
+      <button class="nov-ov-navitem active" id="novOvTab_overview" onclick="NOVOVERLAY.showTab('overview')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8v8H3zM13 3h8v8h-8zM13 13h8v8h-8zM3 13h8v8H3z"/></svg>Game Controls
+      </button>
+      <button class="nov-ov-navitem" id="novOvTab_library" onclick="NOVOVERLAY.showTab('library')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16.5 4.6l3.9-1 3 15.5-3.9 1z"/></svg>Library
+      </button>
+      <button class="nov-ov-navitem" id="novOvTab_windows" onclick="NOVOVERLAY.showTab('windows')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18a1 1 0 011 1v14a1 1 0 01-1 1H3a1 1 0 01-1-1V5a1 1 0 011-1zm1 4v10h16V8z"/></svg>Windows
+      </button>
+      <button class="nov-ov-navitem" id="novOvTab_widgets" onclick="NOVOVERLAY.showTab('widgets')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="2.4"/><rect x="13" y="4" width="7" height="7" rx="2.4"/><rect x="4" y="13" width="7" height="7" rx="2.4"/><rect x="13" y="13" width="7" height="7" rx="2.4"/></svg>Widgets
+      </button>
+      <button class="nov-ov-navitem" id="novOvTab_apps" onclick="NOVOVERLAY.showTab('apps')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 010 20z" fill="#000" fill-opacity="0.35"/></svg>NovOS Apps
+      </button>
+      <button class="nov-ov-navitem" id="novOvTab_settings" onclick="NOVOVERLAY.showTab('settings')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 5v-2l-2.2-.7a7 7 0 00-.6-1.4l1.1-2-1.4-1.4-2 1.1a7 7 0 00-1.4-.6L14 3h-4l-.7 2.2a7 7 0 00-1.4.6l-2-1.1-1.4 1.4 1.1 2a7 7 0 00-.6 1.4L3 11v2l2.2.7c.1.5.3 1 .6 1.4l-1.1 2 1.4 1.4 2-1.1c.4.3.9.5 1.4.6L10 21h4l.7-2.2c.5-.1 1-.3 1.4-.6l2 1.1 1.4-1.4-1.1-2c.3-.4.5-.9.6-1.4z"/></svg>Settings
+      </button>
+      <div class="nov-ov-spacer"></div>
+      <button class="nov-ov-navitem danger" onclick="NOVOVERLAY.closeGame()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6.4 4.9L12 10.6l5.6-5.7 1.5 1.5-5.7 5.6 5.7 5.6-1.5 1.5-5.6-5.7-5.6 5.7-1.5-1.5 5.7-5.6-5.7-5.6z"/></svg>Close Game
+      </button>
+      <button class="nov-ov-return" onclick="NOVOVERLAY.close()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Back to Game
+      </button>
+    </div>
+    <div class="nov-ov-main">
+      <div class="nov-ov-pagehead">
+        <div class="nov-ov-pagetitle" id="novOvPageTitle">Game Controls</div>
+        <div class="nov-ov-pagesub" id="novOvPageSub">Manage the running game</div>
+      </div>
+      <div class="nov-ov-body">
+        <div class="nov-ov-page active" id="novOvPage_overview">
+          <div class="nov-ov-grid">
+            <button class="nov-ov-btn" onclick="NOVOVERLAY.exitFullscreen()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16h3v3h2v-5H5zm3-8H5v2h5V5H8zm6 11h2v-3h3v-2h-5zm2-11V5h-2v5h5V8z"/></svg>Exit Fullscreen
+            </button>
+            <button class="nov-ov-btn" onclick="NOVOVERLAY.minimizeGame()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="11" width="16" height="2.4" rx="1"/></svg>Minimize Game
+            </button>
+            <button class="nov-ov-btn" onclick="NOVOVERLAY.refreshGame()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35A8 8 0 104 12h2a6 6 0 116.1-6l-2.6 2.6H20V2z"/></svg>Refresh Game
+            </button>
+            <button class="nov-ov-btn" onclick="NOVOVERLAY.openInTab()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2h3.6l-9.8 9.8 1.4 1.4L19 6.4V10h2V3zM5 5h6v2H5v12h12v-6h2v8H3V5z"/></svg>Open in Browser Tab
+            </button>
+            <button class="nov-ov-btn danger" onclick="NOVOVERLAY.closeGame()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6.4 4.9L12 10.6l5.6-5.7 1.5 1.5-5.7 5.6 5.7 5.6-1.5 1.5-5.6-5.7-5.6 5.7-1.5-1.5 5.7-5.6-5.7-5.6z"/></svg>Close Game
+            </button>
+          </div>
+        </div>
+        <div class="nov-ov-page" id="novOvPage_library"><div id="novOvLibraryBody"></div></div>
+        <div class="nov-ov-page" id="novOvPage_windows"><div id="novOvWindowsBody"></div></div>
+        <div class="nov-ov-page" id="novOvPage_widgets"><div id="novOvWidgetsBody"></div></div>
+        <div class="nov-ov-page" id="novOvPage_apps" style="padding:0"><div id="novOvAppsBody" style="padding:6px 30px 30px"></div><div id="novOvEmbedHost" style="display:none"></div></div>
+        <div class="nov-ov-page" id="novOvPage_settings"><div id="novOvSettingsBody"></div></div>
+      </div>
+      <div class="nov-ov-corner">
+        <div class="nov-ov-clock" id="novOvClock">--:--</div>
+        <div class="nov-ov-hint" id="novOvHint">Shift + ~ or Esc to return</div>
+      </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- CONTEXT MENU -->
@@ -1435,6 +1396,21 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
   </div>
 </div>
 
+<!-- CLOUDMOON DISCLAIMER -->
+<div id="cloudMoonModal" class="overlay-modal">
+  <div class="modal-box narrow">
+    <div class="modal-header">
+      <h3>☁️ <a href="https://web.cloudmoonapp.com/" target="_blank" rel="noopener" style="color:var(--os-accent);text-decoration:underline">CloudMoon</a></h3>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:12.5px;line-height:1.7;color:var(--os-text);margin-bottom:16px">
+        You must create an account at <a href="https://web.cloudmoonapp.com/" target="_blank" rel="noopener" style="color:var(--os-accent)">CloudMoon</a> outside of school and login here for access.
+      </div>
+      <button class="m-btn" onclick="CLOUDMOON.dismiss()">Don't show again</button>
+    </div>
+  </div>
+</div>
+
 <!-- WELCOME MODAL -->
 <div id="welcomeModal">
   <div class="welcome-box">
@@ -1543,6 +1519,9 @@ const DEFAULT_DESKTOP_APPS = [
    APP LIBRARY DATA
 ═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_SHORTCUTS = {
+  cloud:[
+    {name:"CloudMoon",gridImage:"",bannerImage:"",icon:"☁️",isDefault:true,SupportsHTML:false,isCloudPlaceholder:true,url:"__cloudmoon__"},
+  ],
   Other:[
     {name:"Bug Reports Form",url:"https://forms.gle/5Xzdtd93pL2Kmw9u8",icon:"https://i.imgur.com/Ov7xpiX.png",isDefault:true,SupportsHTML:false,openInNewTab:true},
     {name:"Suggestions Form",url:"https://forms.gle/irbKFW3VbFhczJXs5",icon:"https://i.imgur.com/GfmMMZj.png",isDefault:true,SupportsHTML:false,openInNewTab:true},
@@ -1568,7 +1547,6 @@ const DEFAULT_SHORTCUTS = {
     /* Dadish series */
     {name:"Dadish",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/b384cf1e04c25c0cd4c0194e16117be2.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/ae66880d9336a9fde9ec34472f49f397.jpg",launchUrl:"https://sharemyhtml.com/p/2_5FJwGNx9", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/357.png",isDefault:true,SupportsHTML:true},
     {name:"Dadish 2",bannerImage:"https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1525320/capsule_616x353.jpg?t=1614538233",gridImage:"https://cdn2.steamgriddb.com/thumb/d22ee0196e941e806131587dfe38802f.png",launchUrl:"https://sharemyhtml.com/p/Ak8NZHtctn", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish%202.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/355.png",isDefault:true,SupportsHTML:true},
-    {name:"Dadish 3",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/679df2ff70b899cc12f0e4ddecad9032.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/4ca3a07e1540ba75e04559dedaf1d70a.jpg",launchUrl:"https://sharemyhtml.com/p/z3PW-zUmfD", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish%203.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/356.png",isDefault:true,SupportsHTML:true},
     {name:"Dadish 3",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/679df2ff70b899cc12f0e4ddecad9032.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/4ca3a07e1540ba75e04559dedaf1d70a.jpg",launchUrl:"https://sharemyhtml.com/p/z3PW-zUmfD", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dadish%203.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/356.png",isDefault:true,SupportsHTML:true},
 
 
@@ -1640,6 +1618,8 @@ const DEFAULT_SHORTCUTS = {
     {name:"Among Us", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/c5136a36b0bdea61cf049154a776ecc2.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/09246ffb824ca2c5bc47a64cb302d3cb.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/amongus.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon/c1b782bc1cdd29464a9d0e7298a91678/32/512x512.png",isDefault:true,SupportsHTML:true, notAvailable:false},
     {name:"Kerbal Space Program", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/f5a6742b21e3375ab4ed03b72c5ebb74.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/e6627c57ec25f931e0c332cdcbe8f892.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/kspTrue.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/0e11b56d493ed726dea457a742ceea33.png",isDefault:true,SupportsHTML:true, notAvailable:false},
     {name:"Gang Beasts", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/a33f9041667929bbc90828a4594cc0a3.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/66d39d2a5cb9dcc15b27cb22deee24fa.png",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games html/gangbeastsinglefil.html", url: "__rawhtml__",  icon:"https://image.api.playstation.com/vulcan/ap/rnd/202310/1216/1c6232385de9a836ac9c16ba5d2ddd1f632df409d7e807af.png",isDefault:true,SupportsHTML:true, notAvailable:false},
+    {name:"Bowmasters", bannerImage:"https://cdn.aptoide.com/imgs/a/b/9/ab90b9dec0ec087d5df2b2d76118bd72_fgraphic.png", gridImage:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6noSgwOlS97ijnl5gemYxMrWwUqjrJxp7STXLBZ_evgO9opEv8YRPBF8H&s=10",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/BowMasters.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/229b1c42c67f73dabb0df116445526ea.png",isDefault:true,SupportsHTML:true, notAvailable:false},
+    {name:"Tomb of the Mask", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/8fed05970c522556e135fbf1a4cefe9f.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/be2caf6c13ef5d2472cb4d865f48f715.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Tomb%20Of%20The%20Mask.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/596525fb85c296245f55562f755de682.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:true},
 
 
 
@@ -1734,7 +1714,7 @@ const RAW_HTML={
    SETTINGS STORE
 ═══════════════════════════════════════════════ */
 const SETTINGS={
-  def:{showBoot:true,launchConfirm:true,wallpaper:'obsidian',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:76,showIcons:true,customWallpaper:'',animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.86,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true,customCursor:true,autoFullscreenGames:true,topBarPeekSize:44,taskbarPeekSize:6,bgThrottle:true,smartGlass:true,lowPowerMode:false,reduceIframeFx:false,disableWidgetsInGame:true,noiseTextureOff:false,showChangelogOnUpdate:true,autoFallbackLaunch:true,win11Taskbar:false,taskbarPosition:'bottom',desktopGridSnap:true,desktopGridSize:88,forceRawHtmlLaunch:true,shortcutLaunchAnim:true},
+  def:{showBoot:true,launchConfirm:true,wallpaper:'nova',accent:'7c6dfa',accentRgb:'124,109,250',hideTaskbarFullscreen:true,iconSize:92,showIcons:true,customWallpaper:'',wallpaperFit:'fill',animations:true,liquidGlass:false,taskbarColor:'8,9,14',taskbarOpacity:0.6,taskbarBlur:34,widgetColor:'13,15,22',widgetOpacity:0.82,showWidgets:true,customCursor:true,autoFullscreenGames:true,topBarPeekSize:44,taskbarPeekSize:6,bgThrottle:true,smartGlass:true,lowPowerMode:false,reduceIframeFx:false,disableWidgetsInGame:true,noiseTextureOff:false,showChangelogOnUpdate:true,autoFallbackLaunch:true,win11Taskbar:false,taskbarPosition:'bottom',desktopGridSnap:true,desktopGridSize:88,forceRawHtmlLaunch:true,shortcutLaunchAnim:true},
   data:{},
   load(){try{this.data={...this.def,...JSON.parse(localStorage.getItem('novos_cfg')||sessionStorage.getItem('novos_cfg')||'{}')};}catch{this.data={...this.def};}},
   save(){localStorage.setItem('novos_cfg',JSON.stringify(this.data));try{sessionStorage.setItem('novos_cfg',JSON.stringify(this.data));}catch(e){}},
@@ -1752,8 +1732,9 @@ const KEYBINDS={
   // Each action has: combo (canonical key descriptor), label (human display), desc
   def:{
     launcher:      {combo:'`',              label:'`',              desc:'Open the app launcher'},
-    winSwitcher:   {combo:'Shift+Tab',      label:'Shift + Tab',    desc:'Hold to cycle, release to select'},
+    winSwitcher:   {combo:'Alt+Shift',      label:'Alt + Shift',    desc:'Hold to cycle, release to select'},
     closeCancel:   {combo:'Escape',         label:'Esc',            desc:'Closes overlays, menus, and dialogs'},
+    gameOverlay:   {combo:'Shift+~',        label:'Shift + ~',      desc:'Open the NovOverlay while a game is running'},
   },
   data:{},
 
@@ -1836,7 +1817,10 @@ const KEYBINDS={
     const needCtrl=parts.includes('Ctrl'),needAlt=parts.includes('Alt'),needShift=parts.includes('Shift'),needMeta=parts.includes('Meta');
     if(namedKey){
       // Combo has a concrete key (e.g. Ctrl+Alt+Space, Shift+2, Tab, Escape)
-      const k=this.normalizeKey(e.key);
+      let k=this.normalizeKey(e.key);
+      // Shift+` produces "~" on US layouts but layouts differ, so treat the
+      // physical backtick key (Backquote) as either symbol.
+      if((namedKey==='~'||namedKey==='`')&&e.code==='Backquote')k=(namedKey==='`'&&!e.shiftKey)?'`':'~';
       if(k!==namedKey)return false;
       if(needCtrl!==e.ctrlKey)return false;
       if(needAlt!==e.altKey)return false;
@@ -1938,24 +1922,62 @@ const LIVE_UPDATE_CHECK={
     const n=document.createElement('div');
     n.className='notif';
     n.style.cssText='animation:notifIn 0.25s ease;cursor:pointer;border-color:rgba(var(--os-accent-rgb),0.35)';
-    n.innerHTML=`<div class="notif-title" style="color:var(--os-accent)">NovOS ${version} available</div><div class="notif-body">A new version is ready. Click to refresh now.</div>`;
-    n.addEventListener('click',()=>LIVE_UPDATE_CHECK.hardReload());
+    n.innerHTML=`<div class="notif-title" style="color:var(--os-accent)">NovOS ${version} available</div><div class="notif-body">A new version is ready. Click to refresh now.</div><div style="display:flex;gap:6px;margin-top:8px"><button style="flex:1;height:24px;border-radius:5px;font-size:10.5px;font-weight:500;cursor:pointer;border:1px solid rgba(var(--os-accent-rgb),0.3);background:rgba(var(--os-accent-rgb),0.14);color:var(--os-accent);font-family:var(--font)">Refresh</button><button class="lu-ignore-btn" style="flex:1;height:24px;border-radius:5px;font-size:10.5px;font-weight:500;cursor:pointer;border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-muted);font-family:var(--font)">Ignore</button></div>`;
+    n.addEventListener('click',(e)=>{
+      if(e.target.closest('.lu-ignore-btn')){
+        e.stopPropagation();
+        n.style.animation='notifSlideOut 0.2s ease forwards';
+        setTimeout(()=>n.remove(),200);
+        return;
+      }
+      LIVE_UPDATE_CHECK.hardReload();
+    });
     area.appendChild(n);
     // Persistent — no auto-dismiss timeout, since this matters until acted on
     if(typeof NOTIF_HISTORY!=='undefined')NOTIF_HISTORY.add('NovOS '+version+' available','A new version is ready. Click the notification bell or refresh to update.');
   }
 };
 
+/* ═══════════════════════════════════════════════
+   DEFAULTS MIGRATION — when a shipped default value changes (wallpaper,
+   taskbar color, icon size, etc.), a returning user whose stored setting
+   still equals the OLD default gets silently upgraded to the NEW default.
+   Anyone who has actually changed the setting is left alone. Bump
+   DEFAULTS_MIGRATION_VERSION and add an entry whenever a default changes.
+═══════════════════════════════════════════════ */
+const DEFAULTS_MIGRATIONS=[
+  // {version:'5.18', changes:{wallpaper:{from:'aurora',to:'nova'}}}
+];
+function runDefaultsMigrations(){
+  const seenVersion=localStorage.getItem('novos_defaults_migrated')||'0';
+  DEFAULTS_MIGRATIONS.forEach(mig=>{
+    if(mig.version<=seenVersion)return;
+    Object.keys(mig.changes).forEach(key=>{
+      const {from,to}=mig.changes[key];
+      const current=SETTINGS.data[key];
+      const stillOnOld=current===from||current===undefined;
+      if(stillOnOld)SETTINGS.set(key,to);
+    });
+  });
+  const latest=DEFAULTS_MIGRATIONS.length?DEFAULTS_MIGRATIONS[DEFAULTS_MIGRATIONS.length-1].version:seenVersion;
+  localStorage.setItem('novos_defaults_migrated',latest);
+}
+
 const CHANGELOG={
-  CURRENT_VERSION:'5.16',
+  CURRENT_VERSION:'5.20',
   ENTRIES:[
     {
-      version:'5.16',
-      date:'2026-09-24',
+      version:'5.20',
+      date:'2026-09-27',
       items:[
-        {text:'Updated Geometry Dash file to real Geometry Dash',cat:'games'},
-        {text:'Added Kerbal Space Program',cat:'games'},
-        {text:'Added Gang Beasts',cat:'games'},
+        {text:'New icons + boot screen',cat:'os'},
+        {text:'New default wallpaper',cat:'os'},
+        {text:'New in-game overlay, activated via Shift+~',cat:'os'},
+        {text:'Removed taskbar + window bar peek zones in favor of new game overlay',cat:'os'},
+        {text:'Added new Cloud section under games',cat:'games'},
+        {text:'Added Bow Masters',cat:'games'},
+        {text:'Added Tomb of the Mask',cat:'games'},
+        {text:'Added ignore button to OS update notification',cat:'os'},
       ]
     },
   ],
@@ -1990,17 +2012,19 @@ function loadShortcuts(){
     return{
       web:[...DEFAULT_SHORTCUTS.web,...(uc.web||[])],
       games:[...DEFAULT_SHORTCUTS.games,...(uc.games||[])],
-      apps:[...DEFAULT_SHORTCUTS.Other,...(uc.apps||[])]
+      apps:[...DEFAULT_SHORTCUTS.Other,...(uc.apps||[])],
+      cloud:[...DEFAULT_SHORTCUTS.cloud,...(uc.cloud||[])]
     };
   }catch{
-    return{web:[...DEFAULT_SHORTCUTS.web],games:[...DEFAULT_SHORTCUTS.games],apps:[...DEFAULT_SHORTCUTS.Other]};
+    return{web:[...DEFAULT_SHORTCUTS.web],games:[...DEFAULT_SHORTCUTS.games],apps:[...DEFAULT_SHORTCUTS.Other],cloud:[...DEFAULT_SHORTCUTS.cloud]};
   }
 }
 function saveShortcuts(sc){
   const c={
     web:sc.web.filter(i=>!i.isDefault),
     games:sc.games.filter(i=>!i.isDefault),
-    apps:sc.apps.filter(i=>!i.isDefault)
+    apps:sc.apps.filter(i=>!i.isDefault),
+    cloud:(sc.cloud||[]).filter(i=>!i.isDefault)
   };
   localStorage.setItem('novos_shortcuts',JSON.stringify(c));
 }
@@ -2192,16 +2216,17 @@ const WM={
       '__compiler__':{c:'#7c6dfa',s:`<polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/><line x1="13" y1="4" x2="11" y2="20"/>`},
       '__compiler__NOVCOMP':{c:'#7c6dfa',s:`<polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/><line x1="13" y1="4" x2="11" y2="20"/>`},
       '__tm__':{c:'#4ade80',s:`<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M7 8v4M11 6v6M15 9v3M19 7v5"/>`},
-      '__explorer__':{c:'#fbbf24',s:`<path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>`},
-      '__settings__':{c:'#94a3b8',s:`<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>`},
-      '__library__':{c:'#a78bfa',s:`<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>`},
-      '__music__':{c:'#f472b6',s:`<path d="M4 15v-3a8 8 0 0116 0v3"/><rect x="2.5" y="14" width="5" height="7" rx="2"/><rect x="16.5" y="14" width="5" height="7" rx="2"/>`},
-      '__recyclebin__':{c:'#94a3b8',s:`<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>`},
-      '__cloak__':{c:'#a78bfa',s:`<path d="M12 2 L5 6 L4 20 L12 17 L20 20 L19 6 Z"/><path d="M12 2 L12 17"/>`},
+      '__explorer__':{c:'#fbbf24',f:1,s:`<path d="M3 6a2 2 0 012-2h4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>`},
+      '__settings__':{c:'#94a3b8',f:1,s:`<path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 5v-2l-2.2-.7a7 7 0 00-.6-1.4l1.1-2-1.4-1.4-2 1.1a7 7 0 00-1.4-.6L14 3h-4l-.7 2.2a7 7 0 00-1.4.6l-2-1.1-1.4 1.4 1.1 2a7 7 0 00-.6 1.4L3 11v2l2.2.7c.1.5.3 1 .6 1.4l-1.1 2 1.4 1.4 2-1.1c.4.3.9.5 1.4.6L10 21h4l.7-2.2c.5-.1 1-.3 1.4-.6l2 1.1 1.4-1.4-1.1-2c.3-.4.5-.9.6-1.4z"/>`},
+      '__library__':{c:'#a78bfa',f:1,s:`<path d="M4.5 4.5h5v5h-5zM14.5 4.5h5v5h-5zM14.5 14.5h5v5h-5zM4.5 14.5h5v5h-5z" stroke-width="2.4"/>`},
+      '__music__':{c:'#f472b6',f:1,s:`<path d="M9 3v11.3A3.5 3.5 0 108 17V7.6l9-1.8v6.5A3.5 3.5 0 1018 15V3z" stroke-width="1.4"/>`},
+      '__recyclebin__':{c:'#94a3b8',f:1,s:`<path d="M9.5 3.5h5l.8 1.8h4.7v1.6H4V5.3h4.7zM5.8 9.5h12.4l-1.1 10.3a1.8 1.8 0 01-1.8 1.7H8.7a1.8 1.8 0 01-1.8-1.7z"/>`},
+      '__cloak__':{c:'#f1f5f9',f:1,s:`<path d="M3.5 11h17l-.5 1H4zM6.5 11l1.4-5.6a1.6 1.6 0 011.5-1.2h5.2a1.6 1.6 0 011.5 1.2L17.5 11z" stroke-width="1.6"/><circle cx="7.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><circle cx="16.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><path d="M10.7 16.6h2.6" stroke-width="1.9"/>`},
     };
     const m=map[url];
     if(!m)return null;
-    return `<div class="wnd-icon" style="display:flex;align-items:center;justify-content:center;color:${m.c}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">${m.s}</svg></div>`;
+    const _fill=m.f?'currentColor':'none';
+    return `<div class="wnd-icon" style="display:flex;align-items:center;justify-content:center;color:${m.c}"><svg viewBox="0 0 24 24" fill="${_fill}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">${m.s}</svg></div>`;
   },
 
   open(app){
@@ -2357,9 +2382,15 @@ const WM={
   // freshly-opened windows). All windows keep normal paint/visibility state;
   // z-index alone governs stacking now.
   _throttleBackground(focusedId){
+    const maxId=Object.keys(this.windows).find(wid=>this.windows[wid].maximized&&!this.windows[wid].minimized);
     Object.keys(this.windows).forEach(wid=>{
-      const f=document.getElementById('frm_'+wid);
-      if(f){f.style.opacity='';f.style.pointerEvents='';f.style.visibility='';f.style.contentVisibility='';f.style.willChange='';}
+      const f=document.getElementById('frm_'+wid)||document.getElementById('hvFrm_'+wid);
+      if(!f)return;
+      f.style.opacity='';f.style.pointerEvents='';f.style.willChange='';
+      const w=this.windows[wid];
+      // While a game is fullscreened, stop rendering every other window's content
+      if(maxId&&wid!==maxId&&!w.minimized){f.style.visibility='hidden';f.style.contentVisibility='hidden';}
+      else if(!w.minimized){f.style.visibility='';f.style.contentVisibility='';}
     });
     this._updateGlassLoad();
   },
@@ -2459,6 +2490,10 @@ const WM={
     const el=document.getElementById(id);if(!el)return;
     this.windows[id].maximized=false;
     el.classList.remove('maximized');
+    Object.keys(this.windows).forEach(wid=>{
+      const f=document.getElementById('frm_'+wid)||document.getElementById('hvFrm_'+wid);
+      if(f&&!this.windows[wid].minimized){f.style.visibility='';f.style.contentVisibility='';}
+    });
     if(this._zCounter<100000)this._zCounter=100000;
     el.style.zIndex=++this._zCounter;
     const p=this.windows[id].prevRect;
@@ -2485,6 +2520,7 @@ const WM={
   // sandboxes us out of), there's no JS-reachable way to mute just that
   // iframe's audio — we notify the user honestly instead of pretending it worked.
   peekTitlebar(id,show){
+    return;
     const tb=document.getElementById('tb_'+id);if(!tb)return;
     if(!(this.windows[id]&&this.windows[id].maximized))return;
     clearTimeout(this._peekLeaveTimers&&this._peekLeaveTimers[id]);
@@ -2822,11 +2858,15 @@ const TB={
     if(typeof WIDGETS!=='undefined')WIDGETS.setPaused(hasMax&&SETTINGS.get('disableWidgetsInGame')!==false);
   },
   _topPeekTimeout:null,
-  peekShow(){if(!this._hidden)return;clearTimeout(this._peekTimeout);document.getElementById('taskbar').classList.remove('taskbar-hidden');},
-  peekHide(){if(!this._hidden)return;clearTimeout(this._peekTimeout);this._peekTimeout=setTimeout(()=>{if(this._hidden)document.getElementById('taskbar').classList.add('taskbar-hidden');},400);},
+  peekShow(){},
+  peekHide(){},
   topPeekShow(){
-    // Disabled: the OS top bar must never appear over a fullscreened window.
-    // Windows now reveal their own titlebar via wnd-peek-zone instead.
+    return;
+    // The OS top bar itself stays dead space while a game overlay exists;
+    // hovering top/bottom of the screen now surfaces the taskbar (which
+    // makes itself visible on top of a fullscreened game) instead of the
+    // old top-bar peek. See TB.peekShow/peekHide, which already handle
+    // showing the taskbar over a maximized window on hover.
     return;
   },
   _tbIconHtml(app){
@@ -2842,26 +2882,15 @@ const TB={
       },
       '__explorer__':{
         color:'#fbbf24',
-        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-          <path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
-          <line x1="3" y1="12" x2="21" y2="12" stroke-opacity="0.45"/>
-        </svg>`
+        svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" width="24" height="24"><path d="M3 6a2 2 0 012-2h4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>`
       },
       '__settings__':{
         color:'#94a3b8',
-        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-          <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
-          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
-        </svg>`
+        svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" width="24" height="24"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 5v-2l-2.2-.7a7 7 0 00-.6-1.4l1.1-2-1.4-1.4-2 1.1a7 7 0 00-1.4-.6L14 3h-4l-.7 2.2a7 7 0 00-1.4.6l-2-1.1-1.4 1.4 1.1 2a7 7 0 00-.6 1.4L3 11v2l2.2.7c.1.5.3 1 .6 1.4l-1.1 2 1.4 1.4 2-1.1c.4.3.9.5 1.4.6L10 21h4l.7-2.2c.5-.1 1-.3 1.4-.6l2 1.1 1.4-1.4-1.1-2c.3-.4.5-.9.6-1.4z"/></svg>`
       },
       '__library__':{
         color:'#a78bfa',
-        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-          <rect x="3" y="3" width="7" height="7" rx="1.5"/>
-          <rect x="14" y="3" width="7" height="7" rx="1.5"/>
-          <rect x="14" y="14" width="7" height="7" rx="1.5"/>
-          <rect x="3" y="14" width="7" height="7" rx="1.5"/>
-        </svg>`
+        svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" width="24" height="24"><path d="M4.5 4.5h5v5h-5zM14.5 4.5h5v5h-5zM14.5 14.5h5v5h-5zM4.5 14.5h5v5h-5z"/></svg>`
       },
       '__folder__':{
         color:'#fbbf24',
@@ -2910,11 +2939,7 @@ const TB={
       },
       '__music__':{
         color:'#f472b6',
-        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-          <path d="M4 15v-3a8 8 0 0116 0v3"/>
-          <rect x="2.5" y="14" width="5" height="7" rx="2"/>
-          <rect x="16.5" y="14" width="5" height="7" rx="2"/>
-        </svg>`
+        svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" width="24" height="24"><path d="M9 3v11.3A3.5 3.5 0 108 17V7.6l9-1.8v6.5A3.5 3.5 0 1018 15V3z"/></svg>`
       },
       '__compiler__NOVCOMP':{
         color:'#7c6dfa',
@@ -2924,15 +2949,11 @@ const TB={
       },
       '__recyclebin__':{
         color:'#94a3b8',
-        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>
-        </svg>`
+        svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" width="24" height="24"><path d="M9.5 3.5h5l.8 1.8h4.7v1.6H4V5.3h4.7zM5.8 9.5h12.4l-1.1 10.3a1.8 1.8 0 01-1.8 1.7H8.7a1.8 1.8 0 01-1.8-1.7z"/></svg>`
       },
       '__cloak__':{
-        color:'#a78bfa',
-        svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-          <path d="M12 2 L5 6 L4 20 L12 17 L20 20 L19 6 Z"/><path d="M12 2 L12 17"/>
-        </svg>`
+        color:'#f1f5f9',
+        svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" width="24" height="24"><path d="M3.5 11h17l-.5 1H4zM6.5 11l1.4-5.6a1.6 1.6 0 011.5-1.2h5.2a1.6 1.6 0 011.5 1.2L17.5 11z"/><circle cx="7.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><circle cx="16.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><path d="M10.7 16.6h2.6" stroke-width="1.9"/></svg>`
       },
     };
 
@@ -3239,6 +3260,17 @@ const CTX={
 ═══════════════════════════════════════════════ */
 
 
+const CLOUDMOON={
+  showDisclaimer(){
+    if(localStorage.getItem('novos_cloudmoon_hide')==='1')return;
+    document.getElementById('cloudMoonModal').classList.add('open');
+  },
+  dismiss(){
+    localStorage.setItem('novos_cloudmoon_hide','1');
+    document.getElementById('cloudMoonModal').classList.remove('open');
+  }
+};
+
 const PVZ={
   tryLaunch(name){
     if(localStorage.getItem('novos_pvz')==='1')
@@ -3266,6 +3298,7 @@ const OS={
 
   init(){
     SETTINGS.load();
+    runDefaultsMigrations();
     KEYBINDS.load();
     this.shortcuts=loadShortcuts();
     this.desktopItems=loadDesktopItems();
@@ -3307,6 +3340,7 @@ const OS={
     document.getElementById('iconSizeSlider').value=sz;
     document.getElementById('iconSizeVal').textContent=sz;
     this.applyIconSize(sz);
+    document.getElementById('iconSizeSlider').min=76;
 
     this.refreshWelcomeShortcutLine();
     if(!localStorage.getItem('novos_welcomed')){
@@ -3371,6 +3405,7 @@ const OS={
     document.body.classList.add('taskbar-pos-'+(SETTINGS.get('taskbarPosition')||'bottom'));
     document.documentElement.style.setProperty('--taskbar-bg-color',SETTINGS.get('taskbarColor')||'8,9,14');
     document.documentElement.style.setProperty('--taskbar-opacity',(SETTINGS.get('taskbarOpacity')??0.86).toString());
+    document.documentElement.style.setProperty('--taskbar-blur',(SETTINGS.get('taskbarBlur')??40)+'px');
     document.documentElement.style.setProperty('--widget-bg-color',SETTINGS.get('widgetColor')||'13,15,22');
     document.documentElement.style.setProperty('--widget-opacity',(SETTINGS.get('widgetOpacity')??0.82).toString());
     document.documentElement.style.setProperty('--topbar-peek-size',(SETTINGS.get('topBarPeekSize')??44)+'px');
@@ -3380,6 +3415,8 @@ const OS={
     wEl.className='';wEl.classList.add('wp-'+wp);
     if(wp==='custom'){
       const cw=SETTINGS.get('customWallpaper');
+      const fit=SETTINGS.get('wallpaperFit')||'fill';
+      wEl.classList.add('fit-'+fit);
       if(cw){
         // Remove old GIF element if any
         const oldGif=document.getElementById('wallpaperGif');
@@ -3390,10 +3427,12 @@ const OS={
           let gifEl=document.createElement('img');
           gifEl.id='wallpaperGif';
           gifEl.src=cw;
-          gifEl.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none';
+          const gifFit=fit==='fit'?'contain':(fit==='stretch'?'fill':(fit==='tile'?'none':'cover'));
+          gifEl.style.cssText=`position:absolute;inset:0;width:100%;height:100%;object-fit:${gifFit};z-index:0;pointer-events:none`;
+          if(fit==='tile'){gifEl.style.width='auto';gifEl.style.height='auto';}
           wEl.appendChild(gifEl);
         } else {
-          wEl.style.backgroundImage=`url(${cw})`;wEl.style.backgroundSize='cover';wEl.style.backgroundPosition='center';
+          wEl.style.backgroundImage=`url(${cw})`;
         }
       }
     }else{
@@ -3427,6 +3466,7 @@ const OS={
   },
 
   setWallpaper(name){SETTINGS.set('wallpaper',name);this.applySettings();},
+  setWallpaperFit(fit){SETTINGS.set('wallpaperFit',fit);this.applySettings();},
 
   openWallpaperPicker(){
     this.closeSettings();
@@ -3470,6 +3510,10 @@ const OS={
     SETTINGS.set('taskbarColor',rgb);
     document.documentElement.style.setProperty('--taskbar-bg-color',rgb);
   },
+  setTaskbarBlur(v){
+    v=+v;SETTINGS.set('taskbarBlur',v);
+    document.documentElement.style.setProperty('--taskbar-blur',v+'px');
+  },
   setTaskbarColorHex(hex){
     const rgb=this._hexToRgb(hex);
     if(rgb)this.setTaskbarColor(rgb);
@@ -3492,9 +3536,9 @@ const OS={
     return m?`${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)}`:null;
   },
 
-  setAutoFullscreenGames(on){
-    SETTINGS.set('autoFullscreenGames',on);
-  },
+  // Auto-fullscreen for games is no longer optional — the windowed-launch
+  // toggle has been removed now that NovOverlay (Shift+`) covers window
+  // management (minimize, close, exit fullscreen) for fullscreened games.
   setWin11Taskbar(on){
     SETTINGS.set('win11Taskbar',on);
     document.body.classList.toggle('win11-taskbar',on);
@@ -3547,15 +3591,15 @@ const OS={
 
     // System icon SVGs for desktop — GNOME-style flat colored icons
     const systemSVGs={
-      '__library__':{color:'#a78bfa',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>`},
+      '__library__':{color:'#a78bfa',svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" width="30" height="30"><path d="M4.5 4.5h5v5h-5zM14.5 4.5h5v5h-5zM14.5 14.5h5v5h-5zM4.5 14.5h5v5h-5z"/></svg>`},
       '__compiler__NOVCOMP':{color:'#7c6dfa',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/><line x1="13" y1="4" x2="11" y2="20"/></svg>`},
-      '__explorer__':{color:'#fbbf24',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><line x1="3" y1="12" x2="21" y2="12" opacity="0.4"/></svg>`},
-      '__settings__':{color:'#94a3b8',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>`},
+      '__explorer__':{color:'#fbbf24',svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" width="30" height="30"><path d="M3 6a2 2 0 012-2h4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>`},
+      '__settings__':{color:'#94a3b8',svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" width="30" height="30"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 5v-2l-2.2-.7a7 7 0 00-.6-1.4l1.1-2-1.4-1.4-2 1.1a7 7 0 00-1.4-.6L14 3h-4l-.7 2.2a7 7 0 00-1.4.6l-2-1.1-1.4 1.4 1.1 2a7 7 0 00-.6 1.4L3 11v2l2.2.7c.1.5.3 1 .6 1.4l-1.1 2 1.4 1.4 2-1.1c.4.3.9.5 1.4.6L10 21h4l.7-2.2c.5-.1 1-.3 1.4-.6l2 1.1 1.4-1.4-1.1-2c.3-.4.5-.9.6-1.4z"/></svg>`},
       '__browser__':{color:'#4d9eff',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="12" cy="12" r="9.5"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2c2.6 2.6 4 6.3 4 10s-1.4 7.4-4 10c-2.6-2.6-4-6.3-4-10s1.4-7.4 4-10z"/></svg>`},
       '__folder__':{color:'#fbbf24',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>`},
-      '__music__':{color:'#f472b6',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M4 15v-3a8 8 0 0116 0v3"/><rect x="2.5" y="14" width="5" height="7" rx="2"/><rect x="16.5" y="14" width="5" height="7" rx="2"/></svg>`},
-      '__recyclebin__':{color:'#94a3b8',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`},
-      '__cloak__':{color:'#a78bfa',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M12 2 L5 6 L4 20 L12 17 L20 20 L19 6 Z"/><path d="M12 2 L12 17"/></svg>`},
+      '__music__':{color:'#f472b6',svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" width="30" height="30"><path d="M9 3v11.3A3.5 3.5 0 108 17V7.6l9-1.8v6.5A3.5 3.5 0 1018 15V3z"/></svg>`},
+      '__recyclebin__':{color:'#94a3b8',svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" width="30" height="30"><path d="M9.5 3.5h5l.8 1.8h4.7v1.6H4V5.3h4.7zM5.8 9.5h12.4l-1.1 10.3a1.8 1.8 0 01-1.8 1.7H8.7a1.8 1.8 0 01-1.8-1.7z"/></svg>`},
+      '__cloak__':{color:'#f1f5f9',svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" width="30" height="30"><path d="M3.5 11h17l-.5 1H4zM6.5 11l1.4-5.6a1.6 1.6 0 011.5-1.2h5.2a1.6 1.6 0 011.5 1.2L17.5 11z"/><circle cx="7.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><circle cx="16.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><path d="M10.7 16.6h2.6" stroke-width="1.9"/></svg>`},
     };
 
     this.desktopItems.forEach((item)=>{
@@ -4013,6 +4057,7 @@ const OS={
 
 /* ─── Launch flow ───────────────────────────────────────────── */
   launch(app){
+    if(app.isCloudPlaceholder){CLOUDMOON.showDisclaimer();return;}
     if(app.notAvailable){this.notify('Not Available','This game is not available right now.');return;}
     if(app.openInNewTab&&app.url&&!app.url.startsWith('__')){window.open(app.url,'_blank');return;}
     // Minecraft 1.12 OFFLINE: hardcoded special case, using the exact same
@@ -4099,7 +4144,7 @@ const OS={
     if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
     const id=WM.open(app);
     // Auto-fullscreen: games launch straight into fullscreen unless disabled in Settings.
-    if(id&&this._isGameShortcut(app)&&SETTINGS.get('autoFullscreenGames')!==false){
+    if(id&&this._isGameShortcut(app)){
       setTimeout(()=>{
         if(WM.windows[id]&&!WM.windows[id].maximized){
           WM.maximize(id);
@@ -4181,7 +4226,7 @@ const OS={
     el.innerHTML=`
       <div class="wnd-body" style="display:flex;flex-direction:column;overflow:hidden">
         <div id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" style="cursor:move;height:34px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)">
-          <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#94a3b8;flex-shrink:0;pointer-events:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/></svg></div>
+          <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#94a3b8;flex-shrink:0;pointer-events:none"><svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M9 3h6l1 2h5v2H3V5h5zM5 9h14l-1.2 11a2 2 0 01-2 1.8H8.2a2 2 0 01-2-1.8z"/></svg></div>
           <div style="flex:1;font-size:12px;font-weight:500;color:var(--os-text);pointer-events:none">Recycle Bin</div>
           <button class="wnd-ctrl-btn" onclick="event.stopPropagation();RECYCLEBIN_UI.emptyBin('${id}')" title="Empty Bin"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m5 0V4a1 1 0 011-1h2a1 1 0 011 1v2"/></svg></button>
           <div class="wnd-ctrl-btns">
@@ -4297,7 +4342,7 @@ const OS={
             <div class="nm-side" id="nmSide_${id}"></div>
             <div class="nm-main">
               <div class="nm-main-toolbar" id="nmTb_${id}" onmousedown="WM.startDrag('${id}',event)" style="cursor:move">
-                <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#f472b6;flex-shrink:0;pointer-events:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M9 18V5l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
+                <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#f472b6;flex-shrink:0;pointer-events:none"><svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M9 3v11.3A3.5 3.5 0 108 17V7.6l9-1.8v6.5A3.5 3.5 0 1018 15V3z"/></svg></div>
                 <div class="nm-view-title" id="nmViewTitle_${id}" style="pointer-events:none">Your Library</div>
                 <div class="nm-layout-toggle">
                   <button class="nm-layout-btn" id="nmLayoutList_${id}" onclick="NOVMUSIC.setLayout('${id}','list')" title="List view">
@@ -4481,7 +4526,7 @@ const OS={
       <div class="wnd-body" style="overflow:hidden;position:relative">
         <div class="stlib-root">
           <div class="stlib-topnav" id="tb_${id}" onmousedown="WM.startDrag('${id}',event)">
-            <div class="stlib-brand" style="pointer-events:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>Library</div>
+            <div class="stlib-brand" style="pointer-events:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8v8H3zM13 3h8v8h-8zM13 13h8v8h-8zM3 13h8v8H3z"/></svg>Library</div>
             <div class="stlib-navtabs" onmousedown="event.stopPropagation()">
               <button class="stlib-navtab active" id="stlibNav_games_${id}" onclick="OS.stlibNavSet('${id}','games')">Games</button>
               <button class="stlib-navtab" id="stlibNav_web_${id}" onclick="OS.stlibNavSet('${id}','web')">Apps</button>
@@ -4514,10 +4559,17 @@ const OS={
     if(!WM.windows[wid])return;
     WM.windows[wid].libTab2=tab;
     WM.windows[wid].libFeatIdx=0;
+    WM.windows[wid].libGameSub=(tab==='games')?'games':WM.windows[wid].libGameSub;
     ['games','web','apps'].forEach(t=>{
       const b=document.getElementById('stlibNav_'+t+'_'+wid);
       if(b)b.classList.toggle('active',t===tab);
     });
+    this.stlibCloseDetail(wid);
+    this.stlibRenderBody(wid);
+  },
+  stlibGameSubSet(wid,sub){
+    if(!WM.windows[wid])return;
+    WM.windows[wid].libGameSub=sub;
     this.stlibCloseDetail(wid);
     this.stlibRenderBody(wid);
   },
@@ -4532,9 +4584,11 @@ const OS={
     const body=document.getElementById('stlibBody_'+wid);if(!body)return;
     const w=WM.windows[wid];if(!w)return;
     const tab=w.libTab2||'games';
+    const gameSub=w.libGameSub||'games';
     const q=(w.libQuery||'').toLowerCase();
-    const list=(this.shortcuts[tab]||[]).filter(a=>!q||a.name.toLowerCase().includes(q));
-    const isGames=tab==='games';
+    const effectiveTab=(tab==='games'&&gameSub==='cloud')?'cloud':tab;
+    const list=(this.shortcuts[effectiveTab]||[]).filter(a=>!q||a.name.toLowerCase().includes(q));
+    const isGames=tab==='games'&&gameSub==='games';
 
     if(!list.length){
       body.innerHTML=`<div class="stlib-emptynote">Nothing here yet${q?' matching "'+q+'"':''}.</div>`;
@@ -4588,8 +4642,14 @@ const OS={
       </div>`;
     })():'';
 
+    const gameSubButtons=tab==='games'?`
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="stlib-navtab${gameSub==='games'?' active':''}" onclick="OS.stlibGameSubSet('${wid}','games')">Games</button>
+          <button class="stlib-navtab${gameSub==='cloud'?' active':''}" onclick="OS.stlibGameSubSet('${wid}','cloud')">Cloud</button>
+        </div>`:'';
     const gridHtml=`<div class="stlib-section2">
-        <div class="stlib-section2-head"><div class="stlib-section2-title">${isGames?'All Games':(tab==='web'?'All Apps':'All Other Shortcuts')}</div><div class="stlib-section2-sub">${list.length} total</div></div>
+        <div class="stlib-section2-head"><div class="stlib-section2-title">${isGames?'All Games':(effectiveTab==='cloud'?'Cloud':(tab==='web'?'All Apps':'All Other Shortcuts'))}</div><div class="stlib-section2-sub">${list.length} total</div></div>
+        ${gameSubButtons}
         <div class="stlib-fullgrid">
           ${list.map(a=>{
             const img=this._gridImg(a)||`https://www.google.com/s2/favicons?sz=256&domain=${a.url}`;
@@ -5015,7 +5075,7 @@ const OS={
       </style>
       <div class="wnd-body" style="overflow:hidden;display:flex;flex-direction:column">
         <div id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" style="cursor:move;height:34px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)">
-          <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#94a3b8;flex-shrink:0;pointer-events:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+          <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#94a3b8;flex-shrink:0;pointer-events:none"><svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 5v-2l-2.2-.7a7 7 0 00-.6-1.4l1.1-2-1.4-1.4-2 1.1a7 7 0 00-1.4-.6L14 3h-4l-.7 2.2a7 7 0 00-1.4.6l-2-1.1-1.4 1.4 1.1 2a7 7 0 00-.6 1.4L3 11v2l2.2.7c.1.5.3 1 .6 1.4l-1.1 2 1.4 1.4 2-1.1c.4.3.9.5 1.4.6L10 21h4l.7-2.2c.5-.1 1-.3 1.4-.6l2 1.1 1.4-1.4-1.1-2c.3-.4.5-.9.6-1.4z"/></svg></div>
           <div style="flex:1;font-size:12px;font-weight:500;color:var(--os-text);pointer-events:none">Settings</div>
           <div class="wnd-ctrl-btns">
             <button class="wnd-ctrl-btn" onclick="event.stopPropagation();WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
@@ -5080,6 +5140,7 @@ const OS={
               <div class="sp2-card">
                 <div class="sp2-card-header">Presets</div>
                 <div class="sp2-wp-grid" id="sp2WpGrid_${id}">
+                  <div class="sp2-wp" id="sp2wp_nova_${id}" onclick="OS.setWallpaper('nova');SP2.syncWp('${id}')" title="Nova" style="background:radial-gradient(ellipse 60% 45% at 50% 38%,rgba(124,109,250,0.4),transparent 70%),radial-gradient(circle at 78% 22%,rgba(244,122,255,0.3),transparent 55%),linear-gradient(160deg,#0a0715,#0d0e18,#08090f)"></div>
                   <div class="sp2-wp sp2-wp-aurora" id="sp2wp_aurora_${id}" onclick="OS.setWallpaper('aurora');SP2.syncWp('${id}')" title="Aurora"></div>
                   <div class="sp2-wp sp2-wp-sunset" id="sp2wp_sunset_${id}" onclick="OS.setWallpaper('sunset');SP2.syncWp('${id}')" title="Sunset"></div>
                   <div class="sp2-wp sp2-wp-ocean" id="sp2wp_ocean_${id}" onclick="OS.setWallpaper('ocean');SP2.syncWp('${id}')" title="Ocean"></div>
@@ -5134,8 +5195,7 @@ const OS={
                   <label class="toggle"><input type="checkbox" id="sp2tog-taskbarhide_${id}" ${SETTINGS.get('hideTaskbarFullscreen')?'checked':''} onchange="SETTINGS.set('hideTaskbarFullscreen',this.checked);TB.updateAutoHide()"><span class="tog-slider"></span></label>
                 </div>
                 <div class="sp2-row">
-                  <div><div class="sp2-row-label">Auto-Fullscreen Games</div><div class="sp2-row-sub">Games section shortcuts automatically enter fullscreen on launch</div></div>
-                  <label class="toggle"><input type="checkbox" id="sp2tog-autofsgames_${id}" ${SETTINGS.get('autoFullscreenGames')!==false?'checked':''} onchange="OS.setAutoFullscreenGames(this.checked)"><span class="tog-slider"></span></label>
+                  <div><div class="sp2-row-label">Fullscreen Games</div><div class="sp2-row-sub">Games always launch fullscreen — use the NovOverlay (Shift + \`) to exit, minimize, or close</div></div>
                 </div>
               </div>
               <div class="sp2-card">
@@ -5170,6 +5230,10 @@ const OS={
                 <div class="sp2-row">
                   <div><div class="sp2-row-label">Background Opacity</div><div class="sp2-row-sub">Affects only the taskbar background, not icons or text</div></div>
                   <input type="range" class="sp2-slider" min="20" max="100" value="${Math.round((SETTINGS.get('taskbarOpacity')||0.86)*100)}" oninput="SP2.setTaskbarOpacity(this.value)" style="width:130px">
+                </div>
+                <div class="sp2-row">
+                  <div><div class="sp2-row-label">Background Blur</div><div class="sp2-row-sub">How much the taskbar blurs what's behind it</div></div>
+                  <input type="range" class="sp2-slider" min="0" max="60" value="${SETTINGS.get('taskbarBlur')??40}" oninput="OS.setTaskbarBlur(this.value)" style="width:130px">
                 </div>
                 <div class="sp2-row">
                   <div><div class="sp2-row-label">Background Color</div><div class="sp2-row-sub">Tint color of the taskbar surface</div></div>
@@ -5296,6 +5360,10 @@ const OS={
                   <div class="kb-row" data-kb-row="closeCancel">
                     <div><div class="kb-row-label">Close / cancel</div><div class="kb-row-sub">Closes overlays, menus, and dialogs</div></div>
                     <button class="kb-capture-btn" onclick="KB_UI.startCapture('closeCancel','${id}')" id="kbBtn_closeCancel_${id}">${KEYBINDS.getLabel('closeCancel')}</button>
+                  </div>
+                  <div class="kb-row" data-kb-row="gameOverlay">
+                    <div><div class="kb-row-label">NovOverlay</div><div class="kb-row-sub">Open the in-game menu while a game is fullscreened</div></div>
+                    <button class="kb-capture-btn" onclick="KB_UI.startCapture('gameOverlay','${id}')" id="kbBtn_gameOverlay_${id}">${KEYBINDS.getLabel('gameOverlay')}</button>
                   </div>
                   <div class="kb-reset-row">
                     <button class="kb-reset-link" onclick="KB_UI.resetAll('${id}')">Reset all to defaults</button>
@@ -5631,6 +5699,9 @@ const OS={
   // keyboard shortcuts — customizable via KEYBINDS, defaults: Tab = launcher, Shift+Tab (hold) = window switcher
   setupKeyboard(){
     const _handleKey=e=>{
+      // The overlay hotkey is global: it must work even inside inputs and
+      // regardless of which element has focus, exactly like the launcher.
+      if(typeof NOVOVERLAY!=='undefined'&&NOVOVERLAY.handleGlobalKey(e))return;
       // Always let ALT_TAB handle its own keys first, even inside inputs
       ALT_TAB.handleKeydown(e);
       const tag=document.activeElement&&document.activeElement.tagName;
@@ -5650,6 +5721,8 @@ const OS={
     // even if some UI element (not an iframe) has stolen focus without
     // properly bubbling, since this uses the capture phase on window itself.
     window.addEventListener('keydown',e=>{
+      // Overlay open/close works from anywhere, including text fields.
+      if(typeof NOVOVERLAY!=='undefined'&&NOVOVERLAY.handleGlobalKey(e))return;
       const tag=document.activeElement&&document.activeElement.tagName;
       if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
       ALT_TAB.handleKeydown(e);
@@ -5676,7 +5749,9 @@ const OS={
         if(e.data.type==='keydown'){
           ALT_TAB.handleKeydown(synthetic);
           if(KEYBINDS.matches('launcher',synthetic)&&!synthetic.shiftKey)LAUNCHER.toggle();
-          if(KEYBINDS.matches('closeCancel',synthetic)){
+          if(typeof NOVOVERLAY!=='undefined'&&NOVOVERLAY.handleGlobalKey(synthetic)){
+            // consumed by the overlay
+          }else if(KEYBINDS.matches('closeCancel',synthetic)){
             if(ALT_TAB.open)ALT_TAB.cancel();
             else if(LAUNCHER._open)LAUNCHER.close();
           }
@@ -5703,6 +5778,8 @@ const OS={
       try{
         const doc=frm.contentDocument||frm.contentWindow&&frm.contentWindow.document;
         if(!doc)return;
+        if(doc.__novosRelayed)return;
+        doc.__novosRelayed=true;
         const s=doc.createElement('script');
         s.textContent=`
           (function(){
@@ -6052,7 +6129,21 @@ const VIEWERS={
         doc.open();
         doc.write(w.app._htmlSource);
         doc.close();
-        if(WM._onIframeLoad)setTimeout(()=>WM._onIframeLoad(frm),0);
+        // Inject the key relay after parsing settles, and again shortly after
+        // in case the game rewrites its own document during startup.
+        const inject=()=>{if(WM._onIframeLoad)WM._onIframeLoad(frm);};
+        setTimeout(inject,0);
+        setTimeout(inject,400);
+        // Same-origin fallback: listen for the hotkey directly on the frame.
+        try{
+          const fw=frm.contentWindow;
+          if(fw&&!fw.__novosKeyBound){
+            fw.__novosKeyBound=true;
+            fw.addEventListener('keydown',ev=>{
+              if(typeof NOVOVERLAY!=='undefined')NOVOVERLAY.handleGlobalKey(ev);
+            },true);
+          }
+        }catch(_){}
       }catch(e){}
     };
     if(frm.contentDocument)write();
@@ -6104,7 +6195,7 @@ const VIEWERS={
     WM.windows[id]={app:{name:file.name,url:_winUrl,icon:file._forceSysIcon?'':_gameIcon,_forceSysIcon:file._forceSysIcon,_isHtmlViewer:true,rawUrl:file._rawUrl||'',_htmlSource:htmlSource},minimized:false,maximized:false,prevRect:null};
     WM.focus(id);TB.addWindow(id,_tbAppEntry);WM.makeDraggable(id);
     if(htmlSource)VIEWERS.reinject(id);
-    if(file._isGame&&!file._forceSysIcon&&SETTINGS.get('autoFullscreenGames')!==false){
+    if(file._isGame&&!file._forceSysIcon){
       setTimeout(()=>{
         if(WM.windows[id]&&!WM.windows[id].maximized){
           WM.maximize(id);
@@ -6987,7 +7078,7 @@ const CLOAK={
     el.innerHTML=`
       <div class="wnd-body" style="display:flex;flex-direction:column;overflow:hidden">
         <div id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" style="cursor:move;height:34px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)">
-          <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#a78bfa;flex-shrink:0;pointer-events:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 2 L5 6 L4 20 L12 17 L20 20 L19 6 Z"/><path d="M12 2 L12 17"/></svg></div>
+          <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#f1f5f9;flex-shrink:0;pointer-events:none"><svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M3 11h18l-.6 1.2H3.6zM6.2 11l1.5-6.2A1.5 1.5 0 019.2 3.7h5.6a1.5 1.5 0 011.5 1.1L17.8 11z"/><circle cx="7.5" cy="17" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="16.5" cy="17" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10.7 16.6h2.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
           <div style="flex:1;font-size:12px;font-weight:500;color:var(--os-text);pointer-events:none">NovCloaker</div>
           <div class="wnd-ctrl-btns">
             <button class="wnd-ctrl-btn" onclick="event.stopPropagation();WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
@@ -7263,15 +7354,16 @@ const LAUNCHER={
   _sysLauncherIcon(url,size){
     const map={
       '__browser__':{c:'#4d9eff',s:`<circle cx="12" cy="12" r="9.5"/><line x1="2.5" y1="12" x2="21.5" y2="12"/><path d="M12 2.5c2.6 2.6 4 6 4 9.5s-1.4 6.9-4 9.5c-2.6-2.6-4-6-4-9.5s1.4-6.9 4-9.5z"/>`},
-      '__music__':{c:'#f472b6',s:`<path d="M4 15v-3a8 8 0 0116 0v3"/><rect x="2.5" y="14" width="5" height="7" rx="2"/><rect x="16.5" y="14" width="5" height="7" rx="2"/>`},
-      '__explorer__':{c:'#fbbf24',s:`<path d="M3 8a2 2 0 012-2h3.5l2 2H19a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/><line x1="3" y1="12" x2="21" y2="12" opacity="0.4"/>`},
-      '__settings__':{c:'#94a3b8',s:`<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>`},
-      '__library__':{c:'#a78bfa',s:`<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>`},
+      '__music__':{c:'#f472b6',f:1,s:`<path d="M9 3v11.3A3.5 3.5 0 108 17V7.6l9-1.8v6.5A3.5 3.5 0 1018 15V3z" stroke-width="1.4"/>`},
+      '__explorer__':{c:'#fbbf24',f:1,s:`<path d="M3 6a2 2 0 012-2h4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>`},
+      '__settings__':{c:'#94a3b8',f:1,s:`<path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 5v-2l-2.2-.7a7 7 0 00-.6-1.4l1.1-2-1.4-1.4-2 1.1a7 7 0 00-1.4-.6L14 3h-4l-.7 2.2a7 7 0 00-1.4.6l-2-1.1-1.4 1.4 1.1 2a7 7 0 00-.6 1.4L3 11v2l2.2.7c.1.5.3 1 .6 1.4l-1.1 2 1.4 1.4 2-1.1c.4.3.9.5 1.4.6L10 21h4l.7-2.2c.5-.1 1-.3 1.4-.6l2 1.1 1.4-1.4-1.1-2c.3-.4.5-.9.6-1.4z"/>`},
+      '__library__':{c:'#a78bfa',f:1,s:`<path d="M4.5 4.5h5v5h-5zM14.5 4.5h5v5h-5zM14.5 14.5h5v5h-5zM4.5 14.5h5v5h-5z" stroke-width="2.4"/>`},
+      '__cloak__':{c:'#f1f5f9',f:1,s:`<path d="M3.5 11h17l-.5 1H4zM6.5 11l1.4-5.6a1.6 1.6 0 011.5-1.2h5.2a1.6 1.6 0 011.5 1.2L17.5 11z" stroke-width="1.6"/><circle cx="7.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><circle cx="16.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><path d="M10.7 16.6h2.6" stroke-width="1.9"/>`},
       '__tm__':{c:'#4ade80',s:`<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M7 8v4M11 6v6M15 9v3M19 7v5"/>`},
     };
     const m=map[url];if(!m)return null;
     const px=size||40;const radius=Math.round(px*0.25);
-    return `<div style="width:${px}px;height:${px}px;border-radius:${radius}px;display:flex;align-items:center;justify-content:center;background:${m.c}1a;color:${m.c}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="${Math.round(px*0.6)}" height="${Math.round(px*0.6)}">${m.s}</svg></div>`;
+    return `<div style="width:${px}px;height:${px}px;border-radius:${radius}px;display:flex;align-items:center;justify-content:center;background:${m.c}1a;color:${m.c}"><svg viewBox="0 0 24 24" fill="${m.f?'currentColor':'none'}" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="${Math.round(px*0.6)}" height="${Math.round(px*0.6)}">${m.s}</svg></div>`;
   },
 
   _appCard(app){
@@ -7652,7 +7744,7 @@ const SP2={
   },
   syncWp(wid){
     const wp=SETTINGS.get('wallpaper')||'obsidian';
-    ['aurora','sunset','ocean','forest','void','plain','obsidian','graphite','charcoal','custom'].forEach(w=>{
+    ['nova','aurora','sunset','ocean','forest','void','plain','obsidian','graphite','charcoal','custom'].forEach(w=>{
       const el=document.getElementById(`sp2wp_${w}_${wid}`);
       if(el)el.classList.toggle('active',w===wp);
       if(el&&el.style.border)el.style.border=w===wp?'2px solid var(--os-accent)':'2px solid transparent';
@@ -8064,7 +8156,7 @@ window.addEventListener('load',()=>{
   if(_tb&&_slot)_slot.appendChild(_tb);
   PLAYTIME.load();
   NOVMUSIC.load();
-  OS.init();initTopBar();WIDGETS.init();SCREENSAVER.init();NOTIF_HISTORY.init();QP.init();DND.init()
+  OS.init();initTopBar();WIDGETS.init();NOTIF_HISTORY.init();QP.init();DND.init()
   // Reapply any saved NovCloaker identity to the real (top) document/tab,
   // since srcdoc reloads wipe window.top's title/favicon each time.
   try{
@@ -8398,6 +8490,578 @@ const DOCK={
    - Clicking the mini-preview commits the switch permanently (like actually
      clicking that taskbar icon).
 ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   NOVOVERLAY — Steam-style in-game overlay, opened via Shift+` while a
+   game window is fullscreened. Operates on whichever window is the
+   "current game" (the most recently maximized/focused game window).
+═══════════════════════════════════════════════ */
+const NOVOVERLAY={
+  open:false,
+  _targetWid:null,
+  _activeTab:'overview',
+
+  _pageMeta:{
+    overview:['Game Controls','Manage the running game'],
+    library:['Library','Switch to another game without leaving fullscreen'],
+    windows:['Windows','Switch to another open window'],
+    widgets:['Widgets','Stopwatch, timer, and notepad'],
+    apps:['NovOS Apps','Open a NovOS app without leaving fullscreen'],
+    settings:['Settings','Wallpaper and display options']
+  },
+
+  showTab(tab){
+    this._activeTab=tab;
+    const meta=this._pageMeta[tab]||['',''];
+    const t=document.getElementById('novOvPageTitle');
+    const s=document.getElementById('novOvPageSub');
+    if(t)t.textContent=meta[0];
+    if(s)s.textContent=meta[1];
+    ['overview','library','windows','widgets','apps','settings'].forEach(k=>{
+      document.getElementById('novOvTab_'+k)?.classList.toggle('active',k===tab);
+      document.getElementById('novOvPage_'+k)?.classList.toggle('active',k===tab);
+    });
+    if(tab!=='apps')this._closeEmbed();
+    if(tab==='library')this._renderLibrary();
+    else if(tab==='windows')this._renderWindows();
+    else if(tab==='widgets')this._renderWidgets();
+    else if(tab==='apps')this._renderApps();
+    else if(tab==='settings')this._renderSettings();
+  },
+
+  // Single entry point used by every keyboard path (document, capture, iframe
+  // relay) — identical to how the launcher hotkey is routed. Returns true if
+  // the event was consumed.
+  handleGlobalKey(e){
+    const key=(e.key||'');
+    const isBacktickShift=e.shiftKey&&(key==='~'||key==='`'||e.code==='Backquote');
+    if(isBacktickShift||KEYBINDS.matches('gameOverlay',e)){
+      if(e.preventDefault)e.preventDefault();
+      if(e.stopPropagation)e.stopPropagation();
+      this.toggle();
+      return true;
+    }
+    if(this.open&&(key==='Escape'||KEYBINDS.matches('closeCancel',e))){
+      if(e.preventDefault)e.preventDefault();
+      this.close();
+      return true;
+    }
+    return false;
+  },
+
+  _renderApps(){
+    const body=document.getElementById('novOvAppsBody');if(!body)return;
+    const host=document.getElementById('novOvEmbedHost');
+    if(host&&host.style.display!=='none')return; // an embedded app is open
+    body.style.display='';
+    const btn=(label,fn,svg)=>`<button class="nov-ov-btn" onclick="${fn}">${svg}${label}</button>`;
+    const ic=p=>`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">${p}</svg>`;
+    body.innerHTML=`<div class="nov-ov-grid">
+      ${btn('Show Taskbar',"NOVOVERLAY.showTaskbar()",ic('<path d="M3 17h18v3H3z"/><rect x="5" y="4" width="14" height="10" rx="2.4"/>'))}
+      ${btn('App Library',"NOVOVERLAY.embedApp('library')",ic('<path d="M4.5 4.5h5v5h-5zM14.5 4.5h5v5h-5zM14.5 14.5h5v5h-5zM4.5 14.5h5v5h-5z" stroke-width="2.4"/>'))}
+      ${btn('File Explorer',"NOVOVERLAY.embedApp('explorer')",ic('<path d="M3 6a2 2 0 012-2h4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>'))}
+      ${btn('Task Manager',"NOVOVERLAY.embedApp('tm')",ic('<rect x="3" y="4" width="18" height="13" rx="2.4"/><path d="M8 20h8M7 8v5M11 7v6M15 9v4"/>'))}
+      ${btn('NovMusic',"NOVOVERLAY.embedApp('music')",ic('<path d="M9 3v11.3A3.5 3.5 0 108 17V7.6l9-1.8v6.5A3.5 3.5 0 1018 15V3z" stroke-width="1.4"/>'))}
+    </div>`;
+  },
+
+  _embedKey:null,
+  _closeEmbed(){
+    const host=document.getElementById('novOvEmbedHost');
+    const body=document.getElementById('novOvAppsBody');
+    if(host){host.innerHTML='';host.style.display='none';}
+    if(body)body.style.display='';
+    this._embedKey=null;
+  },
+
+  // Renders the app INSIDE the overlay (never as a separate OS window),
+  // reusing the same builders the App Library / Explorer use.
+  embedApp(key){
+    const host=document.getElementById('novOvEmbedHost');
+    const body=document.getElementById('novOvAppsBody');
+    if(!host||!body)return;
+    body.style.display='none';
+    host.style.display='block';
+    host.style.position='absolute';host.style.inset='0';
+    this._embedKey=key;
+    const titles={library:'App Library',explorer:'File Explorer',tm:'Task Manager',music:'NovMusic'};
+    const eid='novemb_'+key;
+    host.innerHTML=`<div class="nov-ov-embedwrap">
+      <div class="nov-ov-embedbar">
+        <button class="nov-ov-embedback" onclick="NOVOVERLAY._closeEmbed();NOVOVERLAY._renderApps()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Back
+        </button>
+        <div class="nov-ov-embedtitle">${titles[key]||''}</div>
+      </div>
+      <div class="nov-ov-embedbody" id="${eid}"></div>
+    </div>`;
+    const mount=document.getElementById(eid);
+    if(key==='library')this._mountLibrary(mount);
+    else if(key==='explorer')this._mountExplorer(mount);
+    else if(key==='tm')this._mountTM(mount);
+    else if(key==='music')this._mountMusic(mount);
+    this._grabFocus();
+  },
+
+  // App Library: a compact searchable grid, launching games in place.
+  _mountLibrary(mount){
+    mount.innerHTML=`<div style="height:100%;overflow-y:auto;padding:18px 30px">
+      <input type="text" class="nov-ov-libsearch" id="novEmbLibSearch" placeholder="Search…" autocomplete="off">
+      <div class="nov-ov-libgrid" id="novEmbLibGrid"></div></div>`;
+    const draw=(q)=>{
+      const all=[...(OS.shortcuts.games||[]),...(OS.shortcuts.web||[]),...(OS.shortcuts.apps||[])];
+      const lq=(q||'').toLowerCase();
+      const list=all.filter(a=>!lq||a.name.toLowerCase().includes(lq));
+      const grid=document.getElementById('novEmbLibGrid');if(!grid)return;
+      grid.innerHTML=list.map(a=>{
+        const img=OS._gridImg(a)||`https://www.google.com/s2/favicons?sz=256&domain=${a.url}`;
+        const esc=JSON.stringify(a).replace(/"/g,'&quot;');
+        return `<div class="nov-ov-libcard" onclick="NOVOVERLAY.launchInOverlay(${esc})"><img class="nov-ov-libimg" src="${img}" onerror="this.style.opacity=0" alt=""><div class="nov-ov-libname">${a.name}</div></div>`;
+      }).join('')||'<div style="color:var(--os-muted);font-size:12.5px">Nothing found.</div>';
+    };
+    draw('');
+    // only the grid is redrawn on input, so the search box keeps focus
+    document.getElementById('novEmbLibSearch').addEventListener('input',e=>draw(e.target.value));
+  },
+
+  _mountExplorer(mount){
+    const wid='novEmbFE';
+    mount.innerHTML=`<div class="fe-layout" style="height:100%">
+      <div class="fe-sidebar">
+        <div class="fe-sidebar-label">Files</div>
+        ${['all:All Files','images:Images','videos:Videos','audio:Audio','html:HTML','docs:Documents','other:Other'].map(s=>{const [k,l]=s.split(':');return `<div class="fe-sidebar-item${k==='all'?' active':''}" id="feNav_${k}" onclick="NOVOVERLAY._feNav('${k}')">${l}</div>`;}).join('')}
+      </div>
+      <div class="fe-main">
+        <div class="fe-toolbar">
+          <input type="text" class="fe-search-mini" id="feSearch_${wid}" placeholder="Search" autocomplete="off" style="width:220px">
+        </div>
+        <div class="fe-content" id="feContent_${wid}"></div>
+        <div class="fe-statusbar"><span class="fe-status-text" id="feStatus_${wid}">0 items</span></div>
+      </div>
+    </div>`;
+    FEW._state[wid]={filter:'all',view:'grid',files:FE.load(),query:''};
+    FEW.render(wid);
+    document.getElementById('feSearch_'+wid).addEventListener('input',e=>{
+      FEW._state[wid].query=e.target.value;FEW.render(wid);
+    });
+  },
+  _feNav(k){
+    const wid='novEmbFE';const st=FEW._state[wid];if(!st)return;
+    st.filter=k;
+    ['all','images','videos','audio','html','docs','other'].forEach(f=>document.getElementById('feNav_'+f)?.classList.toggle('active',f===k));
+    FEW.render(wid);
+  },
+
+  _mountTM(mount){
+    const draw=()=>{
+      const wins=Object.entries(WM.windows).filter(([wid,w])=>w&&w.app);
+      mount.innerHTML=`<div class="nov-ov-tmlist">${wins.map(([wid,w])=>{
+        const icon=w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`;
+        return `<div class="nov-ov-taskrow" style="cursor:default;margin-bottom:6px">
+          <img src="${icon}" style="width:24px;height:24px;border-radius:6px;object-fit:cover" onerror="this.style.opacity=0" alt="">
+          <div class="nov-ov-taskname">${w.app.name}</div>
+          <div class="nov-ov-taskstat">${w.minimized?'Minimized':'Running'}</div>
+          <button class="nov-ov-wbtn" style="flex:none;padding:0 12px;color:var(--os-red)" onclick="WM.closeWindow('${wid}');NOVOVERLAY._embedRefreshTM()">End</button>
+        </div>`;}).join('')||'<div style="color:var(--os-muted);font-size:12.5px">No running processes.</div>'}</div>`;
+    };
+    this._embedRefreshTM=()=>setTimeout(()=>{const m=document.getElementById('novemb_tm');if(m)this._mountTM(m);},250);
+    draw();
+  },
+
+  // Music runs in the shared NOVMUSIC engine, controlled from the overlay.
+  _mountMusic(mount){
+    const draw=()=>{
+      const t=NOVMUSIC.currentTrack();const a=NOVMUSIC.audio;
+      const playing=a&&!a.paused;
+      mount.innerHTML=`<div style="height:100%;overflow-y:auto;padding:18px 30px">
+        <div class="nov-ov-widget" style="max-width:520px;margin-bottom:16px">
+          <div class="nov-ov-wtitle">Now Playing</div>
+          <div style="font-size:16px;font-weight:600;color:var(--os-text)">${t?t.name:'Nothing playing'}</div>
+          <div style="font-size:12px;color:var(--os-muted);margin-top:2px">${t?t.artist:'Pick a track below'}</div>
+          <div class="nov-ov-wrow">
+            <button class="nov-ov-wbtn" onclick="NOVMUSIC.prev();NOVOVERLAY._musicRefresh()">Prev</button>
+            <button class="nov-ov-wbtn primary" onclick="NOVMUSIC.togglePlay();NOVOVERLAY._musicRefresh()">${playing?'Pause':'Play'}</button>
+            <button class="nov-ov-wbtn" onclick="NOVMUSIC.next();NOVOVERLAY._musicRefresh()">Next</button>
+          </div>
+        </div>
+        <div class="nov-ov-tasklist" style="max-width:520px">${NOVMUSIC.tracks.map(tr=>`<div class="nov-ov-taskrow" onclick="NOVMUSIC.playTrack('${tr.id}','library');NOVOVERLAY._musicRefresh()"><div class="nov-ov-taskname">${tr.name}</div><div class="nov-ov-taskstat">${tr.artist}</div></div>`).join('')||'<div style="color:var(--os-muted);font-size:12.5px">No tracks yet. Upload some in NovMusic.</div>'}</div>
+      </div>`;
+    };
+    this._musicRefresh=()=>setTimeout(()=>{const m=document.getElementById('novemb_music');if(m)this._mountMusic(m);},120);
+    draw();
+  },
+
+  _renderWindows(){
+    const body=document.getElementById('novOvWindowsBody');if(!body)return;
+    const rows=Object.entries(WM.windows).filter(([id,w])=>w&&w.app&&id!==this._targetWid).map(([id,w])=>{
+      const icon=w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`;
+      return `<div class="nov-ov-taskrow" onclick="NOVOVERLAY.switchToWindow('${id}')">
+        <img src="${icon}" style="width:24px;height:24px;border-radius:6px;object-fit:cover" onerror="this.style.opacity=0" alt="">
+        <div class="nov-ov-taskname">${w.app.name}</div>
+        <div class="nov-ov-taskstat">${w.minimized?'Minimized':'Open'}</div>
+      </div>`;
+    }).join('');
+    body.innerHTML=`<div class="nov-ov-tasklist">${rows||'<div style="color:var(--os-muted);font-size:12.5px">No other windows are open.</div>'}</div>`;
+  },
+
+  switchToWindow(id){
+    if(!WM.windows[id])return;
+    // leaving the game: un-fullscreen it so the target window is visible
+    if(this._targetWid&&WM.windows[this._targetWid]&&WM.windows[this._targetWid].maximized)WM.restoreMax(this._targetWid);
+    this.close();
+    if(WM.windows[id].minimized)WM.restore(id);else WM.focus(id);
+  },
+
+
+
+  // Drops fullscreen so system apps aren't hidden behind the maximized game,
+  // then opens the app. Game window stays open and restorable.
+  openApp(action){
+    if(this._targetWid&&WM.windows[this._targetWid]&&WM.windows[this._targetWid].maximized)WM.restoreMax(this._targetWid);
+    this.close();
+    if(OS[action])OS[action]();
+  },
+  openTM(){
+    if(this._targetWid&&WM.windows[this._targetWid]&&WM.windows[this._targetWid].maximized)WM.restoreMax(this._targetWid);
+    this.close();TM.open();
+  },
+  // Taskbar comes back while staying in the game (overlay closes, game remains fullscreen)
+  showTaskbar(){
+    this.close();
+    const tb=document.getElementById('taskbar');
+    if(tb)tb.classList.remove('taskbar-hidden');
+    TB._hidden=false;
+    clearTimeout(this._tbTimer);
+    this._tbTimer=setTimeout(()=>{TB.updateAutoHide();},6000);
+  },
+  openInTab(){
+    if(this._targetWid)WM.openInBrowserTab(this._targetWid);
+  },
+
+  /* ── Widgets: stopwatch, timer, notepad. State lives on NOVOVERLAY so it
+     keeps running while you switch tabs or close the overlay. ── */
+  _sw:{running:false,start:0,accum:0},
+  _tm:{running:false,end:0,remaining:300000},
+  _widgetTick:null,
+  _fmtMs(ms,cs){
+    const t=Math.max(0,Math.floor(ms));
+    const m=Math.floor(t/60000),s=Math.floor((t%60000)/1000),c=Math.floor((t%1000)/10);
+    return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+(cs?'.'+String(c).padStart(2,'0'):'');
+  },
+  _swNow(){return this._sw.accum+(this._sw.running?performance.now()-this._sw.start:0);},
+  _tmNow(){return this._tm.running?Math.max(0,this._tm.end-performance.now()):this._tm.remaining;},
+  _renderWidgets(){
+    const body=document.getElementById('novOvWidgetsBody');if(!body)return;
+    let note='';try{note=localStorage.getItem('novos_ov_note')||'';}catch(e){}
+    body.innerHTML=`<div class="nov-ov-widgets">
+      <div class="nov-ov-widget">
+        <div class="nov-ov-wtitle">Stopwatch</div>
+        <div class="nov-ov-wtime" id="novOvSwDisp">00:00.00</div>
+        <div class="nov-ov-wrow">
+          <button class="nov-ov-wbtn primary" id="novOvSwBtn" onclick="NOVOVERLAY.swToggle()">Start</button>
+          <button class="nov-ov-wbtn" onclick="NOVOVERLAY.swReset()">Reset</button>
+        </div>
+      </div>
+      <div class="nov-ov-widget">
+        <div class="nov-ov-wtitle">Timer</div>
+        <div class="nov-ov-wtime" id="novOvTmDisp">05:00</div>
+        <div class="nov-ov-wrow">
+          <button class="nov-ov-wbtn" onclick="NOVOVERLAY.tmAdjust(-60000)">−1m</button>
+          <button class="nov-ov-wbtn" onclick="NOVOVERLAY.tmAdjust(60000)">+1m</button>
+          <button class="nov-ov-wbtn" onclick="NOVOVERLAY.tmAdjust(300000)">+5m</button>
+        </div>
+        <div class="nov-ov-wrow">
+          <button class="nov-ov-wbtn primary" id="novOvTmBtn" onclick="NOVOVERLAY.tmToggle()">Start</button>
+          <button class="nov-ov-wbtn" onclick="NOVOVERLAY.tmReset()">Reset</button>
+        </div>
+      </div>
+      <div class="nov-ov-widget" style="grid-column:1/-1">
+        <div class="nov-ov-wtitle">Notepad</div>
+        <textarea class="nov-ov-wnote" id="novOvNote" placeholder="Jot something down… (saved automatically)"></textarea>
+      </div>
+    </div>`;
+    const ta=document.getElementById('novOvNote');
+    ta.value=note;
+    ta.addEventListener('input',()=>{try{localStorage.setItem('novos_ov_note',ta.value);}catch(e){}});
+    this._widgetPaint();
+    if(!this._widgetTick)this._widgetTick=setInterval(()=>this._widgetPaint(),50);
+  },
+  _widgetPaint(){
+    const sw=document.getElementById('novOvSwDisp');
+    const tm=document.getElementById('novOvTmDisp');
+    if(sw){
+      sw.textContent=this._fmtMs(this._swNow(),true);
+      const b=document.getElementById('novOvSwBtn');if(b)b.textContent=this._sw.running?'Pause':'Start';
+    }
+    if(tm){
+      const left=this._tmNow();
+      tm.textContent=this._fmtMs(left,false);
+      const b=document.getElementById('novOvTmBtn');if(b)b.textContent=this._tm.running?'Pause':'Start';
+    }
+    // timer completion (also fires while the overlay is closed)
+    if(this._tm.running&&this._tmNow()<=0){
+      this._tm.running=false;this._tm.remaining=0;
+      if(typeof OS!=='undefined')OS.notify('Timer done','Your overlay timer has finished.');
+    }
+    // stop polling once nothing is running and the widgets page isn't showing
+    const showing=document.getElementById('novOvSwDisp');
+    if(!showing&&!this._sw.running&&!this._tm.running&&this._widgetTick){
+      clearInterval(this._widgetTick);this._widgetTick=null;
+    }
+  },
+  swToggle(){
+    if(this._sw.running){this._sw.accum=this._swNow();this._sw.running=false;}
+    else{this._sw.start=performance.now();this._sw.running=true;}
+    this._widgetPaint();
+    if(!this._widgetTick)this._widgetTick=setInterval(()=>this._widgetPaint(),50);
+  },
+  swReset(){this._sw={running:false,start:0,accum:0};this._widgetPaint();},
+  tmAdjust(d){
+    if(this._tm.running){this._tm.end+=d;}
+    else{this._tm.remaining=Math.max(0,this._tm.remaining+d);}
+    this._widgetPaint();
+  },
+  tmToggle(){
+    if(this._tm.running){this._tm.remaining=this._tmNow();this._tm.running=false;}
+    else{
+      if(this._tm.remaining<=0)this._tm.remaining=300000;
+      this._tm.end=performance.now()+this._tm.remaining;this._tm.running=true;
+    }
+    this._widgetPaint();
+    if(!this._widgetTick)this._widgetTick=setInterval(()=>this._widgetPaint(),50);
+  },
+  tmReset(){this._tm={running:false,end:0,remaining:300000};this._widgetPaint();},
+
+  _libQuery:'',
+  // The search <input> is created ONCE. Only the results grid is re-rendered,
+  // so the input never loses focus (this was the one-letter typing bug).
+  _renderLibrary(){
+    const body=document.getElementById('novOvLibraryBody');
+    if(!body)return;
+    if(!document.getElementById('novOvLibSearch')){
+      body.innerHTML=`<input type="text" class="nov-ov-libsearch" id="novOvLibSearch" placeholder="Search games…" autocomplete="off">
+        <div class="nov-ov-libgrid" id="novOvLibGrid"></div>`;
+      const inp=document.getElementById('novOvLibSearch');
+      inp.value=this._libQuery;
+      inp.addEventListener('input',e=>{this._libQuery=e.target.value;this._drawLibraryGrid();});
+    }
+    this._drawLibraryGrid();
+  },
+  _drawLibraryGrid(){
+    const grid=document.getElementById('novOvLibGrid');if(!grid)return;
+    const q=this._libQuery.toLowerCase();
+    const games=(OS.shortcuts&&OS.shortcuts.games||[]).filter(a=>!q||a.name.toLowerCase().includes(q));
+    grid.innerHTML=games.map(a=>{
+      const img=OS._gridImg?OS._gridImg(a):(a.gridImage||a.icon||'');
+      const esc=JSON.stringify(a).replace(/"/g,'&quot;');
+      return `<div class="nov-ov-libcard" onclick="NOVOVERLAY.launchInOverlay(${esc})">
+        <img class="nov-ov-libimg" src="${img||`https://www.google.com/s2/favicons?sz=256&domain=${a.url}`}" onerror="this.style.opacity=0" alt="">
+        <div class="nov-ov-libname">${a.name}</div>
+      </div>`;
+    }).join('')||'<div style="color:var(--os-muted);font-size:12.5px">No games found.</div>';
+  },
+
+  // ── Mouse + keyboard capture ─────────────────────────────────────────
+  // Games can hold pointer lock and iframe focus. On open we release both
+  // so the OS cursor is free and typing goes to the overlay.
+  _releaseGame(){
+    try{if(document.pointerLockElement)document.exitPointerLock();}catch(e){}
+    const wid=this._targetWid;
+    const frm=wid&&(document.getElementById('frm_'+wid)||document.getElementById('hvFrm_'+wid));
+    if(frm){
+      try{
+        const d=frm.contentDocument;
+        if(d&&d.pointerLockElement)d.exitPointerLock();
+        if(d&&d.exitPointerLock)d.exitPointerLock();
+      }catch(e){}
+      try{frm.blur();}catch(e){}
+      frm.style.pointerEvents='none'; // frame can't grab the mouse while overlay is up
+    }
+    try{if(document.activeElement&&document.activeElement.tagName==='IFRAME')document.activeElement.blur();}catch(e){}
+    try{window.focus();document.body.focus();}catch(e){}
+  },
+  _restoreGame(){
+    const wid=this._targetWid;
+    const frm=wid&&(document.getElementById('frm_'+wid)||document.getElementById('hvFrm_'+wid));
+    if(frm){
+      frm.style.pointerEvents='';
+      setTimeout(()=>{try{frm.focus({preventScroll:true});}catch(e){}},60);
+    }
+  },
+  _grabFocus(){
+    const cap=document.getElementById('novOvCapture');
+    // focus the first text field if one is showing, otherwise the capture layer
+    const ov=document.getElementById('novOverlay');
+    const active=ov&&ov.querySelector('input:focus,textarea:focus');
+    if(active)return;
+    if(cap)cap.focus({preventScroll:true});
+  },
+  _bindCapture(){
+    if(this._captureBound)return;
+    this._captureBound=true;
+    // While the overlay is open, keep pointer lock released even if the game re-requests it.
+    document.addEventListener('pointerlockchange',()=>{
+      if(this.open&&document.pointerLockElement){try{document.exitPointerLock();}catch(e){}}
+    });
+    // Keep typing inside the overlay: swallow keys so the game beneath never sees them,
+    // but never interfere while the user is typing in a field.
+    document.addEventListener('keydown',e=>{
+      if(!this.open)return;
+      const t=e.target;
+      const typing=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable);
+      if(typing){e.stopPropagation();return;} // let the field receive it, hide from game
+      if(KEYBINDS.matches('gameOverlay',e)||KEYBINDS.matches('closeCancel',e))return; // toggle/close still work
+      e.stopPropagation();
+    },true);
+    // Any click inside the overlay that isn't a field keeps focus in the overlay.
+    document.getElementById('novOverlay')?.addEventListener('mousedown',e=>{
+      const t=e.target;
+      if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
+      setTimeout(()=>this._grabFocus(),0);
+    });
+  },
+
+  // Launches a game IN PLACE within the current fullscreened window — never
+  // opens a separate OS window. Reuses the target window's iframe/session by
+  // closing the old game and opening the new one, then immediately re-fullscreens
+  // it, so the user never leaves fullscreen or sees a second window appear.
+  launchInOverlay(app){
+    const oldWid=this._targetWid;
+    this.close();
+    if(oldWid&&WM.windows[oldWid])WM.closeWindow(oldWid);
+    const newWid=OS._doLaunch(app);
+    if(newWid){
+      this._targetWid=newWid;
+      setTimeout(()=>{
+        if(WM.windows[newWid]&&!WM.windows[newWid].maximized){WM.maximize(newWid);WM.focus(newWid);}
+      },80);
+    }
+  },
+
+  _renderSettings(){
+    const body=document.getElementById('novOvSettingsBody');
+    if(!body)return;
+    const wallpapers=['nova','aurora','sunset','ocean','forest','void','plain'];
+    const wp=SETTINGS.get('wallpaper')||'nova';
+    const wpGrid=wallpapers.map(w=>`<div class="nov-ov-wpitem${w===wp?' active':''}" style="background:${this._wpPreviewStyle(w)}" onclick="OS.setWallpaper('${w}');NOVOVERLAY._renderSettings()" title="${w}"></div>`).join('');
+    body.innerHTML=`
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim);margin-bottom:10px">Wallpaper</div>
+      <div class="nov-ov-wpgrid">${wpGrid}</div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim);margin-bottom:10px">Display</div>
+      <div class="nov-ov-setrow">
+        <div><div class="nov-ov-setlabel">Animations</div><div class="nov-ov-setsub">Window open, close, minimize effects</div></div>
+        <label class="toggle"><input type="checkbox" ${SETTINGS.get('animations')!==false?'checked':''} onchange="OS.setAnimations(this.checked)"><span class="tog-slider"></span></label>
+      </div>
+      <div class="nov-ov-setrow">
+        <div><div class="nov-ov-setlabel">Auto-hide Taskbar in Fullscreen</div><div class="nov-ov-setsub">Hides taskbar and top bar when a window is maximized</div></div>
+        <label class="toggle"><input type="checkbox" ${SETTINGS.get('hideTaskbarFullscreen')?'checked':''} onchange="SETTINGS.set('hideTaskbarFullscreen',this.checked);TB.updateAutoHide()"><span class="tog-slider"></span></label>
+      </div>
+      <div class="nov-ov-setrow">
+        <div><div class="nov-ov-setlabel">Low Power Mode</div><div class="nov-ov-setsub">Disables animations and blur for max framerate</div></div>
+        <label class="toggle"><input type="checkbox" ${SETTINGS.get('lowPowerMode')?'checked':''} onchange="OS.setLowPowerMode(this.checked)"><span class="tog-slider"></span></label>
+      </div>`;
+  },
+
+  _wpPreviewStyle(w){
+    const map={
+      nova:'radial-gradient(ellipse 60% 45% at 50% 38%,rgba(124,109,250,0.4),transparent 70%),linear-gradient(160deg,#0a0715,#0d0e18,#08090f)',
+      aurora:'radial-gradient(circle at 30% 50%,#0d1f3c,#1a0d3c,#0d2a1f,#080a10)',
+      sunset:'radial-gradient(circle at 50% 80%,#2d0a1a,#1a0d00,#1a0a2d,#0a0508)',
+      ocean:'radial-gradient(circle at 30% 40%,#051530,#0a1525,#05080f)',
+      forest:'radial-gradient(circle at 40% 60%,#051a0a,#0a1f05,#060d06)',
+      void:'#04040a',
+      plain:'#0d0e12'
+    };
+    return map[w]||'#0d0e12';
+  },
+
+  _findGameWindow(){
+    // Prefer the currently focused maximized window if it's a game;
+    // otherwise fall back to any maximized window; otherwise the last
+    // known game window from PLAYTIME.
+    const focusedEl=document.querySelector('.os-window.focused');
+    if(focusedEl&&WM.windows[focusedEl.id]&&WM.windows[focusedEl.id].maximized){
+      return focusedEl.id;
+    }
+    const anyMax=Object.keys(WM.windows).find(id=>WM.windows[id].maximized&&!WM.windows[id].minimized);
+    return anyMax||null;
+  },
+
+  toggle(){this.open?this.close():this.show();},
+
+  show(){
+    const wid=this._findGameWindow();
+    if(!wid){
+      const anyWin=Object.keys(WM.windows)[0];
+      if(!anyWin){OS.notify('NovOverlay','No windows open to show the overlay for.');return;}
+      this._targetWid=anyWin;
+    }
+    this._targetWid=wid||this._targetWid;
+    const w=WM.windows[this._targetWid];
+    if(!w){OS.notify('NovOverlay','No windows open to show the overlay for.');return;}
+    const app=w.app;
+    document.getElementById('novOvTitle').textContent=app.name;
+    document.getElementById('novOvSub').textContent='● Now playing';
+    const _ck=document.getElementById('novOvClock');
+    if(_ck){const n=new Date();let h=n.getHours()%12||12;_ck.textContent=h+':'+String(n.getMinutes()).padStart(2,'0')+' '+(n.getHours()>=12?'PM':'AM');}
+    const _hint=document.getElementById('novOvHint');
+    if(_hint)_hint.textContent=KEYBINDS.getLabel('gameOverlay')+' or Esc to return';
+    const iconEl=document.getElementById('novOvIcon');
+    const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
+    iconEl.src=icon;
+    iconEl.onerror=()=>{iconEl.style.display='none';};
+    this._bindCapture();
+    this.showTab('overview');
+    const ovEl=document.getElementById('novOverlay');
+    ovEl.classList.add('open');
+    ovEl.style.display='block';
+    ovEl.style.pointerEvents='all';
+    this.open=true;
+    // take the mouse and keyboard away from the game
+    this._releaseGame();
+    setTimeout(()=>{this._releaseGame();this._grabFocus();},30);
+    setTimeout(()=>this._releaseGame(),200); // catches games that re-lock after a beat
+  },
+
+  close(){
+    const ovEl=document.getElementById('novOverlay');
+    ovEl.classList.remove('open');
+    ovEl.style.display='none';
+    ovEl.style.pointerEvents='none';
+    this.open=false;
+    this._closeEmbed();
+    this._restoreGame();
+  },
+
+  exitFullscreen(){
+    if(this._targetWid&&WM.windows[this._targetWid])WM.restoreMax(this._targetWid);
+    this.close();
+  },
+
+  minimizeGame(){
+    if(this._targetWid&&WM.windows[this._targetWid])WM.minimize(this._targetWid);
+    this.close();
+  },
+
+  refreshGame(){
+    if(this._targetWid)WM.refreshWindow(this._targetWid);
+    this.close();
+  },
+
+  closeGame(){
+    if(this._targetWid&&WM.windows[this._targetWid])WM.closeWindow(this._targetWid);
+    this.close();
+    this._targetWid=null;
+  },
+
+  openLibrary(){
+    this.showTab('library');
+  },
+
+  openSettings(){
+    this.showTab('settings');
+  }
+};
+
 const TBP={
   _el:null,
   _hideTid:null,       // delay before hiding the mini-preview box itself
