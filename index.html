@@ -1404,9 +1404,12 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
     </div>
     <div class="modal-body">
       <div style="font-size:12.5px;line-height:1.7;color:var(--os-text);margin-bottom:16px">
-        You must create an account at <a href="https://web.cloudmoonapp.com/" target="_blank" rel="noopener" style="color:var(--os-accent)">CloudMoon</a> outside of school and login here for access.
+        You must create an account at <a href="https://web.cloudmoonapp.com/" target="_blank" rel="noopener" style="color:var(--os-accent)">CloudMoon</a> outside of school and login here for access. Refresh the app after logging in
       </div>
-      <button class="m-btn" onclick="CLOUDMOON.dismiss()">Don't show again</button>
+      <div style="display:flex;gap:8px">
+        <button class="m-btn primary" onclick="document.getElementById('cloudMoonModal').classList.remove('open');CLOUDMOON.launch()">Continue</button>
+        <button class="m-btn" onclick="CLOUDMOON.dismiss()">Don't show again</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1520,7 +1523,7 @@ const DEFAULT_DESKTOP_APPS = [
 ═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_SHORTCUTS = {
   cloud:[
-    {name:"CloudMoon",gridImage:"",bannerImage:"",icon:"☁️",isDefault:true,SupportsHTML:false,isCloudPlaceholder:true,url:"__cloudmoon__"},
+    {name:"CloudMoon",gridImage:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOnx70lYJJhgVwg_qToSObMmkEnMUs-33F6qKhb7zSxWTUZHSxdosnvHF3&s=10",bannerImage:"https://i.imgur.com/ZbSpbGn.png",icon:"https://i.imgur.com/skcCc5U.png",isDefault:true,SupportsHTML:false,isCloudPlaceholder:true,url:"__cloudmoon__"},
   ],
   Other:[
     {name:"Bug Reports Form",url:"https://forms.gle/5Xzdtd93pL2Kmw9u8",icon:"https://i.imgur.com/Ov7xpiX.png",isDefault:true,SupportsHTML:false,openInNewTab:true},
@@ -1619,7 +1622,6 @@ const DEFAULT_SHORTCUTS = {
     {name:"Kerbal Space Program", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/f5a6742b21e3375ab4ed03b72c5ebb74.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/e6627c57ec25f931e0c332cdcbe8f892.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/kspTrue.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/0e11b56d493ed726dea457a742ceea33.png",isDefault:true,SupportsHTML:true, notAvailable:false},
     {name:"Gang Beasts", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/a33f9041667929bbc90828a4594cc0a3.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/66d39d2a5cb9dcc15b27cb22deee24fa.png",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games html/gangbeastsinglefil.html", url: "__rawhtml__",  icon:"https://image.api.playstation.com/vulcan/ap/rnd/202310/1216/1c6232385de9a836ac9c16ba5d2ddd1f632df409d7e807af.png",isDefault:true,SupportsHTML:true, notAvailable:false},
     {name:"Bowmasters", bannerImage:"https://cdn.aptoide.com/imgs/a/b/9/ab90b9dec0ec087d5df2b2d76118bd72_fgraphic.png", gridImage:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6noSgwOlS97ijnl5gemYxMrWwUqjrJxp7STXLBZ_evgO9opEv8YRPBF8H&s=10",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/BowMasters.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/229b1c42c67f73dabb0df116445526ea.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:true},
-    {name:"Tomb of the Mask", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/8fed05970c522556e135fbf1a4cefe9f.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/be2caf6c13ef5d2472cb4d865f48f715.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Tomb%20Of%20The%20Mask.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/596525fb85c296245f55562f755de682.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:true},
 
 
 
@@ -1976,7 +1978,6 @@ const CHANGELOG={
         {text:'Removed taskbar + window bar peek zones in favor of new game overlay',cat:'os'},
         {text:'Added new Cloud section under games',cat:'games'},
         {text:'Added Bow Masters',cat:'games'},
-        {text:'Added Tomb of the Mask',cat:'games'},
         {text:'Added ignore button to OS update notification',cat:'os'},
       ]
     },
@@ -2201,7 +2202,13 @@ const WM={
         return;
       }
       const frm=document.getElementById('frm_'+id);
-      const targetUrl=(frm&&frm.src&&frm.src!=='about:blank')?frm.src:app.url;
+      let targetUrl=app.url;
+      if(frm&&frm.__novosShell){
+        const m=/<iframe src="([^"]*)"/.exec(frm.__novosShell);
+        if(m)targetUrl=m[1].replace(/&quot;/g,'"').replace(/&amp;/g,'&');
+      }else if(frm&&frm.src&&frm.src!=='about:blank'){
+        targetUrl=frm.src;
+      }
       if(!targetUrl||targetUrl.startsWith('__')){OS.notify('Cannot open','This window has no external URL.');return;}
       this._openBlobTab({targetUrl});
     }catch(err){
@@ -2318,11 +2325,22 @@ const WM={
 
     // Single, normal load — no lag/burst nonsense.
     const _loadOnce=()=>{
-      if(_isCrossOrigin(realUrl)){
-        frm.srcdoc=_makeShell(realUrl);
-      }else{
-        frm.src=realUrl;
-      }
+      // ALWAYS about:blank: the outer frame never navigates. A same-origin
+      // shell is written into it via document.write, and the target URL is
+      // embedded as a nested full-size iframe inside that shell.
+      const _u=String(realUrl).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+      const shell='<!doctype html><html><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_u+'" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>';
+      frm.setAttribute('src','about:blank');
+      const write=()=>{
+        try{
+          const d=frm.contentDocument||(frm.contentWindow&&frm.contentWindow.document);
+          if(!d)return;
+          d.open();d.write(shell);d.close();
+        }catch(e){}
+      };
+      if(frm.contentDocument&&frm.contentDocument.readyState==='complete')write();
+      else frm.addEventListener('load',write,{once:true});
+      frm.__novosShell=shell;
     };
 
     setTimeout(_loadOnce,20);
@@ -2411,7 +2429,7 @@ const WM={
     if(el){
       const skipAnim=SETTINGS.get('animations')===false;
       if(skipAnim){
-        const frm=document.getElementById('frm_'+id);if(frm)frm.src='about:blank';
+        const frm=document.getElementById('frm_'+id);if(frm){frm.__novosShell=null;frm.src='about:blank';}
         el.remove();
       }else{
         el.style.animation='wndClose 0.18s ease forwards';
@@ -2547,6 +2565,15 @@ const WM={
   refreshWindow(id){
     const frm=document.getElementById('frm_'+id);
     if(!frm)return;
+
+    // about:blank shell windows: rewrite the stored shell document
+    if(frm.__novosShell){
+      try{
+        const d=frm.contentDocument||(frm.contentWindow&&frm.contentWindow.document);
+        if(d){d.open();d.write(frm.__novosShell);d.close();}
+      }catch(e){}
+      return;
+    }
 
     if(frm.hasAttribute('srcdoc')&&frm.getAttribute('srcdoc')){
       const shell=frm.getAttribute('srcdoc');
@@ -3261,13 +3288,20 @@ const CTX={
 
 
 const CLOUDMOON={
+  URL:'https://esm.sh/gh/frozenfinale/secrecy@69f852b/260813.svg',
+  // Always opens CloudMoon inside a NovOS window. WM.open writes it into an
+  // about:blank iframe (never a real navigation, never a separate browser tab).
+  launch(){
+    WM.open({name:'CloudMoon',url:this.URL,icon:'https://static-images.aptoide.com/_next/image?url=https%3A%2F%2Fcdn.aptoide.com%2Fimgs%2F9%2F0%2Fe%2F90e173a707e44b47d5421f1c29a8876d_icon.png&w=256&q=75'});
+  },
   showDisclaimer(){
-    if(localStorage.getItem('novos_cloudmoon_hide')==='1')return;
+    if(localStorage.getItem('novos_cloudmoon_hide')==='1'){this.launch();return;}
     document.getElementById('cloudMoonModal').classList.add('open');
   },
   dismiss(){
     localStorage.setItem('novos_cloudmoon_hide','1');
     document.getElementById('cloudMoonModal').classList.remove('open');
+    this.launch();
   }
 };
 
