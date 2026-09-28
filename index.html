@@ -1618,7 +1618,7 @@ const DEFAULT_SHORTCUTS = {
     {name:"Among Us", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/c5136a36b0bdea61cf049154a776ecc2.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/09246ffb824ca2c5bc47a64cb302d3cb.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/amongus.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon/c1b782bc1cdd29464a9d0e7298a91678/32/512x512.png",isDefault:true,SupportsHTML:true, notAvailable:false},
     {name:"Kerbal Space Program", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/f5a6742b21e3375ab4ed03b72c5ebb74.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/e6627c57ec25f931e0c332cdcbe8f892.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/kspTrue.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/0e11b56d493ed726dea457a742ceea33.png",isDefault:true,SupportsHTML:true, notAvailable:false},
     {name:"Gang Beasts", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/a33f9041667929bbc90828a4594cc0a3.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/66d39d2a5cb9dcc15b27cb22deee24fa.png",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games html/gangbeastsinglefil.html", url: "__rawhtml__",  icon:"https://image.api.playstation.com/vulcan/ap/rnd/202310/1216/1c6232385de9a836ac9c16ba5d2ddd1f632df409d7e807af.png",isDefault:true,SupportsHTML:true, notAvailable:false},
-    {name:"Bowmasters", bannerImage:"https://cdn.aptoide.com/imgs/a/b/9/ab90b9dec0ec087d5df2b2d76118bd72_fgraphic.png", gridImage:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6noSgwOlS97ijnl5gemYxMrWwUqjrJxp7STXLBZ_evgO9opEv8YRPBF8H&s=10",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/BowMasters.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/229b1c42c67f73dabb0df116445526ea.png",isDefault:true,SupportsHTML:true, notAvailable:false},
+    {name:"Bowmasters", bannerImage:"https://cdn.aptoide.com/imgs/a/b/9/ab90b9dec0ec087d5df2b2d76118bd72_fgraphic.png", gridImage:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6noSgwOlS97ijnl5gemYxMrWwUqjrJxp7STXLBZ_evgO9opEv8YRPBF8H&s=10",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/BowMasters.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/229b1c42c67f73dabb0df116445526ea.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:true},
     {name:"Tomb of the Mask", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/8fed05970c522556e135fbf1a4cefe9f.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/be2caf6c13ef5d2472cb4d865f48f715.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Tomb%20Of%20The%20Mask.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/596525fb85c296245f55562f755de682.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:true},
 
 
@@ -4072,6 +4072,14 @@ const OS={
       OS._launchLethalCompanyInBrowserTab();
       return;
     }
+    if(app.name==='Tomb of the Mask'){
+      OS._launchGameInBrowserTab('https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Tomb%20Of%20The%20Mask.html');
+      return;
+    }
+    if(app.name==='Bowmasters'){
+      OS._launchGameInBrowserTab('https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/BowMasters.html');
+      return;
+    }
     // Resolve the full shortcut by name up front so any launch path (pinned,
     // taskbar, session-restored, folder-stored) recovers fields like
     // _openInNewBlobTab even if the object passed in is a stripped copy.
@@ -4169,6 +4177,8 @@ const OS={
     if(sysMap[app.url]){sysMap[app.url]();return;}
     if(app.name==='Minecraft 1.12 OFFLINE'){OS._launchMinecraftInBrowserTab();return;}
     if(app.name==='Lethal Company'){OS._launchLethalCompanyInBrowserTab();return;}
+    if(app.name==='Tomb of the Mask'){OS._launchGameInBrowserTab('https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Tomb%20Of%20The%20Mask.html');return;}
+    if(app.name==='Bowmasters'){OS._launchGameInBrowserTab('https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/BowMasters.html');return;}
     if(app.url&&app.url.startsWith('__')){WM.open(app);return;}
     // Raw HTML games never go straight to WM.open — route them through OS.launch,
     // which resolves the rawUrl (looking it up by name if the pinned/taskbar copy
