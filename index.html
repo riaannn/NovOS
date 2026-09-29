@@ -294,6 +294,12 @@ body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms
 .os-window.maximized .wnd-titlebar.tb-peek ~ .wnd-body .wnd-iframe{pointer-events:none}
 
 .wnd-peek-zone{display:none!important}
+/* LINK WINDOWS ONLY: cross-origin content swallows keystrokes, so NovOverlay can't be reached.
+   Give these windows a hover-to-reveal titlebar while maximized. */
+.os-window.maximized.is-link-window>.wnd-peek-zone{display:block!important;position:absolute;top:0;left:0;right:0;height:8px;z-index:200011}
+.os-window.maximized.is-link-window .wnd-titlebar{display:flex!important;position:absolute;top:0;left:0;right:0;z-index:200012;background:rgba(13,15,22,0.97);transform:translateY(-100%);opacity:0;pointer-events:none;transition:transform 0.15s ease,opacity 0.15s ease}
+.os-window.maximized.is-link-window .wnd-titlebar.tb-peek{transform:translateY(0);opacity:1;pointer-events:all}
+#linkTaskbarPeek{position:fixed;left:0;right:0;bottom:0;height:8px;z-index:9998;display:none}
 /* Once the titlebar is peeked in, the peek zone must stop intercepting clicks
    so they reach the control buttons sitting beneath it. The titlebar itself
    re-triggers peek via its own onmouseenter, so hover state is preserved. */
@@ -1966,19 +1972,13 @@ function runDefaultsMigrations(){
 }
 
 const CHANGELOG={
-  CURRENT_VERSION:'5.20',
+  CURRENT_VERSION:'5.21',
   ENTRIES:[
     {
-      version:'5.20',
-      date:'2026-09-27',
+      version:'5.21',
+      date:'2026-09-28',
       items:[
-        {text:'New icons + boot screen',cat:'os'},
-        {text:'New default wallpaper',cat:'os'},
-        {text:'New in-game overlay, activated via Shift+~',cat:'os'},
-        {text:'Removed taskbar + window bar peek zones in favor of new game overlay',cat:'os'},
-        {text:'Added new Cloud section under games',cat:'games'},
-        {text:'Added Bow Masters',cat:'games'},
-        {text:'Added ignore button to OS update notification',cat:'os'},
+        {text:'Brought back peek zones for link apps so u cant get stuck on fullscreen anymore',cat:'os'},
       ]
     },
   ],
@@ -2345,7 +2345,8 @@ const WM={
 
     setTimeout(_loadOnce,20);
 
-    this.windows[id]={app,minimized:false,maximized:false,prevRect:null};
+    el.classList.add('is-link-window');
+    this.windows[id]={app,minimized:false,maximized:false,prevRect:null,isLink:true};
     this.focus(id);TB.addWindow(id,app);this.makeDraggable(id);
     return id;
   },
@@ -2538,7 +2539,7 @@ const WM={
   // sandboxes us out of), there's no JS-reachable way to mute just that
   // iframe's audio — we notify the user honestly instead of pretending it worked.
   peekTitlebar(id,show){
-    return;
+    if(!(this.windows[id]&&this.windows[id].isLink))return;
     const tb=document.getElementById('tb_'+id);if(!tb)return;
     if(!(this.windows[id]&&this.windows[id].maximized))return;
     clearTimeout(this._peekLeaveTimers&&this._peekLeaveTimers[id]);
@@ -2883,10 +2884,42 @@ const TB={
       if(topPeek)topPeek.style.display='none';
     }
     if(typeof WIDGETS!=='undefined')WIDGETS.setPaused(hasMax&&SETTINGS.get('disableWidgetsInGame')!==false);
+    this._syncLinkPeekZone(setting&&hasMax);
   },
   _topPeekTimeout:null,
-  peekShow(){},
-  peekHide(){},
+  _maxIsLink(){return Object.values(WM.windows).some(w=>w&&w.maximized&&!w.minimized&&w.isLink);},
+  _ensurePeekZone(){
+    let z=document.getElementById('linkTaskbarPeek');
+    if(!z){
+      z=document.createElement('div');
+      z.id='linkTaskbarPeek';
+      z.addEventListener('mouseenter',()=>TB.peekShow());
+      z.addEventListener('mouseleave',()=>TB.peekHide());
+      document.body.appendChild(z);
+      const tbEl=document.getElementById('taskbar');
+      if(tbEl){
+        tbEl.addEventListener('mouseenter',()=>TB.peekShow());
+        tbEl.addEventListener('mouseleave',()=>TB.peekHide());
+      }
+    }
+    return z;
+  },
+  _syncLinkPeekZone(on){
+    const z=this._ensurePeekZone();
+    z.style.display=(on&&this._maxIsLink())?'block':'none';
+  },
+  peekShow(){
+    clearTimeout(this._peekTimeout);
+    const tb=document.getElementById('taskbar');
+    if(tb&&this._hidden&&this._maxIsLink())tb.classList.remove('taskbar-hidden');
+  },
+  peekHide(){
+    clearTimeout(this._peekTimeout);
+    this._peekTimeout=setTimeout(()=>{
+      const tb=document.getElementById('taskbar');
+      if(tb&&this._hidden&&this._maxIsLink())tb.classList.add('taskbar-hidden');
+    },350);
+  },
   topPeekShow(){
     return;
     // The OS top bar itself stays dead space while a game overlay exists;
