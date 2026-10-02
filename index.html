@@ -1769,6 +1769,11 @@ const RAW_HTML={
     }catch(err){}
   },
   _inflight:{},
+  _trim(){
+    const keep=new Set();
+    Object.values(WM.windows).forEach(w=>{if(w&&w.app&&w.app.rawUrl)keep.add(w.app.rawUrl);});
+    Object.keys(this._cache).forEach(k=>{if(!keep.has(k))delete this._cache[k];});
+  },
   async launch(app){
     if(!app.rawUrl){OS.notify('Error','No raw URL defined for '+app.name);return;}
 
@@ -2082,17 +2087,15 @@ function runDefaultsMigrations(){
 }
 
 const CHANGELOG={
-  CURRENT_VERSION:'5.22',
+  CURRENT_VERSION:'5.23',
   ENTRIES:[
     {
-      version:'5.22',
-      date:'2026-09-30',
+      version:'5.23',
+      date:'2026-10-01',
       items:[
-        {text:'Added profiles, nicknames, deleting/editing msgs, & more to Friends app',cat:'os'},
-        {text:'Updated in-game overlay',cat:'os'},
-        {text:'NOTE: The browser is currently broken, use the alternative CloudMoon chrome app',cat:'os'},
-        {text:'(add my friend code: c8b5ea64 )',cat:'os'},
-        {text:'Updates will SOON (hopefully) be automatic, meaning u wont have to refresh/reopen the page every few days',cat:'os'},
+        {text:'In-game overlay now only appears for games. Everything else uses the top bar and taskbar peek zones',cat:'os'},
+        {text:'Exiting fullscreen from the overlay no longer kicks you out of it, and the overlay works on windowed games too',cat:'os'},
+        {text:'Browser switched to Gust (temporary until i find a better 1)',cat:'os'},
       ]
     },
   ],
@@ -2324,6 +2327,12 @@ const WM={
         targetUrl=frm.src;
       }
       if(!targetUrl||targetUrl.startsWith('__')){OS.notify('Cannot open','This window has no external URL.');return;}
+      if(app.url==='__browser__'){
+        // Gust must always live inside an about:blank page, never navigated to directly.
+        const _g=String(targetUrl).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+        this._openBlobTab({htmlSource:'<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_g+'" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen></iframe></body></html>'});
+        return;
+      }
       this._openBlobTab({targetUrl});
     }catch(err){
       OS.notify('Failed','Could not open in a new tab: '+(err&&err.message||'error'));
@@ -2557,7 +2566,9 @@ const WM={
       }
     }
     if(typeof PLAYTIME!=='undefined'&&this.windows[id]&&PLAYTIME._active&&PLAYTIME._active.name===this.windows[id].app.name)PLAYTIME.stop();
-    delete this.windows[id];TB.removeWindow(id);TB.updateAutoHide();
+    if(this.windows[id]&&this.windows[id].app)this.windows[id].app._htmlSource=null;
+delete this.windows[id];TB.removeWindow(id);TB.updateAutoHide();
+setTimeout(()=>{if(typeof RAW_HTML!=='undefined')RAW_HTML._trim();},400);
   },
   // Applies the "just opened" animation to a window element that was built
   // outside WM.open() (Settings, App Library, File Explorer, NovMusic, Task
@@ -2604,6 +2615,8 @@ const WM={
   maximize(id){
     const el=document.getElementById(id);if(!el)return;
     this.windows[id].maximized=true;
+    // Non-games get the titlebar peek zone (games use NovOverlay instead)
+    if(!OS._isGameWindow(id))el.classList.add('is-link-window');
     this.windows[id].prevRect={top:el.style.top,left:el.style.left,width:el.style.width,height:el.style.height};
     el.classList.add('maximized');
     // Maximized windows always sit above every normal window, in their own
@@ -2654,7 +2667,9 @@ const WM={
   // sandboxes us out of), there's no JS-reachable way to mute just that
   // iframe's audio — we notify the user honestly instead of pretending it worked.
   peekTitlebar(id,show){
-    if(!(this.windows[id]&&this.windows[id].isLink))return;
+    if(!this.windows[id])return;
+    const _pel=document.getElementById(id);
+    if(!_pel||!_pel.classList.contains('is-link-window'))return;
     const tb=document.getElementById('tb_'+id);if(!tb)return;
     if(!(this.windows[id]&&this.windows[id].maximized))return;
     clearTimeout(this._peekLeaveTimers&&this._peekLeaveTimers[id]);
@@ -3017,7 +3032,7 @@ const TB={
     this._syncLinkPeekZone(setting&&hasMax);
   },
   _topPeekTimeout:null,
-  _maxIsLink(){return Object.values(WM.windows).some(w=>w&&w.maximized&&!w.minimized&&w.isLink);},
+  _maxIsLink(){return Object.keys(WM.windows).some(id=>{const w=WM.windows[id];return w&&w.maximized&&!w.minimized&&(w.isLink||!OS._isGameWindow(id));});},
   _ensurePeekZone(){
     let z=document.getElementById('linkTaskbarPeek');
     if(!z){
@@ -4372,6 +4387,12 @@ const OS={
     if(app._cat==='games')return true;
     return (this.shortcuts&&this.shortcuts.games||[]).some(g=>g.name===app.name);
   },
+  // True only for windows labeled as games (Browser, Compiler and system windows never count)
+  _isGameWindow(id){
+    const w=WM.windows[id];
+    if(!w||!w.app||w.app._forceSysIcon)return false;
+    return this._isGameShortcut(w.app);
+  },
   _doLaunch(app){
     if(app.isPVZ){PVZ.tryLaunch(app.name);return;}
     const id=WM.open(app);
@@ -4434,25 +4455,17 @@ const OS={
   // The window/taskbar keeps the system url (__browser__ / __music__) so it gets
   // the correct system icon and stays on the right side of the taskbar.
   _systemRealUrl(sysUrl){
-    return sysUrl;
+    return sysUrl==='__browser__'?this.BROWSER_IFRAME_URL:sysUrl;
   },
-  BROWSER_IFRAME_URL:'https://cdn.statically.io/gh/OpiumBest/svg@main/index.svg',
+  BROWSER_IFRAME_URL:'https://esm.sh/gh/riaannn/Gus@main/gust.svg',
   openBrowser(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__browser__');
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
     OS._openBrowserWindow();
   },
   _openBrowserWindow(){
-    // Opium: fetched as raw HTML and run through the HTML Viewer (same path as
-    // raw-HTML games), but registered as the system Browser (url '__browser__',
-    // system icon, right side of the taskbar, singleton, not auto-fullscreened).
-    RAW_HTML.launch({
-      name:'Browser',
-      rawUrl:'https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/opium.html',
-      icon:'',
-      _forceSysIcon:'__browser__',
-      _defer:true
-    });
+    // Gust: WM.open always writes a shell into an about:blank iframe and nests the real URL inside it.
+    WM.open({name:'Browser',url:'__browser__',icon:''});
   },
   openTM(){TM.open();},
   openFriends(){FRIENDS.open();},
@@ -6575,6 +6588,15 @@ const NOVMUSIC_DB={
       req.onerror=()=>reject(req.error);
     });
   },
+  async getTrack(id){
+    const db=await this.open();
+    return new Promise((resolve,reject)=>{
+      const tx=db.transaction('tracks','readonly');
+      const req=tx.objectStore('tracks').get(id);
+      req.onsuccess=()=>resolve(req.result||null);
+      req.onerror=()=>reject(req.error);
+    });
+  },
   async deleteTrack(id){
     const db=await this.open();
     return new Promise((resolve,reject)=>{
@@ -6656,7 +6678,7 @@ const NOVMUSIC={
           artUrl
         };
         await NOVMUSIC_DB.putTrack(trackObj);
-        this.tracks.unshift(trackObj);
+        this.tracks.unshift({...trackObj,dataUrl:null});
         seenIds.add(def.id);
       }catch(err){
         console.warn('Failed to seed default track',def.id,err);
@@ -6682,7 +6704,7 @@ const NOVMUSIC={
       dbTracks.forEach(t=>{byId[t.id]=t;});
       this.tracks.forEach(t=>{
         const full=byId[t.id];
-        if(full){t.dataUrl=full.dataUrl;t.artUrl=full.artUrl||t.artUrl||'';}
+        if(full){t.artUrl=full.artUrl||t.artUrl||'';}
       });
       this._refreshAll();
       const seenIds=new Set((JSON.parse(localStorage.getItem('novmusic_seeded')||'[]')));
@@ -6753,6 +6775,17 @@ const NOVMUSIC={
   },
 
   _loadAndPlay(){
+    const t0=this.currentTrack();
+    if(t0&&!t0.dataUrl){
+      const tok=this._loadToken=(this._loadToken||0)+1;
+      NOVMUSIC_DB.getTrack(t0.id).then(full=>{
+        if(tok!==this._loadToken||!full)return;
+        t0.dataUrl=full.dataUrl;
+        this._loadAndPlay();
+        t0.dataUrl=null;
+      }).catch(()=>{});
+      return;
+    }
     const t=this.currentTrack();
     const a=this.ensureAudio();
     if(!t||!t.dataUrl){
@@ -6969,7 +7002,7 @@ const NOVMUSIC={
           };
           try{
             await NOVMUSIC_DB.putTrack(trackObj);
-            this.tracks.push(trackObj);
+            this.tracks.push({...trackObj,dataUrl:null});
             this._pendingUploadResults.push(newId);
             this.saveTracks();
             this._refreshAll();
@@ -7024,7 +7057,7 @@ const NOVMUSIC={
       reader.onload=e=>{
         if(kind==='track'){
           const t=this.tracks.find(t=>t.id===id);
-          if(t){t.artUrl=e.target.result;this.saveTracks();NOVMUSIC_DB.putTrack(t).catch(()=>{});}
+          if(t){t.artUrl=e.target.result;this.saveTracks();NOVMUSIC_DB.getTrack(t.id).then(f=>{if(f){f.artUrl=t.artUrl;return NOVMUSIC_DB.putTrack(f);}}).catch(()=>{});}
         }else if(kind==='playlist'){
           const pl=this.playlists.find(p=>p.id===id);
           if(pl){pl.artUrl=e.target.result;this.savePlaylists();}
@@ -7199,7 +7232,8 @@ const NOVMUSIC={
       const artBox=document.getElementById('nmNowArt_'+w);
       if(titleEl)titleEl.textContent=t?t.name:'Nothing playing';
       if(artistEl)artistEl.textContent=t?t.artist:'Upload some MP3s to get started';
-      if(artBox){
+      if(artBox&&artBox.dataset.k!==(t?t.id+(t.artUrl?'1':'0'):'-')){
+        artBox.dataset.k=(t?t.id+(t.artUrl?'1':'0'):'-');
         if(t&&t.artUrl){
           artBox.innerHTML=`<img src="${t.artUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:8px" alt="">`;
         }else if(t){
@@ -8979,7 +9013,6 @@ const NOVOVERLAY={
       +(playing.length?playing.map(f=>'<div class="nv-row">'+FRIENDS._av(f.id,null,24)+this._esc(FRIENDS._dn(f.id))+'</div>').join(''):'<div class="nv-row" style="color:var(--os-muted)">No friends are playing right now</div>')+'</div>'
       +'<div class="nv-sec"><div class="nv-sech">Game controls</div><div class="nv-btns">'
       +'<button class="nv-b" onclick="NOVOVERLAY.toggleFullscreen()">'+(w&&w.maximized?'Exit Fullscreen':'Fullscreen')+'</button>'
-      +'<button class="nv-b" onclick="NOVOVERLAY.toggleTabPref()">'+(OS._tabPref(app.name)?'Open in Window':'Always Open in Tab')+'</button>'
       +'<button class="nv-b" onclick="NOVOVERLAY.minimizeGame()">Minimize</button>'
       +'<button class="nv-b" onclick="NOVOVERLAY.refreshGame()">Refresh</button>'
       +'<button class="nv-b" onclick="NOVOVERLAY.openInTab()">Open in Tab</button>'
@@ -9019,12 +9052,11 @@ const NOVOVERLAY={
   async _r_browser(b){
     b.innerHTML='<iframe class="nv-frame" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads" allow="fullscreen; autoplay; clipboard-write" allowfullscreen></iframe>';
     const frm=b.firstChild;
-    let html=RAW_HTML._cache[this.OPIUM];
-    if(!html){
-      try{const r=await fetch(this.OPIUM,{cache:'force-cache'});if(!r.ok)throw 0;html=await r.text();RAW_HTML._cache[this.OPIUM]=html;}
-      catch(e){b.innerHTML='<div class="nv-empty">Could not load the browser.</div>';return;}
-    }
-    try{VIEWERS._deferLoad(frm,html);setTimeout(()=>{if(WM._onIframeLoad)WM._onIframeLoad(frm);},300);}catch(e){}
+    const u=String(OS.BROWSER_IFRAME_URL).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    const shell='<!doctype html><html><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+u+'" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>';
+    const write=()=>{try{const d=frm.contentDocument;if(!d)return;d.open();d.write(shell);d.close();}catch(e){}};
+    if(frm.contentDocument&&frm.contentDocument.readyState==='complete')write();
+    else frm.addEventListener('load',write,{once:true});
   },
   _r_windows(b){
     const rows=Object.entries(WM.windows).filter(([id,w])=>w&&w.app&&id!==this._targetWid).map(([id,w])=>{
@@ -9105,6 +9137,7 @@ const NOVOVERLAY={
     const key=(e.key||'');
     const isHot=(e.shiftKey&&(key==='~'||key==='`'||e.code==='Backquote'))||KEYBINDS.matches('gameOverlay',e);
     if(isHot){
+      if(!this.open&&!this._findGameWindow())return false;
       const t=e.target;
       if(this.open&&t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return false;
       if(e.preventDefault)e.preventDefault();
@@ -9120,13 +9153,14 @@ const NOVOVERLAY={
   toggle(){this.open?this.close():this.show();},
   _findGameWindow(){
     const f=document.querySelector('.os-window.focused');
-    if(f&&WM.windows[f.id]&&WM.windows[f.id].maximized)return f.id;
-    return Object.keys(WM.windows).find(id=>WM.windows[id].maximized&&!WM.windows[id].minimized)||null;
+    if(f&&WM.windows[f.id]&&!WM.windows[f.id].minimized&&OS._isGameWindow(f.id))return f.id;
+    const games=Object.keys(WM.windows).filter(id=>!WM.windows[id].minimized&&OS._isGameWindow(id));
+    return games.find(id=>WM.windows[id].maximized)||games[0]||null;
   },
   show(){
     this._init();
-    let wid=this._findGameWindow()||Object.keys(WM.windows)[0];
-    if(!wid){OS.notify('NovOverlay','No windows open to show the overlay for.');return;}
+    let wid=this._findGameWindow();
+    if(!wid)return;
     this._targetWid=wid;
     const app=WM.windows[wid].app;
     document.getElementById('nvGName').textContent=app.name;
@@ -9175,7 +9209,7 @@ const NOVOVERLAY={
     this.close();
     if(WM.windows[id].minimized)WM.restore(id);else WM.focus(id);
   },
-  exitFullscreen(){if(this._targetWid&&WM.windows[this._targetWid])WM.restoreMax(this._targetWid);this.close();},
+  exitFullscreen(){const id=this._targetWid;if(id&&WM.windows[id]&&WM.windows[id].maximized)WM.restoreMax(id);this._renderPanel('overview');},
   toggleFullscreen(){const id=this._targetWid;if(!id||!WM.windows[id])return;WM.toggleMaximize(id);this._renderPanel('overview');},
   toggleTabPref(){const w=WM.windows[this._targetWid];if(!w)return;OS.setTabPref(w.app.name,!OS._tabPref(w.app.name));this._renderPanel('overview');},
   minimizeGame(){if(this._targetWid&&WM.windows[this._targetWid])WM.minimize(this._targetWid);this.close();},
@@ -9921,7 +9955,7 @@ const FRIENDS={
     if(h){h.id='frRoot';this._view=null;this._render();}
   },
   _toastOpen(k){
-    if(typeof NOVOVERLAY!=='undefined'&&(NOVOVERLAY.open||WM.hasMaximizedWindow())){
+    if(typeof NOVOVERLAY!=='undefined'&&(NOVOVERLAY.open||(WM.hasMaximizedWindow()&&NOVOVERLAY._findGameWindow()))){
       if(!NOVOVERLAY.open)NOVOVERLAY.show();
       NOVOVERLAY.openPanel('friends');
       setTimeout(()=>this.openChat(k),80);
