@@ -1977,91 +1977,6 @@ const KEYBINDS={
 };
 
 /* ═══════════════════════════════════════════════
-   CHANGELOG — version history shown in Settings and,
-   on first load after an update, as a one-time popup.
-   Bump CURRENT_VERSION and add an entry at the top of
-   ENTRIES whenever you ship user-facing changes.
-═══════════════════════════════════════════════ */
-/* ═══════════════════════════════════════════════
-   LIVE UPDATE CHECK — polls the running page's own source for a newer
-   CHANGELOG.CURRENT_VERSION so long-lived tabs get notified without a
-   manual refresh. Fetches this same HTML file periodically, regex-extracts
-   the version string, and shows a persistent "Update Available" toast/
-   notification (with a Refresh action) the first time a newer version
-   is spotted, without forcing a reload.
-═══════════════════════════════════════════════ */
-const LIVE_UPDATE_CHECK={
-  _seenNewVersion:null,
-  _intervalMs:5*60*1000, // check every 5 minutes
-  _timer:null,
-  // Point this at your own raw GitHub file containing JUST the version string
-  // (e.g. a version.txt with contents like: 5.12 ), updated every release.
-  VERSION_URL:'https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/version.txt',
-
-  init(){
-    this._timer=setInterval(()=>this._check(),this._intervalMs);
-    // Also check shortly after load, in case an update landed while boot was happening
-    setTimeout(()=>this._check(),30000);
-    // Re-check whenever the user comes back to this tab (alt-tab / switch back)
-    document.addEventListener('visibilitychange',()=>{
-      if(!document.hidden)this._check();
-    });
-    window.addEventListener('focus',()=>this._check());
-  },
-
-  async _check(){
-    try{
-      const res=await fetch(this.VERSION_URL+'?_cb='+Date.now(),{cache:'no-store'});
-      if(!res.ok)return;
-      const remoteVersion=(await res.text()).trim();
-      if(!remoteVersion)return;
-      if(remoteVersion!==CHANGELOG.CURRENT_VERSION&&remoteVersion!==this._seenNewVersion){
-        this._seenNewVersion=remoteVersion;
-        this._notifyUpdate(remoteVersion);
-      }
-    }catch(e){/* network hiccup — silently retry next interval */}
-  },
-
-  // NovOS runs inside an about:blank srcdoc frame created by the launcher.
-  // location.reload() only reloads THAT frame, which re-renders the same
-  // already-written source — the launcher never re-fetches index.html, so the
-  // update notice kept firing forever. Reload window.top instead, with a
-  // cache-busting param so the launcher's own index.html fetch can't be
-  // served from the HTTP cache either.
-  hardReload(){
-    try{
-      const top=window.top||window;
-      const url=new URL(top.location.href);
-      url.searchParams.set('_v',Date.now());
-      top.location.replace(url.toString());
-    }catch(e){
-      try{window.top.location.reload(true);}catch(_){location.reload();}
-    }
-  },
-
-  _notifyUpdate(version){
-    const area=document.getElementById('notifArea');
-    if(!area)return;
-    const n=document.createElement('div');
-    n.className='notif';
-    n.style.cssText='animation:notifIn 0.25s ease;cursor:pointer;border-color:rgba(var(--os-accent-rgb),0.35)';
-    n.innerHTML=`<div class="notif-title" style="color:var(--os-accent)">NovOS ${version} available</div><div class="notif-body">A new version is ready. Click to refresh now.</div><div style="display:flex;gap:6px;margin-top:8px"><button style="flex:1;height:24px;border-radius:5px;font-size:10.5px;font-weight:500;cursor:pointer;border:1px solid rgba(var(--os-accent-rgb),0.3);background:rgba(var(--os-accent-rgb),0.14);color:var(--os-accent);font-family:var(--font)">Refresh</button><button class="lu-ignore-btn" style="flex:1;height:24px;border-radius:5px;font-size:10.5px;font-weight:500;cursor:pointer;border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-muted);font-family:var(--font)">Ignore</button></div>`;
-    n.addEventListener('click',(e)=>{
-      if(e.target.closest('.lu-ignore-btn')){
-        e.stopPropagation();
-        n.style.animation='notifSlideOut 0.2s ease forwards';
-        setTimeout(()=>n.remove(),200);
-        return;
-      }
-      LIVE_UPDATE_CHECK.hardReload();
-    });
-    area.appendChild(n);
-    // Persistent — no auto-dismiss timeout, since this matters until acted on
-    if(typeof NOTIF_HISTORY!=='undefined')NOTIF_HISTORY.add('NovOS '+version+' available','A new version is ready. Click the notification bell or refresh to update.');
-  }
-};
-
-/* ═══════════════════════════════════════════════
    DEFAULTS MIGRATION — when a shipped default value changes (wallpaper,
    taskbar color, icon size, etc.), a returning user whose stored setting
    still equals the OLD default gets silently upgraded to the NEW default.
@@ -2086,9 +2001,23 @@ function runDefaultsMigrations(){
   localStorage.setItem('novos_defaults_migrated',latest);
 }
 
+/* ═══════════════════════════════════════════════
+   CHANGELOG — version history shown in Settings and, on first
+   load after an update, as a one-time popup. Live releases pushed
+   through the Supabase `releases` table (see RELEASES below) add
+   their own entries here automatically. When you fold those into
+   this file, add the entries to ENTRIES and bump CURRENT_VERSION.
+═══════════════════════════════════════════════ */
 const CHANGELOG={
-  CURRENT_VERSION:'5.23',
+  CURRENT_VERSION:'5.24',
   ENTRIES:[
+    {
+      version:'5.24',
+      date:'2026-10-03',
+      items:[
+        {text:'Updates now install in the background while NovOS is open, so you no longer need to refresh the page',cat:'os'},
+      ]
+    },
     {
       version:'5.23',
       date:'2026-10-01',
@@ -2116,10 +2045,555 @@ const CHANGELOG={
   shouldShowPopup(){
     if(SETTINGS.get('showChangelogOnUpdate')===false)return false;
     const seen=localStorage.getItem('novos_changelog_seen');
-    return seen!==this.CURRENT_VERSION;
+    return !seen||this.cmp(this.CURRENT_VERSION,seen)>0;
   },
   markSeen(){localStorage.setItem('novos_changelog_seen',this.CURRENT_VERSION);},
+  // Numeric dotted-version compare: 1 if a>b, -1 if a<b, 0 if equal (5.23.1 > 5.23 > 5.9)
+  cmp(a,b){
+    const pa=String(a).split('.').map(n=>parseInt(n,10)||0),pb=String(b).split('.').map(n=>parseInt(n,10)||0);
+    for(let i=0;i<Math.max(pa.length,pb.length);i++){const d=(pa[i]||0)-(pb[i]||0);if(d)return d>0?1:-1;}
+    return 0;
+  },
+  // Adds (or merges into) an entry for `version`, newest first. Optionally bumps CURRENT_VERSION.
+  addEntry(version,date,items,bump){
+    let e=this.ENTRIES.find(x=>x.version===version);
+    if(!e){e={version,date,items:[]};this.ENTRIES.push(e);}
+    items.forEach(i=>{if(!e.items.some(x=>x.text===i.text))e.items.push(i);});
+    this.ENTRIES.sort((a,b)=>this.cmp(b.version,a.version));
+    if(bump&&this.cmp(version,this.CURRENT_VERSION)>0)this.CURRENT_VERSION=version;
+  },
 };
+
+/* ═══════════════════════════════════════════════
+   RELEASES — live updates with no refresh. Updates are rows in the Supabase
+   `releases` table (insert one from the SQL editor). Every open tab listens over
+   Realtime, applies the row's css/js on the spot, and logs its notes to the
+   CHANGELOG (Settings). The "updated" announcement is held back as PENDING and
+   only shows when the user tabs back into NovOS (or opens/wakes it), never while
+   they're actively in it. Rows flagged needs_reload skip css/js and announce a
+   Refresh button instead (for changes that can't be applied live).
+═══════════════════════════════════════════════ */
+const RELEASES={
+  _inited:false,_sb:null,_sbP:null,_chan:null,_wasDown:false,
+  _maxId:0,_applied:new Set(),_pending:[],_entries:[],_syncing:null,
+  _grace:false,_graceTimer:null,_tick:Date.now(),
+  GRACE_MS:25000,        // after a tab-back/open, announcements may show for this long
+  POLL_MS:5*60*1000,     // safety-net sync in case a Realtime event is missed
+  // Where the published HTML lives. When a new release arrives, open tabs re-read the data
+  // blocks listed in SYNC_BLOCKS (e.g. the games list) from this file and swap them in live.
+  SOURCE_URL:'https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/index.html',
+  SYNC_BLOCKS:['DEFAULT_SHORTCUTS'],
+  _needSrc:false,
+
+  /* ── small helpers ── */
+  _esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));},
+  _seen(){try{const v=localStorage.getItem('novos_release_seen');return v===null?null:(parseInt(v,10)||0);}catch(e){return 0;}},
+  _setSeen(n){try{localStorage.setItem('novos_release_seen',String(n));}catch(e){}},
+  _toItems(rel){
+    const items=String(rel.notes||'').split(/\r?\n/).map(l=>l.trim().replace(/^[-•*]\s+/,'')).filter(Boolean).map(line=>{
+      let cat='os';const m=line.match(/^\[(os|games)\]\s*/i);
+      if(m){cat=m[1].toLowerCase();line=line.slice(m[0].length);}
+      return{text:line,cat};
+    });
+    if(!items.length&&rel.title)items.push({text:String(rel.title),cat:'os'});
+    return items;
+  },
+
+  /* Merge changelog entries cached from earlier sessions so Settings shows them
+     instantly (even offline) and CURRENT_VERSION is right before the boot popup
+     check runs. Only entries the user has already been told about are merged here. */
+  _mergeCache(){
+    try{
+      const base=CHANGELOG.CURRENT_VERSION,seen=this._seen();
+      const cached=JSON.parse(localStorage.getItem('novos_release_cache')||'[]');
+      cached.forEach(c=>{
+        if(!c||!c.version||!Array.isArray(c.items))return;
+        if(CHANGELOG.cmp(c.version,base)<0)return;       // already baked into this HTML
+        if(seen===null||c.id>seen)return;                // not announced yet — added when synced
+        CHANGELOG.addEntry(c.version,c.date,c.items,true);
+      });
+    }catch(e){}
+  },
+  _saveCache(){try{localStorage.setItem('novos_release_cache',JSON.stringify(this._entries));}catch(e){}},
+
+  /* ── supabase client (anon, read-only; separate from FRIENDS' signed-in client) ── */
+  _client(){
+    if(this._sb)return Promise.resolve(this._sb);
+    if(this._sbP)return this._sbP;
+    this._sbP=new Promise(res=>{
+      const make=()=>{
+        try{
+          this._sb=window.supabase.createClient(FRIENDS.URL,FRIENDS.KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'novos-releases-auth'}});
+          res(this._sb);
+        }catch(e){this._sbP=null;res(null);}
+      };
+      if(window.supabase&&window.supabase.createClient){make();return;}
+      const sc=document.createElement('script');
+      sc.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+      sc.onload=make;
+      sc.onerror=()=>{this._sbP=null;res(null);};
+      document.head.appendChild(sc);
+    });
+    return this._sbP;
+  },
+
+  /* ── lifecycle ── */
+  init(){
+    if(this._inited)return;
+    this._inited=true;
+    this._openGrace();                       // the page was just opened = the user is arriving
+    this._connect();
+    this._sync().then(()=>this._maybeAnnounce());
+    document.addEventListener('visibilitychange',()=>{
+      if(document.hidden)this._grace=false;
+      else this._onReturn();
+    });
+    window.addEventListener('pageshow',e=>{if(e.persisted)this._onReturn();});
+    window.addEventListener('online',()=>{this._connect();this._sync().then(()=>this._maybeAnnounce());});
+    // Wake-from-sleep detector: if this timer was frozen for 45s+ while the tab was visible,
+    // the laptop was asleep — treat that like tabbing back in.
+    setInterval(()=>{
+      const now=Date.now();
+      if(!document.hidden&&now-this._tick>45000)this._onReturn();
+      this._tick=now;
+    },5000);
+    setInterval(()=>{this._sync().then(()=>this._maybeAnnounce());},this.POLL_MS);
+  },
+  _openGrace(){
+    this._grace=true;
+    clearTimeout(this._graceTimer);
+    this._graceTimer=setTimeout(()=>{this._grace=false;},this.GRACE_MS);
+  },
+  _onReturn(){
+    this._openGrace();
+    this._connect();
+    this._maybeAnnounce();                                   // flush anything that arrived while away
+    this._sync().then(()=>this._maybeAnnounce());            // and anything missed while asleep/offline
+  },
+
+  async _connect(){
+    const sb=await this._client();
+    if(!sb)return;
+    if(this._chan&&this._chan.state!=='closed')return;
+    try{if(this._chan)sb.removeChannel(this._chan);}catch(e){}
+    this._chan=sb.channel('novos-releases')
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'releases'},()=>{
+        this._sync().then(()=>this._maybeAnnounce());
+      })
+      .subscribe(st=>{
+        if(st==='SUBSCRIBED'&&this._wasDown){this._wasDown=false;this._sync().then(()=>this._maybeAnnounce());}
+        else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'||st==='CLOSED')this._wasDown=true;
+      });
+  },
+
+  /* Fetch every active release we haven't applied yet and apply it in order. */
+  _sync(){
+    if(this._syncing)return this._syncing;
+    this._syncing=(async()=>{
+      try{
+        const sb=await this._client();
+        if(!sb)return;
+        const r=await sb.from('releases')
+          .select('id,version,title,notes,css,js,needs_reload,created_at')
+          .eq('active',true).gt('id',this._maxId).order('id',{ascending:true});
+        if(r.error||!r.data)return;
+        // First run on this device: everything that exists now counts as already seen.
+        if(this._seen()===null)this._setSeen(r.data.reduce((m,x)=>Math.max(m,x.id),0));
+        r.data.forEach(rel=>this._ingest(rel));
+        if(this._needSrc){this._needSrc=false;await this._syncSource();setTimeout(()=>this._syncSource(),120000);}  // 2nd pass covers GitHub's CDN cache
+        this._saveCache();
+      }catch(e){/* offline — the next poll / return retries */}
+      finally{this._syncing=null;}
+    })();
+    return this._syncing;
+  },
+
+  _ingest(rel){
+    if(!rel||this._applied.has(rel.id))return;
+    this._applied.add(rel.id);
+    this._maxId=Math.max(this._maxId,rel.id);
+    if(!rel.needs_reload){
+      if(rel.css){
+        const st=document.createElement('style');
+        st.setAttribute('data-release',rel.id);
+        st.textContent=rel.css;
+        document.head.appendChild(st);
+      }
+      if(rel.js){
+        try{(new Function(rel.js))();}
+        catch(e){console.error('[NovOS release '+rel.id+' (v'+rel.version+')] patch failed:',e);}
+      }
+    }
+    const items=this._toItems(rel);
+    if(items.length){
+      const date=(rel.created_at||'').slice(0,10)||new Date().toISOString().slice(0,10);
+      CHANGELOG.addEntry(rel.version,date,items,true);
+      this._entries.push({id:rel.id,version:rel.version,date,items});
+    }else if(CHANGELOG.cmp(rel.version,CHANGELOG.CURRENT_VERSION)>0){
+      CHANGELOG.CURRENT_VERSION=rel.version;
+    }
+    const seen=this._seen();
+    if(seen!==null&&rel.id>seen){this._pending.push(rel);if(!rel.needs_reload)this._needSrc=true;}
+  },
+
+  /* Pull a top-level `const NAME = {...}|[...]` literal out of source text (string/comment aware). */
+  _extract(src,name){
+    const m=new RegExp('\\bconst\\s+'+name+'\\s*=\\s*').exec(src);if(!m)return null;
+    let i=m.index+m[0].length;const start=i;if(src[i]!=='{'&&src[i]!=='[')return null;
+    let depth=0;
+    for(;i<src.length;i++){
+      const c=src[i],n=src[i+1];
+      if(c==='/'&&n==='/'){i=src.indexOf('\n',i);if(i<0)return null;continue;}
+      if(c==='/'&&n==='*'){i=src.indexOf('*/',i+2);if(i<0)return null;i++;continue;}
+      if(c==='"'||c==="'"||c==='`'){for(i++;i<src.length&&src[i]!==c;i++){if(src[i]==='\\')i++;}continue;}
+      if(c==='{'||c==='[')depth++;
+      else if(c==='}'||c===']'){depth--;if(!depth)return src.slice(start,i+1);}
+    }
+    return null;
+  },
+  _swap(live,fresh){            // update `live` in place so every existing reference sees the change
+    if(Array.isArray(live)&&Array.isArray(fresh)){live.length=0;fresh.forEach(x=>live.push(x));return;}
+    Object.keys(live).forEach(k=>{if(!(k in fresh))delete live[k];});
+    Object.keys(fresh).forEach(k=>{
+      if(Array.isArray(live[k])&&Array.isArray(fresh[k]))this._swap(live[k],fresh[k]);else live[k]=fresh[k];
+    });
+  },
+  /* Re-read the published HTML and hot-swap its data blocks (games list etc.) into this open tab. */
+  async _syncSource(){
+    try{
+      const res=await fetch(this.SOURCE_URL+'?_cb='+Date.now(),{cache:'no-store'});
+      if(!res.ok){console.warn('[NovOS] source sync: HTTP',res.status);return false;}
+      const src=await res.text();let changed=false;
+      this.SYNC_BLOCKS.forEach(name=>{
+        try{
+          const lit=this._extract(src,name);if(!lit)return;
+          const fresh=(new Function('return ('+lit+')'))(),live=(new Function('return '+name))();
+          if(JSON.stringify(live)===JSON.stringify(fresh))return;
+          this._swap(live,fresh);changed=true;
+        }catch(e){console.warn('[NovOS] source sync failed for',name,e);}
+      });
+      if(changed){try{OS.shortcuts=loadShortcuts();OS.renderDesktop();}catch(e){}}
+      return changed;
+    }catch(e){return false;}
+  },
+
+  /* Only announce right after the user tabs back in / opens NovOS — never mid-session. */
+  _maybeAnnounce(){
+    if(document.hidden||!this._grace||!this._pending.length)return;
+    this._announce();
+  },
+  _announce(){
+    const list=this._pending.splice(0);
+    if(!list.length)return;
+    this._setSeen(list.reduce((m,r)=>Math.max(m,r.id),this._seen()||0));
+    try{CHANGELOG.markSeen();}catch(e){}
+    const needsReload=list.some(r=>r.needs_reload);
+    const ver=CHANGELOG.latestVersion();
+    const titles=list.map(r=>r.title).filter(Boolean).join(' · ').slice(0,140);
+    const title=needsReload?'NovOS '+ver+' available':'NovOS updated to '+ver;
+    const body=needsReload?'Refresh to finish updating.':(titles||'Updated in the background — no refresh needed.');
+    const area=document.getElementById('notifArea');
+    if(area){
+      const n=document.createElement('div');
+      n.className='notif';
+      n.style.cssText='animation:notifIn 0.25s ease;cursor:pointer;border-color:rgba(var(--os-accent-rgb),0.35)';
+      const btn='height:24px;border-radius:5px;font-size:10.5px;font-weight:500;cursor:pointer;font-family:var(--font);flex:1;';
+      n.innerHTML=`<div class="notif-title" style="color:var(--os-accent)">${this._esc(title)}</div><div class="notif-body">${this._esc(body)}</div><div style="display:flex;gap:6px;margin-top:8px"><button class="rl-main-btn" style="${btn}border:1px solid rgba(var(--os-accent-rgb),0.3);background:rgba(var(--os-accent-rgb),0.14);color:var(--os-accent)">${needsReload?'Refresh':"What's new"}</button><button class="rl-ignore-btn" style="${btn}border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-muted)">${needsReload?'Later':'Dismiss'}</button></div>`;
+      const close=()=>{n.style.animation='notifSlideOut 0.2s ease forwards';setTimeout(()=>n.remove(),200);};
+      n.addEventListener('click',e=>{
+        if(e.target.closest('.rl-ignore-btn')){e.stopPropagation();close();return;}
+        if(needsReload){RELEASES.hardReload();return;}
+        close();
+        try{OS.openChangelogPopup();}catch(_){}
+      });
+      area.appendChild(n);   // persistent until the user acts on it
+    }
+    if(typeof NOTIF_HISTORY!=='undefined')NOTIF_HISTORY.add(title,body);
+  },
+
+  // The launcher opens an about:blank tab and document.write()s this page into it, so there is no
+  // URL to reload (reloading would leave a blank tab). To "reload", re-download the published HTML,
+  // wrap it in a blob page and navigate THIS tab to it. Same tab, same origin, so localStorage,
+  // sessionStorage (still unlocked) and the open-window session all carry over.
+  _leaving:false,
+  async hardReload(){
+    try{
+      const res=await fetch(this.SOURCE_URL+'?_cb='+Date.now(),{cache:'no-store'});
+      if(!res.ok)throw new Error('HTTP '+res.status);
+      let html=await res.text();
+      const base=this.SOURCE_URL.replace(/[?#].*$/,'').replace(/[^/]*$/,'');   // same <base> trick the launcher uses
+      const tag='<base href="'+base+'">';
+      html=html.replace(/<base\b[^>]*>/i,'');
+      html=/<head[^>]*>/i.test(html)?html.replace(/<head([^>]*)>/i,'<head$1>'+tag):tag+html;
+      html+='<script>window.addEventListener("beforeunload",function(e){e.preventDefault();e.returnValue="";return "";});<\/script>';
+      try{PLAYTIME.stop();}catch(e){}
+      try{SESSION.save();}catch(e){}
+      this._leaving=true;                                   // lets us skip the launcher's "Leave site?" prompt
+      const url=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+      window.location.replace(url);
+      setTimeout(()=>{this._leaving=false;},4000);
+    }catch(e){
+      this._leaving=false;
+      try{OS.notify('Update failed','Could not download the update. Relaunch NovOS from the launcher to get it.');}catch(_){}
+    }
+  }
+};
+// Registered before the launcher's own beforeunload guard, so it can wave a deliberate update through.
+window.addEventListener('beforeunload',e=>{if(RELEASES._leaving)e.stopImmediatePropagation();});
+RELEASES._mergeCache();
+
+/* ═══════════════════════════════════════════════
+   ACCOUNT — Windows-style lock screen, sign up / sign in, PIN, cloud sync.
+   First name = username. Password signs in on any link and powers Friends;
+   the 4-digit PIN (stored only as a salted hash) unlocks NovOS once per tab.
+   All novos_* settings/data sync to the Supabase `user_data` row.
+═══════════════════════════════════════════════ */
+const _lsSet=Storage.prototype.setItem,_lsRem=Storage.prototype.removeItem;
+Storage.prototype.setItem=function(k,v){_lsSet.call(this,k,v);if(this===window.localStorage)ACCOUNT._touch(k);};
+Storage.prototype.removeItem=function(k){_lsRem.call(this,k);if(this===window.localStorage)ACCOUNT._touch(k);};
+const ACCOUNT={
+  _locked:true,_uid:null,_ready:false,_dirty:new Set(),_t:{},_last:0,_bad:0,_pt:null,_tt:null,_clk:null,
+  SKIP:/^novos_(session|release_|fr_|changelog_seen|welcomed|acct|pin|sync_t|synced_uid|cloak_)/,
+  active(){try{return !!localStorage.getItem('novos_acct');}catch(e){return false;}},
+  _acct(){try{return JSON.parse(localStorage.getItem('novos_acct')||'null');}catch(e){return null;}},
+  _pin(){try{return JSON.parse(localStorage.getItem('novos_pin')||'null');}catch(e){return null;}},
+  _e(s){return FRIENDS._e(s);},
+  _uname(n){let u=String(n).trim().toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,20);while(u&&u.length<3)u+='_';return u;},
+  _cap(n){n=String(n).trim();return n.charAt(0).toUpperCase()+n.slice(1);},
+  _salt(){return btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(12))));},
+  async _hash(pin,salt){
+    const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveBits']);
+    const b=await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(salt),iterations:100000,hash:'SHA-256'},k,256);
+    return btoa(String.fromCharCode(...new Uint8Array(b)));
+  },
+
+  /* ── sync ── */
+  _touch(k){
+    if(!/^novos_/.test(k)||this.SKIP.test(k))return;
+    this._t[k]=Date.now();
+    clearTimeout(this._tt);this._tt=setTimeout(()=>{try{_lsSet.call(localStorage,'novos_sync_t',JSON.stringify(this._t));}catch(e){}},1500);
+    if(this._ready){this._dirty.add(k);clearTimeout(this._pt);this._pt=setTimeout(()=>this._push(),15000);}
+  },
+  _applyRemote(rd,force){
+    let changed=false;
+    Object.keys(rd).forEach(k=>{
+      if(!/^novos_/.test(k)||this.SKIP.test(k))return;
+      const e=rd[k];if(!e||typeof e.t!=='number')return;
+      if(!force&&e.t<=(this._t[k]||0))return;
+      const cur=localStorage.getItem(k);
+      if(e.v===null||e.v===undefined){if(cur!==null){_lsRem.call(localStorage,k);changed=true;}}
+      else if(cur!==e.v){_lsSet.call(localStorage,k,e.v);changed=true;}
+      this._t[k]=e.t;
+    });
+    try{_lsSet.call(localStorage,'novos_sync_t',JSON.stringify(this._t));}catch(e){}
+    return changed;
+  },
+  async _syncInit(isNew){
+    const sb=FRIENDS.sb,uid=this._uid;if(!sb||!uid)return;
+    try{
+      const r=await sb.from('user_data').select('data').eq('user_id',uid).maybeSingle();
+      if(r.error)return;
+      const rd=(r.data&&r.data.data)||{};
+      const hasData=Object.keys(rd).some(k=>/^novos_/.test(k));
+      const first=localStorage.getItem('novos_synced_uid')!==uid;
+      const changed=hasData?this._applyRemote(rd,first&&!isNew):false;
+      _lsSet.call(localStorage,'novos_synced_uid',uid);
+      this._ready=true;
+      if(!hasData||isNew||first)await this._push(true);
+      if(changed)this._reload();
+    }catch(e){}
+  },
+  async _push(all){
+    const sb=FRIENDS.sb;if(!sb||!this._ready||!this._uid)return;
+    try{
+      const r=await sb.from('user_data').select('data').eq('user_id',this._uid).maybeSingle();
+      const d=(r.data&&r.data.data)||{};
+      const keys=all?Object.keys(localStorage).filter(k=>/^novos_/.test(k)&&!this.SKIP.test(k)):[...this._dirty];
+      this._dirty.clear();
+      keys.forEach(k=>{const t=this._t[k]||Date.now();if(!d[k]||d[k].t<=t||all&&!d[k])d[k]={v:localStorage.getItem(k),t};});
+      const p=this._pin();if(p)d._pin=p;
+      const w=await sb.from('user_data').upsert({user_id:this._uid,data:d,updated_at:new Date().toISOString()});
+      if(!w.error)this._last=Date.now();
+    }catch(e){}
+  },
+  _reload(){try{sessionStorage.setItem('novos_unlock','1');}catch(e){}RELEASES.hardReload();},
+
+  /* ── lifecycle ── */
+  async init(){
+    try{this._t=JSON.parse(localStorage.getItem('novos_sync_t')||'{}');}catch(e){this._t={};}
+    window.addEventListener('keydown',e=>{if(this._locked&&!(e.target&&e.target.closest&&e.target.closest('#acctGate'))){e.stopImmediatePropagation();e.preventDefault();}},true);
+    this._mount();
+    const a=this._acct();let ok=false;
+    try{ok=!!sessionStorage.getItem('novos_unlock');}catch(e){}
+    if(ok&&a&&this._pin()){this._open();this._uid=a.uid;
+      try{if(await FRIENDS._loadSdk()){const r=await FRIENDS.sb.auth.getSession();if(r.data&&r.data.session)await this._syncInit(false);}}catch(e){}
+      return;}
+    this._lock(false);   // keys locked now, but the screen stays hidden until the loading screen is done
+    if(a&&this._pin())this._showPin(a);else this._showWelcome();
+    this._afterBoot(()=>{document.getElementById('acctGate').classList.add('on');const f=document.querySelector('#agBody input');if(f)setTimeout(()=>f.focus(),350);});
+  },
+  _mount(){
+    const st=document.createElement('style');
+    st.textContent=`#acctGate{position:fixed;inset:0;z-index:2147483000;display:flex;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease,visibility .3s;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:var(--font,system-ui,sans-serif);background:radial-gradient(1100px 700px at 25% 15%,rgba(var(--os-accent-rgb,124,109,250),.38),transparent 60%),linear-gradient(160deg,#0a0c18,#12122b 55%,#1c1040)}
+#acctGate.on{opacity:1;visibility:visible;pointer-events:auto}#acctGate *{box-sizing:border-box}
+.ag-clock{position:absolute;left:44px;bottom:38px}.ag-t{font-size:66px;font-weight:300;line-height:1}.ag-d{font-size:18px;opacity:.8;margin-top:6px}
+.ag-av{width:128px;height:128px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:600;box-shadow:0 8px 40px rgba(0,0,0,.45)}
+.ag-name{font-size:26px;font-weight:500;margin:18px 0 16px}.ag-title{font-size:24px;font-weight:500;margin-bottom:6px}.ag-sub{font-size:13px;opacity:.7;margin-bottom:16px;text-align:center;max-width:300px}
+.ag-f{width:270px;height:38px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;padding:0 12px;font-size:14px;outline:none;margin-bottom:10px;font-family:inherit;text-align:center}
+.ag-f:focus{border-color:#fff;background:rgba(255,255,255,.18)}.ag-f::placeholder{color:rgba(255,255,255,.55)}
+.ag-pin{letter-spacing:.5em;font-size:20px}.ag-b{width:270px;height:38px;border-radius:6px;border:0;background:rgba(var(--os-accent-rgb,124,109,250),1);color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;font-family:inherit}
+.ag-b.alt{background:rgba(255,255,255,.14);font-weight:500}.ag-l{margin-top:16px;font-size:12.5px;color:rgba(255,255,255,.75);cursor:pointer;text-decoration:underline;background:none;border:0;font-family:inherit}
+.ag-err{color:#ff9a9a;font-size:12.5px;min-height:18px;margin-top:6px;text-align:center;max-width:290px}.ag-shake{animation:agShake .35s}@keyframes agShake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}`;
+    document.head.appendChild(st);
+    const g=document.createElement('div');g.id='acctGate';
+    g.innerHTML='<div id="agBody" style="display:flex;flex-direction:column;align-items:center"></div><div class="ag-clock"><div class="ag-t" id="agT"></div><div class="ag-d" id="agD"></div></div>';
+    g.addEventListener('keydown',e=>e.stopPropagation());g.addEventListener('contextmenu',e=>e.preventDefault());
+    document.body.appendChild(g);
+    const tick=()=>{const n=new Date(),t=document.getElementById('agT'),d=document.getElementById('agD');if(t)t.textContent=n.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});if(d)d.textContent=n.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});};
+    tick();this._clk=setInterval(tick,10000);
+  },
+  _lock(show){this._locked=true;if(show!==false)document.getElementById('acctGate').classList.add('on');},
+  // Run fn once the loading screen (#boot) has started fading out (or immediately if it is off).
+  _afterBoot(fn){
+    const b=document.getElementById('boot');
+    let done=false;const go=()=>{if(done)return;done=true;fn();};
+    if(!b||b.style.display==='none'||b.classList.contains('hide')){go();return;}
+    new MutationObserver((m,o)=>{if(b.classList.contains('hide')){o.disconnect();go();}}).observe(b,{attributes:true,attributeFilter:['class']});
+    setTimeout(go,7000);   // safety net so the login can never get stuck behind a boot screen
+  },
+  _open(){this._locked=false;try{sessionStorage.setItem('novos_unlock','1');}catch(e){}document.getElementById('acctGate').classList.remove('on');},
+  _view(h){const b=document.getElementById('agBody');b.innerHTML=h;const f=b.querySelector('input');if(f)setTimeout(()=>f.focus(),50);},
+  _err(m){const el=document.getElementById('agErr');if(el)el.textContent=m||'';},
+  _v(id){const el=document.getElementById(id);return el?el.value:'';},
+  _shake(){const b=document.getElementById('agBody');b.classList.remove('ag-shake');void b.offsetWidth;b.classList.add('ag-shake');},
+
+  /* ── screens ── */
+  _showWelcome(){
+    this._view(`<div class="ag-av" style="background:rgba(255,255,255,.14)"><svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div><div class="ag-name">Welcome</div><button class="ag-b" onclick="ACCOUNT._showForm('up')">Sign up</button><button class="ag-b alt" style="margin-top:10px" onclick="ACCOUNT._showForm('in')">Sign in</button>`);
+  },
+  _showForm(mode,name,msg){
+    const up=mode==='up';
+    this._view(`<div class="ag-title">${up?'Create your account':'Sign in'}</div><div class="ag-sub">${this._e(msg||(up?'Your first name is your username. The PIN unlocks this computer.':'Use your first name and password.'))}</div><input class="ag-f" id="agN" placeholder="First name" maxlength="20" autocomplete="off" value="${this._e(name||'')}"><input class="ag-f" id="agP" type="password" placeholder="Password" autocomplete="off" onkeydown="if(event.key==='Enter')ACCOUNT._${up?'signUp':'signIn'}()">${up?'<input class="ag-f ag-pin" id="agK" type="password" inputmode="numeric" maxlength="4" placeholder="4-digit PIN" autocomplete="off" onkeydown="if(event.key===\'Enter\')ACCOUNT._signUp()">':''}<button class="ag-b" onclick="ACCOUNT._${up?'signUp':'signIn'}()">${up?'Create account':'Sign in'}</button><div class="ag-err" id="agErr"></div><button class="ag-l" onclick="ACCOUNT._showForm('${up?'in':'up'}')">${up?'I already have an account':'Create a new account'}</button>`);
+  },
+  _showPin(a){
+    this._view(`<div class="ag-av" style="background:hsl(${FRIENDS._hue(a.u)},50%,42%)">${this._e(a.name.charAt(0).toUpperCase())}</div><div class="ag-name">${this._e(a.name)}</div><input class="ag-f ag-pin" id="agK" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" autocomplete="off" oninput="this.value=this.value.replace(/\\D/g,'');if(this.value.length===4)ACCOUNT._tryPin(this.value)"><div class="ag-err" id="agErr"></div><button class="ag-l" onclick="ACCOUNT._showForm('in','${this._e(a.name)}')">Sign in with password</button>`);
+  },
+  _showSetPin(user,name,u,msg){
+    this._pend={user,name,u};
+    this._view(`<div class="ag-title">Choose a PIN</div><div class="ag-sub">${this._e(msg||'Pick a 4-digit PIN. You will type it each time you open NovOS.')}</div><input class="ag-f ag-pin" id="agK" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" autocomplete="off" onkeydown="if(event.key==='Enter')ACCOUNT._setPin()"><button class="ag-b" onclick="ACCOUNT._setPin()">Continue</button><div class="ag-err" id="agErr"></div>`);
+  },
+
+  /* ── actions ── */
+  async _tryPin(v){
+    const p=this._pin(),a=this._acct();
+    if(!p||!a){this._showWelcome();return;}
+    if(this._bad>=5){this._err('Too many tries. Wait 30 seconds.');return;}
+    if(await this._hash(v,p.salt)!==p.h){
+      this._bad++;this._shake();this._err('Incorrect PIN');
+      if(this._bad>=5)setTimeout(()=>{this._bad=0;this._err('');},30000);
+      const k=document.getElementById('agK');if(k){k.value='';k.focus();}
+      return;
+    }
+    this._bad=0;
+    let u=null;
+    try{if(await FRIENDS._loadSdk()){const r=await FRIENDS.sb.auth.getSession();u=r.data&&r.data.session&&r.data.session.user;}}catch(e){}
+    if(!u&&navigator.onLine){this._showForm('in',a.name,'Your session expired. Enter your password to continue.');return;}
+    this._uid=a.uid;this._open();
+    if(u){
+      try{const was=localStorage.getItem('novos_fr_on')==='1';localStorage.setItem('novos_fr_on','1');if(!was&&!FRIENDS.me)await FRIENDS._onLogin(u);}catch(e){}
+      this._syncInit(false);
+    }
+  },
+  async _auth(name,pw){
+    if(!(await FRIENDS._loadSdk())){this._err('Cannot reach the server. Check your connection.');return null;}
+    return FRIENDS.sb;
+  },
+  async _signUp(){
+    const name=this._cap(this._v('agN')),pw=this._v('agP'),pin=this._v('agK'),u=this._uname(name);
+    if(!u)return this._err('Enter your first name.');
+    if(pw.length<6)return this._err('Password must be at least 6 characters.');
+    if(!/^\d{4}$/.test(pin))return this._err('PIN must be exactly 4 digits.');
+    this._err('Creating account…');
+    const sb=await this._auth();if(!sb)return;
+    const em=FRIENDS._mail(u);
+    const r=await sb.auth.signUp({email:em,password:pw,options:{data:{username:u}}});
+    if(r.error){this._err(/username_taken|profiles_username|Database error|already/i.test(r.error.message)?'That name is taken. Add your last initial (e.g. '+u+'m).':r.error.message);return;}
+    let user=r.data.user;
+    if(!r.data.session){const s=await sb.auth.signInWithPassword({email:em,password:pw});if(s.error)return this._err(s.error.message);user=s.data.user;}
+    try{await sb.from('profiles').update({display_name:name}).eq('id',user.id);}catch(e){}
+    const salt=this._salt();
+    await this._finish(user,name,u,{salt,h:await this._hash(pin,salt)},true);
+  },
+  async _signIn(){
+    const typed=this._v('agN'),pw=this._v('agP'),u=this._uname(typed);
+    if(!u||pw.length<6)return this._err('Enter your first name and password.');
+    this._err('Signing in…');
+    const sb=await this._auth();if(!sb)return;
+    let em=FRIENDS._mail(u);
+    try{const q=await sb.rpc('login_email',{u});if(q.data)em=q.data;}catch(e){}
+    const r=await sb.auth.signInWithPassword({email:em,password:pw});
+    if(r.error){this._shake();this._err(/invalid/i.test(r.error.message)?'Wrong first name or password.':r.error.message);return;}
+    const user=r.data.user;
+    let name=this._cap(typed);
+    try{const pr=await sb.from('profiles').select('display_name').eq('id',user.id).maybeSingle();if(pr.data&&pr.data.display_name)name=pr.data.display_name;}catch(e){}
+    let pn=null;
+    try{const ud=await sb.from('user_data').select('data').eq('user_id',user.id).maybeSingle();pn=ud.data&&ud.data.data&&ud.data.data._pin;}catch(e){}
+    if(pn&&pn.salt&&pn.h)await this._finish(user,name,u,pn,false);
+    else this._showSetPin(user,name,u);
+  },
+  async _setPin(){
+    const pin=this._v('agK');if(!/^\d{4}$/.test(pin))return this._err('PIN must be exactly 4 digits.');
+    const {user,name,u}=this._pend,salt=this._salt();
+    await this._finish(user,name,u,{salt,h:await this._hash(pin,salt)},false);
+  },
+  async _finish(user,name,u,pinObj,isNew){
+    _lsSet.call(localStorage,'novos_acct',JSON.stringify({uid:user.id,u,name,since:user.created_at}));
+    _lsSet.call(localStorage,'novos_pin',JSON.stringify(pinObj));
+    this._uid=user.id;this._open();
+    try{localStorage.setItem('novos_fr_on','1');await FRIENDS._onLogin(user);}catch(e){}
+    await this._syncInit(isNew);
+  },
+  async signOut(){
+    try{await FRIENDS.signOut();}catch(e){}
+    try{await FRIENDS.sb.auth.signOut();}catch(e){}
+    ['novos_acct','novos_pin','novos_fr_on','novos_synced_uid'].forEach(k=>_lsRem.call(localStorage,k));
+    try{sessionStorage.removeItem('novos_unlock');}catch(e){}
+    this._ready=false;this._uid=null;this._lock();this._showWelcome();
+  },
+
+  /* ── Settings → Account page ── */
+  renderPage(wid){
+    const el=document.getElementById('acctBox_'+wid);if(!el)return;
+    const a=this._acct();
+    if(!a){el.innerHTML='<div class="sp2-card"><div style="padding:20px;text-align:center;color:var(--os-muted);font-size:12.5px">Not signed in.</div></div>';return;}
+    const row=(l,v)=>`<div class="sp2-row"><div><div class="sp2-row-label">${l}</div></div><span style="font-size:12px;color:var(--os-muted);font-family:var(--mono)">${this._e(v)}</span></div>`;
+    const b=(t,f)=>`<button onclick="${f}" style="height:28px;padding:0 12px;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-text);font-family:var(--font)">${t}</button>`;
+    el.innerHTML=`<div class="sp2-card">${row('Name',a.name)}${row('Username',a.u)}${row('Member since',(a.since||'').slice(0,10)||'-')}${row('Last synced',this._last?new Date(this._last).toLocaleTimeString():'Not yet this session')}${row('Password / PIN','Hidden - change them below')}</div><div class="sp2-card" style="padding:14px;display:flex;flex-wrap:wrap;gap:8px">${b('Change password',`ACCOUNT._chg('pw','${wid}')`)}${b('Change PIN',`ACCOUNT._chg('pin','${wid}')`)}${b('Sync now',`ACCOUNT._push(true).then(()=>ACCOUNT.renderPage('${wid}'))`)}${b('Sign out of NovOS','ACCOUNT.signOut()')}</div><div id="acctForm_${wid}"></div>`;
+  },
+  _chg(kind,wid){
+    const f=document.getElementById('acctForm_'+wid);if(!f)return;
+    const pw=kind==='pw',i='height:30px;border-radius:6px;border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-text);padding:0 10px;font-size:12px;font-family:var(--font)';
+    f.innerHTML=`<div class="sp2-card" style="padding:14px;display:flex;flex-direction:column;gap:8px;max-width:300px"><input id="acC_${wid}" type="password" placeholder="Current ${pw?'password':'PIN'}" style="${i}"><input id="acN_${wid}" type="password" placeholder="New ${pw?'password (6+ characters)':'PIN (4 digits)'}" ${pw?'':'inputmode="numeric" maxlength="4"'} style="${i}"><button onclick="ACCOUNT._saveChg('${kind}','${wid}')" style="height:30px;border-radius:6px;border:0;background:var(--os-accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)">Save</button><div id="acM_${wid}" style="font-size:11.5px;color:var(--os-muted)"></div></div>`;
+  },
+  async _saveChg(kind,wid){
+    const cur=this._v('acC_'+wid),nw=this._v('acN_'+wid),m=document.getElementById('acM_'+wid),say=t=>{if(m)m.textContent=t;},a=this._acct();
+    if(kind==='pw'){
+      if(nw.length<6)return say('New password must be at least 6 characters.');
+      let em=FRIENDS._mail(a.u);try{const q=await FRIENDS.sb.rpc('login_email',{u:a.u});if(q.data)em=q.data;}catch(e){}
+      const v=await FRIENDS.sb.auth.signInWithPassword({email:em,password:cur});
+      if(v.error)return say('Current password is wrong.');
+      const r=await FRIENDS.sb.auth.updateUser({password:nw});
+      say(r.error?r.error.message:'Password changed.');
+    }else{
+      const p=this._pin();
+      if(!p||await this._hash(cur,p.salt)!==p.h)return say('Current PIN is wrong.');
+      if(!/^\d{4}$/.test(nw))return say('New PIN must be exactly 4 digits.');
+      const salt=this._salt();_lsSet.call(localStorage,'novos_pin',JSON.stringify({salt,h:await this._hash(nw,salt)}));
+      await this._push();say('PIN changed. It now works on every link.');
+    }
+  }
+};
+
 
 /* ═══════════════════════════════════════════════
    SHORTCUT STORE
@@ -3556,7 +4030,6 @@ const OS={
 
     this.refreshWelcomeShortcutLine();
     if(!localStorage.getItem('novos_welcomed')){
-      setTimeout(()=>document.getElementById('welcomeModal').classList.add('open'),SETTINGS.get('showBoot')?2800:300);
       // First-ever run: mark the current changelog as seen so the popup
       // doesn't immediately follow the welcome modal for a brand new user.
       CHANGELOG.markSeen();
@@ -5374,6 +5847,10 @@ const OS={
               <div class="sp2-nav-icon" style="background:rgba(248,113,113,0.12);color:#f87171"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
               Performance
             </div>
+            <div class="sp2-nav-item" onclick="SP2.nav('account','${id}')">
+              <div class="sp2-nav-icon" style="background:rgba(var(--os-accent-rgb),0.12);color:var(--os-accent)">👤</div>
+              Account
+            </div>
             <div class="sp2-nav-item" onclick="SP2.nav('changelog','${id}')">
               <div class="sp2-nav-icon" style="background:rgba(52,211,153,0.12);color:#34d399"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M14 3v5h5"/><path d="M5 3h9l5 5v13H5z"/><path d="M9 13h6M9 17h4"/></svg></div>
               Changelog
@@ -5684,6 +6161,14 @@ const OS={
               </div>
             </div>
 
+            <!-- ACCOUNT PAGE -->
+            <div class="sp2-page" id="sp2pg_account_${id}">
+              <div class="sp2-hero">
+                <div class="sp2-hero-icon" style="background:rgba(var(--os-accent-rgb),0.12);color:var(--os-accent)">👤</div>
+                <div><div class="sp2-hero-title">Account</div><div class="sp2-hero-sub">Your profile, password and PIN</div></div>
+              </div>
+              <div id="acctBox_${id}"></div>
+            </div>
             <!-- CHANGELOG PAGE -->
             <div class="sp2-page" id="sp2pg_changelog_${id}">
               <div class="sp2-hero">
@@ -8048,6 +8533,7 @@ const SP2={
     document.querySelectorAll(`[id^="sp2pg_"][id$="_${wid}"]`).forEach(p=>p.classList.remove('active'));
     const target=document.getElementById(`sp2pg_${page}_${wid}`);
     if(target)target.classList.add('active');
+    if(page==='account'&&window.ACCOUNT)ACCOUNT.renderPage(wid);
     document.querySelectorAll(`#sp2Main_${wid}`).forEach(()=>{});
     // Update nav active
     const navItems=document.getElementById(`sp2Main_${wid}`)?.closest('.sp2-layout')?.querySelectorAll('.sp2-nav-item');
@@ -8480,7 +8966,8 @@ window.addEventListener('load',()=>{
     if(savedTitle||savedIcon)CLOAK._apply(savedTitle||'NovOS',savedIcon||'');
   }catch(e){}
   setTimeout(()=>SESSION.restore(),SETTINGS.get('showBoot')?2600:200);
-  LIVE_UPDATE_CHECK.init();
+  ACCOUNT.init();
+  RELEASES.init();
   FRIENDS.boot();
 
   // Playtime pause/resume — stops the clock the instant the tab is hidden,
@@ -10147,7 +10634,7 @@ const FRIENDS={
   async signOut(){
     this._stopLive();
     try{await this.sb.rpc('go_offline');}catch(e){}
-    try{await this.sb.auth.signOut();}catch(e){}
+    if(!(window.ACCOUNT&&ACCOUNT.active())){try{await this.sb.auth.signOut();}catch(e){}}
     try{localStorage.removeItem('novos_fr_on');}catch(e){}
     this.me=null;this.profile=null;this.friends=[];this.requests=[];this.presence={};this.unread={};this.msgs={};this.active=null;this._loadedOnce=false;this.groups=[];this.profiles={};this.nicks={};this._editId=null;
     this._render();
