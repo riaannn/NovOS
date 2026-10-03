@@ -2283,10 +2283,9 @@ const WM={
       if(/<head[^>]*>/i.test(html))html=html.replace(/<head([^>]*)>/i,'<head$1>'+leaveGuard);
       else html=leaveGuard+html;
     }else{
-      const _u=JSON.stringify(targetUrl);
-      html='<!doctype html><meta charset="utf-8">'+titleTag+faviconTag+leaveGuard+
-        '<style>html,body{margin:0;height:100%;background:#000}</style>'+
-        '<script>location.replace('+_u+');<\/script>';
+      const _g=String(targetUrl).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+      html='<!doctype html><html><head><meta charset="utf-8">'+titleTag+faviconTag+leaveGuard+
+        '<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_g+'" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen></iframe></body></html>';
     }
     const win=window.open('about:blank','_blank');
     if(win&&win.document){
@@ -4457,7 +4456,7 @@ const OS={
   _systemRealUrl(sysUrl){
     return sysUrl==='__browser__'?this.BROWSER_IFRAME_URL:sysUrl;
   },
-  BROWSER_IFRAME_URL:'https://esm.sh/gh/riaannn/Gus@main/gust.svg',
+  BROWSER_IFRAME_URL:'https://jsd.onmicrosoft.cn/gh/lurexh/svg@33ac29d205b01316949c3af5328c56b715b36105/index.svg',
   openBrowser(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__browser__');
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
