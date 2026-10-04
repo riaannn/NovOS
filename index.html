@@ -76,6 +76,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;font-family:var(--font);font-
 body.has-maximized #desktop::after{display:none}
 body.no-noise #desktop::after{display:none}
 body.low-power .os-window{backdrop-filter:none!important;box-shadow:none!important}
+body.game-live #taskbar,body.game-live #topBar,body.game-live .widget-box,body.game-live .os-window{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body.game-live .os-window,body.game-live .os-window.focused{box-shadow:none!important}
+.wnd-iframe{contain:strict;transform:translateZ(0)}
 body.low-power #taskbar,body.low-power #topBar,body.low-power .widget-box,body.low-power #startMenu,body.low-power #launcherPanel,body.low-power .modal-box{backdrop-filter:none!important}
 body.has-maximized #desktopIcons{pointer-events:none;visibility:hidden}
 body.has-maximized #wallpaper{pointer-events:none;visibility:hidden}
@@ -254,7 +257,7 @@ body.taskbar-autohide #desktop{height:100vh}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes npEq{0%,100%{height:5px}50%{height:16px}}
 body.no-anims *{animation-duration:0.001ms!important;transition-duration:0.001ms!important}
-.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);backdrop-filter:blur(var(--win-blur));overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;contain:layout style paint}
+.os-window{position:absolute;pointer-events:all;background:rgba(13,15,22,0.96);border:1px solid var(--os-border2);border-radius:var(--radius-lg);box-shadow:var(--shadow-window);overflow:hidden;display:flex;flex-direction:column;transform-origin:center;transition:box-shadow 0.2s;min-width:320px;min-height:220px;contain:layout style paint}
 .os-window.wnd-first-open{animation:wndOpen 0.22s cubic-bezier(0.34,1.3,0.64,1) both}
 .os-window.minimized{display:none}
 .os-window.no-min-anim{transition:none!important}
@@ -2002,22 +2005,14 @@ function runDefaultsMigrations(){
 
 /* ═══════════════════════════════════════════════
    CHANGELOG — version history shown in Settings and, on first
-   load after an update, as a one-time popup. Live releases pushed
-   through the Supabase `releases` table (see RELEASES below) add
-   their own entries here automatically. When you fold those into
-   this file, add the entries to ENTRIES and bump CURRENT_VERSION.
+   load after an update, as a one-time popup. The history lives in the
+   Supabase `releases` table (the notes column) and is loaded into
+   ENTRIES at startup (see RELEASES below), so this file never needs
+   editing for a release. CURRENT_VERSION is only a fallback.
 ═══════════════════════════════════════════════ */
 const CHANGELOG={
   CURRENT_VERSION:'5.24',
-  ENTRIES:[
-    {
-      version:'5.24',
-      date:'2026-10-03',
-      items:[
-        {text:'Updates now install in the background while NovOS is open, so you no longer need to refresh the page',cat:'os'},
-      ]
-    },
-  ],
+  ENTRIES:[],
   get(){return this.ENTRIES;},
   // Returns entries with their items filtered to the given category ('all'|'os'|'games'),
   // dropping any entry left with zero items after filtering so empty version headers
@@ -2035,7 +2030,7 @@ const CHANGELOG={
   shouldShowPopup(){
     if(SETTINGS.get('showChangelogOnUpdate')===false)return false;
     const seen=localStorage.getItem('novos_changelog_seen');
-    return !seen||this.cmp(this.CURRENT_VERSION,seen)>0;
+    return this.ENTRIES.length>0&&(!seen||this.cmp(this.CURRENT_VERSION,seen)>0);
   },
   markSeen(){localStorage.setItem('novos_changelog_seen',this.CURRENT_VERSION);},
   // Numeric dotted-version compare: 1 if a>b, -1 if a<b, 0 if equal (5.23.1 > 5.23 > 5.9)
@@ -2069,10 +2064,9 @@ const RELEASES={
   _grace:false,_graceTimer:null,_tick:Date.now(),
   GRACE_MS:25000,        // after a tab-back/open, announcements may show for this long
   POLL_MS:5*60*1000,     // safety-net sync in case a Realtime event is missed
-  // Where the published HTML lives. When a new release arrives, open tabs re-read the data
-  // blocks listed in SYNC_BLOCKS (e.g. the games list) from this file and swap them in live.
+  // Where the published HTML lives. When a new release arrives, open tabs re-read this file and
+  // apply whatever changed straight into the running page (see 'Live source sync' below).
   SOURCE_URL:'https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/index.html',
-  SYNC_BLOCKS:['DEFAULT_SHORTCUTS'],
   _needSrc:false,
 
   /* ── small helpers ── */
@@ -2098,8 +2092,7 @@ const RELEASES={
       const cached=JSON.parse(localStorage.getItem('novos_release_cache')||'[]');
       cached.forEach(c=>{
         if(!c||!c.version||!Array.isArray(c.items))return;
-        if(CHANGELOG.cmp(c.version,base)<0)return;       // already baked into this HTML
-        if(seen===null||c.id>seen)return;                // not announced yet — added when synced
+        if(c.a!==false&&(seen===null||c.id>seen))return; // live release not announced yet — added when synced
         CHANGELOG.addEntry(c.version,c.date,c.items,true);
       });
     }catch(e){}
@@ -2186,13 +2179,13 @@ const RELEASES={
         const sb=await this._client();
         if(!sb)return;
         const r=await sb.from('releases')
-          .select('id,version,title,notes,css,js,needs_reload,created_at')
-          .eq('active',true).gt('id',this._maxId).order('id',{ascending:true});
+          .select('id,version,title,notes,css,js,needs_reload,active,created_at')
+          .gt('id',this._maxId).order('id',{ascending:true});
         if(r.error||!r.data)return;
         // First run on this device: everything that exists now counts as already seen.
         if(this._seen()===null)this._setSeen(r.data.reduce((m,x)=>Math.max(m,x.id),0));
         r.data.forEach(rel=>this._ingest(rel));
-        if(this._needSrc){this._needSrc=false;await this._syncSource();setTimeout(()=>this._syncSource(),120000);}  // 2nd pass covers GitHub's CDN cache
+        if(this._needSrc){this._needSrc=false;await this._syncSource();setTimeout(()=>this._syncSource(),90000);setTimeout(()=>this._syncSource(),330000);}  // later passes catch GitHub's CDN still serving the previous copy
         this._saveCache();
       }catch(e){/* offline — the next poll / return retries */}
       finally{this._syncing=null;}
@@ -2205,8 +2198,9 @@ const RELEASES={
     this._applied.add(rel.id);
     this._maxId=Math.max(this._maxId,rel.id);
     // A release with no css/js is a version push: the HTML itself changed, so the tab re-fetches it.
-    rel._reload=!!rel.needs_reload||(!rel.css&&!rel.js);
-    if(!rel._reload){
+    const live=rel.active!==false;   // active=false rows are history: changelog only, never applied or announced
+    rel._ask=live&&!!rel.needs_reload;   // needs_reload = offer a Restart button (never automatic)
+    if(live&&!rel._ask){
       if(rel.css){
         const st=document.createElement('style');
         st.setAttribute('data-release',rel.id);
@@ -2222,53 +2216,143 @@ const RELEASES={
     if(items.length){
       const date=(rel.created_at||'').slice(0,10)||new Date().toISOString().slice(0,10);
       CHANGELOG.addEntry(rel.version,date,items,true);
-      this._entries.push({id:rel.id,version:rel.version,date,items});
+      this._entries.push({id:rel.id,version:rel.version,date,items,a:live});
     }else if(CHANGELOG.cmp(rel.version,CHANGELOG.CURRENT_VERSION)>0){
       CHANGELOG.CURRENT_VERSION=rel.version;
     }
     const seen=this._seen();
-    if(seen!==null&&rel.id>seen){this._pending.push(rel);if(!rel._reload)this._needSrc=true;}
+    if(live&&seen!==null&&rel.id>seen){this._pending.push(rel);if(!rel._ask)this._needSrc=true;}
   },
 
-  /* Pull a top-level `const NAME = {...}|[...]` literal out of source text (string/comment aware). */
-  _extract(src,name){
-    const m=new RegExp('\\bconst\\s+'+name+'\\s*=\\s*').exec(src);if(!m)return null;
-    let i=m.index+m[0].length;const start=i;if(src[i]!=='{'&&src[i]!=='[')return null;
-    let depth=0;
-    for(;i<src.length;i++){
-      const c=src[i],n=src[i+1];
-      if(c==='/'&&n==='/'){i=src.indexOf('\n',i);if(i<0)return null;continue;}
-      if(c==='/'&&n==='*'){i=src.indexOf('*/',i+2);if(i<0)return null;i++;continue;}
-      if(c==='"'||c==="'"||c==='`'){for(i++;i<src.length&&src[i]!==c;i++){if(src[i]==='\\')i++;}continue;}
-      if(c==='{'||c==='[')depth++;
-      else if(c==='}'||c===']'){depth--;if(!depth)return src.slice(start,i+1);}
-    }
-    return null;
+  /* ═══ Live source sync ═══
+     Re-reads the published index.html and applies what changed straight into the running page:
+     CSS, top-level data (game list...), and individual methods of the OS objects (OS, WM, FRIENDS...).
+     No reload, no loading screen. Anything that cannot be swapped in live (page markup, loose
+     top-level code, new <script> tags) is reported, and the tab then offers a Restart button. */
+  _hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return h+':'+s.length;},
+  _okScript(s){return !s.src&&s.textContent.trim().length>0&&!/returnValue/.test(s.textContent.slice(0,500))&&!s.hasAttribute('data-release');},
+  _bodySig(root){const c=root.cloneNode(true);c.querySelectorAll('script,style').forEach(n=>n.remove());return c.innerHTML.replace(/\s+/g,' ');},
+  _capture(){          // snapshot of the page exactly as loaded, before any code touches the DOM
+    if(this._cap)return;this._cap=true;
+    this._srcScripts=[...document.scripts].filter(s=>this._okScript(s)).map(s=>s.textContent);
+    this._srcStyles=[...document.querySelectorAll('style')];
+    this._srcStyleTxt=this._srcStyles.map(s=>s.textContent);
+    this._srcBody=this._bodySig(document.body);
+  },
+  _acorn(){
+    if(window.acorn)return Promise.resolve(window.acorn);
+    if(this._acP)return this._acP;
+    this._acP=new Promise(res=>{
+      const sc=document.createElement('script');
+      sc.src='https://cdn.jsdelivr.net/npm/acorn@8.11.3/dist/acorn.js';
+      sc.onload=()=>res(window.acorn||null);
+      sc.onerror=()=>{this._acP=null;res(null);};
+      document.head.appendChild(sc);
+    });
+    return this._acP;
   },
   _swap(live,fresh){            // update `live` in place so every existing reference sees the change
     if(Array.isArray(live)&&Array.isArray(fresh)){live.length=0;fresh.forEach(x=>live.push(x));return;}
     Object.keys(live).forEach(k=>{if(!(k in fresh))delete live[k];});
     Object.keys(fresh).forEach(k=>{
-      if(Array.isArray(live[k])&&Array.isArray(fresh[k]))this._swap(live[k],fresh[k]);else live[k]=fresh[k];
+      if(live[k]&&fresh[k]&&typeof live[k]==='object'&&typeof fresh[k]==='object'&&Array.isArray(live[k])===Array.isArray(fresh[k]))this._swap(live[k],fresh[k]);
+      else live[k]=fresh[k];
     });
   },
-  /* Re-read the published HTML and hot-swap its data blocks (games list etc.) into this open tab. */
+  _units(ac,src){
+    const map=new Map(),other=[];
+    ac.parse(src,{ecmaVersion:'latest'}).body.forEach(n=>{
+      if(n.type==='VariableDeclaration'&&n.declarations.length===1&&n.declarations[0].id.type==='Identifier'){
+        const d=n.declarations[0],i=d.init;
+        const kind=i&&i.type==='ObjectExpression'?'obj':i&&i.type==='ArrayExpression'?'arr':'expr';
+        map.set('v:'+d.id.name,{kind,name:d.id.name,text:src.slice(n.start,n.end),init:i,src});
+      }else if(n.type==='FunctionDeclaration')map.set('f:'+n.id.name,{kind:'fn',name:n.id.name,text:src.slice(n.start,n.end)});
+      else other.push(src.slice(n.start,n.end));
+    });
+    return{map,other};
+  },
+  _props(u){
+    const m=new Map();
+    for(const p of u.init.properties){
+      if(p.type!=='Property'||p.computed||p.kind!=='init')return null;
+      m.set(p.key.type==='Identifier'?p.key.name:String(p.key.value),{text:u.src.slice(p.start,p.end),val:u.src.slice(p.value.start,p.value.end),fn:/Function/.test(p.value.type)});
+    }
+    return m;
+  },
+  _patchObj(name,old,nu,rep){
+    const live=(0,eval)(name),o=this._props(old),n=this._props(nu);
+    if(!o||!n){rep.skipped.push(name);return;}
+    n.forEach((np,k)=>{
+      const op=o.get(k);if(op&&op.text===np.text)return;
+      try{
+        if(np.fn)live[k]=(0,eval)('({'+np.text+'})')[k];
+        else{
+          const v=(0,eval)('('+np.val+')'),cur=live[k];
+          if(cur&&v&&typeof cur==='object'&&typeof v==='object'&&Array.isArray(cur)===Array.isArray(v))this._swap(cur,v);else live[k]=v;
+          rep.data.add(name);
+        }
+        rep.n++;
+      }catch(e){console.warn('[NovOS] live update failed for',name+'.'+k,e);rep.skipped.push(name+'.'+k);}
+    });
+    o.forEach((op,k)=>{if(!n.has(k)){try{delete live[k];rep.n++;}catch(e){}}});
+  },
+  _applyScript(ac,oldSrc,newSrc,rep){
+    const a=this._units(ac,oldSrc),b=this._units(ac,newSrc);
+    if(a.other.length!==b.other.length||a.other.some((t,i)=>t!==b.other[i]))rep.skipped.push('top-level code');
+    b.map.forEach((nu,key)=>{
+      const old=a.map.get(key);
+      if(old&&old.text===nu.text)return;
+      try{
+        if(nu.kind==='fn'){(0,eval)('window.'+nu.name+'=('+nu.text+')');rep.n++;}
+        else if(nu.kind==='obj'){
+          if(!old){(0,eval)('window.'+nu.name+'=('+nu.src.slice(nu.init.start,nu.init.end)+')');rep.n++;}
+          else if(old.kind!=='obj')rep.skipped.push(nu.name);
+          else this._patchObj(nu.name,old,nu,rep);
+        }else if(nu.kind==='arr'&&old&&old.kind==='arr'){
+          this._swap((0,eval)(nu.name),(0,eval)('('+nu.src.slice(nu.init.start,nu.init.end)+')'));rep.data.add(nu.name);rep.n++;
+        }else rep.skipped.push(nu.name);
+      }catch(e){console.warn('[NovOS] live update failed for',nu.name,e);rep.skipped.push(nu.name);}
+    });
+  },
   async _syncSource(){
+    if(this._srcBusy)return false;
+    this._srcBusy=true;
     try{
+      if(!this._cap)this._capture();
       const res=await fetch(this.SOURCE_URL+'?_cb='+Date.now(),{cache:'no-store'});
       if(!res.ok){console.warn('[NovOS] source sync: HTTP',res.status);return false;}
-      const src=await res.text();let changed=false;
-      this.SYNC_BLOCKS.forEach(name=>{
-        try{
-          const lit=this._extract(src,name);if(!lit)return;
-          const fresh=(new Function('return ('+lit+')'))(),live=(new Function('return '+name))();
-          if(JSON.stringify(live)===JSON.stringify(fresh))return;
-          this._swap(live,fresh);changed=true;
-        }catch(e){console.warn('[NovOS] source sync failed for',name,e);}
-      });
-      if(changed){try{OS.shortcuts=loadShortcuts();OS.renderDesktop();}catch(e){}}
-      return changed;
-    }catch(e){return false;}
+      const src=await res.text(),sig=this._hash(src);
+      this._sigs=this._sigs||[];
+      if(sig===this._lastSig||this._sigs.includes(sig))return false;   // nothing new (or a stale CDN copy of an older version)
+      const doc=new DOMParser().parseFromString(src,'text/html');
+      const rep={n:0,skipped:[],data:new Set()};
+      // CSS
+      const ns=[...doc.querySelectorAll('style')].map(x=>x.textContent);
+      if(ns.length!==this._srcStyles.length)rep.skipped.push('styles');
+      else ns.forEach((t,i)=>{if(t!==this._srcStyleTxt[i]){this._srcStyles[i].textContent=t;this._srcStyleTxt[i]=t;rep.n++;}});
+      // page markup
+      const nb=this._bodySig(doc.body);
+      if(nb!==this._srcBody){rep.skipped.push('page layout');this._srcBody=nb;}
+      // scripts
+      const nsc=[...doc.querySelectorAll('script')].filter(s=>this._okScript(s)).map(s=>s.textContent);
+      if(nsc.length!==this._srcScripts.length)rep.skipped.push('scripts');
+      else{
+        const ac=nsc.some((t,i)=>t!==this._srcScripts[i])?await this._acorn():null;
+        for(let i=0;i<nsc.length;i++){
+          if(nsc[i]===this._srcScripts[i])continue;
+          if(!ac){rep.skipped.push('script '+i);continue;}
+          try{this._applyScript(ac,this._srcScripts[i],nsc[i],rep);}catch(e){console.warn('[NovOS] could not read the new script',e);rep.skipped.push('script '+i);}
+          this._srcScripts[i]=nsc[i];
+        }
+      }
+      if(this._lastSig)this._sigs.push(this._lastSig);
+      this._lastSig=sig;
+      if(rep.data.has('DEFAULT_SHORTCUTS')||rep.data.has('DEFAULT_DESKTOP_APPS')){try{OS.shortcuts=loadShortcuts();OS.renderDesktop();}catch(e){}}
+      if(rep.skipped.length)this._restartNeeded=true;
+      if(rep.n||rep.skipped.length)console.log('[NovOS] live update: '+rep.n+' change(s) applied'+(rep.skipped.length?'; needs restart for: '+rep.skipped.join(', '):''));
+      return rep.n>0;
+    }catch(e){console.warn('[NovOS] source sync failed',e);return false;}
+    finally{this._srcBusy=false;}
   },
 
   /* Only announce right after the user tabs back in / opens NovOS — never mid-session. */
@@ -2276,18 +2360,20 @@ const RELEASES={
     if(document.hidden||!this._grace||!this._pending.length)return;
     this._announce();
   },
-  _toast(title,body){
+  _toast(title,body,restart,post){
     const area=document.getElementById('notifArea');
     if(area){
       const n=document.createElement('div');
       n.className='notif';
       n.style.cssText='animation:notifIn 0.25s ease;cursor:pointer;border-color:rgba(var(--os-accent-rgb),0.35)';
       const btn='height:24px;border-radius:5px;font-size:10.5px;font-weight:500;cursor:pointer;font-family:var(--font);flex:1;';
-      n.innerHTML=`<div class="notif-title" style="color:var(--os-accent)">${this._esc(title)}</div><div class="notif-body">${this._esc(body)}</div><div style="display:flex;gap:6px;margin-top:8px"><button class="rl-main-btn" style="${btn}border:1px solid rgba(var(--os-accent-rgb),0.3);background:rgba(var(--os-accent-rgb),0.14);color:var(--os-accent)">What's new</button><button class="rl-ignore-btn" style="${btn}border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-muted)">Dismiss</button></div>`;
+      n.innerHTML=`<div class="notif-title" style="color:var(--os-accent)">${this._esc(title)}</div><div class="notif-body">${this._esc(body)}</div><div style="display:flex;gap:6px;margin-top:8px"><button class="rl-main-btn" style="${btn}border:1px solid rgba(var(--os-accent-rgb),0.3);background:rgba(var(--os-accent-rgb),0.14);color:var(--os-accent)">${restart?'Restart now':"What's new"}</button><button class="rl-ignore-btn" style="${btn}border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-muted)">${restart?'Later':'Dismiss'}</button></div>`;
       const close=()=>{n.style.animation='notifSlideOut 0.2s ease forwards';setTimeout(()=>n.remove(),200);};
       n.addEventListener('click',e=>{
         if(e.target.closest('.rl-ignore-btn')){e.stopPropagation();close();return;}
-        close();try{OS.openChangelogPopup();}catch(_){}
+        close();
+        if(restart){RELEASES.hardReload(post);return;}
+        try{OS.openChangelogPopup();}catch(_){}
       });
       area.appendChild(n);   // persistent until the user acts on it
     }
@@ -2296,19 +2382,15 @@ const RELEASES={
   _announce(){
     const list=this._pending.splice(0);
     if(!list.length)return;
-    const prev=this._seen();
-    this._setSeen(list.reduce((m,r)=>Math.max(m,r.id),prev||0));
+    this._setSeen(list.reduce((m,r)=>Math.max(m,r.id),this._seen()||0));
     try{CHANGELOG.markSeen();}catch(e){}
     const ver=CHANGELOG.latestVersion();
     const title='NovOS updated to '+ver;
     const body=list.map(r=>r.title).filter(Boolean).join(' · ').slice(0,140)||'Updated in the background.';
-    const rl=list.filter(r=>r._reload);
-    if(rl.length){
-      // The HTML itself changed: re-download it and swap this tab over, then announce on the other side.
-      this.hardReload({title,body},rl[rl.length-1].version).then(ok=>{if(!ok)this._setSeen(prev||0);});
-      return;
-    }
-    this._toast(title,body);
+    // Everything that could be applied live already was. Only if something couldn't (page layout,
+    // new scripts, or a release flagged needs_reload) do we offer a restart, and only as a button.
+    const ask=!!(list.some(r=>r._ask)||this._restartNeeded);
+    this._toast(title,ask?'Most changes are already live. Restart NovOS to finish applying the rest.':body,ask,{title,body});
   },
 
   // The launcher opens an about:blank tab and document.write()s this page into it, so there is no
@@ -2316,16 +2398,11 @@ const RELEASES={
   // wrap it in a blob page and navigate THIS tab to it. Same tab, same origin, so localStorage,
   // sessionStorage (still unlocked) and the open-window session all carry over.
   _leaving:false,
-  async hardReload(post,expect){
+  async hardReload(post){
     try{
-      let html='';
-      for(let n=0;n<3;n++){   // GitHub can serve the previous copy for a minute or two after a push
-        const res=await fetch(this.SOURCE_URL+'?_cb='+Date.now(),{cache:'no-store'});
-        if(!res.ok)throw new Error('HTTP '+res.status);
-        html=await res.text();
-        if(!expect||html.includes("CURRENT_VERSION:'"+expect+"'"))break;
-        if(n<2)await new Promise(r=>setTimeout(r,10000));
-      }
+      const res=await fetch(this.SOURCE_URL+'?_cb='+Date.now(),{cache:'no-store'});
+      if(!res.ok)throw new Error('HTTP '+res.status);
+      let html=await res.text();
       const base=this.SOURCE_URL.replace(/[?#].*$/,'').replace(/[^/]*$/,'');   // same <base> trick the launcher uses
       const tag='<base href="'+base+'">';
       html=html.replace(/<base\b[^>]*>/i,'');
@@ -2350,6 +2427,7 @@ const RELEASES={
 // Registered before the launcher's own beforeunload guard, so it can wave a deliberate update through.
 window.addEventListener('beforeunload',e=>{if(RELEASES._leaving)e.stopImmediatePropagation();});
 RELEASES._mergeCache();
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>RELEASES._capture());else RELEASES._capture();
 
 /* ═══════════════════════════════════════════════
    ACCOUNT — Windows-style lock screen, sign up / sign in, PIN, cloud sync.
@@ -2768,7 +2846,7 @@ const WM={
     }else{
       const _g=String(targetUrl).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
       html='<!doctype html><html><head><meta charset="utf-8">'+titleTag+faviconTag+leaveGuard+
-        '<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_g+'" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen></iframe></body></html>';
+        '<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_g+'" allow="fullscreen; autoplay; clipboard-write; clipboard-read; pointer-lock; gamepad; accelerometer; gyroscope; microphone; camera; midi; cross-origin-isolated; web-share; screen-wake-lock" allowfullscreen></iframe></body></html>';
     }
     const win=window.open('about:blank','_blank');
     if(win&&win.document){
@@ -2812,7 +2890,7 @@ const WM={
       if(app.url==='__browser__'){
         // Gust must always live inside an about:blank page, never navigated to directly.
         const _g=String(targetUrl).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-        this._openBlobTab({htmlSource:'<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_g+'" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen></iframe></body></html>'});
+        this._openBlobTab({htmlSource:'<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_g+'" allow="fullscreen; autoplay; clipboard-write; clipboard-read; pointer-lock; gamepad; accelerometer; gyroscope; microphone; camera; midi; cross-origin-isolated; web-share; screen-wake-lock" allowfullscreen></iframe></body></html>'});
         return;
       }
       this._openBlobTab({targetUrl});
@@ -2894,7 +2972,7 @@ const WM={
         </div>
       </div>
       <div class="wnd-body">
-        <iframe class="wnd-iframe" id="frm_${id}" loading="eager" sandbox="${app.sandboxOverride||'allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads'}" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen referrerpolicy="no-referrer"></iframe>
+        <iframe class="wnd-iframe" id="frm_${id}" loading="eager" sandbox="${app.sandboxOverride||'allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads allow-modals allow-popups-to-escape-sandbox allow-orientation-lock allow-presentation'}" allow="fullscreen; autoplay; clipboard-write; clipboard-read; pointer-lock; gamepad; accelerometer; gyroscope; microphone; camera; midi; cross-origin-isolated; web-share; screen-wake-lock" allowfullscreen referrerpolicy="no-referrer"></iframe>
       </div>
       <div class="wnd-resize" onmousedown="WM.startResize('${id}',event,'se')"></div>
       <div class="wnd-edge wnd-edge-n" onmousedown="WM.startResize('${id}',event,'n')"></div>
@@ -2936,7 +3014,7 @@ const WM={
       // shell is written into it via document.write, and the target URL is
       // embedded as a nested full-size iframe inside that shell.
       const _u=String(realUrl).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-      const shell='<!doctype html><html><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_u+'" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>';
+      const shell='<!doctype html><html><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_u+'" allow="fullscreen; autoplay; clipboard-write; clipboard-read; pointer-lock; gamepad; accelerometer; gyroscope; microphone; camera; midi; cross-origin-isolated; web-share; screen-wake-lock" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>';
       frm.setAttribute('src','about:blank');
       const write=()=>{
         try{
@@ -3023,7 +3101,13 @@ const WM={
 
   // Smart glass degrade — drops blur radius when many windows are open so
   // backdrop-filter stops murdering the GPU under heavy load.
+  _updateGameLive(){
+    let live=false;
+    for(const id in this.windows){const w=this.windows[id];if(w&&!w.minimized&&(w.isLink||(window.OS&&OS._isGameWindow&&OS._isGameWindow(id)))){live=true;break;}}
+    if(document.body.classList.contains('game-live')!==live)document.body.classList.toggle('game-live',live);
+  },
   _updateGlassLoad(){
+    try{this._updateGameLive();}catch(_){}
     if(typeof SETTINGS!=='undefined'&&SETTINGS.get('smartGlass')===false){
       document.documentElement.style.setProperty('--win-blur','30px');
       return;
@@ -3037,20 +3121,20 @@ const WM={
     if(el){
       const skipAnim=SETTINGS.get('animations')===false;
       if(skipAnim){
-        const frm=document.getElementById('frm_'+id);if(frm){frm.__novosShell=null;frm.src='about:blank';}
+        const frm=document.getElementById('frm_'+id);if(frm){frm.__novosShell=null;frm.removeAttribute('srcdoc');frm.src='about:blank';}
         el.remove();
       }else{
         el.style.animation='wndClose 0.18s ease forwards';
         el.style.pointerEvents='none';
         setTimeout(()=>{
-          const frm=document.getElementById('frm_'+id);if(frm)frm.src='about:blank';
+          const frm=document.getElementById('frm_'+id);if(frm){frm.__novosShell=null;frm.removeAttribute('srcdoc');frm.src='about:blank';}
           el.remove();
         },180);
       }
     }
     if(typeof PLAYTIME!=='undefined'&&this.windows[id]&&PLAYTIME._active&&PLAYTIME._active.name===this.windows[id].app.name)PLAYTIME.stop();
     if(this.windows[id]&&this.windows[id].app)this.windows[id].app._htmlSource=null;
-delete this.windows[id];TB.removeWindow(id);TB.updateAutoHide();
+delete this.windows[id];TB.removeWindow(id);TB.updateAutoHide();this._updateGameLive();
 setTimeout(()=>{if(typeof RAW_HTML!=='undefined')RAW_HTML._trim();},400);
   },
   // Applies the "just opened" animation to a window element that was built
@@ -6973,7 +7057,7 @@ const VIEWERS={
       <div class="wnd-body" style="display:flex;flex-direction:column;overflow:hidden">
         <div style="flex:1;overflow:hidden;background:#fff;position:relative">
           ${htmlSource
-            ?`<iframe id="hvFrm_${id}" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none"></iframe>`
+            ?`<iframe id="hvFrm_${id}" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads allow-modals allow-popups-to-escape-sandbox allow-orientation-lock allow-presentation" allow="fullscreen; autoplay; clipboard-write; clipboard-read; pointer-lock; gamepad; accelerometer; gyroscope; microphone; camera; midi; cross-origin-isolated; web-share; screen-wake-lock" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none"></iframe>`
             :`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;color:#666;font-size:13px"><div style="font-size:36px">🌐</div><div>Cannot display this file</div></div>`}
         </div>
       </div>
@@ -9222,10 +9306,11 @@ const SCREENSAVER={
     // Same-origin iframes respond instantly; cross-origin ones are silent
     // but we also poll them via the visibility/focus APIs below.
     setInterval(()=>{
+      if(document.hidden||document.body.classList.contains('game-live'))return;
       document.querySelectorAll('.wnd-iframe').forEach(frm=>{
         try{frm.contentWindow&&frm.contentWindow.postMessage('__novos_ping','*');}catch(_){}
       });
-    },4000);
+    },8000);
 
     // When the OS window regains focus from an iframe, count that as activity
     window.addEventListener('focus',()=>this._resetIdle(),{passive:true});
@@ -9432,7 +9517,7 @@ const NOVOVERLAY={
       setTimeout(()=>{try{if(!r.contains(document.activeElement)||document.activeElement===document.body)r.focus({preventScroll:true});}catch(_){}},0);
     });
     this._bindCapture();
-    setInterval(()=>this._tick(),250);
+    setInterval(()=>{if(!document.hidden)this._tick();},500);
   },
 
   _bindCapture(){
@@ -9559,10 +9644,10 @@ const NOVOVERLAY={
       +(list.length?list.map(f=>{const s=FRIENDS._status(f.id);return '<div class="nv-row">'+FRIENDS._av(f.id,s,30)+'<div style="min-width:0"><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+this._esc(FRIENDS._dn(f.id))+'</div><div style="font-size:11px;color:'+(s.game?'var(--os-accent)':s.on?'var(--os-green)':'var(--os-muted)')+'">'+this._esc(s.text)+'</div></div></div>';}).join(''):'<div class="nv-empty">No friends yet.</div>');
   },
   async _r_browser(b){
-    b.innerHTML='<iframe class="nv-frame" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads" allow="fullscreen; autoplay; clipboard-write" allowfullscreen></iframe>';
+    b.innerHTML='<iframe class="nv-frame" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-fullscreen allow-downloads allow-modals allow-popups-to-escape-sandbox allow-orientation-lock allow-presentation" allow="fullscreen; autoplay; clipboard-write" allowfullscreen></iframe>';
     const frm=b.firstChild;
     const u=String(OS.BROWSER_IFRAME_URL).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-    const shell='<!doctype html><html><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+u+'" allow="fullscreen; autoplay; clipboard-write; pointer-lock; gamepad" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>';
+    const shell='<!doctype html><html><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+u+'" allow="fullscreen; autoplay; clipboard-write; clipboard-read; pointer-lock; gamepad; accelerometer; gyroscope; microphone; camera; midi; cross-origin-isolated; web-share; screen-wake-lock" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>';
     const write=()=>{try{const d=frm.contentDocument;if(!d)return;d.open();d.write(shell);d.close();}catch(e){}};
     if(frm.contentDocument&&frm.contentDocument.readyState==='complete')write();
     else frm.addEventListener('load',write,{once:true});
@@ -10029,7 +10114,7 @@ const NOVOVERLAY_OLD={
     ta.value=note;
     ta.addEventListener('input',()=>{try{localStorage.setItem('novos_ov_note',ta.value);}catch(e){}});
     this._widgetPaint();
-    if(!this._widgetTick)this._widgetTick=setInterval(()=>this._widgetPaint(),50);
+    if(!this._widgetTick)this._widgetTick=setInterval(()=>this._widgetPaint(),100);
   },
   _widgetPaint(){
     const sw=document.getElementById('novOvSwDisp');
@@ -10058,7 +10143,7 @@ const NOVOVERLAY_OLD={
     if(this._sw.running){this._sw.accum=this._swNow();this._sw.running=false;}
     else{this._sw.start=performance.now();this._sw.running=true;}
     this._widgetPaint();
-    if(!this._widgetTick)this._widgetTick=setInterval(()=>this._widgetPaint(),50);
+    if(!this._widgetTick)this._widgetTick=setInterval(()=>this._widgetPaint(),100);
   },
   swReset(){this._sw={running:false,start:0,accum:0};this._widgetPaint();},
   tmAdjust(d){
@@ -10073,7 +10158,7 @@ const NOVOVERLAY_OLD={
       this._tm.end=performance.now()+this._tm.remaining;this._tm.running=true;
     }
     this._widgetPaint();
-    if(!this._widgetTick)this._widgetTick=setInterval(()=>this._widgetPaint(),50);
+    if(!this._widgetTick)this._widgetTick=setInterval(()=>this._widgetPaint(),100);
   },
   tmReset(){this._tm={running:false,end:0,remaining:300000};this._widgetPaint();},
 
@@ -11269,10 +11354,10 @@ const TBP={
 
     const canvas=document.getElementById('tbpvCanvas');
     const ph=document.getElementById('tbpvPlaceholder');
-    const old=canvas.querySelector('iframe');if(old)old.remove();
+    const old=canvas.querySelector('iframe');if(old){try{old.src='about:blank';}catch(_){}old.remove();}
     const realFrm=document.getElementById('frm_'+wid)||document.getElementById('hvFrm_'+wid);
     const sysIcons=sysEmoji;
-    if(realFrm&&!w.minimized){
+    if(realFrm&&!w.minimized&&!w.isLink&&!(OS._isGameWindow&&OS._isGameWindow(wid))&&false){
       ph.style.display='none';
       const previewFrm=document.createElement('iframe');
       previewFrm.style.cssText='position:absolute;inset:0;width:400%;height:400%;transform:scale(0.25);transform-origin:top left;border:none;pointer-events:none';
