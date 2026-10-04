@@ -2058,6 +2058,28 @@ const CHANGELOG={
    they're actively in it. Rows flagged needs_reload skip css/js and announce a
    Refresh button instead (for changes that can't be applied live).
 ═══════════════════════════════════════════════ */
+/* Library loader. jsdelivr is blocked on some networks, so try esm.sh first (ES module import,
+   exposed as the same window globals the UMD builds would give), then fall back to jsdelivr. */
+const NOVLIB={
+  _p:{},
+  _script(src){return new Promise(res=>{const sc=document.createElement('script');sc.src=src;sc.onload=()=>res(true);sc.onerror=()=>{sc.remove();res(false);};document.head.appendChild(sc);});},
+  load(name){
+    if(name==='supabase'&&window.supabase&&window.supabase.createClient)return Promise.resolve(true);
+    if(name==='acorn'&&window.acorn&&window.acorn.parse)return Promise.resolve(true);
+    if(this._p[name])return this._p[name];
+    const cfg={
+      supabase:{esm:['https://esm.sh/@supabase/supabase-js@2'],umd:['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'],set:m=>{window.supabase={createClient:m.createClient||(m.default&&m.default.createClient)};},ok:()=>!!(window.supabase&&window.supabase.createClient)},
+      acorn:{esm:['https://esm.sh/acorn@8.11.3'],umd:['https://cdn.jsdelivr.net/npm/acorn@8.11.3/dist/acorn.js'],set:m=>{window.acorn={parse:m.parse||(m.default&&m.default.parse)};},ok:()=>!!(window.acorn&&window.acorn.parse)}
+    }[name];
+    this._p[name]=(async()=>{
+      for(const u of cfg.esm){try{const m=await import(u);cfg.set(m);if(cfg.ok())return true;}catch(e){}}
+      for(const u of cfg.umd){if(await this._script(u)&&cfg.ok())return true;}
+      return false;
+    })();
+    this._p[name].then(ok=>{if(!ok)delete this._p[name];});   // allow a retry later
+    return this._p[name];
+  }
+};
 const RELEASES={
   _inited:false,_sb:null,_sbP:null,_chan:null,_wasDown:false,
   _maxId:0,_applied:new Set(),_pending:[],_entries:[],_syncing:null,
@@ -2110,12 +2132,7 @@ const RELEASES={
           res(this._sb);
         }catch(e){this._sbP=null;res(null);}
       };
-      if(window.supabase&&window.supabase.createClient){make();return;}
-      const sc=document.createElement('script');
-      sc.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-      sc.onload=make;
-      sc.onerror=()=>{this._sbP=null;res(null);};
-      document.head.appendChild(sc);
+      NOVLIB.load('supabase').then(ok=>{if(ok)make();else{this._sbP=null;res(null);}});
     });
     return this._sbP;
   },
@@ -2243,11 +2260,7 @@ const RELEASES={
     if(window.acorn)return Promise.resolve(window.acorn);
     if(this._acP)return this._acP;
     this._acP=new Promise(res=>{
-      const sc=document.createElement('script');
-      sc.src='https://cdn.jsdelivr.net/npm/acorn@8.11.3/dist/acorn.js';
-      sc.onload=()=>res(window.acorn||null);
-      sc.onerror=()=>{this._acP=null;res(null);};
-      document.head.appendChild(sc);
+      NOVLIB.load('acorn').then(ok=>{if(ok)res(window.acorn||null);else{this._acP=null;res(null);}});
     });
     return this._acP;
   },
@@ -10610,12 +10623,7 @@ const FRIENDS={
           res(true);
         }catch(e){this._loading=null;res(false);}
       };
-      if(window.supabase&&window.supabase.createClient){done();return;}
-      const s=document.createElement('script');
-      s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-      s.onload=done;
-      s.onerror=()=>{this._loading=null;res(false);};
-      document.head.appendChild(s);
+      NOVLIB.load('supabase').then(ok=>{if(ok)done();else{this._loading=null;res(false);}});
     });
     return this._loading;
   },
