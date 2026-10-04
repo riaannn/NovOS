@@ -2395,10 +2395,19 @@ const RELEASES={
 
   // The launcher opens an about:blank tab and document.write()s this page into it, so there is no
   // URL to reload (reloading would leave a blank tab). To "reload", re-download the published HTML,
-  // wrap it in a blob page and navigate THIS tab to it. Same tab, same origin, so localStorage,
-  // sessionStorage (still unlocked) and the open-window session all carry over.
+  // open a NEW about:blank tab, document.write() the updated page into it, then close this tab.
+  // The new tab is opened by this page, so it shares the origin: localStorage, sessionStorage
+  // (still unlocked) and the saved open-window session all carry over. No blob: URL anywhere.
   _leaving:false,
   async hardReload(post){
+    // Open the new tab FIRST, synchronously, while the click's user gesture is still valid
+    // (after the await below the popup blocker would kill it).
+    let nw=null;
+    try{nw=window.open('about:blank','_blank');}catch(e){}
+    if(!nw||!nw.document){
+      try{OS.notify('Update blocked','Allow pop-ups for this page, then press restart again.');}catch(_){}
+      return false;
+    }
     try{
       const res=await fetch(this.SOURCE_URL+'?_cb='+Date.now(),{cache:'no-store'});
       if(!res.ok)throw new Error('HTTP '+res.status);
@@ -2412,12 +2421,15 @@ const RELEASES={
       try{SESSION.save();}catch(e){}
       if(post){try{localStorage.setItem('novos_post_update',JSON.stringify(post));}catch(e){}}
       this._leaving=true;                                   // lets us skip the launcher's "Leave site?" prompt
-      const url=URL.createObjectURL(new Blob([html],{type:'text/html'}));
-      window.location.replace(url);
+      // Write the updated page into the new about:blank tab, then close this old tab.
+      nw.document.open();nw.document.write(html);nw.document.close();
+      try{nw.focus();}catch(_){}
+      setTimeout(()=>{try{window.close();}catch(_){}},150);
       setTimeout(()=>{this._leaving=false;},4000);
       return true;
     }catch(e){
       this._leaving=false;
+      try{nw.close();}catch(_){}
       try{localStorage.removeItem('novos_post_update');}catch(_){}
       try{OS.notify('Update failed','Could not download the update. Relaunch NovOS from the launcher to get it.');}catch(_){}
       return false;
