@@ -960,6 +960,37 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 .kb-reset-row{display:flex;justify-content:flex-end;margin-top:4px}
 .kb-reset-link{font-size:10.5px;color:var(--os-muted);cursor:pointer;background:none;border:none;font-family:var(--font);text-decoration:underline;text-decoration-color:transparent;transition:all 0.13s}
 .kb-reset-link:hover{color:var(--os-accent);text-decoration-color:var(--os-accent)}
+.adm{display:flex;height:100%;font-size:12.5px;color:var(--os-text)}
+.adm-side{width:150px;flex-shrink:0;border-right:1px solid var(--os-border);padding:10px;display:flex;flex-direction:column;gap:4px}
+.adm-tab{padding:7px 10px;border-radius:7px;cursor:pointer;color:var(--os-muted)}
+.adm-tab:hover{background:rgba(255,255,255,.05)}
+.adm-tab.on{background:rgba(var(--os-accent-rgb),.16);color:var(--os-text)}
+.adm-main{flex:1;min-width:0;overflow:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.adm-in{width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid var(--os-border);border-radius:7px;padding:8px 10px;color:var(--os-text);font:inherit;outline:none}
+.adm-in:focus{border-color:rgba(var(--os-accent-rgb),.6)}
+textarea.adm-in{min-height:96px;resize:vertical}
+.adm-btn{background:rgba(255,255,255,.06);border:1px solid var(--os-border);border-radius:7px;padding:7px 12px;color:var(--os-text);font:inherit;cursor:pointer;white-space:nowrap}
+.adm-btn:hover{background:rgba(255,255,255,.1)}
+.adm-btn.pri{background:var(--os-accent);border-color:transparent;color:#fff}
+.adm-btn.dng{color:var(--os-red);border-color:rgba(248,113,113,.3)}
+.adm-seg{display:inline-flex;border:1px solid var(--os-border);border-radius:7px;overflow:hidden}
+.adm-seg button{background:none;border:0;color:var(--os-muted);padding:6px 12px;cursor:pointer;font:inherit}
+.adm-seg button.on{background:rgba(var(--os-accent-rgb),.2);color:var(--os-text)}
+.adm-tgtbar{display:flex;align-items:center;gap:10px}
+.adm-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--os-muted);margin-bottom:4px}
+.adm-sub{font-size:11px;color:var(--os-muted);margin-top:2px}
+.adm-list{display:flex;flex-direction:column;gap:1px}
+.adm-row{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:7px;cursor:default}
+.adm-row:hover{background:rgba(255,255,255,.04)}
+.adm-dot{width:8px;height:8px;border-radius:50%;background:#64748b;flex-shrink:0}
+.adm-dot.on{background:var(--os-green)}.adm-dot.game{background:#38bdf8}
+.adm-pop{position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center}
+.adm-pop-card{width:min(420px,88vw);background:var(--os-bg,#0d0e12);border:1px solid var(--os-border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.adm-pop-card.imp{border-color:rgba(248,113,113,.5)}
+.adm-pop-tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--os-accent)}
+.adm-pop-card.imp .adm-pop-tag{color:var(--os-red)}
+.adm-pop-t{font-size:16px;font-weight:600;color:var(--os-text)}
+.adm-pop-b{font-size:13px;color:var(--os-muted);white-space:pre-wrap;max-height:50vh;overflow:auto}
 </style>
 </head>
 <body>
@@ -1680,6 +1711,7 @@ const DEFAULT_SHORTCUTS = {
     {name:"Dice A Million",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/d135a79d61ec5a78d3b675fdbde19617.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/a8c63cbbe8b5c31d129c8295807e2893.png",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Dice%20a%20Million.html", url:"__rawhtml__",icon:"https://apkvision.org/wp-content/uploads/2026/09/dice-a-million-1.jpg",isDefault:true,SupportsHTML:true, notAvailable:false},
     {name:"Clover Pit",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/52075d4bdac6f71fdb7613f470ca2a86.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/e79333b088968399d736de65d5f0222c.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Clover%20Pit.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/078f65312167d70e83297ca2fbb8761c/32/256x256.png",isDefault:true, launchUrl:"https://sharemyhtml.com/p/Js_shJA1EM", SupportsHTML:false},
     {name:"Nubby's Number Factory", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/e6ff9322edf7f42415bbcff66318de4b.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/3509f0a2f44b1887df91f7de2c06761d.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Nubby's%20Number%20Factory.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon/657a7cea2fdbb7f7bdf65b72ada7f38d/32/512x512.png",isDefault:true,SupportsHTML:true, notAvailable:false},
+    {name:"Gambonanza", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/ad95400850a8f42970884b2172e149e8.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/5f848bb42c4d59134b4f7296f614044d.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/gambonanza.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon/67ab413b738291152233b0dbb4b77fc1/32/512x512.png",isDefault:true,SupportsHTML:true, notAvailable:false},
 
 
     /* FNAF */
@@ -1766,6 +1798,7 @@ const RAW_HTML={
         if(!res.ok)throw new Error('HTTP '+res.status);
         html=await res.text();
         this._cache[app.rawUrl]=html;
+        setTimeout(()=>{delete RAW_HTML._cache[app.rawUrl];},4000);
       }
       WM._openBlobTab({htmlSource:html});
     }catch(err){}
@@ -1819,6 +1852,7 @@ const RAW_HTML={
           if(!res.ok)throw new Error('HTTP '+res.status);
           const html=await res.text();
           this._cache[app.rawUrl]=html;
+          setTimeout(()=>{delete RAW_HTML._cache[app.rawUrl];},4000);
           return html;
         }catch(err){
           lastErr=err;
@@ -3755,6 +3789,7 @@ const TB={
     };
 
     systemIcons['__friends__']={color:'#38bdf8',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16.2 14.2c2.7.1 4.8 2.2 4.8 5.3"/></svg>`};
+    systemIcons['__admin__']={color:'#f87171',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>`};
     systemIcons['__forms__']={color:'#f5f5f5',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>`};
     if(systemIcons[app.url]){
       const si=systemIcons[app.url];
@@ -3775,7 +3810,7 @@ const TB={
   // raw-HTML games opened through the HTML Viewer stay on the user (left) side,
   // matching their pinned/desktop shortcut.
   _isSystemUrl(url){
-    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__compiler__','__compiler__NOVCOMP','__ai__','__music__','__recyclebin__','__cloak__','__friends__','__forms__'].includes(url);
+    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__compiler__','__compiler__NOVCOMP','__ai__','__music__','__recyclebin__','__cloak__','__friends__','__forms__','__admin__'].includes(url);
   },
 
   _makeBtn(app,wid,isPinned){
@@ -4972,7 +5007,7 @@ const OS={
       const res=await fetch(rawUrl,{cache:'no-store'});
       if(!res.ok)throw new Error('HTTP '+res.status);
       const html=await res.text();
-      RAW_HTML._cache[rawUrl]=html;
+      RAW_HTML._cache[rawUrl]=html;setTimeout(()=>{delete RAW_HTML._cache[rawUrl];},4000);
       WM._openBlobTab({htmlSource:html});
     }catch(err){}
   },
@@ -5014,6 +5049,7 @@ const OS={
       '__music__':()=>this.openMusic(),
       '__cloak__':()=>this.openCloak(),
       '__friends__':()=>this.openFriends(),
+      '__admin__':()=>{if(ADMIN.isAdmin())ADMIN.open();},
       '__forms__':()=>FORMS.open(),
       '__bugs__':()=>FORMS.open('bug'),
       '__suggest__':()=>FORMS.open('suggestion'),
@@ -5067,6 +5103,7 @@ const OS={
   },
   openTM(){TM.open();},
   openFriends(){FRIENDS.open();},
+  openAdmin(){if(ADMIN.isAdmin())ADMIN.open();},
   openForms(){FORMS.open();},
 
   openRecycleBin(){
@@ -5462,7 +5499,7 @@ const OS={
             const img=this._bannerImg(a)||`https://www.google.com/s2/favicons?sz=256&domain=${a.url}`;
             const esc=JSON.stringify(a).replace(/"/g,'&quot;');
             return `<div class="stlib-feat-slide" onclick="OS.stlibOpenDetail('${wid}',${esc})">
-              <img class="stlib-feat-img" src="${img}" onerror="this.style.opacity=0" alt="">
+              <img class="stlib-feat-img" src="${img}" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt="">
               <div class="stlib-feat-grad"></div>
               <div class="stlib-feat-info">
                 <div class="stlib-feat-tag">${isGames?'Featured':(tab==='web'?'App':'Other')}</div>
@@ -5486,7 +5523,7 @@ const OS={
             const img=this._gridImg(a)||`https://www.google.com/s2/favicons?sz=256&domain=${a.url}`;
             const esc=JSON.stringify(a).replace(/"/g,'&quot;');
             return `<div class="stlib-shelfcard" onclick="OS.stlibOpenDetail('${wid}',${esc})">
-              <div class="stlib-shelfcard-imgwrap"><img class="stlib-shelfcard-img" src="${img}" onerror="this.style.opacity=0" alt=""></div>
+              <div class="stlib-shelfcard-imgwrap"><img class="stlib-shelfcard-img" src="${img}" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt=""></div>
               <div class="stlib-shelfcard-name">${a.name}</div>
               <div class="stlib-shelfcard-meta">${PLAYTIME.fmt(p.totalMs)}</div>
             </div>`;
@@ -5508,7 +5545,7 @@ const OS={
             const img=this._gridImg(a)||`https://www.google.com/s2/favicons?sz=256&domain=${a.url}`;
             const esc=JSON.stringify(a).replace(/"/g,'&quot;');
             return `<div class="stlib-tile" onclick="OS.stlibOpenDetail('${wid}',${esc})" oncontextmenu="event.preventDefault();OS.libCtx(event,${esc})">
-              <div class="stlib-tile-imgwrap"><img class="stlib-tile-img" src="${img}" onerror="this.style.opacity=0" alt=""></div>
+              <div class="stlib-tile-imgwrap"><img class="stlib-tile-img" src="${img}" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt=""></div>
               <div class="stlib-tile-name">${a.name}</div>
             </div>`;
           }).join('')}
@@ -5554,13 +5591,13 @@ const OS={
 
     ov.innerHTML=`
       <div class="stlib-detail-banner">
-        <img class="stlib-detail-banner-img" src="${banner}" onerror="this.style.opacity=0" alt="">
+        <img class="stlib-detail-banner-img" src="${banner}" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt="">
         <div class="stlib-detail-banner-grad"></div>
         <button class="stlib-detail-back" onclick="OS.stlibCloseDetail('${wid}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Back</button>
       </div>
       <div class="stlib-detail-content">
         <div class="stlib-detail-titlerow">
-          <img src="${iconImg}" onerror="this.style.opacity=0" alt="">
+          <img src="${iconImg}" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt="">
           <div>
             <div class="stlib-detail-title">${app.name}</div>
             <div class="stlib-detail-meta">${isGameCat?(totalTime!=='Never played'?totalTime+' played':'Not played yet'):this._libSeriesKey(app.name)}${lastPlayed!=='—'?' · Last played '+lastPlayed:''}</div>
@@ -5673,8 +5710,8 @@ const OS={
       ?`<span class="stlib-launch-char space"> </span>`
       :`<span class="stlib-launch-char">${ch}</span>`).join('');
     overlay.innerHTML=`
-      <div class="stlib-launch-banner" id="stlibLaunchBanner_global"><img src="${banner}" onerror="this.style.opacity=0" alt=""></div>
-      <img class="stlib-launch-icon" id="stlibLaunchIcon_global" src="${icon}" onerror="this.style.opacity=0" alt="">
+      <div class="stlib-launch-banner" id="stlibLaunchBanner_global"><img src="${banner}" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt=""></div>
+      <img class="stlib-launch-icon" id="stlibLaunchIcon_global" src="${icon}" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt="">
       <div class="stlib-launch-title" id="stlibLaunchTitle_global">${chars}</div>`;
     overlay.classList.add('active');
     overlay.classList.remove('fadeout');
@@ -6985,7 +7022,13 @@ const VIEWERS={
   // creates an object URL anymore.
   reinject(id){
     const w=WM.windows[id];
-    if(!w||!w.app||!w.app._htmlSource)return;
+    if(!w||!w.app)return;
+    // Game windows don't keep their (huge) HTML text in memory: re-read it from the HTTP cache on refresh.
+    if(!w.app._htmlSource&&w.app.rawUrl){
+      fetch(w.app.rawUrl,{cache:'force-cache'}).then(r=>r.text()).then(t=>{if(WM.windows[id]){w.app._htmlSource=t;VIEWERS.reinject(id);}}).catch(()=>{});
+      return;
+    }
+    if(!w.app._htmlSource)return;
     const frm=document.getElementById('hvFrm_'+id);
     if(!frm)return;
     const write=()=>{
@@ -6995,6 +7038,7 @@ const VIEWERS={
         const _src=w.app._htmlSource;
         if(w.app._defer||!/document\.write/.test(_src)){VIEWERS._deferLoad(frm,_src);}
         else{doc.open();doc.write(_src);doc.close();}
+        if(w.app.rawUrl)w.app._htmlSource=null;   // the iframe owns the code now; free our copy
         // Inject the key relay after parsing settles, and again shortly after
         // in case the game rewrites its own document during startup.
         const inject=()=>{if(WM._onIframeLoad)WM._onIframeLoad(frm);};
@@ -7023,8 +7067,8 @@ const VIEWERS={
     doc.open();doc.write('<!doctype html><html><head></head><body></body></html>');doc.close();
     [...parsed.documentElement.attributes].forEach(a=>{try{doc.documentElement.setAttribute(a.name,a.value);}catch(_){}});
     [...parsed.body.attributes].forEach(a=>{try{doc.body.setAttribute(a.name,a.value);}catch(_){}});
-    [...parsed.head.childNodes].forEach(n=>doc.head.appendChild(doc.importNode(n,true)));
-    [...parsed.body.childNodes].forEach(n=>doc.body.appendChild(doc.importNode(n,true)));
+    [...parsed.head.childNodes].forEach(n=>doc.head.appendChild(doc.adoptNode(n)));
+    [...parsed.body.childNodes].forEach(n=>doc.body.appendChild(doc.adoptNode(n)));
     const list=[...doc.querySelectorAll('script')];
     let i=0;
     const next=()=>{
@@ -7044,6 +7088,8 @@ const VIEWERS={
       }else{
         s.textContent=old.textContent;
         old.replaceWith(s);
+        old.textContent='';
+        if(s.textContent.length>100000)setTimeout(()=>{try{s.textContent='';}catch(_){}},0);   // already executed; don't keep a giant copy in the DOM
         next();
       }
     };
@@ -7062,6 +7108,7 @@ const VIEWERS={
         try{htmlSource=decodeURIComponent(escape(atob(_b64)));}catch(_e){htmlSource=atob(_b64);}
       }catch(e){}
     }
+    if(file._rawUrl)file.htmlSource=null;   // fresh launch object only; never touch stored user files
     const _sysForceIcon=file._forceSysIcon&&WM._sysTitlebarIcon?WM._sysTitlebarIcon(file._forceSysIcon):null;
     const _gameIconHtml=_sysForceIcon?_sysForceIcon:(file._isGame&&file._appIcon
       ?`<img src="${file._appIcon}" style="width:16px;height:16px;border-radius:4px;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'" alt="">`
@@ -8042,7 +8089,7 @@ const CLOAK={
     if(!grid)return;
     grid.innerHTML=this.PRESETS.map((p,i)=>`
       <div onclick="CLOAK.applyPreset(${i})" style="display:flex;align-items:center;gap:8px;padding:9px 10px;background:var(--os-surface);border:1px solid var(--os-border);border-radius:8px;cursor:pointer;transition:all 0.13s" onmouseover="this.style.background='var(--os-surface2)';this.style.borderColor='rgba(var(--os-accent-rgb),0.3)'" onmouseout="this.style.background='var(--os-surface)';this.style.borderColor='var(--os-border)'">
-        <img src="${p.icon}" style="width:18px;height:18px;flex-shrink:0" onerror="this.style.opacity=0" alt="">
+        <img src="${p.icon}" style="width:18px;height:18px;flex-shrink:0" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt="">
         <span style="font-size:12px;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</span>
       </div>`).join('');
   },
@@ -8248,6 +8295,7 @@ const LAUNCHER={
       {name:'NovCloaker',url:'__cloak__',icon:'',isSystem:true,systemAction:'openCloak'},
       {name:'Friends',url:'__friends__',icon:'',isSystem:true,systemAction:'openFriends'},
       {name:'Forms',url:'__forms__',icon:'',isSystem:true,systemAction:'openForms'},
+      ...(typeof ADMIN!=='undefined'&&ADMIN.isAdmin()?[{name:'Admin',url:'__admin__',icon:'',isSystem:true,systemAction:'openAdmin'}]:[]),
     ];
     const all=[...sysApps,...userApps];
 
@@ -8284,6 +8332,7 @@ const LAUNCHER={
       '__cloak__':{c:'#f1f5f9',f:1,s:`<path d="M3.5 11h17l-.5 1H4zM6.5 11l1.4-5.6a1.6 1.6 0 011.5-1.2h5.2a1.6 1.6 0 011.5 1.2L17.5 11z" stroke-width="1.6"/><circle cx="7.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><circle cx="16.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><path d="M10.7 16.6h2.6" stroke-width="1.9"/>`},
       '__tm__':{c:'#4ade80',s:`<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M7 8v4M11 6v6M15 9v3M19 7v5"/>`},
     };
+    map['__admin__']={c:'#f87171',s:`<path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/>`};
     map['__friends__']={c:'#38bdf8',s:`<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16.2 14.2c2.7.1 4.8 2.2 4.8 5.3"/>`};
     map['__forms__']={c:'#f5f5f5',s:`<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/>`};
     const m=map[url];if(!m)return null;
@@ -9018,6 +9067,7 @@ const SESSION={
       else if(w.url==='__explorer__')OS.openFileExplorer();
       else if(w.url==='__tm__')TM.open();
       else if(w.url==='__friends__')FRIENDS.open();
+      else if(w.url==='__admin__'){if(ADMIN.isAdmin())ADMIN.open();}
       else if(w.url==='__forms__')FORMS.open();
       else if(w.url==='__bugs__')FORMS.open('bug');
       else if(w.url==='__suggest__')FORMS.open('suggestion');
@@ -9645,7 +9695,7 @@ const NOVOVERLAY={
       const list=(OS.shortcuts.games||[]).filter(a=>!t||a.name.toLowerCase().includes(t));
       g.innerHTML=list.map(a=>{
         const img=OS._gridImg(a)||('https://www.google.com/s2/favicons?sz=256&domain='+a.url);
-        return '<div class="nv-card" data-n="'+this._esc(a.name)+'"><img src="'+this._esc(img)+'" onerror="this.style.opacity=0" alt=""><div>'+this._esc(a.name)+'</div></div>';
+        return '<div class="nv-card" data-n="'+this._esc(a.name)+'"><img src="'+this._esc(img)+'" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt=""><div>'+this._esc(a.name)+'</div></div>';
       }).join('')||'<div class="nv-empty">No games found.</div>';
       g.querySelectorAll('.nv-card').forEach(c=>c.onclick=()=>{const a=(OS.shortcuts.games||[]).find(x=>x.name===c.dataset.n);if(a)this.launchInOverlay(a);});
     };
@@ -9680,7 +9730,7 @@ const NOVOVERLAY={
   _r_windows(b){
     const rows=Object.entries(WM.windows).filter(([id,w])=>w&&w.app&&id!==this._targetWid).map(([id,w])=>{
       const ic=w.app.icon&&w.app.icon.indexOf('http')===0?w.app.icon:('https://www.google.com/s2/favicons?sz=64&domain='+w.app.url);
-      return '<div class="nv-row click" data-id="'+id+'"><img src="'+this._esc(ic)+'" style="width:22px;height:22px;border-radius:6px" onerror="this.style.opacity=0" alt=""><span>'+this._esc(w.app.name)+'</span><span class="r">'+(w.minimized?'Minimized':'Open')+'</span></div>';
+      return '<div class="nv-row click" data-id="'+id+'"><img src="'+this._esc(ic)+'" style="width:22px;height:22px;border-radius:6px" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt=""><span>'+this._esc(w.app.name)+'</span><span class="r">'+(w.minimized?'Minimized':'Open')+'</span></div>';
     }).join('');
     b.innerHTML=rows||'<div class="nv-empty">No other windows are open.</div>';
     b.querySelectorAll('.nv-row.click').forEach(r=>r.onclick=()=>this.switchToWindow(r.dataset.id));
@@ -9971,7 +10021,7 @@ const NOVOVERLAY_OLD={
       grid.innerHTML=list.map(a=>{
         const img=OS._gridImg(a)||`https://www.google.com/s2/favicons?sz=256&domain=${a.url}`;
         const esc=JSON.stringify(a).replace(/"/g,'&quot;');
-        return `<div class="nov-ov-libcard" onclick="NOVOVERLAY.launchInOverlay(${esc})"><img class="nov-ov-libimg" src="${img}" onerror="this.style.opacity=0" alt=""><div class="nov-ov-libname">${a.name}</div></div>`;
+        return `<div class="nov-ov-libcard" onclick="NOVOVERLAY.launchInOverlay(${esc})"><img class="nov-ov-libimg" src="${img}" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt=""><div class="nov-ov-libname">${a.name}</div></div>`;
       }).join('')||'<div style="color:var(--os-muted);font-size:12.5px">Nothing found.</div>';
     };
     draw('');
@@ -10013,7 +10063,7 @@ const NOVOVERLAY_OLD={
       mount.innerHTML=`<div class="nov-ov-tmlist">${wins.map(([wid,w])=>{
         const icon=w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`;
         return `<div class="nov-ov-taskrow" style="cursor:default;margin-bottom:6px">
-          <img src="${icon}" style="width:24px;height:24px;border-radius:6px;object-fit:cover" onerror="this.style.opacity=0" alt="">
+          <img src="${icon}" style="width:24px;height:24px;border-radius:6px;object-fit:cover" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt="">
           <div class="nov-ov-taskname">${w.app.name}</div>
           <div class="nov-ov-taskstat">${w.minimized?'Minimized':'Running'}</div>
           <button class="nov-ov-wbtn" style="flex:none;padding:0 12px;color:var(--os-red)" onclick="WM.closeWindow('${wid}');NOVOVERLAY._embedRefreshTM()">End</button>
@@ -10051,7 +10101,7 @@ const NOVOVERLAY_OLD={
     const rows=Object.entries(WM.windows).filter(([id,w])=>w&&w.app&&id!==this._targetWid).map(([id,w])=>{
       const icon=w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`;
       return `<div class="nov-ov-taskrow" onclick="NOVOVERLAY.switchToWindow('${id}')">
-        <img src="${icon}" style="width:24px;height:24px;border-radius:6px;object-fit:cover" onerror="this.style.opacity=0" alt="">
+        <img src="${icon}" style="width:24px;height:24px;border-radius:6px;object-fit:cover" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt="">
         <div class="nov-ov-taskname">${w.app.name}</div>
         <div class="nov-ov-taskstat">${w.minimized?'Minimized':'Open'}</div>
       </div>`;
@@ -10210,7 +10260,7 @@ const NOVOVERLAY_OLD={
       const img=OS._gridImg?OS._gridImg(a):(a.gridImage||a.icon||'');
       const esc=JSON.stringify(a).replace(/"/g,'&quot;');
       return `<div class="nov-ov-libcard" onclick="NOVOVERLAY.launchInOverlay(${esc})">
-        <img class="nov-ov-libimg" src="${img||`https://www.google.com/s2/favicons?sz=256&domain=${a.url}`}" onerror="this.style.opacity=0" alt="">
+        <img class="nov-ov-libimg" src="${img||`https://www.google.com/s2/favicons?sz=256&domain=${a.url}`}" loading="lazy" decoding="async" onerror="this.style.opacity=0" alt="">
         <div class="nov-ov-libname">${a.name}</div>
       </div>`;
     }).join('')||'<div style="color:var(--os-muted);font-size:12.5px">No games found.</div>';
@@ -11131,7 +11181,7 @@ const FRIENDS={
   },
   _onMsgUpd(m){const k=this._key(m),l=this.msgs[k];if(!l)return;const x=l.find(y=>String(y.id)===String(m.id));if(!x)return;Object.assign(x,m);if(this.active===k)this._renderMsgs();},
   logSession(name,ms){
-    if(!this.sb||!this.me||ms<30000||localStorage.getItem('novos_fr_share')==='0')return;
+    if(!this.sb||!this.me||ms<30000||localStorage.getItem('novos_fr_share')==='0'||(typeof ADMIN!=='undefined'&&ADMIN.stealthOn()))return;
     this.sb.from('activity').insert({user_id:this.me.id,game:name,seconds:Math.round(ms/1000)}).then(()=>{},()=>{});
   },
 
@@ -11273,6 +11323,15 @@ const FRIENDS={
     try{
       do{
         this._beatDirty=false;
+        if(typeof ADMIN!=='undefined'&&ADMIN.stealthOn()){          // admin hidden: publish "offline" once, then stay silent
+          if(!this._stealthSent){
+            let r0=await this.sb.from('presence').upsert({user_id:this.me.id,current_game:null,last_seen:null});
+            if(r0.error)r0=await this.sb.from('presence').upsert({user_id:this.me.id,current_game:null,last_seen:new Date(0).toISOString()});
+            if(!r0.error)this._stealthSent=true;
+          }
+          continue;
+        }
+        this._stealthSent=false;
         const g=localStorage.getItem('novos_fr_share')!=='0'?this._game:null;
         const r=await this.sb.from('presence').upsert({user_id:this.me.id,current_game:g,last_seen:new Date().toISOString()});
         if(r.error)console.warn('presence:',r.error.message);
@@ -11300,15 +11359,268 @@ const FRIENDS={
         .on('postgres_changes',{event:'INSERT',schema:'public',table:'group_members'},()=>this.refresh())
         .on('postgres_changes',{event:'DELETE',schema:'public',table:'group_members'},()=>this.refresh())
         .on('postgres_changes',{event:'UPDATE',schema:'public',table:'groups'},()=>this.refresh())
+        .on('postgres_changes',{event:'INSERT',schema:'public',table:'admin_commands'},p=>ADMINCMD.handle(p.new))
         .subscribe();
     }catch(e){}
     this._beat();
+    try{ADMINCMD.fetchPending();}catch(e){}
   },
   _stopLive(){
     clearInterval(this._hb);clearInterval(this._poll);clearInterval(this._clk);
     if(this._vis){document.removeEventListener('visibilitychange',this._vis);window.removeEventListener('online',this._vis);this._vis=null;}
     if(this._chan&&this.sb){try{this.sb.removeChannel(this._chan);}catch(e){}}
     this._chan=null;
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   ADMIN — owner-only control panel + the client side of admin commands.
+   The UI is hidden unless the signed-in Friends account is ADMIN_EMAIL, but hiding is only cosmetic:
+   the real lock is Supabase RLS (see admin_setup.sql) so only that account can INSERT commands.
+═══════════════════════════════════════════════ */
+const ADMIN_EMAIL='rian.novos@gmail.com';
+
+// Runs on EVERY signed-in client: receives announcements / close / restart commands.
+const ADMINCMD={
+  _done:new Set(),
+  _last(){try{const v=localStorage.getItem('novos_admin_last');return v===null?null:(parseInt(v,10)||0);}catch(e){return 0;}},
+  _setLast(n){try{localStorage.setItem('novos_admin_last',String(Math.max(n,this._last()||0)));}catch(e){}},
+  async fetchPending(){
+    const sb=FRIENDS.sb;if(!sb||!FRIENDS.me)return;
+    const r=await sb.from('admin_commands').select('*').gt('expires_at',new Date(FRIENDS._now()).toISOString()).order('id',{ascending:true}).limit(30);
+    if(r.error||!r.data)return;
+    const last=this._last();
+    r.data.forEach(row=>{if(last===null||row.id>last)this.handle(row);});
+  },
+  handle(row){
+    try{
+      if(!row||this._done.has(row.id))return;
+      this._done.add(row.id);
+      this._setLast(row.id);
+      const me=FRIENDS.me;
+      if(!me||row.sender===me.id)return;                       // the admin never runs their own commands
+      if(row.target&&row.target!==me.id)return;
+      if(row.expires_at&&new Date(row.expires_at).getTime()<FRIENDS._now())return;
+      const p=row.payload||{};
+      if(row.kind==='announce')this._popup(row.title,row.body,p.level);
+      else if(row.kind==='close')this._close(p);
+      else if(row.kind==='restart')RELEASES._toast(row.title||'Restart NovOS',row.body||'Restart NovOS to get the latest version.',true,{title:'NovOS restarted',body:'You are on the latest version.'});
+    }catch(e){}
+  },
+  _close(p){
+    const m=String(p.match||'').toLowerCase();
+    Object.keys(WM.windows).forEach(id=>{
+      const w=WM.windows[id];if(!w||!w.app)return;
+      if(w.app.url==='__friends__'||w.app.url==='__admin__')return;
+      let hit=false;
+      if(p.mode==='all')hit=true;
+      else if(p.mode==='games')hit=!!(OS._isGameWindow&&OS._isGameWindow(id));
+      else hit=!!m&&String(w.app.name||'').toLowerCase().includes(m);
+      if(hit){try{WM.closeWindow(id);}catch(e){}}
+    });
+  },
+  _popup(title,body,level){
+    const e=s=>FRIENDS._e(s),imp=level==='important';
+    const d=document.createElement('div');d.className='adm-pop';
+    d.innerHTML=`<div class="adm-pop-card${imp?' imp':''}"><div class="adm-pop-tag">${imp?'Important · ':''}Announcement</div><div class="adm-pop-t">${e(title||'Announcement')}</div><div class="adm-pop-b">${e(body||'')}</div><button class="adm-btn pri">Got it</button></div>`;
+    d.querySelector('button').onclick=()=>d.remove();
+    document.body.appendChild(d);
+    try{NOTIF_HISTORY.add(title||'Announcement',body||'');}catch(e){}
+  }
+};
+
+// Owner-only window.
+const ADMIN={
+  _wid:null,_tab:'users',_users:[],_pres:{},_sel:new Set(),_mode:'all',_log:[],_q:'',_err:'',_iv:null,
+  isAdmin(){try{return !!(FRIENDS.me&&String(FRIENDS.me.email||'').toLowerCase()===ADMIN_EMAIL);}catch(e){return false;}},
+  stealthOn(){try{return this.isAdmin()&&localStorage.getItem('novos_admin_stealth')==='1';}catch(e){return false;}},
+  setStealth(on){
+    try{localStorage.setItem('novos_admin_stealth',on?'1':'0');}catch(e){}
+    FRIENDS._stealthSent=false;FRIENDS._beat();
+    this._renderSide();
+  },
+  _toast(m){try{OS.notify('Admin',m);}catch(e){}},
+
+  open(){
+    if(!this.isAdmin())return;
+    const ex=Object.entries(WM.windows).find(([,w])=>w.app&&w.app.url==='__admin__');
+    if(ex){WM.windows[ex[0]].minimized?WM.restore(ex[0]):WM.focus(ex[0]);return;}
+    const id=WM.newId();const el=document.createElement('div');
+    el.className='os-window focused';el.id=id;
+    const dw=Math.min(window.innerWidth*0.8,860),dh=Math.min(window.innerHeight*0.8,600);
+    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
+    el.innerHTML=`
+      <div class="wnd-body" style="display:flex;flex-direction:column;overflow:hidden">
+        <div id="tb_${id}" onmousedown="WM.startDrag('${id}',event)" style="cursor:move;height:34px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;border-bottom:1px solid var(--os-border);background:rgba(255,255,255,0.02)">
+          <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#f87171;flex-shrink:0;pointer-events:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <div style="flex:1;font-size:12px;font-weight:500;color:var(--os-text);pointer-events:none">Admin</div>
+          <div class="wnd-ctrl-btns">
+            <button class="wnd-ctrl-btn" onclick="event.stopPropagation();WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
+            <button class="wnd-ctrl-btn" onclick="event.stopPropagation();WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+            <button class="wnd-ctrl-btn wnd-close" onclick="event.stopPropagation();WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </div>
+        </div>
+        <div id="admRoot" style="flex:1;min-height:0"></div>
+      </div>
+      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event)"></div>`;
+    document.getElementById('windowLayer').appendChild(el);
+    WM.playOpenAnim(el);
+    WM.windows[id]={app:{name:'Admin',url:'__admin__',icon:''},minimized:false,maximized:false,prevRect:null};
+    WM.focus(id);TB.addWindow(id,{name:'Admin',url:'__admin__',icon:''});WM.makeDraggable(id);
+    this._wid=id;
+    this._render();
+    this.loadUsers();this.loadLog();
+    clearInterval(this._iv);
+    this._iv=setInterval(()=>{                       // refresh the user list only while the window exists and Users is open
+      if(!document.getElementById('admRoot')){clearInterval(this._iv);this._iv=null;return;}
+      if(this._tab==='users'&&!document.hidden)this.loadUsers();
+    },15000);
+  },
+
+  /* ── layout ── */
+  _render(){
+    const r=document.getElementById('admRoot');if(!r)return;
+    r.innerHTML=`<div class="adm"><div class="adm-side" id="admSide"></div><div class="adm-main" id="admMain"></div></div>`;
+    this._renderSide();this._renderMain();
+  },
+  _renderSide(){
+    const s=document.getElementById('admSide');if(!s)return;
+    const tabs=[['users','Users'],['announce','Announce'],['control','Control'],['log','Sent']];
+    const on=this.stealthOn();
+    s.innerHTML=tabs.map(t=>`<div class="adm-tab${this._tab===t[0]?' on':''}" onclick="ADMIN.setTab('${t[0]}')">${t[1]}</div>`).join('')
+      +`<div style="flex:1"></div><div class="adm-lbl">Presence</div><div class="adm-seg" style="width:100%"><button class="${on?'':'on'}" style="flex:1" onclick="ADMIN.setStealth(false)">Online</button><button class="${on?'on':''}" style="flex:1" onclick="ADMIN.setStealth(true)">Hidden</button></div>`
+      +`<div class="adm-sub">${on?'Others see you as offline.':'Others see you normally.'}</div>`;
+  },
+  setTab(t){this._tab=t;this._renderSide();this._renderMain();if(t==='log')this.loadLog();if(t==='users')this.loadUsers();},
+  _renderMain(){
+    const m=document.getElementById('admMain');if(!m)return;
+    m.innerHTML=this['_v_'+this._tab]();
+    if(this._tab==='users')this._renderUsers();
+    this._updTgt();
+  },
+  _tgtBar(){
+    return `<div class="adm-tgtbar"><span class="adm-lbl" style="margin:0">Send to</span><div class="adm-seg"><button data-adm-mode="all" onclick="ADMIN.setMode('all')">Everyone</button><button data-adm-mode="sel" onclick="ADMIN.setMode('sel')">Selected (<span class="adm-selcount">0</span>)</button></div></div>`;
+  },
+  setMode(m){this._mode=m;this._updTgt();},
+  _updTgt(){
+    document.querySelectorAll('[data-adm-mode]').forEach(b=>b.classList.toggle('on',b.dataset.admMode===this._mode));
+    document.querySelectorAll('.adm-selcount').forEach(x=>x.textContent=this._sel.size);
+  },
+
+  /* ── users ── */
+  _name(u){return u.username||'user';},
+  _st(id){
+    const p=this._pres[id];
+    if(!p||!p.last_seen)return{on:false,text:'Offline'};
+    if(FRIENDS._now()-new Date(p.last_seen).getTime()<120000)return p.current_game?{on:true,game:true,text:'Playing '+p.current_game}:{on:true,text:'Online'};
+    return{on:false,text:'Last seen '+FRIENDS._ago(p.last_seen)};
+  },
+  _v_users(){
+    return `<div style="display:flex;gap:8px;align-items:center"><input class="adm-in" id="admQ" placeholder="Search users…" value="${FRIENDS._e(this._q)}" oninput="ADMIN._q=this.value;ADMIN._renderUsers()"><button class="adm-btn" onclick="ADMIN.selOnline()">Select online</button><button class="adm-btn" onclick="ADMIN.selClear()">Clear</button><button class="adm-btn" onclick="ADMIN.loadUsers()">Refresh</button></div>
+      <div class="adm-sub" id="admUsub"></div><div id="admUl" class="adm-list"></div>`;
+  },
+  _renderUsers(){
+    const ul=document.getElementById('admUl');if(!ul)return;
+    const q=this._q.trim().toLowerCase(),myId=FRIENDS.me&&FRIENDS.me.id;
+    const list=this._users.filter(u=>u.id!==myId&&(!q||this._name(u).toLowerCase().includes(q)));
+    const online=this._users.filter(u=>u.id!==myId&&this._st(u.id).on).length;
+    const sub=document.getElementById('admUsub');
+    if(sub)sub.textContent=this._err||`${this._users.length-(this._users.some(u=>u.id===myId)?1:0)} users · ${online} online · ${this._sel.size} selected`;
+    ul.innerHTML=list.map(u=>{
+      const st=this._st(u.id);
+      return `<label class="adm-row"><input type="checkbox" ${this._sel.has(u.id)?'checked':''} onchange="ADMIN.pick('${u.id}',this.checked)"><span class="adm-dot${st.on?(st.game?' game':' on'):''}"></span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${FRIENDS._e(this._name(u))}</span><span class="adm-sub" style="margin:0">${FRIENDS._e(st.text)}</span></label>`;
+    }).join('')||'<div class="adm-sub">No users to show.</div>';
+  },
+  pick(id,on){on?this._sel.add(id):this._sel.delete(id);this._updTgt();const sub=document.getElementById('admUsub');if(sub&&!this._err)this._renderUsers();},
+  selOnline(){const my=FRIENDS.me.id;this._users.forEach(u=>{if(u.id!==my&&this._st(u.id).on)this._sel.add(u.id);});this._mode='sel';this._renderUsers();this._updTgt();},
+  selClear(){this._sel.clear();this._renderUsers();this._updTgt();},
+  async loadUsers(){
+    const sb=FRIENDS.sb;if(!sb||!this.isAdmin())return;
+    const [p,pr]=await Promise.all([sb.from('profiles').select('id,username').limit(1000),sb.from('presence').select('*').limit(1000)]);
+    this._err=p.error?'Could not read users. Run admin_setup.sql in Supabase first.':'';
+    this._users=p.data||[];
+    this._pres={};(pr.data||[]).forEach(r=>this._pres[r.user_id]=r);
+    this._users.sort((a,b)=>(this._st(b.id).on-this._st(a.id).on)||this._name(a).localeCompare(this._name(b)));
+    if(this._tab==='users')this._renderUsers();
+  },
+
+  /* ── announce ── */
+  _v_announce(){
+    return `${this._tgtBar()}
+      <input class="adm-in" id="admT" placeholder="Title" maxlength="80">
+      <textarea class="adm-in" id="admB" placeholder="Message" maxlength="1000"></textarea>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <select class="adm-in" id="admL" style="width:auto"><option value="info">Normal</option><option value="important">Important</option></select>
+        <select class="adm-in" id="admX" style="width:auto"><option value="3600000">Expires in 1 hour</option><option value="86400000" selected>Expires in 1 day</option><option value="604800000">Expires in 7 days</option></select>
+        <span style="flex:1"></span>
+        <button class="adm-btn" onclick="ADMIN.previewAnnounce()">Preview</button>
+        <button class="adm-btn pri" onclick="ADMIN.sendAnnounce()">Send</button>
+      </div>
+      <div class="adm-sub">People who are offline see it the next time they sign in, until it expires.</div>`;
+  },
+  _val(id){const e=document.getElementById(id);return e?e.value:'';},
+  previewAnnounce(){ADMINCMD._popup(this._val('admT').trim(),this._val('admB').trim(),this._val('admL'));},
+  async sendAnnounce(){
+    const title=this._val('admT').trim(),body=this._val('admB').trim();
+    if(!title&&!body){this._toast('Write a title or message first.');return;}
+    if(await this._send({kind:'announce',title,body,payload:{level:this._val('admL')}},parseInt(this._val('admX'),10)||86400000)){
+      const t=document.getElementById('admT'),b=document.getElementById('admB');if(t)t.value='';if(b)b.value='';
+    }
+  },
+
+  /* ── control ── */
+  _v_control(){
+    return `${this._tgtBar()}
+      <div class="adm-lbl">Close an app or game</div>
+      <div style="display:flex;gap:8px"><input class="adm-in" id="admM" placeholder="Name contains… (e.g. Celeste)"><button class="adm-btn dng" onclick="ADMIN.closeApp()">Close it</button></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="adm-btn dng" onclick="ADMIN.closeAll('games')">Close all games</button><button class="adm-btn dng" onclick="ADMIN.closeAll('all')">Close every window</button></div>
+      <div class="adm-sub">Friends and Admin windows are never closed. Only reaches people signed in to Friends right now; offline users are not affected later.</div>
+      <div class="adm-lbl" style="margin-top:8px">Restart</div>
+      <div style="display:flex;gap:8px"><button class="adm-btn" onclick="ADMIN.askRestart()">Ask to restart NovOS</button></div>
+      <div class="adm-sub">Shows a Restart button to the target so they pick up your latest push. It never restarts by itself.</div>`;
+  },
+  async closeApp(){const m=this._val('admM').trim();if(!m){this._toast('Type part of the app name.');return;}await this._send({kind:'close',payload:{mode:'app',match:m}},120000);},
+  async closeAll(mode){if(!confirm(mode==='games'?'Close all games for the target?':'Close EVERY window for the target?'))return;await this._send({kind:'close',payload:{mode}},120000);},
+  async askRestart(){await this._send({kind:'restart',title:'Restart NovOS',body:'A new version is ready. Restart NovOS to get it.',payload:{}},600000);},
+
+  async _send(base,ttl){
+    const sb=FRIENDS.sb;if(!sb||!this.isAdmin())return false;
+    const exp=new Date(FRIENDS._now()+ttl).toISOString();
+    let rows;
+    if(this._mode==='all')rows=[{...base,target:null,expires_at:exp}];
+    else{
+      if(!this._sel.size){this._toast('Select at least one user in Users first.');return false;}
+      rows=[...this._sel].map(id=>({...base,target:id,expires_at:exp}));
+    }
+    const r=await sb.from('admin_commands').insert(rows);
+    if(r.error){this._toast('Failed: '+r.error.message);return false;}
+    this._toast('Sent to '+(this._mode==='all'?'everyone':rows.length+' user'+(rows.length>1?'s':'')));
+    this.loadLog();
+    return true;
+  },
+
+  /* ── sent log ── */
+  _v_log(){return `<div style="display:flex;gap:8px;align-items:center"><div class="adm-sub" style="flex:1;margin:0">Last 40 commands. Revoke removes an unseen announcement.</div><button class="adm-btn" onclick="ADMIN.loadLog()">Refresh</button></div><div id="admLg" class="adm-list"></div>`;},
+  _renderLog(){
+    const el=document.getElementById('admLg');if(!el)return;
+    const nm={};this._users.forEach(u=>nm[u.id]=this._name(u));
+    const now=FRIENDS._now();
+    el.innerHTML=this._log.map(c=>{
+      const what=c.kind==='announce'?(c.title||c.body||'Announcement'):c.kind==='close'?('Close '+((c.payload&&(c.payload.mode==='app'?c.payload.match:'all '+(c.payload.mode==='games'?'games':'windows')))||'')):'Restart prompt';
+      const live=new Date(c.expires_at).getTime()>now;
+      return `<div class="adm-row"><span class="adm-dot${live?' on':''}"></span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><b>${FRIENDS._e(c.kind)}</b> · ${FRIENDS._e(what)}</span><span class="adm-sub" style="margin:0">${FRIENDS._e(c.target?(nm[c.target]||'1 user'):'Everyone')} · ${FRIENDS._e(FRIENDS._ago(c.created_at))}</span><button class="adm-btn" onclick="ADMIN.revoke(${c.id})">Revoke</button></div>`;
+    }).join('')||'<div class="adm-sub">Nothing sent yet.</div>';
+  },
+  async loadLog(){
+    const sb=FRIENDS.sb;if(!sb||!this.isAdmin())return;
+    const r=await sb.from('admin_commands').select('*').order('id',{ascending:false}).limit(40);
+    this._log=r.data||[];
+    if(this._tab==='log')this._renderLog();
+  },
+  async revoke(id){
+    const r=await FRIENDS.sb.from('admin_commands').delete().eq('id',id);
+    if(r.error){this._toast('Failed: '+r.error.message);return;}
+    this.loadLog();
   }
 };
 
