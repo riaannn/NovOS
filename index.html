@@ -7,8 +7,129 @@
 <link id="favicon" rel="icon" href="">
 <script>
 (function(){
+if(window.__nvPerf)return;window.__nvPerf=1;
+var S=function(k){try{return typeof SETTINGS!=='undefined'?SETTINGS.get(k):undefined}catch(e){}};
+var ret=0,jit=0,hiddenAt=0,freed=false,slept=false,ctxs=new Set(),LOG=[],tFree=null,tSleep=null;
 
+/* CSS: staged fx-off classes (#1-#4). fxa=animations, fx1=bars, fx2=widgets, fx3=windows/menus */
+var st=document.createElement('style');st.textContent=
+'body.fxa *,body.fxa *::before,body.fxa *::after{animation-play-state:paused!important;transition:none!important}'
++'body.fx1 #taskbar,body.fx1 #topBar{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}'
++'body.fx2 .widget-box,body.fx2 .lib-card,body.fx2 .widget-music-art{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}'
++'body.fx3 .os-window,body.fx3 #startMenu,body.fx3 #launcherPanel,body.fx3 #ctxMenu,body.fx3 .modal-box,body.fx3 #settingsPanel,body.fx3 #quickMenu{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;filter:none!important}'
++'.os-window.minimized,.os-window.minimized *{content-visibility:hidden}';
+(document.head||document.documentElement).appendChild(st);
+
+/* #7/#8: NovOS timers skip ticks while hidden, and 60% of ticks right after return (gradual restart).
+   Countdown timers are excluded so they stay accurate. */
+var _si=window.setInterval.bind(window);
+window.setInterval=function(f,ms){
+  if(typeof f!=='function'||/remaining--/.test(Function.prototype.toString.call(f)))return _si.apply(null,arguments);
+  var a=[].slice.call(arguments,2);
+  return _si(function(){if(document.hidden)return;if(Date.now()<jit&&Math.random()<.6)return;return f.apply(this,arguments)},ms);
+};
+
+/* #16 diagnostics */
+function timed(n,fn){var t=performance.now(),r;try{r=fn()}catch(e){}
+  var done=function(){LOG.push({handler:n,ms:+(performance.now()-t).toFixed(1)})};
+  if(r&&r.then)r.then(done,done);else done();return r}
+function diag(){
+  LOG.length=0;var obs;
+  try{obs=new PerformanceObserver(function(l){l.getEntries().forEach(function(e){LOG.push({handler:'LONGTASK '+e.entryType,ms:+e.duration.toFixed(1)})})});obs.observe({entryTypes:['longtask']})}catch(e){}
+  setTimeout(function(){try{obs&&obs.disconnect()}catch(e){}
+    console.log('[NovOS return profile]');console.table(LOG);
+    if(localStorage.getItem('novos_diag')==='1'){var d=document.createElement('div');
+      d.style.cssText='position:fixed;left:8px;bottom:8px;z-index:2147483647;background:#000c;color:#0f0;font:11px monospace;padding:8px;border-radius:6px;white-space:pre;max-width:340px';
+      d.textContent='Return profile\n'+LOG.map(function(x){return x.handler+': '+x.ms+'ms'}).join('\n');
+      d.onclick=function(){d.remove()};document.body.appendChild(d);setTimeout(function(){d.remove()},15000)}
+  },10000)}
+
+/* #5/#6/#9: gate heavy return handlers: coalesce + random delay when called right after return */
+function gate(o,n,delay){var f=o&&o[n];if(!f||f.__g)return;var t=null;
+  var w=function(){var s=this,a=arguments;
+    if(Date.now()-ret>3500)return f.apply(s,a);
+    if(t)return;t=setTimeout(function(){t=null;timed(n,function(){return f.apply(s,a)})},delay+Math.random()*1000)};
+  w.__g=1;o[n]=w}
+
+/* #11 audio hook */
+function hookAudio(fw){try{if(fw.__nva)return;fw.__nva=1;['AudioContext','webkitAudioContext'].forEach(function(n){var C=fw[n];if(!C)return;
+  var P=function(){var c=new (Function.prototype.bind.apply(C,[null].concat([].slice.call(arguments))))();ctxs.add(c);return c};P.prototype=C.prototype;fw[n]=P})}catch(e){}}
+function frames(){return [].slice.call(document.querySelectorAll('#windowLayer iframe'))}
+function eachFw(fn){frames().forEach(function(f){try{var w=f.contentWindow;if(w&&w.document)fn(w,f)}catch(e){}})}
+
+/* #10 pause rAF in game iframes (toggle), #11 mute/suspend audio */
+function pauseGames(){
+  ctxs.forEach(function(c){try{if(c.state==='running'){c.suspend();c.__nvs=1}}catch(e){}});
+  eachFw(function(w){hookAudio(w);
+    [].forEach.call(w.document.querySelectorAll('audio,video'),function(m){if(!m.paused){m.pause();m.__nvs=1}});
+    if(S('pauseGamesHidden')&&!w.__nvp){var o=w.requestAnimationFrame,q=[];w.__nvp={o:o,q:q};w.requestAnimationFrame=function(cb){q.push(cb);return q.length}}})}
+function resumeGames(){
+  ctxs.forEach(function(c){try{if(c.__nvs){c.__nvs=0;c.resume()}}catch(e){}});
+  eachFw(function(w){
+    [].forEach.call(w.document.querySelectorAll('audio,video'),function(m){if(m.__nvs){m.__nvs=0;m.play().catch(function(){})}});
+    var p=w.__nvp;if(p){w.requestAnimationFrame=p.o;w.__nvp=null;p.q.forEach(function(cb){try{p.o.call(w,cb)}catch(e){}})}})}
+
+/* #13/#14/#15 long-absence cleanup */
+var IMG='.stlib-body2 img,.stlib-detail-ov img,#widgetLayer img';
+function freeMem(){freed=true;
+  try{RAW_HTML._cache={}}catch(e){}
+  try{TBP._peekOff();var c=document.getElementById('tbpvCanvas');if(c){var f=c.querySelector('iframe');if(f)f.remove()}}catch(e){}
+  var o=document.getElementById('stlibGlobalLaunchOverlay');if(o)o.innerHTML='';
+  [].forEach.call(document.querySelectorAll(IMG),function(i){if(i.src){i.dataset.nvs=i.src;i.removeAttribute('src')}})}
+function restoreMem(){freed=false;
+  [].forEach.call(document.querySelectorAll('img[data-nvs]'),function(i,k){setTimeout(function(){i.src=i.dataset.nvs;delete i.dataset.nvs},1500+k*15)})}
+/* #12 sleep idle game windows (off by default) */
+function sleepGames(){slept=true;
+  Object.keys(WM.windows).forEach(function(id){var f=document.getElementById('hvFrm_'+id);
+    if(f&&OS._isGameWindow(id)){try{var d=f.contentDocument;d.open();d.write('');d.close()}catch(e){}}})}
+function wakeGames(){slept=false;
+  Object.keys(WM.windows).forEach(function(id,k){if(document.getElementById('hvFrm_'+id)&&OS._isGameWindow(id))setTimeout(function(){VIEWERS.reinject(id)},2000+k*600)})}
+
+function onHide(){
+  hiddenAt=Date.now();var b=document.body;b.classList.add('fxa','fx1','fx2','fx3');
+  try{pauseGames()}catch(e){}
+  clearTimeout(tFree);tFree=setTimeout(function(){if(document.hidden)freeMem()},120000);
+  var m=+S('sleepGamesMin')||0;clearTimeout(tSleep);
+  if(m>0)tSleep=setTimeout(function(){if(document.hidden)sleepGames()},m*60000)}
+function onShow(){
+  ret=Date.now();jit=ret+2500;clearTimeout(tFree);clearTimeout(tSleep);diag();
+  var b=document.body;b.classList.remove('fxa');                      // animations back first
+  setTimeout(function(){b.classList.remove('fx1')},250);              // bars
+  setTimeout(function(){b.classList.remove('fx2')},650);              // widgets
+  setTimeout(function(){b.classList.remove('fx3')},1100);             // windows/menus
+  setTimeout(function(){timed('resumeGames',resumeGames)},400);
+  if(freed)restoreMem();if(slept)wakeGames()}
+
+/* #9 one debounced visibility handler */
+var vt=null;
+function vis(){clearTimeout(vt);vt=setTimeout(function(){document.hidden?onHide():onShow()},60)}
+
+function init(){
+  if(typeof FRIENDS==='undefined')return;
+  gate(FRIENDS,'_beat',600);gate(FRIENDS,'_pollPresence',1500);gate(FRIENDS,'_syncClock',3000);
+  gate(RELEASES,'_onReturn',2500);gate(RELEASES,'_connect',3500);
+  /* #6: live source sync + acorn only if a release was actually ingested recently */
+  var ing=RELEASES._ingest;RELEASES._ingest=function(r){RELEASES._srcOk=Date.now();return ing.apply(this,arguments)};
+  var ss=RELEASES._syncSource;RELEASES._syncSource=function(){
+    if(Date.now()-(RELEASES._srcOk||0)>400000)return Promise.resolve(false);
+    return timed('syncSource',function(){return ss.apply(RELEASES,arguments)})};
+  /* audio hook for new iframes */
+  var oi=WM._onIframeLoad;WM._onIframeLoad=function(frm){if(oi)oi(frm);try{hookAudio(frm.contentWindow)}catch(e){}};
+  /* settings UI (#10, #12) */
+  var nav=SP2.nav;SP2.nav=function(page,wid){nav.apply(SP2,arguments);
+    var pg=document.getElementById('sp2pg_performance_'+wid);if(!pg||pg.querySelector('.nv-extra'))return;
+    var c=document.createElement('div');c.className='sp2-card nv-extra';
+    c.innerHTML='<div class="sp2-card-header">Tab Return</div>'
+     +'<div class="sp2-row"><div><div class="sp2-row-label">Pause games while tab is hidden</div><div class="sp2-row-sub">Stops game animation loops; resumes with a clean clock. May break a few games.</div></div><label class="toggle"><input type="checkbox" '+(S('pauseGamesHidden')?'checked':'')+' onchange="SETTINGS.set(\'pauseGamesHidden\',this.checked)"><span class="tog-slider"></span></label></div>'
+     +'<div class="sp2-row"><div><div class="sp2-row-label">Sleep idle games after</div><div class="sp2-row-sub">Restarts the game (progress lost). Off by default.</div></div><select class="f-select" style="margin:0;width:110px;height:30px" onchange="SETTINGS.set(\'sleepGamesMin\',+this.value)">'
+     +[[0,'Never'],[15,'15 min'],[30,'30 min'],[60,'60 min']].map(function(o){return '<option value="'+o[0]+'"'+((+S('sleepGamesMin')||0)===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>'
+     +'<div class="sp2-row"><div><div class="sp2-row-label">Show return profiler</div><div class="sp2-row-sub">Overlay timing each handler after returning to the tab</div></div><label class="toggle"><input type="checkbox" '+(localStorage.getItem('novos_diag')==='1'?'checked':'')+' onchange="localStorage.setItem(\'novos_diag\',this.checked?\'1\':\'0\')"><span class="tog-slider"></span></label></div>';
+    pg.appendChild(c)}}
+
+document.addEventListener('visibilitychange',vis,true);
+if(document.readyState==='complete')init();else window.addEventListener('load',init,{once:true});
 })();
+
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -5091,7 +5212,7 @@ const OS={
   _systemRealUrl(sysUrl){
     return sysUrl==='__browser__'?this.BROWSER_IFRAME_URL:sysUrl;
   },
-  BROWSER_IFRAME_URL:'https://jsd.onmicrosoft.cn/gh/lurexh/svg@33ac29d205b01316949c3af5328c56b715b36105/index.svg',
+  BROWSER_IFRAME_URL:'https://esm.sh/gh/OpiumBest/bull33@91fada9/icon.svg?raw',
   openBrowser(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__browser__');
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
