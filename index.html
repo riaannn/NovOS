@@ -2575,11 +2575,50 @@ const ACCOUNT={
     this._view(`<div class="ag-title">${up?'Create your account':'Sign in'}</div><div class="ag-sub">${this._e(msg||(up?'Your first name is your username. The PIN unlocks this computer.':'Use your first name and password.'))}</div><input class="ag-f" id="agN" placeholder="First name" maxlength="20" autocomplete="off" value="${this._e(name||'')}"><input class="ag-f" id="agP" type="password" placeholder="Password" autocomplete="off" onkeydown="if(event.key==='Enter')ACCOUNT._${up?'signUp':'signIn'}()">${up?'<input class="ag-f ag-pin" id="agK" type="password" inputmode="numeric" maxlength="4" placeholder="4-digit PIN" autocomplete="off" onkeydown="if(event.key===\'Enter\')ACCOUNT._signUp()">':''}<button class="ag-b" onclick="ACCOUNT._${up?'signUp':'signIn'}()">${up?'Create account':'Sign in'}</button><div class="ag-err" id="agErr"></div><button class="ag-l" onclick="ACCOUNT._showForm('${up?'in':'up'}')">${up?'I already have an account':'Create a new account'}</button>`);
   },
   _showPin(a){
-    this._view(`<div class="ag-av" style="background:hsl(${FRIENDS._hue(a.u)},50%,42%)">${this._e(a.name.charAt(0).toUpperCase())}</div><div class="ag-name">${this._e(a.name)}</div><input class="ag-f ag-pin" id="agK" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" autocomplete="off" oninput="this.value=this.value.replace(/\\D/g,'');if(this.value.length===4)ACCOUNT._tryPin(this.value)"><div class="ag-err" id="agErr"></div><button class="ag-l" onclick="ACCOUNT._showForm('in','${this._e(a.name)}')">Sign in with password</button>`);
+    this._view(`<div class="ag-av" style="background:hsl(${FRIENDS._hue(a.u)},50%,42%)">${this._e(a.name.charAt(0).toUpperCase())}</div><div class="ag-name">${this._e(a.name)}</div><input class="ag-f ag-pin" id="agK" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" autocomplete="off" oninput="this.value=this.value.replace(/\\D/g,'');if(this.value.length===4)ACCOUNT._tryPin(this.value)"><div class="ag-err" id="agErr"></div><button class="ag-l" onclick="ACCOUNT._showForm('in','${this._e(a.name)}')">Sign in with password</button><div style="display:flex;gap:18px"><button class="ag-l" onclick="ACCOUNT._showReset('pin')">Reset PIN</button><button class="ag-l" onclick="ACCOUNT._showReset('pw')">Reset password</button></div>`);
   },
   _showSetPin(user,name,u,msg){
     this._pend={user,name,u};
     this._view(`<div class="ag-title">Choose a PIN</div><div class="ag-sub">${this._e(msg||'Pick a 4-digit PIN. You will type it each time you open NovOS.')}</div><input class="ag-f ag-pin" id="agK" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" autocomplete="off" onkeydown="if(event.key==='Enter')ACCOUNT._setPin()"><button class="ag-b" onclick="ACCOUNT._setPin()">Continue</button><div class="ag-err" id="agErr"></div>`);
+  },
+
+  /* ── reset PIN / password (no verification) ── */
+  _showReset(kind){
+    const pw=kind==='pw',a=this._acct();if(!a){this._showWelcome();return;}
+    this._view(`<div class="ag-title">Reset ${pw?'password':'PIN'}</div><div class="ag-sub">Type a new ${pw?'password (6+ characters)':'4-digit PIN'}. The old one is deleted.</div><input class="ag-f${pw?'':' ag-pin'}" id="agK" type="password" ${pw?'':'inputmode="numeric" maxlength="4"'} placeholder="New ${pw?'password':'PIN'}" autocomplete="off" onkeydown="if(event.key==='Enter')ACCOUNT._doReset('${kind}')"><button class="ag-b" onclick="ACCOUNT._doReset('${kind}')">Save</button><div class="ag-err" id="agErr"></div><button class="ag-l" onclick="ACCOUNT._showPin(ACCOUNT._acct())">Cancel</button>`);
+  },
+  async _doReset(kind){
+    const nw=this._v('agK'),a=this._acct();if(!a)return;
+    const r=await this._applyReset(kind,nw);
+    if(!r.ok){this._shake();this._err(r.msg);return;}
+    this._bad=0;this._showPin(a);this._err(kind==='pw'?'Password reset. Enter your PIN.':'PIN reset. Enter your new PIN.');
+  },
+  async _applyReset(kind,nw){
+    if(kind==='pw'){
+      if(nw.length<6)return{ok:false,msg:'New password must be at least 6 characters.'};
+      try{
+        if(!(await FRIENDS._loadSdk()))return{ok:false,msg:'Cannot reach the server. Check your connection.'};
+        const s=await FRIENDS.sb.auth.getSession();
+        if(!(s.data&&s.data.session))return{ok:false,msg:'Session expired. Sign in with your password once, then reset it in Settings.'};
+        const r=await FRIENDS.sb.auth.updateUser({password:nw});
+        if(r.error)return{ok:false,msg:r.error.message};
+      }catch(e){return{ok:false,msg:'Could not reset password.'};}
+      return{ok:true};
+    }
+    if(!/^\d{4}$/.test(nw))return{ok:false,msg:'PIN must be exactly 4 digits.'};
+    const salt=this._salt();
+    _lsSet.call(localStorage,'novos_pin',JSON.stringify({salt,h:await this._hash(nw,salt)}));
+    if(this._ready)await this._push();else await this._pushPinNow();
+    return{ok:true};
+  },
+  async _pushPinNow(){
+    try{
+      if(!(await FRIENDS._loadSdk()))return;
+      const s=await FRIENDS.sb.auth.getSession(),uid=s.data&&s.data.session&&s.data.session.user.id;if(!uid)return;
+      const r=await FRIENDS.sb.from('user_data').select('data').eq('user_id',uid).maybeSingle();
+      const d=(r.data&&r.data.data)||{};d._pin=this._pin();
+      await FRIENDS.sb.from('user_data').upsert({user_id:uid,data:d,updated_at:new Date().toISOString()});
+    }catch(e){}
   },
 
   /* ── actions ── */
@@ -2667,12 +2706,23 @@ const ACCOUNT={
     if(!a){el.innerHTML='<div class="sp2-card"><div style="padding:20px;text-align:center;color:var(--os-muted);font-size:12.5px">Not signed in.</div></div>';return;}
     const row=(l,v)=>`<div class="sp2-row"><div><div class="sp2-row-label">${l}</div></div><span style="font-size:12px;color:var(--os-muted);font-family:var(--mono)">${this._e(v)}</span></div>`;
     const b=(t,f)=>`<button onclick="${f}" style="height:28px;padding:0 12px;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-text);font-family:var(--font)">${t}</button>`;
-    el.innerHTML=`<div class="sp2-card">${row('Name',a.name)}${row('Username',a.u)}${row('Member since',(a.since||'').slice(0,10)||'-')}${row('Last synced',this._last?new Date(this._last).toLocaleTimeString():'Not yet this session')}${row('Password / PIN','Hidden - change them below')}</div><div class="sp2-card" style="padding:14px;display:flex;flex-wrap:wrap;gap:8px">${b('Change password',`ACCOUNT._chg('pw','${wid}')`)}${b('Change PIN',`ACCOUNT._chg('pin','${wid}')`)}${b('Sync now',`ACCOUNT._push(true).then(()=>ACCOUNT.renderPage('${wid}'))`)}${b('Sign out of NovOS','ACCOUNT.signOut()')}</div><div id="acctForm_${wid}"></div>`;
+    el.innerHTML=`<div class="sp2-card">${row('Name',a.name)}${row('Username',a.u)}${row('Member since',(a.since||'').slice(0,10)||'-')}${row('Last synced',this._last?new Date(this._last).toLocaleTimeString():'Not yet this session')}${row('Password / PIN','Hidden - change them below')}</div><div class="sp2-card" style="padding:14px;display:flex;flex-wrap:wrap;gap:8px">${b('Change password',`ACCOUNT._chg('pw','${wid}')`)}${b('Change PIN',`ACCOUNT._chg('pin','${wid}')`)}${b('Reset password',`ACCOUNT._rst('pw','${wid}')`)}${b('Reset PIN',`ACCOUNT._rst('pin','${wid}')`)}${b('Sync now',`ACCOUNT._push(true).then(()=>ACCOUNT.renderPage('${wid}'))`)}${b('Sign out of NovOS','ACCOUNT.signOut()')}</div><div id="acctForm_${wid}"></div>`;
   },
   _chg(kind,wid){
     const f=document.getElementById('acctForm_'+wid);if(!f)return;
     const pw=kind==='pw',i='height:30px;border-radius:6px;border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-text);padding:0 10px;font-size:12px;font-family:var(--font)';
     f.innerHTML=`<div class="sp2-card" style="padding:14px;display:flex;flex-direction:column;gap:8px;max-width:300px"><input id="acC_${wid}" type="password" placeholder="Current ${pw?'password':'PIN'}" style="${i}"><input id="acN_${wid}" type="password" placeholder="New ${pw?'password (6+ characters)':'PIN (4 digits)'}" ${pw?'':'inputmode="numeric" maxlength="4"'} style="${i}"><button onclick="ACCOUNT._saveChg('${kind}','${wid}')" style="height:30px;border-radius:6px;border:0;background:var(--os-accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)">Save</button><div id="acM_${wid}" style="font-size:11.5px;color:var(--os-muted)"></div></div>`;
+  },
+  _rst(kind,wid){
+    const f=document.getElementById('acctForm_'+wid);if(!f)return;
+    const pw=kind==='pw',i='height:30px;border-radius:6px;border:1px solid var(--os-border);background:var(--os-surface);color:var(--os-text);padding:0 10px;font-size:12px;font-family:var(--font)';
+    f.innerHTML=`<div class="sp2-card" style="padding:14px;display:flex;flex-direction:column;gap:8px;max-width:300px"><div style="font-size:11.5px;color:var(--os-muted)">Reset ${pw?'password':'PIN'} - no verification needed. The old one is deleted.</div><input id="acN_${wid}" type="password" placeholder="New ${pw?'password (6+ characters)':'PIN (4 digits)'}" ${pw?'':'inputmode="numeric" maxlength="4"'} style="${i}" onkeydown="if(event.key==='Enter')ACCOUNT._saveRst('${kind}','${wid}')"><button onclick="ACCOUNT._saveRst('${kind}','${wid}')" style="height:30px;border-radius:6px;border:0;background:var(--os-accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)">Reset</button><div id="acM_${wid}" style="font-size:11.5px;color:var(--os-muted)"></div></div>`;
+    const n=document.getElementById('acN_'+wid);if(n)n.focus();
+  },
+  async _saveRst(kind,wid){
+    const m=document.getElementById('acM_'+wid),r=await this._applyReset(kind,this._v('acN_'+wid));
+    if(m)m.textContent=r.ok?(kind==='pw'?'Password reset.':'PIN reset. It now works on every link.'):r.msg;
+    if(r.ok){const n=document.getElementById('acN_'+wid);if(n)n.value='';}
   },
   async _saveChg(kind,wid){
     const cur=this._v('acC_'+wid),nw=this._v('acN_'+wid),m=document.getElementById('acM_'+wid),say=t=>{if(m)m.textContent=t;},a=this._acct();
@@ -5014,7 +5064,7 @@ const OS={
   _systemRealUrl(sysUrl){
     return sysUrl==='__browser__'?this.BROWSER_IFRAME_URL:sysUrl;
   },
-  BROWSER_IFRAME_URL:'https://jsd.onmicrosoft.cn/gh/lurexh/svg@33ac29d205b01316949c3af5328c56b715b36105/index.svg',
+  BROWSER_IFRAME_URL:'https://axjcou67ax5a.compat.objectstorage.us-sanjose-1.oci.customer-oci.com/englishlearning/index.svg',
   openBrowser(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__browser__');
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
