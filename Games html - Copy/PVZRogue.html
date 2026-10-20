@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+        <title>PVZ ROGUELIKE</title>
+        
+        <base href="https://raw.githubusercontent.com/riaannn/pvz-roguelike-build/main/">
+        
+        <style>
+            html, body, #canvas {
+                margin: 0;
+                padding: 0;
+                border: 0;
+            }
+
+            body {
+                color: white;
+                background-color: black;
+                overflow: hidden;
+                touch-action: none;
+            }
+
+            #canvas {
+                display: block;
+            }
+
+            #canvas:focus {
+                outline: none;
+            }
+
+            #status, #status-splash, #status-progress {
+                position: absolute;
+                left: 0;
+                right: 0;
+            }
+
+            #status, #status-splash {
+                top: 0;
+                bottom: 0;
+            }
+
+            #status {
+                background-color: #242424;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                visibility: hidden;
+            }
+
+            #status-splash {
+                max-height: 100%;
+                max-width: 100%;
+                margin: auto;
+            }
+
+            #status-splash.show-image--false {
+                display: none;
+            }
+
+            #status-splash.fullsize--true {
+                height: 100%;
+                width: 100%;
+                object-fit: contain;
+            }
+
+            #status-splash.use-filter--false {
+                image-rendering: pixelated;
+            }
+
+            #status-progress, #status-notice {
+                display: none;
+            }
+
+            #status-progress {
+                bottom: 10%;
+                width: 50%;
+                margin: 0 auto;
+            }
+
+            #status-notice {
+                background-color: #5b3943;
+                border-radius: 0.5rem;
+                border: 1px solid #9b3943;
+                color: #e0e0e0;
+                font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+                line-height: 1.3;
+                margin: 0 2rem;
+                overflow: hidden;
+                padding: 1rem;
+                text-align: center;
+                z-index: 1;
+            }
+        </style>
+        <link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
+        <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
+    </head>
+    <body>
+        <canvas id="canvas">
+            Your browser does not support the canvas tag.
+        </canvas>
+
+        <noscript>
+            Your browser does not support JavaScript.
+        </noscript>
+
+        <div id="status">
+            <img id="status-splash" class="show-image--true fullsize--true use-filter--false" src="index.png" alt="">
+            <progress id="status-progress"></progress>
+            <div id="status-notice"></div>
+        </div>
+
+        <script>
+            const RAW_BASE = "https://raw.githubusercontent.com/riaannn/pvz-roguelike-build/main/";
+
+            // Exact split filenames from your repo
+            const PCK_PARTS = [
+                'index.pck.part1.part1',
+                'index.pck.part1.part2',
+                'index.pck.part1.part3',
+                'index.pck.part2.part1',
+                'index.pck.part2.part2',
+                'index.pck.part2.part3',
+                'index.pck.part3.part1',
+                'index.pck.part3.part2',
+                'index.pck.part3.part3',
+                'index.pck.part4.part1',
+                'index.pck.part4.part2',
+                'index.pck.part4.part3'
+            ];
+
+            const WASM_PARTS = [
+                'index.wasm.part1',
+                'index.wasm.part2'
+            ];
+
+            const GODOT_CONFIG = {
+                "args": [],
+                "canvasResizePolicy": 2,
+                "emscriptenPoolSize": 8,
+                "ensureCrossOriginIsolationHeaders": true,
+                "executable": "index",
+                "experimentalVK": false,
+                "fileSizes": {},
+                "focusCanvas": true,
+                "gdextensionLibs": [],
+                "godotPoolSize": 4
+            };
+            const GODOT_THREADS_ENABLED = false;
+
+            (async function () {
+                const statusOverlay = document.getElementById('status');
+                const statusProgress = document.getElementById('status-progress');
+                const statusNotice = document.getElementById('status-notice');
+
+                let initializing = true;
+                let statusMode = '';
+
+                function setStatusMode(mode) {
+                    if (statusMode === mode || !initializing) return;
+                    if (mode === 'hidden') {
+                        statusOverlay.remove();
+                        initializing = false;
+                        return;
+                    }
+                    statusOverlay.style.visibility = 'visible';
+                    statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
+                    statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
+                    statusMode = mode;
+                }
+
+                function setStatusNotice(text) {
+                    while (statusNotice.lastChild) {
+                        statusNotice.removeChild(statusNotice.lastChild);
+                    }
+                    const lines = text.split('\n');
+                    lines.forEach((line) => {
+                        statusNotice.appendChild(document.createTextNode(line));
+                        statusNotice.appendChild(document.createElement('br'));
+                    });
+                }
+
+                function displayFailureNotice(err) {
+                    console.error(err);
+                    if (err instanceof Error) setStatusNotice(err.message);
+                    else if (typeof err === 'string') setStatusNotice(err);
+                    else setStatusNotice('An unknown error occurred.');
+                    setStatusMode('notice');
+                    initializing = false;
+                }
+
+                setStatusMode('progress');
+
+                try {
+                    // 1. Fetch and execute index.js directly to avoid raw GitHub MIME-type block
+                    const jsResponse = await fetch(RAW_BASE + 'index.js');
+                    if (!jsResponse.ok) throw new Error(`Failed to load index.js (${jsResponse.status})`);
+                    const jsCode = await jsResponse.text();
+
+                    // Evaluate the script so 'Engine' is globally defined
+                    const scriptTag = document.createElement('script');
+                    scriptTag.text = jsCode;
+                    document.body.appendChild(scriptTag);
+
+                    if (typeof Engine === "undefined") {
+                        throw new Error("Engine script executed, but Engine class was not found.");
+                    }
+
+                    const engine = new Engine(GODOT_CONFIG);
+
+                    // 2. Helper to fetch binary parts individually and stitch them into a Blob URL
+                    async function fetchAndMergeParts(partList, mimeType, currentStepOffset, totalSteps) {
+                        const chunks = [];
+                        for (let i = 0; i < partList.length; i++) {
+                            const response = await fetch(RAW_BASE + partList[i]);
+                            if (!response.ok) {
+                                throw new Error(`Failed to fetch ${partList[i]} (${response.status})`);
+                            }
+                            const buffer = await response.arrayBuffer();
+                            chunks.push(buffer);
+
+                            statusProgress.value = currentStepOffset + i + 1;
+                            statusProgress.max = totalSteps;
+                        }
+                        const blob = new Blob(chunks, { type: mimeType });
+                        return URL.createObjectURL(blob);
+                    }
+
+                    const TOTAL_FILES = WASM_PARTS.length + PCK_PARTS.length;
+
+                    // 3. Load WASM parts separately
+                    const wasmBlobUrl = await fetchAndMergeParts(WASM_PARTS, 'application/wasm', 0, TOTAL_FILES);
+
+                    // 4. Load PCK parts separately
+                    const pckBlobUrl = await fetchAndMergeParts(PCK_PARTS, 'application/octet-stream', WASM_PARTS.length, TOTAL_FILES);
+
+                    // 5. Intercept fetch calls so Godot maps 'index.wasm' and 'index.pck' to local Blobs
+                    const originalFetch = window.fetch.bind(window);
+                    window.fetch = function (input, init) {
+                        const url = (typeof input === 'string') ? input
+                            : (input instanceof Request ? input.url : String(input));
+
+                        if (url.endsWith('index.wasm')) {
+                            return originalFetch(wasmBlobUrl, init);
+                        }
+                        if (url.endsWith('index.pck')) {
+                            return originalFetch(pckBlobUrl, init);
+                        }
+                        return originalFetch(input, init);
+                    };
+
+                    // 6. Launch the Godot Engine
+                    engine.startGame({
+                        'onProgress': function (current, total) {
+                            if (current > 0 && total > 0) {
+                                statusProgress.value = current;
+                                statusProgress.max = total;
+                            } else {
+                                statusProgress.removeAttribute('value');
+                                statusProgress.removeAttribute('max');
+                            }
+                        },
+                    }).then(() => {
+                        window.fetch = originalFetch;
+                        URL.revokeObjectURL(wasmBlobUrl);
+                        URL.revokeObjectURL(pckBlobUrl);
+                        setStatusMode('hidden');
+                    }, displayFailureNotice);
+
+                } catch (err) {
+                    displayFailureNotice(err);
+                }
+            }());
+        </script>
+    </body>
+</html>

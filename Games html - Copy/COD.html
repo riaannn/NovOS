@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module Loader Test</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #89b4fa;
+      color: #111;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #b4befe;
+    }
+    #status {
+      margin-top: 15px;
+      color: #aaa;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="loadBtn">Launch Module</button>
+  <div id="status">Click the button to fetch and execute.</div>
+
+  <!-- Note: script type="module" allows top-level await and dynamic imports -->
+  <script type="module">
+    const btn = document.getElementById('loadBtn');
+    const status = document.getElementById('status');
+
+    btn.addEventListener('click', async () => {
+      status.textContent = "Fetching module from esm.sh...";
+      
+      try {
+        // Dynamically import the module directly from the CDN
+        const module = await import("https://esm.sh/gadidae");
+        
+        status.textContent = "Module loaded successfully!";
+        console.log("Loaded module output:", module);
+
+        // If the module exports a default function or setup method, call it here
+        if (typeof module.default === 'function') {
+          module.default();
+        }
+      } catch (err) {
+        console.error("Failed to load module:", err);
+        status.textContent = "Error: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

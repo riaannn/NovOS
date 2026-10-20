@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/>
+<title>Brotato</title>
+<!-- Remote Icons via jsDelivr -->
+<link rel="icon" type="image/png" href="https://cdn2.steamgriddb.com/icon/2e904afa80a8ca949f187f64ff2d15b2/32/256x256.png"/>
+<link rel="apple-touch-icon" href="https://cdn2.steamgriddb.com/icon/2e904afa80a8ca949f187f64ff2d15b2/32/256x256.png"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:#0d0a0d;
+  font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color:#fff;
+  height:100vh;
+  overflow:hidden;
+  touch-action:none;
+}
+
+canvas{
+  display:block;
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:none;
+  background:#000;
+}
+canvas:focus{outline:none}
+
+/* ─── Loader Overlay ─── */
+#loader{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  transition:opacity 0.7s ease;
+}
+
+/* Background Banner with Dim Overlay */
+.bg-banner{
+  position:absolute;
+  inset:0;
+  background-image: url('https://cdn2.steamgriddb.com/hero_thumb/33db1b4f46cf1ce80f1dd4a83c64d552.jpg');
+  background-size:cover;
+  background-position:center;
+  filter: brightness(0.4) contrast(1.1) blur(2px);
+  transform: scale(1.05);
+}
+
+/* Dark gradient vignette over the background */
+.bg-overlay{
+  position:absolute;
+  inset:0;
+  background: radial-gradient(circle at center, rgba(0,0,0,0.3) 0%, rgba(10,8,12,0.85) 100%);
+}
+
+/* ─── Content Card ─── */
+.content{
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+  width:100%;
+  max-width:320px;
+  padding:20px;
+}
+
+/* App Icon Container */
+.app-icon-wrapper{
+  position:relative;
+  width:100px;
+  height:100px;
+  border-radius:24px;
+  background:rgba(255,255,255,0.05);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.1) inset;
+  overflow:hidden;
+  margin-bottom:4px;
+}
+
+.app-icon{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:24px;
+}
+
+/* Game Title */
+.game-title{
+  font-size:1.15rem;
+  font-weight:700;
+  letter-spacing:0.02em;
+  color:#ffffff;
+  text-shadow:0 2px 8px rgba(0,0,0,0.8);
+  margin-bottom:8px;
+}
+
+/* Single Sleek Progress Container */
+.progress-container{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.track{
+  height:6px;
+  background:rgba(255,255,255,0.15);
+  border-radius:99px;
+  overflow:hidden;
+  backdrop-filter:blur(4px);
+}
+
+.fill{
+  height:100%;
+  border-radius:99px;
+  width:0%;
+  background:linear-gradient(90deg, #ff416c, #ff4b2b);
+  box-shadow:0 0 12px rgba(255,75,43,0.6);
+  transition:width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.status-line{
+  font-size:0.75rem;
+  color:rgba(255,255,255,0.6);
+  letter-spacing:0.03em;
+  text-align:center;
+  font-weight:500;
+}
+
+/* Error Box */
+.err-box{
+  display:none;
+  width:100%;
+  background:rgba(255, 59, 48, 0.2);
+  border:1px solid rgba(255, 59, 48, 0.4);
+  backdrop-filter:blur(10px);
+  border-radius:12px;
+  padding:12px;
+  margin-top:10px;
+  text-align:center;
+}
+.err-box.show{display:block}
+.err-title{
+  font-size:0.75rem;
+  font-weight:700;
+  color:#ff453a;
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+.err-msg{
+  font-size:0.7rem;
+  color:rgba(255,255,255,0.8);
+  line-height:1.4;
+  word-break:break-word;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<div id="loader">
+  <div class="bg-banner"></div>
+  <div class="bg-overlay"></div>
+
+  <div class="content">
+    <div class="app-icon-wrapper">
+      <img class="app-icon" src="https://cdn2.steamgriddb.com/icon/2e904afa80a8ca949f187f64ff2d15b2/32/256x256.png" alt="Brotato Icon"/>
+    </div>
+
+    <div class="game-title">Brotato Paws & Claws</div>
+
+    <div class="progress-container">
+      <div class="track">
+        <div class="fill" id="main-fill"></div>
+      </div>
+      <div class="status-line" id="status-line">Loading...</div>
+    </div>
+
+    <div class="err-box" id="err-box">
+      <div class="err-title">Unable to Load</div>
+      <div class="err-msg" id="err-msg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CDN = 'https://fastly.jsdelivr.net/gh/riaannn/brotatodlc-web@main/';
+
+const GODOT_CONFIG = {
+  args: [], canvasResizePolicy: 2, executable: 'index',
+  experimentalVK: false,
+  fileSizes: { 'index.pck': 205270016, 'index.wasm': 26156492 },
+  focusCanvas: true, gdnativeLibs: []
+};
+
+/* File size metrics for total overall percentage tracking */
+const PCK_SIZE = 205270016;
+const WASM_SIZE = 26156492;
+const TOTAL_BYTES = PCK_SIZE + WASM_SIZE;
+
+let pckLoadedBytes = 0;
+let wasmLoadedBytes = 0;
+
+const $ = id => document.getElementById(id);
+
+function updateOverallProgress() {
+  const currentTotal = pckLoadedBytes + wasmLoadedBytes;
+  const pct = Math.min(100, (currentTotal / TOTAL_BYTES) * 100);
+  $('main-fill').style.width = pct + '%';
+}
+
+function setStatus(msg) { 
+  if ($('status-line'))$('status-line').textContent = msg; 
+}
+
+function showError(msg) {
+  $('err-box').classList.add('show');
+  if ($('err-msg'))$('err-msg').textContent = msg;
+  setStatus('Loading failed');
+}
+
+/* Fetch and merge file parts */
+async function fetchParts(filename, count, padded, totalBytes, onProgress) {
+  const parts = [];
+  let fetched = 0;
+
+  for (let i = 1; i <= count; i++) {
+    const suffix = padded ? String(i).padStart(2, '0') : String(i);
+    const part = `${filename}.part${suffix}`;
+
+    const resp = await fetch(CDN + part, { mode: 'cors' });
+    if (!resp.ok) throw new Error(`Could not load game resource (${resp.status})`);
+
+    const buf = await resp.arrayBuffer();
+    parts.push(buf);
+    fetched += buf.byteLength;
+
+    onProgress(fetched);
+  }
+
+  const merged = new Uint8Array(parts.reduce((s, b) => s + b.byteLength, 0));
+  let offset = 0;
+  for (const p of parts) { 
+    merged.set(new Uint8Array(p), offset); 
+    offset += p.byteLength; 
+  }
+
+  return merged.buffer;
+}
+
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.crossOrigin = 'anonymous';
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('Failed to load core components.'));
+    document.head.appendChild(script);
+  });
+}
+
+/* Main Initialization Loop */
+(async () => {
+  try {
+    setStatus('Preparing game...');
+    await loadScript(CDN + 'index.js');
+
+    if (!window.Engine || !Engine.isWebGLAvailable()) {
+      showError('Graphics acceleration unavailable. Please enable WebGL in browser settings.');
+      return;
+    }
+
+    setStatus('Loading resources...');
+
+    const [pckBuf, wasmBuf] = await Promise.all([
+      fetchParts('index.pck', 11, true, PCK_SIZE, (bytes) => {
+        pckLoadedBytes = bytes;
+        updateOverallProgress();
+      }),
+      fetchParts('index.wasm', 2, false, WASM_SIZE, (bytes) => {
+        wasmLoadedBytes = bytes;
+        updateOverallProgress();
+      })
+    ]);
+
+    setStatus('Starting game...');
+    $('main-fill').style.width = '100%';
+
+    const pckUrl = URL.createObjectURL(
+      new Blob([pckBuf], { type: 'application/octet-stream' })
+    );
+
+    const _fetch = window.fetch.bind(window);
+    window.fetch = function (input, init) {
+      const url = input instanceof Request ? input.url : String(input);
+      if (/index\.wasm$/.test(url)) {
+        return Promise.resolve(new Response(
+          new Blob([wasmBuf], { type: 'application/wasm' }),
+          { status: 200, headers: { 'Content-Type': 'application/wasm' } }
+        ));
+      }
+      if (/index\.audio\.worklet\.js$/.test(url)) {
+        return _fetch(CDN + 'index.audio.worklet.js', init);
+      }
+      return _fetch(input, init);
+    };
+
+    const engine = new Engine(GODOT_CONFIG);
+
+    await engine.startGame({
+      executable: CDN + 'index',
+      mainPack: pckUrl,
+      onProgress(current, total) {
+        if (total > 0) {
+          const pct = Math.min(100, (current / total) * 100);
+          $('main-fill').style.width = pct + '%';
+        }
+      }
+    });
+
+    /* Game Ready Transition */
+    const loader = $('loader');
+    loader.style.opacity = '0';
+    loader.style.pointerEvents = 'none';
+    setTimeout(() => { loader.style.display = 'none'; }, 750);
+
+  } catch (e) {
+    console.error('[Brotato Loader]', e);
+    showError(e.message || String(e));
+  }
+})();
+</script>
+</body>
+</html>
