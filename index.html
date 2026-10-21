@@ -1773,7 +1773,11 @@ const PVZ_URL='https://wszqkzqk.github.io/pvz-portable-wasm/pvz-portable.html';
 const RAW_HTML={
   _cache:{},
   async launchInNewTab(app){
-    if(!app.rawUrl)return;
+    if(!app.rawUrl){
+      const t=app.launchUrl||app.url;
+      if(t&&/^https?:/i.test(t))WM._openBlobTab({targetUrl:t});
+      return;
+    }
     try{
       let html=this._cache[app.rawUrl];
       if(!html){
@@ -4932,7 +4936,7 @@ const OS={
       if(full)resolved=full;
     }
 
-    if(resolved._openInNewBlobTab||OS._tabPref(resolved.name)){
+    if(OS._tabPref(resolved.name,resolved._openInNewBlobTab)){
       RAW_HTML.launchInNewTab(resolved);
       return;
     }
@@ -4959,19 +4963,46 @@ const OS={
     }
     this._doLaunch(resolved);
   },
+  // Launch mode: per-shortcut choice between running inside NovOS (default) or
+  // a real new browser tab. Explicit user choices live in novos_launchmode
+  // ({name:'tab'|'window'}); with no choice stored, Cuphead, Lethal Company and
+  // every Minecraft version except Story Mode default to a new tab.
   _tabPrefs:null,
   _clearOldTabPrefs(){try{if(!localStorage.getItem('novos_tabapps_cleared_v2')){localStorage.removeItem('novos_tabapps');localStorage.setItem('novos_tabapps_cleared_v2','1');}}catch(e){}},
-  _tabPref(n){
-    this._clearOldTabPrefs();
-    if(!this._tabPrefs){try{this._tabPrefs=JSON.parse(localStorage.getItem('novos_tabapps')||'[]');}catch{this._tabPrefs=[];}}
-    return this._tabPrefs.includes(n);
+  _tabDefault(n,fb){
+    n=String(n||'');
+    if(/^minecraft\b/i.test(n))return !/story\s*mode/i.test(n);
+    if(n==='Cuphead'||n==='Lethal Company')return true;
+    return !!fb;
   },
-  setTabPref(n,on){
-    this._tabPref(n);
-    this._tabPrefs=this._tabPrefs.filter(x=>x!==n);
-    if(on)this._tabPrefs.push(n);
-    localStorage.setItem('novos_tabapps',JSON.stringify(this._tabPrefs));
-    OS.notify(on?'Opens in new tab':'Opens in window',n+(on?' will always open in a new browser tab.':' will open inside NovOS.'));
+  _loadTabPrefs(){
+    if(this._tabPrefs)return this._tabPrefs;
+    this._clearOldTabPrefs();
+    let m={};
+    try{const r=JSON.parse(localStorage.getItem('novos_launchmode')||'{}');if(r&&typeof r==='object'&&!Array.isArray(r))m=r;}catch(e){}
+    // One-time carry-over of the old "always open in tab" list.
+    try{
+      const old=JSON.parse(localStorage.getItem('novos_tabapps')||'null');
+      if(Array.isArray(old)){
+        old.forEach(n=>{if(!(n in m))m[n]='tab';});
+        localStorage.setItem('novos_launchmode',JSON.stringify(m));
+        localStorage.removeItem('novos_tabapps');
+      }
+    }catch(e){}
+    this._tabPrefs=m;
+    return m;
+  },
+  _tabPref(n,fb){
+    const v=this._loadTabPrefs()[n];
+    if(v==='tab')return true;
+    if(v==='window')return false;
+    return this._tabDefault(n,fb);
+  },
+  setTabPref(n,on,quiet){
+    const m=this._loadTabPrefs();
+    m[n]=on?'tab':'window';
+    try{localStorage.setItem('novos_launchmode',JSON.stringify(m));}catch(e){}
+    if(!quiet)OS.notify(on?'Opens in new tab':'Opens in window',n+(on?' will always open in a new browser tab.':' will open inside NovOS.'));
   },
   closeConfirm(){document.getElementById('confirmDialog').classList.remove('open');},
   // Uses the exact same logic as WM.openInBrowserTab's titlebar button:
@@ -5073,7 +5104,8 @@ const OS={
   _systemRealUrl(sysUrl){
     return sysUrl==='__browser__'?this.BROWSER_IFRAME_URL:sysUrl;
   },
-  BROWSER_IFRAME_URL:'https://axjcou67ax5a.compat.objectstorage.us-sanjose-1.oci.customer-oci.com/englishlearning/index.svg',
+  // CHERRI BROWSER URL
+  BROWSER_IFRAME_URL:'https://objectstorage.us-sanjose-1.oraclecloud.com/n/axjcou67ax5a/b/sciencelearning/o/index.html',
   openBrowser(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__browser__');
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
@@ -5385,6 +5417,14 @@ const OS={
         .stlib-detail-iconbtn:hover{background:rgba(255,255,255,0.16)}
         .stlib-detail-iconbtn.danger:hover{background:rgba(220,38,38,0.3);border-color:rgba(220,38,38,0.5)}
         .stlib-detail-stats{display:flex;gap:12px;flex-wrap:wrap}
+        .stlib-lm{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px}
+        .stlib-lm-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#6b7280;margin-bottom:4px}
+        .stlib-lm-sub{font-size:12px;color:#9aa0ab}
+        .stlib-lm-seg{display:flex;gap:4px;padding:3px;border-radius:9px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.08)}
+        .stlib-lm-opt{height:30px;padding:0 14px;border-radius:7px;border:none;background:transparent;color:#9aa0ab;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+        .stlib-lm-opt:hover{color:#fff}
+        .stlib-lm-opt.active{background:rgb(var(--os-accent-rgb));color:#fff}
+        body.stlib-light-accent .stlib-lm-opt.active{color:#0b0c10}
         .stlib-detail-stat{background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;min-width:130px}
         .stlib-detail-stat-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#6b7280;margin-bottom:4px}
         .stlib-detail-stat-val{font-size:16px;font-weight:700;color:rgba(var(--slb),1);font-family:var(--mono)}
@@ -5600,6 +5640,7 @@ const OS={
           <div class="stlib-detail-stat"><div class="stlib-detail-stat-label">Total Playtime</div><div class="stlib-detail-stat-val">${totalTime}</div></div>
           <div class="stlib-detail-stat"><div class="stlib-detail-stat-label">Last Played</div><div class="stlib-detail-stat-val" style="font-size:13px">${lastPlayed}</div></div>
         </div>`:''}
+        ${this._libLaunchModeHTML(wid,app)}
         <div class="stlib-detail-notes">
           <div class="stlib-detail-notes-title">Notes</div>
           <div class="stlib-detail-notes-text" id="stlibDetailNote_${wid}" contenteditable="true" data-ph="Click to add a note…">${note?note.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}</div>
@@ -5637,6 +5678,24 @@ const OS={
     }
   },
 
+  _libLaunchModeHTML(wid,app){
+    if(app.notAvailable||app.isCloudPlaceholder)return '';
+    if(!(app.rawUrl||(app.url&&!app.url.startsWith('__'))))return '';
+    const esc=JSON.stringify(app).replace(/"/g,'&quot;');
+    const tab=OS._tabPref(app.name,app._openInNewBlobTab);
+    const changed=tab!==OS._tabDefault(app.name,app._openInNewBlobTab);
+    const btn=(m,label)=>`<button class="stlib-lm-opt${(m==='tab')===tab?' active':''}" onclick="OS.stlibSetLaunchMode('${wid}',${esc},'${m}')">${label}</button>`;
+    return `<div class="stlib-lm">
+          <div><div class="stlib-lm-title">Launch Mode</div><div class="stlib-lm-sub">${tab?'Opens in a new browser tab.':'Opens inside NovOS.'}${changed?' (changed from default)':''}</div></div>
+          <div class="stlib-lm-seg">${btn('window','Inside NovOS')}${btn('tab','New Browser Tab')}</div>
+        </div>`;
+  },
+
+  stlibSetLaunchMode(wid,app,mode){
+    OS.setTabPref(app.name,mode==='tab',true);
+    this.stlibOpenDetail(wid,app);
+  },
+
   stlibCloseDetail(wid){
     const ov=document.getElementById('stlibDetail_'+wid);
     if(ov)ov.classList.remove('open');
@@ -5665,7 +5724,7 @@ const OS={
   // as the "main attraction", then the game actually launches. Once launched,
   // the App Library resets back to its default Games view for next time.
   stlibLaunchWithAnim(wid,app){
-    if(SETTINGS.get('shortcutLaunchAnim')===false){
+    if(SETTINGS.get('shortcutLaunchAnim')===false||OS._tabPref(app.name,app._openInNewBlobTab)){
       OS.launch(app);
       if(WM.windows[wid]){
         WM.windows[wid].libTab2='games';
