@@ -1454,6 +1454,22 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
   </div>
 </div>
 
+<!-- BROWSER PICKER MODAL -->
+<div id="browserPickModal" class="overlay-modal" onclick="if(event.target===this)OS.pickBrowser()">
+  <div class="modal-box narrow">
+    <div class="modal-header">
+      <h3>Choose a browser</h3>
+      <button class="modal-close" onclick="OS.pickBrowser()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-actions">
+        <button class="m-btn primary" onclick="OS.pickBrowser('cherri')">Cherri</button>
+        <button class="m-btn primary" onclick="OS.pickBrowser('opium')">Opium</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ADD TO FOLDER MODAL -->
 <div id="addToFolderModal" class="overlay-modal">
   <div class="modal-box">
@@ -5073,14 +5089,24 @@ const OS={
   // The window/taskbar keeps the system url (__browser__ / __music__) so it gets
   // the correct system icon and stays on the right side of the taskbar.
   _systemRealUrl(sysUrl){
-    return sysUrl==='__browser__'?this.BROWSER_IFRAME_URL:sysUrl;
+    return sysUrl==='__browser__'?(this._browserPick||this.BROWSER_IFRAME_URL):sysUrl;
   },
   // CHERRI BROWSER URL
   BROWSER_IFRAME_URL:'https://objectstorage.us-sanjose-1.oraclecloud.com/n/axjcou67ax5a/b/sciencelearning/o/index.html',
+  BROWSER_OPIUM_URL:'https://splitshire.nyc3.digitaloceanspaces.com/uploads/images/1790652862160_687f60e8_singlefile.svg',
+  _browserPick:null,
   openBrowser(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__browser__');
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
-    OS._openBrowserWindow();
+    // Asked every time a new browser window is launched; nothing is remembered.
+    document.getElementById('browserPickModal').classList.add('open');
+  },
+  // No argument (X / backdrop) cancels without opening anything.
+  pickBrowser(which){
+    document.getElementById('browserPickModal').classList.remove('open');
+    if(which!=='cherri'&&which!=='opium')return;
+    this._browserPick=which==='opium'?this.BROWSER_OPIUM_URL:this.BROWSER_IFRAME_URL;
+    try{this._openBrowserWindow();}finally{this._browserPick=null;}
   },
   _openBrowserWindow(){
     // Gust: WM.open always writes a shell into an about:blank iframe and nests the real URL inside it.
@@ -9321,7 +9347,7 @@ const CMDK={
       {label:'Open File Explorer',hint:'Files',fn:()=>OS.openFileExplorer()},
       {label:'Open Settings',hint:'System',fn:()=>OS.openSettings()},
       {label:'Open Task Manager',hint:'System',fn:()=>TM.open()},
-      {label:'Open Cherri Browser',hint:'Web',fn:()=>OS.openBrowser()},
+      {label:'Open Browser',hint:'Web',fn:()=>OS.openBrowser()},
       {label:'Open NovCompiler',hint:'Development',fn:()=>OS.openCompiler()},
       {label:'Open NovMusic',hint:'Media',fn:()=>OS.openMusic()},
       {label:'Add Widget',hint:'Widgets',fn:()=>WIDGETS.openPicker()},
