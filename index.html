@@ -5,11 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NovOS</title>
 <link id="favicon" rel="icon" href="">
-<script>
-(function(){
-
-})();
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -1701,7 +1696,7 @@ const DEFAULT_SHORTCUTS = {
     {name:"Plague Inc Evolved",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/3187b1703c3b9b19bb63c027d8efc2f1.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/da8a8e9cbcc29f7a06600fc7b6ce72ba.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Plague%20Inc.html", url:"__rawhtml__",icon:"https://play-lh.googleusercontent.com/qLgeusnY6S6JC_qB7s1qz5rPzrzMIuiXDvQN2R9qZhuQb3xTw4adMD0-Ktk12LrLwFB_wn_ftNVvLDsixSBeGQ", launchUrl:"https://sharemyhtml.com/p/qIWHU45vix", isDefault:true,SupportsHTML:true},
     {name:"Vampire Survivors",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/d55c063e665cf55517a9f186af1b48e4.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/b6c580b0ed08cf19c925be5a68475cd4.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Vampire%20Survivors.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/6551eee9b14143cac7eb1baf35ed4739/32/256x256.png",launchUrl: "https://sharemyhtml.com/p/7wJNbhd4R0", isDefault:true,SupportsHTML:true},
     {name:"Stardew Valley",gridImage:"https://cdn2.steamgriddb.com/thumb/996e24639b91722571c81723760023e0.jpg",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/d44c78dcad9de0aed2f37902ea02cef2.png",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Stardew%20Valley.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/a429ee6281b4bad77a94b44df89f4036/32/512x512.png", launchUrl:"https://sharemyhtml.com/p/yB05XTzH4x", isDefault:true,SupportsHTML:true},
-    {name:"Terraria",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/38dadc9fae7b5a4415d01986ee4907fe.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/9bc661e8362657d8cbbe4bb41d17c7f3.jpg",launchUrl:"https://sharemyhtml.com/p/YN6J0nhfGY", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Terraria.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/669.png", launchUrl:"https://sharemyhtml.com/p/YN6J0nhfGY", isDefault:true,SupportsHTML:true},
+    {name:"Terraria",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/38dadc9fae7b5a4415d01986ee4907fe.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/9bc661e8362657d8cbbe4bb41d17c7f3.jpg",launchUrl:"https://sharemyhtml.com/p/YN6J0nhfGY", rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Terraria.html", url:"__rawhtml__",icon:"https://cdn.jsdelivr.net/gh/freebuisness/covers@main/669.png", isDefault:true,SupportsHTML:true},
     {name:"Geometry Dash", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/a9f7b62f1fa0212d6809420dc83023e8.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/818d9d1eaede1c656acf1db6a10d9866.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Geometry%20Dash.html", url:"__rawhtml__",icon:"https://cdn2.steamgriddb.com/icon/750ed96f0d56d3346cda66d24bc0cbd5/32/256x256.png",isDefault:true,SupportsHTML:true, notAvailable:false},
     {name:"Worldbox",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/29ac2cd8c9463697d28f46c7af743395.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/ca7324689f3e3cd53ef200c5223a5769.jpg",url:"__rawhtml__",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/wb0x",icon:"https://cdn2.steamgriddb.com/icon_thumb/32c3215de8110a85d451202e083fe156.png",isDefault:true,SupportsHTML:false, notAvailable:false},
 
@@ -2107,7 +2102,7 @@ const RELEASES={
      check runs. Only entries the user has already been told about are merged here. */
   _mergeCache(){
     try{
-      const base=CHANGELOG.CURRENT_VERSION,seen=this._seen();
+      const seen=this._seen();
       const cached=JSON.parse(localStorage.getItem('novos_release_cache')||'[]');
       cached.forEach(c=>{
         if(!c||!c.version||!Array.isArray(c.items))return;
@@ -2959,7 +2954,7 @@ const WM={
       if(app.url==='__browser__'){
         // Gust must always live inside an about:blank page, never navigated to directly.
         const _g=String(targetUrl).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-        this._openBlobTab({htmlSource:'<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_g+'" allow="fullscreen; autoplay; clipboard-read; clipboard-write; pointer-lock; gamepad; microphone; camera; midi; accelerometer; gyroscope; encrypted-media; display-capture" allowfullscreen></iframe></body></html>'});
+        this._openBlobTab({htmlSource:'<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-pointer-lock allow-fullscreen allow-downloads allow-orientation-lock allow-presentation allow-storage-access-by-user-activation" src="'+_g+'" allow="fullscreen; autoplay; clipboard-read; clipboard-write; pointer-lock; gamepad; microphone; camera; midi; accelerometer; gyroscope; encrypted-media; display-capture" allowfullscreen></iframe></body></html>'});
         return;
       }
       this._openBlobTab({targetUrl});
@@ -3064,19 +3059,6 @@ const WM={
     frm.addEventListener('load',()=>{
       if(WM._onIframeLoad)WM._onIframeLoad(frm);
     });
-    // Determine whether the target is cross-origin relative to this page.
-    const _isCrossOrigin=(u)=>{
-      if(u&&(u.startsWith('data:')||u.startsWith('blob:')))return false;
-      try{return new URL(u,location.href).origin!==location.origin;}
-      catch{return true;}
-    };
-
-    // Builds the same-origin srcdoc shell used for cross-origin targets.
-    const _makeShell=(u)=>{
-      const _u=JSON.stringify(u);
-      return '<!doctype html><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:transparent;color:#6b6f85;font:12px system-ui,sans-serif;display:flex;align-items:center;justify-content:center}</style><script>try{setTimeout(function(){window.location.replace('+_u+');},20);}catch(e){window.location.href='+_u+';}<\/script><div></div>';
-    };
-
     // Single, normal load — no lag/burst nonsense.
     const _loadOnce=()=>{
       // ALWAYS about:blank: the outer frame never navigates. A same-origin
@@ -3391,7 +3373,7 @@ setTimeout(()=>{if(typeof RAW_HTML!=='undefined')RAW_HTML._trim();},400);
       if(rafId)return;
       rafId=requestAnimationFrame(()=>{
         rafId=null;
-        const w=el.offsetWidth,h=el.offsetHeight;
+        const w=el.offsetWidth;
         el.style.left=Math.max(EDGE_MARGIN-w,Math.min(window.innerWidth-EDGE_MARGIN,lastX-sx))+'px';
         el.style.top=Math.max(0,Math.min(window.innerHeight-EDGE_MARGIN,lastY-sy))+'px';
       });
@@ -3700,15 +3682,6 @@ const TB={
       const tb=document.getElementById('taskbar');
       if(tb&&this._hidden&&this._maxIsLink())tb.classList.add('taskbar-hidden');
     },350);
-  },
-  topPeekShow(){
-    return;
-    // The OS top bar itself stays dead space while a game overlay exists;
-    // hovering top/bottom of the screen now surfaces the taskbar (which
-    // makes itself visible on top of a fullscreened game) instead of the
-    // old top-bar peek. See TB.peekShow/peekHide, which already handle
-    // showing the taskbar over a maximized window on hover.
-    return;
   },
   _tbIconHtml(app){
     // Clean, refined system icons — no emojis, consistent stroke style
@@ -4505,10 +4478,8 @@ const OS={
 
   /* ─── Icon drag-and-drop ────────────────────────────────────── */
   _attachDrag(el,item){
-    let hasDragged=false;
     el.addEventListener('mousedown',e=>{
       if(e.button!==0||e.target.tagName==='INPUT')return;
-      hasDragged=false;
       // If this icon isn't already part of a multi-selection, clicking it
       // collapses the selection to just this one (standard OS behavior),
       // unless Ctrl/Cmd is held for additive toggling.
@@ -7763,7 +7734,6 @@ const NOVMUSIC={
   },
 
   _finishUploadBatch(){
-    const wid=this._pendingUploadWid;
     const newIds=this._pendingUploadResults||[];
     const targetPlaylist=this.playlists.find(p=>p.id===this.view);
     if(targetPlaylist&&newIds.length){
@@ -8359,7 +8329,6 @@ const LAUNCHER={
   _render(q){
     const body=document.getElementById('lpBody');if(!body)return;
     const sc=OS.shortcuts;
-    const userApps=[...sc.games,...sc.web,...sc.apps];
     // System apps always searchable
     const sysApps=[
       {name:'Settings',url:'__settings__',icon:'',isSystem:true,systemAction:'openSettings'},
@@ -8373,8 +8342,6 @@ const LAUNCHER={
       {name:'Friends',url:'__friends__',icon:'',isSystem:true,systemAction:'openFriends'},
       {name:'Forms',url:'__forms__',icon:'',isSystem:true,systemAction:'openForms'},
     ];
-    const all=[...sysApps,...userApps];
-
     if(q){
       // Search results — uses the same shared index as the App Library
       const results=[...sysApps.filter(a=>a.name.toLowerCase().includes(q.toLowerCase())),...OS._searchIndex(q)].slice(0,18);
@@ -8482,13 +8449,6 @@ const TBDrag={
       if(!this._dragging||this._dragging===btn)return;
       // Map the visual pinned order to TB.pinned indices by title, so the
       // splice always targets the correct entries regardless of running windows.
-      const pinnedTitles=[
-        ...document.querySelectorAll('#taskbarUserApps .tb-app'),
-        ...document.querySelectorAll('#taskbarApps .tb-app')
-      ].filter(el=>{
-        const t=el.getAttribute('title')||'';
-        return TB.pinned.some(p=>p.name===t);
-      }).map(el=>el.getAttribute('title')||'');
       const fromTitle=this._dragging.getAttribute('title')||'';
       const toTitle=btn.getAttribute('title')||'';
       const fromIdx=TB.pinned.findIndex(p=>p.name===fromTitle);
@@ -8641,7 +8601,6 @@ const WIDGETS={
         const s=n.getSeconds()+n.getMilliseconds()/1000;
         const m=n.getMinutes()+s/60;
         const h=(n.getHours()%12)+m/60;
-        const rot=(deg,cx,cy,len,strokeW)=>{const a=(deg-90)*Math.PI/180;return{x2:60+len*Math.cos(a),y2:60+len*Math.sin(a)};};
         const setHand=(id,deg,len)=>{const a=(deg-90)*Math.PI/180;const line=document.getElementById(id);if(line){line.setAttribute('x2',60+len*Math.cos(a));line.setAttribute('y2',60+len*Math.sin(a));}};
         setHand(w.id+'_h',h*30,26);
         setHand(w.id+'_m',m*6,36);
@@ -8899,7 +8858,6 @@ const KB_UI={
           // All modifiers released with no named key ever pressed — but we need
           // at least TWO modifiers for a meaningful modifier-only combo (a lone
           // Shift tap isn't useful as a system-wide hotkey), otherwise keep waiting.
-          const heldCount=[e.ctrlKey,e.altKey,e.shiftKey,e.metaKey].filter(Boolean).length;
           // Reconstruct what was held right before release using the snapshot
           // taken at keydown time via _lastFullMods (set below).
           if(this._lastFullMods){
@@ -9003,22 +8961,6 @@ const KB_UI={
     });
   }
 };
-
-/* ═══════════════════════════════════════════════
-   WALLPAPER-TINTED TASKBAR
-═══════════════════════════════════════════════ */
-const WP_TINTS={
-  aurora:'rgba(12,16,38,0.88)',
-  sunset:'rgba(28,10,20,0.88)',
-  ocean:'rgba(5,12,28,0.88)',
-  forest:'rgba(6,18,8,0.88)',
-  void:'rgba(4,4,12,0.92)',
-  plain:'rgba(10,11,16,0.88)',
-  custom:'rgba(8,9,14,0.88)',
-};
-// Taskbar background is now driven by user-selectable color + opacity
-// (see OS.setTaskbarColor / SP2.setTaskbarOpacity), so no wallpaper auto-tint.
-function applyTaskbarTint(){/* deprecated — kept as no-op for compatibility */}
 
 const PLAYTIME={
   sessionStart:Date.now(),
@@ -9175,19 +9117,6 @@ const SESSION={
         if(el){el.style.top=w.rect.t;el.style.left=w.rect.l;el.style.width=w.rect.w;el.style.height=w.rect.h;}}
       if(id&&w.min)setTimeout(()=>WM.minimize(id),50);
     });
-  }
-};
-
-/* ═══════════════════════════════════════════════
-   FALLBACK DOCK — mouse-only shortcut access for when
-   a cross-origin game/iframe owns all keyboard focus.
-═══════════════════════════════════════════════ */
-const FALLBACK_DOCK={
-  // Mouse-only shortcut access now lives directly in the taskbar
-  // (#fallbackTaskbarGroup), so it inherits the taskbar's auto-hide/peek
-  // behavior automatically — no floating dock, no drag state needed.
-  run(action){
-    if(action==='launcher')LAUNCHER.toggle();
   }
 };
 
@@ -9522,8 +9451,7 @@ const SCREENSAVER={
 
   _tick(){
     const n=new Date();
-    let h=n.getHours()%12||12,m=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');
-    const ap=n.getHours()>=12?'PM':'AM';
+    let h=n.getHours()%12||12,m=String(n.getMinutes()).padStart(2,'0');
     const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
     const tEl=document.getElementById('ssTime');
@@ -9790,7 +9718,7 @@ const NOVOVERLAY={
   },
   _r_overview(b){
     const w=WM.windows[this._targetWid],app=w?w.app:{name:'—'};
-    const e=PLAYTIME.log.find(x=>x.name===app.name),cur=this._curMs();
+    const cur=this._curMs();
     const total=PLAYTIME.totalFor(app.name);
     const playing=(typeof FRIENDS!=='undefined'&&FRIENDS.me)?FRIENDS.friends.filter(f=>{const p=FRIENDS.presence[f.id];return p&&p.current_game===app.name&&FRIENDS._status(f.id).on;}):[];
     b.innerHTML='<div class="nv-sec"><div class="nv-sech">Playtime</div>'
@@ -10149,574 +10077,6 @@ const NOVTUT={
   _end(){
     clearInterval(this._poll);this._poll=null;
     if(this._el){this._el.remove();this._el=null;}
-  }
-};
-
-/* old overlay, no longer used — safe to delete this whole object */
-const NOVOVERLAY_OLD={
-  open:false,
-  _targetWid:null,
-  _activeTab:'overview',
-
-  _pageMeta:{
-    overview:['Game Controls','Manage the running game'],
-    library:['Library','Switch to another game without leaving fullscreen'],
-    windows:['Windows','Switch to another open window'],
-    widgets:['Widgets','Stopwatch, timer, and notepad'],
-    apps:['NovOS Apps','Open a NovOS app without leaving fullscreen'],
-    settings:['Settings','Wallpaper and display options']
-  },
-
-  showTab(tab){
-    this._activeTab=tab;
-    const meta=this._pageMeta[tab]||['',''];
-    const t=document.getElementById('novOvPageTitle');
-    const s=document.getElementById('novOvPageSub');
-    if(t)t.textContent=meta[0];
-    if(s)s.textContent=meta[1];
-    ['overview','library','windows','widgets','apps','settings'].forEach(k=>{
-      document.getElementById('novOvTab_'+k)?.classList.toggle('active',k===tab);
-      document.getElementById('novOvPage_'+k)?.classList.toggle('active',k===tab);
-    });
-    if(tab!=='apps')this._closeEmbed();
-    if(tab==='library')this._renderLibrary();
-    else if(tab==='windows')this._renderWindows();
-    else if(tab==='widgets')this._renderWidgets();
-    else if(tab==='apps')this._renderApps();
-    else if(tab==='settings')this._renderSettings();
-  },
-
-  // Single entry point used by every keyboard path (document, capture, iframe
-  // relay) — identical to how the launcher hotkey is routed. Returns true if
-  // the event was consumed.
-  handleGlobalKey(e){
-    const key=(e.key||'');
-    const isBacktickShift=e.shiftKey&&(key==='~'||key==='`'||e.code==='Backquote');
-    if(isBacktickShift||KEYBINDS.matches('gameOverlay',e)){
-      if(e.preventDefault)e.preventDefault();
-      if(e.stopPropagation)e.stopPropagation();
-      this.toggle();
-      return true;
-    }
-    if(this.open&&(key==='Escape'||KEYBINDS.matches('closeCancel',e))){
-      if(e.preventDefault)e.preventDefault();
-      this.close();
-      return true;
-    }
-    return false;
-  },
-
-  _renderApps(){
-    const body=document.getElementById('novOvAppsBody');if(!body)return;
-    const host=document.getElementById('novOvEmbedHost');
-    if(host&&host.style.display!=='none')return; // an embedded app is open
-    body.style.display='';
-    const btn=(label,fn,svg)=>`<button class="nov-ov-btn" onclick="${fn}">${svg}${label}</button>`;
-    const ic=p=>`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">${p}</svg>`;
-    body.innerHTML=`<div class="nov-ov-grid">
-      ${btn('Show Taskbar',"NOVOVERLAY.showTaskbar()",ic('<path d="M3 17h18v3H3z"/><rect x="5" y="4" width="14" height="10" rx="2.4"/>'))}
-      ${btn('App Library',"NOVOVERLAY.embedApp('library')",ic('<path d="M4.5 4.5h5v5h-5zM14.5 4.5h5v5h-5zM14.5 14.5h5v5h-5zM4.5 14.5h5v5h-5z" stroke-width="2.4"/>'))}
-      ${btn('File Explorer',"NOVOVERLAY.embedApp('explorer')",ic('<path d="M3 6a2 2 0 012-2h4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>'))}
-      ${btn('Task Manager',"NOVOVERLAY.embedApp('tm')",ic('<rect x="3" y="4" width="18" height="13" rx="2.4"/><path d="M8 20h8M7 8v5M11 7v6M15 9v4"/>'))}
-      ${btn('NovMusic',"NOVOVERLAY.embedApp('music')",ic('<path d="M9 3v11.3A3.5 3.5 0 108 17V7.6l9-1.8v6.5A3.5 3.5 0 1018 15V3z" stroke-width="1.4"/>'))}
-    </div>`;
-  },
-
-  _embedKey:null,
-  _closeEmbed(){
-    const host=document.getElementById('novOvEmbedHost');
-    const body=document.getElementById('novOvAppsBody');
-    if(host){host.innerHTML='';host.style.display='none';}
-    if(body)body.style.display='';
-    this._embedKey=null;
-  },
-
-  // Renders the app INSIDE the overlay (never as a separate OS window),
-  // reusing the same builders the App Library / Explorer use.
-  embedApp(key){
-    const host=document.getElementById('novOvEmbedHost');
-    const body=document.getElementById('novOvAppsBody');
-    if(!host||!body)return;
-    body.style.display='none';
-    host.style.display='block';
-    host.style.position='absolute';host.style.inset='0';
-    this._embedKey=key;
-    const titles={library:'App Library',explorer:'File Explorer',tm:'Task Manager',music:'NovMusic'};
-    const eid='novemb_'+key;
-    host.innerHTML=`<div class="nov-ov-embedwrap">
-      <div class="nov-ov-embedbar">
-        <button class="nov-ov-embedback" onclick="NOVOVERLAY._closeEmbed();NOVOVERLAY._renderApps()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Back
-        </button>
-        <div class="nov-ov-embedtitle">${titles[key]||''}</div>
-      </div>
-      <div class="nov-ov-embedbody" id="${eid}"></div>
-    </div>`;
-    const mount=document.getElementById(eid);
-    if(key==='library')this._mountLibrary(mount);
-    else if(key==='explorer')this._mountExplorer(mount);
-    else if(key==='tm')this._mountTM(mount);
-    else if(key==='music')this._mountMusic(mount);
-    this._grabFocus();
-  },
-
-  // App Library: a compact searchable grid, launching games in place.
-  _mountLibrary(mount){
-    mount.innerHTML=`<div style="height:100%;overflow-y:auto;padding:18px 30px">
-      <input type="text" class="nov-ov-libsearch" id="novEmbLibSearch" placeholder="Search…" autocomplete="off">
-      <div class="nov-ov-libgrid" id="novEmbLibGrid"></div></div>`;
-    const draw=(q)=>{
-      const all=[...(OS.shortcuts.games||[]),...(OS.shortcuts.web||[]),...(OS.shortcuts.apps||[])];
-      const lq=(q||'').toLowerCase();
-      const list=all.filter(a=>!lq||a.name.toLowerCase().includes(lq));
-      const grid=document.getElementById('novEmbLibGrid');if(!grid)return;
-      grid.innerHTML=list.map(a=>{
-        const img=OS._gridImg(a)||`https://www.google.com/s2/favicons?sz=256&domain=${a.url}`;
-        const esc=JSON.stringify(a).replace(/"/g,'&quot;');
-        return `<div class="nov-ov-libcard" onclick="NOVOVERLAY.launchInOverlay(${esc})"><img class="nov-ov-libimg" src="${img}" onerror="this.style.opacity=0" alt=""><div class="nov-ov-libname">${a.name}</div></div>`;
-      }).join('')||'<div style="color:var(--os-muted);font-size:12.5px">Nothing found.</div>';
-    };
-    draw('');
-    // only the grid is redrawn on input, so the search box keeps focus
-    document.getElementById('novEmbLibSearch').addEventListener('input',e=>draw(e.target.value));
-  },
-
-  _mountExplorer(mount){
-    const wid='novEmbFE';
-    mount.innerHTML=`<div class="fe-layout" style="height:100%">
-      <div class="fe-sidebar">
-        <div class="fe-sidebar-label">Files</div>
-        ${['all:All Files','images:Images','videos:Videos','audio:Audio','html:HTML','docs:Documents','other:Other'].map(s=>{const [k,l]=s.split(':');return `<div class="fe-sidebar-item${k==='all'?' active':''}" id="feNav_${k}" onclick="NOVOVERLAY._feNav('${k}')">${l}</div>`;}).join('')}
-      </div>
-      <div class="fe-main">
-        <div class="fe-toolbar">
-          <input type="text" class="fe-search-mini" id="feSearch_${wid}" placeholder="Search" autocomplete="off" style="width:220px">
-        </div>
-        <div class="fe-content" id="feContent_${wid}"></div>
-        <div class="fe-statusbar"><span class="fe-status-text" id="feStatus_${wid}">0 items</span></div>
-      </div>
-    </div>`;
-    FEW._state[wid]={filter:'all',view:'grid',files:FE.load(),query:''};
-    FEW.render(wid);
-    document.getElementById('feSearch_'+wid).addEventListener('input',e=>{
-      FEW._state[wid].query=e.target.value;FEW.render(wid);
-    });
-  },
-  _feNav(k){
-    const wid='novEmbFE';const st=FEW._state[wid];if(!st)return;
-    st.filter=k;
-    ['all','images','videos','audio','html','docs','other'].forEach(f=>document.getElementById('feNav_'+f)?.classList.toggle('active',f===k));
-    FEW.render(wid);
-  },
-
-  _mountTM(mount){
-    const draw=()=>{
-      const wins=Object.entries(WM.windows).filter(([wid,w])=>w&&w.app);
-      mount.innerHTML=`<div class="nov-ov-tmlist">${wins.map(([wid,w])=>{
-        const icon=w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`;
-        return `<div class="nov-ov-taskrow" style="cursor:default;margin-bottom:6px">
-          <img src="${icon}" style="width:24px;height:24px;border-radius:6px;object-fit:cover" onerror="this.style.opacity=0" alt="">
-          <div class="nov-ov-taskname">${w.app.name}</div>
-          <div class="nov-ov-taskstat">${w.minimized?'Minimized':'Running'}</div>
-          <button class="nov-ov-wbtn" style="flex:none;padding:0 12px;color:var(--os-red)" onclick="WM.closeWindow('${wid}');NOVOVERLAY._embedRefreshTM()">End</button>
-        </div>`;}).join('')||'<div style="color:var(--os-muted);font-size:12.5px">No running processes.</div>'}</div>`;
-    };
-    this._embedRefreshTM=()=>setTimeout(()=>{const m=document.getElementById('novemb_tm');if(m)this._mountTM(m);},250);
-    draw();
-  },
-
-  // Music runs in the shared NOVMUSIC engine, controlled from the overlay.
-  _mountMusic(mount){
-    const draw=()=>{
-      const t=NOVMUSIC.currentTrack();const a=NOVMUSIC.audio;
-      const playing=a&&!a.paused;
-      mount.innerHTML=`<div style="height:100%;overflow-y:auto;padding:18px 30px">
-        <div class="nov-ov-widget" style="max-width:520px;margin-bottom:16px">
-          <div class="nov-ov-wtitle">Now Playing</div>
-          <div style="font-size:16px;font-weight:600;color:var(--os-text)">${t?t.name:'Nothing playing'}</div>
-          <div style="font-size:12px;color:var(--os-muted);margin-top:2px">${t?t.artist:'Pick a track below'}</div>
-          <div class="nov-ov-wrow">
-            <button class="nov-ov-wbtn" onclick="NOVMUSIC.prev();NOVOVERLAY._musicRefresh()">Prev</button>
-            <button class="nov-ov-wbtn primary" onclick="NOVMUSIC.togglePlay();NOVOVERLAY._musicRefresh()">${playing?'Pause':'Play'}</button>
-            <button class="nov-ov-wbtn" onclick="NOVMUSIC.next();NOVOVERLAY._musicRefresh()">Next</button>
-          </div>
-        </div>
-        <div class="nov-ov-tasklist" style="max-width:520px">${NOVMUSIC.tracks.map(tr=>`<div class="nov-ov-taskrow" onclick="NOVMUSIC.playTrack('${tr.id}','library');NOVOVERLAY._musicRefresh()"><div class="nov-ov-taskname">${tr.name}</div><div class="nov-ov-taskstat">${tr.artist}</div></div>`).join('')||'<div style="color:var(--os-muted);font-size:12.5px">No tracks yet. Upload some in NovMusic.</div>'}</div>
-      </div>`;
-    };
-    this._musicRefresh=()=>setTimeout(()=>{const m=document.getElementById('novemb_music');if(m)this._mountMusic(m);},120);
-    draw();
-  },
-
-  _renderWindows(){
-    const body=document.getElementById('novOvWindowsBody');if(!body)return;
-    const rows=Object.entries(WM.windows).filter(([id,w])=>w&&w.app&&id!==this._targetWid).map(([id,w])=>{
-      const icon=w.app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${w.app.url}`;
-      return `<div class="nov-ov-taskrow" onclick="NOVOVERLAY.switchToWindow('${id}')">
-        <img src="${icon}" style="width:24px;height:24px;border-radius:6px;object-fit:cover" onerror="this.style.opacity=0" alt="">
-        <div class="nov-ov-taskname">${w.app.name}</div>
-        <div class="nov-ov-taskstat">${w.minimized?'Minimized':'Open'}</div>
-      </div>`;
-    }).join('');
-    body.innerHTML=`<div class="nov-ov-tasklist">${rows||'<div style="color:var(--os-muted);font-size:12.5px">No other windows are open.</div>'}</div>`;
-  },
-
-  switchToWindow(id){
-    if(!WM.windows[id])return;
-    // leaving the game: un-fullscreen it so the target window is visible
-    if(this._targetWid&&WM.windows[this._targetWid]&&WM.windows[this._targetWid].maximized)WM.restoreMax(this._targetWid);
-    this.close();
-    if(WM.windows[id].minimized)WM.restore(id);else WM.focus(id);
-  },
-
-
-
-  // Drops fullscreen so system apps aren't hidden behind the maximized game,
-  // then opens the app. Game window stays open and restorable.
-  openApp(action){
-    if(this._targetWid&&WM.windows[this._targetWid]&&WM.windows[this._targetWid].maximized)WM.restoreMax(this._targetWid);
-    this.close();
-    if(OS[action])OS[action]();
-  },
-  openTM(){
-    if(this._targetWid&&WM.windows[this._targetWid]&&WM.windows[this._targetWid].maximized)WM.restoreMax(this._targetWid);
-    this.close();TM.open();
-  },
-  // Taskbar comes back while staying in the game (overlay closes, game remains fullscreen)
-  showTaskbar(){
-    this.close();
-    const tb=document.getElementById('taskbar');
-    if(tb)tb.classList.remove('taskbar-hidden');
-    TB._hidden=false;
-    clearTimeout(this._tbTimer);
-    this._tbTimer=setTimeout(()=>{TB.updateAutoHide();},6000);
-  },
-  openInTab(){
-    if(this._targetWid)WM.openInBrowserTab(this._targetWid);
-  },
-
-  /* ── Widgets: stopwatch, timer, notepad. State lives on NOVOVERLAY so it
-     keeps running while you switch tabs or close the overlay. ── */
-  _sw:{running:false,start:0,accum:0},
-  _tm:{running:false,end:0,remaining:300000},
-  _widgetTick:null,
-  _fmtMs(ms,cs){
-    const t=Math.max(0,Math.floor(ms));
-    const m=Math.floor(t/60000),s=Math.floor((t%60000)/1000),c=Math.floor((t%1000)/10);
-    return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+(cs?'.'+String(c).padStart(2,'0'):'');
-  },
-  _swNow(){return this._sw.accum+(this._sw.running?performance.now()-this._sw.start:0);},
-  _tmNow(){return this._tm.running?Math.max(0,this._tm.end-performance.now()):this._tm.remaining;},
-  _renderWidgets(){
-    const body=document.getElementById('novOvWidgetsBody');if(!body)return;
-    let note='';try{note=localStorage.getItem('novos_ov_note')||'';}catch(e){}
-    body.innerHTML=`<div class="nov-ov-widgets">
-      <div class="nov-ov-widget">
-        <div class="nov-ov-wtitle">Stopwatch</div>
-        <div class="nov-ov-wtime" id="novOvSwDisp">00:00.00</div>
-        <div class="nov-ov-wrow">
-          <button class="nov-ov-wbtn primary" id="novOvSwBtn" onclick="NOVOVERLAY.swToggle()">Start</button>
-          <button class="nov-ov-wbtn" onclick="NOVOVERLAY.swReset()">Reset</button>
-        </div>
-      </div>
-      <div class="nov-ov-widget">
-        <div class="nov-ov-wtitle">Timer</div>
-        <div class="nov-ov-wtime" id="novOvTmDisp">05:00</div>
-        <div class="nov-ov-wrow">
-          <button class="nov-ov-wbtn" onclick="NOVOVERLAY.tmAdjust(-60000)">−1m</button>
-          <button class="nov-ov-wbtn" onclick="NOVOVERLAY.tmAdjust(60000)">+1m</button>
-          <button class="nov-ov-wbtn" onclick="NOVOVERLAY.tmAdjust(300000)">+5m</button>
-        </div>
-        <div class="nov-ov-wrow">
-          <button class="nov-ov-wbtn primary" id="novOvTmBtn" onclick="NOVOVERLAY.tmToggle()">Start</button>
-          <button class="nov-ov-wbtn" onclick="NOVOVERLAY.tmReset()">Reset</button>
-        </div>
-      </div>
-      <div class="nov-ov-widget" style="grid-column:1/-1">
-        <div class="nov-ov-wtitle">Notepad</div>
-        <textarea class="nov-ov-wnote" id="novOvNote" placeholder="Jot something down… (saved automatically)"></textarea>
-      </div>
-    </div>`;
-    const ta=document.getElementById('novOvNote');
-    ta.value=note;
-    ta.addEventListener('input',()=>{try{localStorage.setItem('novos_ov_note',ta.value);}catch(e){}});
-    this._widgetPaint();
-    if(!this._widgetTick)this._widgetTick=setInterval(()=>this._widgetPaint(),50);
-  },
-  _widgetPaint(){
-    const sw=document.getElementById('novOvSwDisp');
-    const tm=document.getElementById('novOvTmDisp');
-    if(sw){
-      sw.textContent=this._fmtMs(this._swNow(),true);
-      const b=document.getElementById('novOvSwBtn');if(b)b.textContent=this._sw.running?'Pause':'Start';
-    }
-    if(tm){
-      const left=this._tmNow();
-      tm.textContent=this._fmtMs(left,false);
-      const b=document.getElementById('novOvTmBtn');if(b)b.textContent=this._tm.running?'Pause':'Start';
-    }
-    // timer completion (also fires while the overlay is closed)
-    if(this._tm.running&&this._tmNow()<=0){
-      this._tm.running=false;this._tm.remaining=0;
-      if(typeof OS!=='undefined')OS.notify('Timer done','Your overlay timer has finished.');
-    }
-    // stop polling once nothing is running and the widgets page isn't showing
-    const showing=document.getElementById('novOvSwDisp');
-    if(!showing&&!this._sw.running&&!this._tm.running&&this._widgetTick){
-      clearInterval(this._widgetTick);this._widgetTick=null;
-    }
-  },
-  swToggle(){
-    if(this._sw.running){this._sw.accum=this._swNow();this._sw.running=false;}
-    else{this._sw.start=performance.now();this._sw.running=true;}
-    this._widgetPaint();
-    if(!this._widgetTick)this._widgetTick=setInterval(()=>this._widgetPaint(),50);
-  },
-  swReset(){this._sw={running:false,start:0,accum:0};this._widgetPaint();},
-  tmAdjust(d){
-    if(this._tm.running){this._tm.end+=d;}
-    else{this._tm.remaining=Math.max(0,this._tm.remaining+d);}
-    this._widgetPaint();
-  },
-  tmToggle(){
-    if(this._tm.running){this._tm.remaining=this._tmNow();this._tm.running=false;}
-    else{
-      if(this._tm.remaining<=0)this._tm.remaining=300000;
-      this._tm.end=performance.now()+this._tm.remaining;this._tm.running=true;
-    }
-    this._widgetPaint();
-    if(!this._widgetTick)this._widgetTick=setInterval(()=>this._widgetPaint(),50);
-  },
-  tmReset(){this._tm={running:false,end:0,remaining:300000};this._widgetPaint();},
-
-  _libQuery:'',
-  // The search <input> is created ONCE. Only the results grid is re-rendered,
-  // so the input never loses focus (this was the one-letter typing bug).
-  _renderLibrary(){
-    const body=document.getElementById('novOvLibraryBody');
-    if(!body)return;
-    if(!document.getElementById('novOvLibSearch')){
-      body.innerHTML=`<input type="text" class="nov-ov-libsearch" id="novOvLibSearch" placeholder="Search games…" autocomplete="off">
-        <div class="nov-ov-libgrid" id="novOvLibGrid"></div>`;
-      const inp=document.getElementById('novOvLibSearch');
-      inp.value=this._libQuery;
-      inp.addEventListener('input',e=>{this._libQuery=e.target.value;this._drawLibraryGrid();});
-    }
-    this._drawLibraryGrid();
-  },
-  _drawLibraryGrid(){
-    const grid=document.getElementById('novOvLibGrid');if(!grid)return;
-    const q=this._libQuery.toLowerCase();
-    const games=(OS.shortcuts&&OS.shortcuts.games||[]).filter(a=>!q||a.name.toLowerCase().includes(q));
-    grid.innerHTML=games.map(a=>{
-      const img=OS._gridImg?OS._gridImg(a):(a.gridImage||a.icon||'');
-      const esc=JSON.stringify(a).replace(/"/g,'&quot;');
-      return `<div class="nov-ov-libcard" onclick="NOVOVERLAY.launchInOverlay(${esc})">
-        <img class="nov-ov-libimg" src="${img||`https://www.google.com/s2/favicons?sz=256&domain=${a.url}`}" onerror="this.style.opacity=0" alt="">
-        <div class="nov-ov-libname">${a.name}</div>
-      </div>`;
-    }).join('')||'<div style="color:var(--os-muted);font-size:12.5px">No games found.</div>';
-  },
-
-  // ── Mouse + keyboard capture ─────────────────────────────────────────
-  // Games can hold pointer lock and iframe focus. On open we release both
-  // so the OS cursor is free and typing goes to the overlay.
-  _releaseGame(){
-    try{if(document.pointerLockElement)document.exitPointerLock();}catch(e){}
-    const wid=this._targetWid;
-    const frm=wid&&(document.getElementById('frm_'+wid)||document.getElementById('hvFrm_'+wid));
-    if(frm){
-      try{
-        const d=frm.contentDocument;
-        if(d&&d.pointerLockElement)d.exitPointerLock();
-        if(d&&d.exitPointerLock)d.exitPointerLock();
-      }catch(e){}
-      try{frm.blur();}catch(e){}
-      frm.style.pointerEvents='none'; // frame can't grab the mouse while overlay is up
-    }
-    try{if(document.activeElement&&document.activeElement.tagName==='IFRAME')document.activeElement.blur();}catch(e){}
-    try{window.focus();document.body.focus();}catch(e){}
-  },
-  _restoreGame(){
-    const wid=this._targetWid;
-    const frm=wid&&(document.getElementById('frm_'+wid)||document.getElementById('hvFrm_'+wid));
-    if(frm){
-      frm.style.pointerEvents='';
-      setTimeout(()=>{try{frm.focus({preventScroll:true});}catch(e){}},60);
-    }
-  },
-  _grabFocus(){
-    const cap=document.getElementById('novOvCapture');
-    // focus the first text field if one is showing, otherwise the capture layer
-    const ov=document.getElementById('novOverlay');
-    const active=ov&&ov.querySelector('input:focus,textarea:focus');
-    if(active)return;
-    if(cap)cap.focus({preventScroll:true});
-  },
-  _bindCapture(){
-    if(this._captureBound)return;
-    this._captureBound=true;
-    // While the overlay is open, keep pointer lock released even if the game re-requests it.
-    document.addEventListener('pointerlockchange',()=>{
-      if(this.open&&document.pointerLockElement){try{document.exitPointerLock();}catch(e){}}
-    });
-    // Keep typing inside the overlay: swallow keys so the game beneath never sees them,
-    // but never interfere while the user is typing in a field.
-    document.addEventListener('keydown',e=>{
-      if(!this.open)return;
-      const t=e.target;
-      const typing=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable);
-      if(typing){e.stopPropagation();return;} // let the field receive it, hide from game
-      if(KEYBINDS.matches('gameOverlay',e)||KEYBINDS.matches('closeCancel',e))return; // toggle/close still work
-      e.stopPropagation();
-    },true);
-    // Any click inside the overlay that isn't a field keeps focus in the overlay.
-    document.getElementById('novOverlay')?.addEventListener('mousedown',e=>{
-      const t=e.target;
-      if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
-      setTimeout(()=>this._grabFocus(),0);
-    });
-  },
-
-  // Launches a game IN PLACE within the current fullscreened window — never
-  // opens a separate OS window. Reuses the target window's iframe/session by
-  // closing the old game and opening the new one, then immediately re-fullscreens
-  // it, so the user never leaves fullscreen or sees a second window appear.
-  launchInOverlay(app){
-    const oldWid=this._targetWid;
-    this.close();
-    if(oldWid&&WM.windows[oldWid])WM.closeWindow(oldWid);
-    const newWid=OS._doLaunch(app);
-    if(newWid){
-      this._targetWid=newWid;
-      setTimeout(()=>{
-        if(WM.windows[newWid]&&!WM.windows[newWid].maximized){WM.maximize(newWid);WM.focus(newWid);}
-      },80);
-    }
-  },
-
-  _renderSettings(){
-    const body=document.getElementById('novOvSettingsBody');
-    if(!body)return;
-    const wallpapers=['nova','aurora','sunset','ocean','forest','void','plain'];
-    const wp=SETTINGS.get('wallpaper')||'nova';
-    const wpGrid=wallpapers.map(w=>`<div class="nov-ov-wpitem${w===wp?' active':''}" style="background:${this._wpPreviewStyle(w)}" onclick="OS.setWallpaper('${w}');NOVOVERLAY._renderSettings()" title="${w}"></div>`).join('');
-    body.innerHTML=`
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim);margin-bottom:10px">Wallpaper</div>
-      <div class="nov-ov-wpgrid">${wpGrid}</div>
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--os-dim);margin-bottom:10px">Display</div>
-      <div class="nov-ov-setrow">
-        <div><div class="nov-ov-setlabel">Animations</div><div class="nov-ov-setsub">Window open, close, minimize effects</div></div>
-        <label class="toggle"><input type="checkbox" ${SETTINGS.get('animations')!==false?'checked':''} onchange="OS.setAnimations(this.checked)"><span class="tog-slider"></span></label>
-      </div>
-      <div class="nov-ov-setrow">
-        <div><div class="nov-ov-setlabel">Auto-hide Taskbar in Fullscreen</div><div class="nov-ov-setsub">Hides taskbar and top bar when a window is maximized</div></div>
-        <label class="toggle"><input type="checkbox" ${SETTINGS.get('hideTaskbarFullscreen')?'checked':''} onchange="SETTINGS.set('hideTaskbarFullscreen',this.checked);TB.updateAutoHide()"><span class="tog-slider"></span></label>
-      </div>
-      <div class="nov-ov-setrow">
-        <div><div class="nov-ov-setlabel">Low Power Mode</div><div class="nov-ov-setsub">Disables animations and blur for max framerate</div></div>
-        <label class="toggle"><input type="checkbox" ${SETTINGS.get('lowPowerMode')?'checked':''} onchange="OS.setLowPowerMode(this.checked)"><span class="tog-slider"></span></label>
-      </div>`;
-  },
-
-  _wpPreviewStyle(w){
-    const map={
-      nova:'radial-gradient(ellipse 60% 45% at 50% 38%,rgba(124,109,250,0.4),transparent 70%),linear-gradient(160deg,#0a0715,#0d0e18,#08090f)',
-      aurora:'radial-gradient(circle at 30% 50%,#0d1f3c,#1a0d3c,#0d2a1f,#080a10)',
-      sunset:'radial-gradient(circle at 50% 80%,#2d0a1a,#1a0d00,#1a0a2d,#0a0508)',
-      ocean:'radial-gradient(circle at 30% 40%,#051530,#0a1525,#05080f)',
-      forest:'radial-gradient(circle at 40% 60%,#051a0a,#0a1f05,#060d06)',
-      void:'#04040a',
-      plain:'#0d0e12'
-    };
-    return map[w]||'#0d0e12';
-  },
-
-  _findGameWindow(){
-    // Prefer the currently focused maximized window if it's a game;
-    // otherwise fall back to any maximized window; otherwise the last
-    // known game window from PLAYTIME.
-    const focusedEl=document.querySelector('.os-window.focused');
-    if(focusedEl&&WM.windows[focusedEl.id]&&WM.windows[focusedEl.id].maximized){
-      return focusedEl.id;
-    }
-    const anyMax=Object.keys(WM.windows).find(id=>WM.windows[id].maximized&&!WM.windows[id].minimized);
-    return anyMax||null;
-  },
-
-  toggle(){this.open?this.close():this.show();},
-
-  show(){
-    const wid=this._findGameWindow();
-    if(!wid){
-      const anyWin=Object.keys(WM.windows)[0];
-      if(!anyWin){OS.notify('NovOverlay','No windows open to show the overlay for.');return;}
-      this._targetWid=anyWin;
-    }
-    this._targetWid=wid||this._targetWid;
-    const w=WM.windows[this._targetWid];
-    if(!w){OS.notify('NovOverlay','No windows open to show the overlay for.');return;}
-    const app=w.app;
-    document.getElementById('novOvTitle').textContent=app.name;
-    document.getElementById('novOvSub').textContent='● Now playing';
-    const _ck=document.getElementById('novOvClock');
-    if(_ck){const n=new Date();let h=n.getHours()%12||12;_ck.textContent=h+':'+String(n.getMinutes()).padStart(2,'0')+' '+(n.getHours()>=12?'PM':'AM');}
-    const _hint=document.getElementById('novOvHint');
-    if(_hint)_hint.textContent=KEYBINDS.getLabel('gameOverlay')+' or Esc to return';
-    const iconEl=document.getElementById('novOvIcon');
-    const icon=app.icon||`https://www.google.com/s2/favicons?sz=64&domain=${app.url}`;
-    iconEl.src=icon;
-    iconEl.onerror=()=>{iconEl.style.display='none';};
-    this._bindCapture();
-    this.showTab('overview');
-    const ovEl=document.getElementById('novOverlay');
-    ovEl.classList.add('open');
-    ovEl.style.display='block';
-    ovEl.style.pointerEvents='all';
-    this.open=true;
-    // take the mouse and keyboard away from the game
-    this._releaseGame();
-    setTimeout(()=>{this._releaseGame();this._grabFocus();},30);
-    setTimeout(()=>this._releaseGame(),200); // catches games that re-lock after a beat
-  },
-
-  close(){
-    const ovEl=document.getElementById('novOverlay');
-    ovEl.classList.remove('open');
-    ovEl.style.display='none';
-    ovEl.style.pointerEvents='none';
-    this.open=false;
-    this._closeEmbed();
-    this._restoreGame();
-  },
-
-  exitFullscreen(){
-    if(this._targetWid&&WM.windows[this._targetWid])WM.restoreMax(this._targetWid);
-    this.close();
-  },
-
-  minimizeGame(){
-    if(this._targetWid&&WM.windows[this._targetWid])WM.minimize(this._targetWid);
-    this.close();
-  },
-
-  refreshGame(){
-    if(this._targetWid)WM.refreshWindow(this._targetWid);
-    this.close();
-  },
-
-  closeGame(){
-    if(this._targetWid&&WM.windows[this._targetWid])WM.closeWindow(this._targetWid);
-    this.close();
-    this._targetWid=null;
-  },
-
-  openLibrary(){
-    this.showTab('library');
-  },
-
-  openSettings(){
-    this.showTab('settings');
   }
 };
 
