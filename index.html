@@ -3002,8 +3002,6 @@ const WM={
   },
 
   open(app){
-    // Every way of launching the browser funnels here: ask Cherri/Opium first (OS.pickBrowser re-enters with a choice set).
-    if(app.url==='__browser__'&&!OS._browserPick){OS.openBrowser();return null;}
     // Raw-HTML games must never load their placeholder url as a real iframe src.
     // Any path that reaches WM.open with __rawhtml__ (e.g. session restore) is
     // rerouted through OS.launch, which resolves the real rawUrl and opens the
@@ -3077,44 +3075,19 @@ const WM={
     frm.addEventListener('load',()=>{
       if(WM._onIframeLoad)WM._onIframeLoad(frm);
     });
-    // Browser windows only: if the frame (or the page inside it) ever ends up on this page's own origin
-    // (e.g. the launcher URL), put the shell / browser URL back instead of leaving NovOS running inside it.
-    if(app.url==='__browser__'){
-      frm.__novosBrowser=true;
-      let heals=0;
-      frm.addEventListener('load',()=>{
-        try{
-          const d=frm.contentDocument;
-          if(!d||!frm.__novosShell||!d.body||!d.body.children.length)return;
-          const n=d.querySelector('iframe[data-novos-shell]');
-          if(!n){if(heals++<5)WM._writeShell(frm,d,frm.__novosShell);return;}
-          if(n.__novosGuard)return;n.__novosGuard=1;
-          n.addEventListener('load',()=>{
-            let h;try{h=n.contentWindow.location.href;}catch(_){return;}   // cross-origin = a normal page
-            if(!h||h==='about:blank'||heals>=8)return;
-            heals++;
-            // Same-origin = something (e.g. a filter extension redirecting a blocked navigation) dropped this frame onto
-            // NovOS's own launcher URL. Step back to the page the user was on instead of resetting to the browser home;
-            // only fall back to the home URL if going back didn't leave the launcher.
-            try{n.contentWindow.history.back();}catch(_){n.src=realUrl;return;}
-            setTimeout(()=>{try{if(n.contentWindow.location.href===h)n.src=realUrl;}catch(_){}},3000);
-          });
-        }catch(_){}
-      });
-    }
     // Single, normal load — no lag/burst nonsense.
     const _loadOnce=()=>{
       // ALWAYS about:blank: the outer frame never navigates. A same-origin
       // shell is written into it via document.write, and the target URL is
       // embedded as a nested full-size iframe inside that shell.
       const _u=String(realUrl).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-      const shell='<!doctype html><html><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_u+'" data-novos-shell allow="fullscreen; autoplay; clipboard-read; clipboard-write; pointer-lock; gamepad; microphone; camera; midi; accelerometer; gyroscope; encrypted-media; display-capture" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>';
+      const shell='<!doctype html><html><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_u+'" allow="fullscreen; autoplay; clipboard-read; clipboard-write; pointer-lock; gamepad; microphone; camera; midi; accelerometer; gyroscope; encrypted-media; display-capture" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>';
       frm.setAttribute('src','about:blank');
       const write=()=>{
         try{
           const d=frm.contentDocument||(frm.contentWindow&&frm.contentWindow.document);
           if(!d)return;
-          WM._writeShell(frm,d,shell);
+          d.open();d.write(shell);d.close();
         }catch(e){}
       };
       if(frm.contentDocument&&frm.contentDocument.readyState==='complete')write();
@@ -3352,16 +3325,6 @@ setTimeout(()=>{if(typeof RAW_HTML!=='undefined')RAW_HTML._trim();},400);
     }
   },
 
-  // Writes a shell into an about:blank window frame. Browser windows write from the frame's own realm so the
-  // document keeps about:blank as its URL; document.open() called from this page would copy THIS page's URL (the
-  // launcher's), and any reload/history traversal of the frame would then load the launcher inside the window.
-  _writeShell(frm,d,shell){
-    if(frm.__novosBrowser){
-      try{new frm.contentWindow.Function('d','s','d.open();d.write(s);d.close();')(d,shell);return;}catch(_){}
-    }
-    d.open();d.write(shell);d.close();
-  },
-
   // FIX: refresh now properly shows loader, waits for real load, then hides
   refreshWindow(id){
     const frm=document.getElementById('frm_'+id);
@@ -3371,7 +3334,7 @@ setTimeout(()=>{if(typeof RAW_HTML!=='undefined')RAW_HTML._trim();},400);
     if(frm.__novosShell){
       try{
         const d=frm.contentDocument||(frm.contentWindow&&frm.contentWindow.document);
-        if(d)WM._writeShell(frm,d,frm.__novosShell);
+        if(d){d.open();d.write(frm.__novosShell);d.close();}
       }catch(e){}
       [0,300,1000].forEach(ms=>setTimeout(()=>{if(WM._onIframeLoad)WM._onIframeLoad(frm);},ms));
       return;
@@ -5128,9 +5091,9 @@ const OS={
   _systemRealUrl(sysUrl){
     return sysUrl==='__browser__'?(this._browserPick||this.BROWSER_IFRAME_URL):sysUrl;
   },
-  // CHERRI/OPIUM BROWSER URL
+  // CHERRI BROWSER URL
   BROWSER_IFRAME_URL:'https://objectstorage.us-sanjose-1.oraclecloud.com/n/axjcou67ax5a/b/sciencelearning/o/index.html',
-  BROWSER_OPIUM_URL:'https://cdn.statically.io/gh/Mtreasur0133-bit/Shenplslike-1/main/assets/v0002/opium.svg?id=3',
+  BROWSER_OPIUM_URL:'https://splitshire.nyc3.digitaloceanspaces.com/uploads/images/1790652862160_687f60e8_singlefile.svg',
   _browserPick:null,
   openBrowser(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__browser__');
