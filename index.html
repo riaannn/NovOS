@@ -3091,7 +3091,13 @@ const WM={
           if(n.__novosGuard)return;n.__novosGuard=1;
           n.addEventListener('load',()=>{
             let h;try{h=n.contentWindow.location.href;}catch(_){return;}   // cross-origin = a normal page
-            if(h&&h!=='about:blank'&&heals++<5)n.src=realUrl;               // same-origin = it loaded NovOS/the launcher
+            if(!h||h==='about:blank'||heals>=8)return;
+            heals++;
+            // Same-origin = something (e.g. a filter extension redirecting a blocked navigation) dropped this frame onto
+            // NovOS's own launcher URL. Step back to the page the user was on instead of resetting to the browser home;
+            // only fall back to the home URL if going back didn't leave the launcher.
+            try{n.contentWindow.history.back();}catch(_){n.src=realUrl;return;}
+            setTimeout(()=>{try{if(n.contentWindow.location.href===h)n.src=realUrl;}catch(_){}},3000);
           });
         }catch(_){}
       });
