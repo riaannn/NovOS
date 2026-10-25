@@ -487,6 +487,19 @@ body.wnd-resizing{user-select:none}
 .openvia-link-btn:hover:not(:disabled){background:rgba(74,222,128,0.22)!important;border-color:rgba(74,222,128,0.5)!important}
 
 /* WELCOME */
+#desecLock{position:fixed;inset:0;z-index:2147483000;background:#0b0a10;display:flex;flex-direction:column}
+#desecLock .dl-bar{display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(239,68,68,0.08);border-bottom:1px solid rgba(239,68,68,0.25);color:#f1f5f9;font:600 13px/1.2 system-ui,sans-serif}
+#desecLock .dl-title{letter-spacing:0.02em}
+#desecLock .dl-msg{flex:1;font-weight:400;font-size:12px;color:#94a3b8}
+#desecLock .dl-btn{border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#f1f5f9;border-radius:8px;padding:7px 14px;font:600 12px system-ui,sans-serif;cursor:pointer}
+#desecLock .dl-btn.primary{background:#ef4444;border-color:#ef4444;color:#fff}
+#desecLock .dl-btn:disabled{opacity:0.35;cursor:not-allowed}
+#desecLock iframe{flex:1;width:100%;border:0;background:#241e22}
+#desecLock .dl-intro{position:absolute;inset:45px 0 0 0;background:#0b0a10;display:flex;align-items:center;justify-content:center;padding:24px}
+#desecLock .dl-card{max-width:380px;text-align:center;color:#f1f5f9;font:14px/1.6 system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;gap:6px}
+#desecLock .dl-card h2{margin:8px 0 2px;font-size:20px}
+#desecLock .dl-card p{margin:0;color:#cbd5e1}
+#desecLock .dl-card .dl-btn{margin-top:14px;padding:9px 28px;font-size:13px}
 #welcomeModal{position:fixed;inset:0;z-index:300000;background:rgba(0,0,0,0.75);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:24px}
 #welcomeModal.open{display:flex}
 .welcome-box{width:100%;max-width:480px;background:rgba(13,14,20,0.98);border:1px solid var(--os-border2);border-radius:var(--radius-xl);box-shadow:var(--shadow-window);overflow:hidden;animation:wndIn 0.25s ease}
@@ -1454,22 +1467,6 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
   </div>
 </div>
 
-<!-- BROWSER PICKER MODAL -->
-<div id="browserPickModal" class="overlay-modal" onclick="if(event.target===this)OS.pickBrowser()">
-  <div class="modal-box narrow">
-    <div class="modal-header">
-      <h3>Choose a browser</h3>
-      <button class="modal-close" onclick="OS.pickBrowser()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-actions">
-        <button class="m-btn primary" onclick="OS.pickBrowser('cherri')">Cherri</button>
-        <button class="m-btn primary" onclick="OS.pickBrowser('opium')">Opium</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ADD TO FOLDER MODAL -->
 <div id="addToFolderModal" class="overlay-modal">
   <div class="modal-box">
@@ -1521,24 +1518,6 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
       <div class="pvz-warn">⚠ Confirming below will not allow you to revisit this setup screen.</div>
     </div>
     <div class="pvz-footer"><button class="pvz-confirm-btn" onclick="PVZ.confirmSetup()">I Have Downloaded the Files</button></div>
-  </div>
-</div>
-
-<!-- CLOUDMOON DISCLAIMER -->
-<div id="cloudMoonModal" class="overlay-modal">
-  <div class="modal-box narrow">
-    <div class="modal-header">
-      <h3>☁️ <a href="https://web.cloudmoonapp.com/" target="_blank" rel="noopener" style="color:var(--os-accent);text-decoration:underline">CloudMoon</a></h3>
-    </div>
-    <div class="modal-body">
-      <div style="font-size:12.5px;line-height:1.7;color:var(--os-text);margin-bottom:16px">
-        You must create an account at <a href="https://web.cloudmoonapp.com/" target="_blank" rel="noopener" style="color:var(--os-accent)">CloudMoon</a> outside of school and login here for access. Refresh the app after logging in
-      </div>
-      <div style="display:flex;gap:8px">
-        <button class="m-btn primary" onclick="document.getElementById('cloudMoonModal').classList.remove('open');CLOUDMOON.launch()">Continue</button>
-        <button class="m-btn" onclick="CLOUDMOON.dismiss()">Don't show again</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -1633,6 +1612,7 @@ body.liquid-glass #quickPromptBox{border:1px solid var(--lg-border);box-shadow:0
 /* ═══════════════════════════════════════════════════════════════════
    DEFAULT DESKTOP APPS — keyed by URL so cache busting works
 ═══════════════════════════════════════════════════════════════════ */
+const DESEC_SVG_INNER=`<path d="M12 2.8 4.5 5.6v6c0 4.4 3 7.7 7.5 9.6 4.5-1.9 7.5-5.2 7.5-9.6v-6z"/><path d="M12 16.2c-3-2-4.6-3.6-4.6-5.4A2.5 2.5 0 0 1 12 9.5a2.5 2.5 0 0 1 4.6 1.3c0 1.8-1.6 3.4-4.6 5.4z"/>`;
 const DEFAULT_DESKTOP_APPS = [
   { name:"Browser", url:"__browser__", icon:"", isDefault:true, isSystem:true, systemAction:"openBrowser"},
   { name:"NovCloaker", url:"__cloak__", icon:"", isDefault:true, isSystem:true, systemAction:"openCloak"},
@@ -1644,6 +1624,7 @@ const DEFAULT_DESKTOP_APPS = [
   { name:"NovMusic",         url:"__music__",    icon:"", isDefault:true, isSystem:true, systemAction:"openMusic" },
   { name:"Friends",          url:"__friends__",  icon:"", isDefault:true, isSystem:true, systemAction:"openFriends" },
   { name:"Forms",            url:"__forms__",    icon:"", isDefault:true, isSystem:true, systemAction:"openForms" },
+  { name:"DeSecurly",        url:"__desecurly__", icon:"", isDefault:true, isSystem:true, systemAction:"openDeSecurly" },
   //{ name:"TikTok",       url:"https://supermath.salavat.ru/scram/service/u7qzxbu4/m8pfhfua/https%3A%2F%2Fwww.tiktok.com%2F", icon:"https://static.vecteezy.com/system/resources/thumbnails/016/716/450/small/tiktok-icon-free-png.png", isDefault:true },
 
 ];
@@ -1653,12 +1634,11 @@ const DEFAULT_DESKTOP_APPS = [
 ═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_SHORTCUTS = {
   cloud:[
-    {name:"CloudMoon",gridImage:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOnx70lYJJhgVwg_qToSObMmkEnMUs-33F6qKhb7zSxWTUZHSxdosnvHF3&s=10",bannerImage:"https://i.imgur.com/ZbSpbGn.png",icon:"https://i.imgur.com/skcCc5U.png",isDefault:true,SupportsHTML:false,isCloudPlaceholder:true,url:"__cloudmoon__"},
   ],
   Other:[
   ],
   web:[
-    {name:"Movies",bannerImage:"https://upload.wikimedia.org/wikipedia/commons/7/71/Black.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",gridImage:"https://i.pinimg.com/736x/ea/8d/11/ea8d11f1ffc6355b8a440106ce61d0f3.jpg",rawUrl:"https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Movies.html",url:"__rawhtml__",icon:"https://i.pinimg.com/736x/ea/8d/11/ea8d11f1ffc6355b8a440106ce61d0f3.jpg",isDefault:true,SupportsHTML:true,notAvailable:false},
+    //{name:"TikTok",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/0ae9e6ebb3f4246d8a09479d00ba2731.jpg",gridImage:"https://cdn2.steamgriddb.com/thumb/30acbc6ff8034551580d1d73d9b3958c.jpg",launchUrl:"https://truffled.lol/studying/service/snqzrtes/fuil6wjl/https%3A%2F%2Fwww.tiktok.com%2F",url:"https://truffled.lol/studying/service/snqzrtes/fuil6wjl/https%3A%2F%2Fwww.tiktok.com%2F",icon:"https://cdn2.steamgriddb.com/icon/094b7cd1111ed23f5b64a54744cb25b7/32/512x512.png",isDefault:true,SupportsHTML:true,notAvailable:false},
     //{name:"Truffled", url:"https://supermath.salavat.ru",icon:"https://supermath.salavat.ru/png/logo.png",isDefault:true, SupportsHTML:false},
     //{name:"opium",url:"https://cdn.statically.io/gh/OpiumBest/svg@main/index.svg",icon:"https://i.imgur.com/ssjsMbX.png",isDefault:true,SupportsHTML:false},
     //{name:"TikTok",bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/0ae9e6ebb3f4246d8a09479d00ba2731.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/30acbc6ff8034551580d1d73d9b3958c.jpg", url: "__rawhtml__", launchUrl:"https://cdn.statically.io/gh/OpiumBest/svg@main/~/83rmou6x/w9c7t9jr/otpYdDTx6MNA3RVKzoNKtk-AbOObbj9teP5Ax6w",icon:"https://cdn2.steamgriddb.com/icon/094b7cd1111ed23f5b64a54744cb25b7/32/512x512.png",isDefault:true,SupportsHTML:true},
@@ -1765,6 +1745,8 @@ const DEFAULT_SHORTCUTS = {
     {name:"FISH", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/e29b651898164cea9eb79a6c7d4d361b.png", gridImage:"https://cdn2.steamgriddb.com/thumb/de5e87e8474a2e0d2ed6d633801573bc.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/FISH.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon/be7e14e5fdde96bbee86960a5a007e4b/32/512x512.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:false},
     {name:"ROUNDS", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/12c7c68e4e25a6bb27bcdbccf500b5fd.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/ed561a1e0cca7ff5284f3cf76caa48fe.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/rounds.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/59ec71c4b305cafcf52bc5b2c09e6e80.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:false},
     {name:"Minesweeper Plus", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/13ec70c64e9b3d24301393db75f6dc12.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/6fbc073976c4d320e4a19d26aae9cece.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/minesweeper.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/454f813dcace59aef418268bad554c23.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:false},
+    {name:"Rain World", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/33d3d089ec35491f225946e1ab103991.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/838bea84b83eaf266eb26d4732d3b8ff.jpg",launchUrl: "https://truffled.lol/f/WxUUCwMfSjYVGxsxCR4JAFsbGwIDFEsMAB8Z/", url: "https://truffled.lol/f/WxUUCwMfSjYVGxsxCR4JAFsbGwIDFEsMAB8Z/",  icon:"https://cdn2.steamgriddb.com/icon/e53ba686b7ad2ec7825f0f4afff80a1b/32/256x256.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:false},
+    {name:"Slay the Spire", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/5cfa02f9154d8220d0a911d6ca82ddb5.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/eb18d63a27975cfc0e8b5cedea56f356.jpg",launchUrl: "https://truffled.lol/f/WxUUCwMfShcAAVoPCAgAHFoaAQsK/", url: "https://truffled.lol/f/WxUUCwMfShcAAVoPCAgAHFoaAQsK/",  icon:"https://cdn2.steamgriddb.com/icon/aecf89d1270d044970cf4da4de7cf218/32/256x256.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:false},
 
 
 
@@ -2993,6 +2975,7 @@ const WM={
       '__friends__':{c:'#38bdf8',s:`<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16.2 14.2c2.7.1 4.8 2.2 4.8 5.3"/>`},
       '__forms__':{c:'#f5f5f5',s:`<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/>`},
       '__recyclebin__':{c:'#94a3b8',f:1,s:`<path d="M9.5 3.5h5l.8 1.8h4.7v1.6H4V5.3h4.7zM5.8 9.5h12.4l-1.1 10.3a1.8 1.8 0 01-1.8 1.7H8.7a1.8 1.8 0 01-1.8-1.7z"/>`},
+      '__desecurly__':{c:'#ef4444',s:`${DESEC_SVG_INNER}`},
       '__cloak__':{c:'#f1f5f9',f:1,s:`<path d="M3.5 11h17l-.5 1H4zM6.5 11l1.4-5.6a1.6 1.6 0 011.5-1.2h5.2a1.6 1.6 0 011.5 1.2L17.5 11z" stroke-width="1.6"/><circle cx="7.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><circle cx="16.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><path d="M10.7 16.6h2.6" stroke-width="1.9"/>`},
     };
     const m=map[url];
@@ -3002,6 +2985,8 @@ const WM={
   },
 
   open(app){
+    // DeSecurly is a system app: its HTML is fetched by OS.openDeSecurly and handed in as app._desHtml.
+    if(app.url==='__desecurly__'&&!app._desHtml){OS.openDeSecurly();return null;}
     // Raw-HTML games must never load their placeholder url as a real iframe src.
     // Any path that reaches WM.open with __rawhtml__ (e.g. session restore) is
     // rerouted through OS.launch, which resolves the real rawUrl and opens the
@@ -3075,19 +3060,44 @@ const WM={
     frm.addEventListener('load',()=>{
       if(WM._onIframeLoad)WM._onIframeLoad(frm);
     });
+    // Browser windows only: if the frame (or the page inside it) ever ends up on this page's own origin
+    // (e.g. the launcher URL), put the shell / browser URL back instead of leaving NovOS running inside it.
+    if(app.url==='__browser__'){
+      frm.__novosBrowser=true;
+      let heals=0;
+      frm.addEventListener('load',()=>{
+        try{
+          const d=frm.contentDocument;
+          if(!d||!frm.__novosShell||!d.body||!d.body.children.length)return;
+          const n=d.querySelector('iframe[data-novos-shell]');
+          if(!n){if(heals++<5)WM._writeShell(frm,d,frm.__novosShell);return;}
+          if(n.__novosGuard)return;n.__novosGuard=1;
+          n.addEventListener('load',()=>{
+            let h;try{h=n.contentWindow.location.href;}catch(_){return;}   // cross-origin = a normal page
+            if(!h||h==='about:blank'||heals>=8)return;
+            heals++;
+            // Same-origin = something (e.g. a filter extension redirecting a blocked navigation) dropped this frame onto
+            // NovOS's own launcher URL. Step back to the page the user was on instead of resetting to the browser home;
+            // only fall back to the home URL if going back didn't leave the launcher.
+            try{n.contentWindow.history.back();}catch(_){n.src=realUrl;return;}
+            setTimeout(()=>{try{if(n.contentWindow.location.href===h)n.src=realUrl;}catch(_){}},3000);
+          });
+        }catch(_){}
+      });
+    }
     // Single, normal load — no lag/burst nonsense.
     const _loadOnce=()=>{
       // ALWAYS about:blank: the outer frame never navigates. A same-origin
       // shell is written into it via document.write, and the target URL is
       // embedded as a nested full-size iframe inside that shell.
       const _u=String(realUrl).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-      const shell='<!doctype html><html><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_u+'" allow="fullscreen; autoplay; clipboard-read; clipboard-write; pointer-lock; gamepad; microphone; camera; midi; accelerometer; gyroscope; encrypted-media; display-capture" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>';
+      const shell=(app.url==='__desecurly__'&&app._desHtml)?app._desHtml:'<!doctype html><html><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>html,body{margin:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:none}</style></head><body><iframe src="'+_u+'" data-novos-shell allow="fullscreen; autoplay; clipboard-read; clipboard-write; pointer-lock; gamepad; microphone; camera; midi; accelerometer; gyroscope; encrypted-media; display-capture" allowfullscreen referrerpolicy="no-referrer"></iframe></body></html>';
       frm.setAttribute('src','about:blank');
       const write=()=>{
         try{
           const d=frm.contentDocument||(frm.contentWindow&&frm.contentWindow.document);
           if(!d)return;
-          d.open();d.write(shell);d.close();
+          WM._writeShell(frm,d,shell);
         }catch(e){}
       };
       if(frm.contentDocument&&frm.contentDocument.readyState==='complete')write();
@@ -3325,6 +3335,16 @@ setTimeout(()=>{if(typeof RAW_HTML!=='undefined')RAW_HTML._trim();},400);
     }
   },
 
+  // Writes a shell into an about:blank window frame. Browser windows write from the frame's own realm so the
+  // document keeps about:blank as its URL; document.open() called from this page would copy THIS page's URL (the
+  // launcher's), and any reload/history traversal of the frame would then load the launcher inside the window.
+  _writeShell(frm,d,shell){
+    if(frm.__novosBrowser){
+      try{new frm.contentWindow.Function('d','s','d.open();d.write(s);d.close();')(d,shell);return;}catch(_){}
+    }
+    d.open();d.write(shell);d.close();
+  },
+
   // FIX: refresh now properly shows loader, waits for real load, then hides
   refreshWindow(id){
     const frm=document.getElementById('frm_'+id);
@@ -3334,7 +3354,7 @@ setTimeout(()=>{if(typeof RAW_HTML!=='undefined')RAW_HTML._trim();},400);
     if(frm.__novosShell){
       try{
         const d=frm.contentDocument||(frm.contentWindow&&frm.contentWindow.document);
-        if(d){d.open();d.write(frm.__novosShell);d.close();}
+        if(d)WM._writeShell(frm,d,frm.__novosShell);
       }catch(e){}
       [0,300,1000].forEach(ms=>setTimeout(()=>{if(WM._onIframeLoad)WM._onIframeLoad(frm);},ms));
       return;
@@ -3789,6 +3809,7 @@ const TB={
 
     systemIcons['__friends__']={color:'#38bdf8',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16.2 14.2c2.7.1 4.8 2.2 4.8 5.3"/></svg>`};
     systemIcons['__forms__']={color:'#f5f5f5',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>`};
+    systemIcons['__desecurly__']={color:'#ef4444',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">${DESEC_SVG_INNER}</svg>`};
     if(systemIcons[app.url]){
       const si=systemIcons[app.url];
       if(!si._skipIfIcon||!app.icon){
@@ -3808,7 +3829,7 @@ const TB={
   // raw-HTML games opened through the HTML Viewer stay on the user (left) side,
   // matching their pinned/desktop shortcut.
   _isSystemUrl(url){
-    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__compiler__','__compiler__NOVCOMP','__ai__','__music__','__recyclebin__','__cloak__','__friends__','__forms__'].includes(url);
+    return['__settings__','__tm__','__library__','__explorer__','__browser__','__folder__','__compiler__','__compiler__NOVCOMP','__ai__','__music__','__recyclebin__','__cloak__','__friends__','__forms__','__desecurly__'].includes(url);
   },
 
   _makeBtn(app,wid,isPinned){
@@ -4092,21 +4113,86 @@ const CTX={
 ═══════════════════════════════════════════════ */
 
 
-const CLOUDMOON={
-  URL:'https://esm.sh/gh/frozenfinale/secrecy@69f852b/260813.svg',
-  // Always opens CloudMoon inside a NovOS window. WM.open writes it into an
-  // about:blank iframe (never a real navigation, never a separate browser tab).
-  launch(){
-    WM.open({name:'CloudMoon',url:this.URL,icon:'https://static-images.aptoide.com/_next/image?url=https%3A%2F%2Fcdn.aptoide.com%2Fimgs%2F9%2F0%2Fe%2F90e173a707e44b47d5421f1c29a8876d_icon.png&w=256&q=75'});
+const DESECURLY={
+  URL:'https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Secular-ly.html',
+  KEY:'novos_desecurly_done',
+  MIN_MS:10000,            // minimum time on the page before Continue unlocks (on top of scrolling to the bottom)
+  _html:null,_lock:null,_poll:null,_stop:null,_afterLock:null,
+  async fetchHtml(){
+    if(this._html)return this._html;
+    const res=await fetch(this.URL,{cache:'no-cache'});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    this._html=await res.text();
+    return this._html;
   },
-  showDisclaimer(){
-    if(localStorage.getItem('novos_cloudmoon_hide')==='1'){this.launch();return;}
-    document.getElementById('cloudMoonModal').classList.add('open');
+  done(){try{return localStorage.getItem(this.KEY)==='1';}catch(_){return false;}},
+  // Normal (window) mode — available any time from the system app.
+  async open(){
+    const ex=Object.entries(WM.windows).find(([,w])=>w.app&&w.app.url==='__desecurly__');
+    if(ex){WM.windows[ex[0]].minimized?WM.restore(ex[0]):WM.focus(ex[0]);return;}
+    try{
+      const html=await this.fetchHtml();
+      WM.open({name:'DeSecurly',url:'__desecurly__',icon:'',_desHtml:html});
+    }catch(e){OS.notify('DeSecurly','Could not load: '+(e&&e.message||'error'));}
   },
-  dismiss(){
-    localStorage.setItem('novos_cloudmoon_hide','1');
-    document.getElementById('cloudMoonModal').classList.remove('open');
-    this.launch();
+  // One-time forced run: a full-screen lock over the whole OS until the page has been read.
+  lock(){
+    if(this._lock||this.done())return;
+    const el=document.createElement('div');
+    el.id='desecLock';
+    el.innerHTML='<div class="dl-bar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ef4444" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+DESEC_SVG_INNER+'</svg><div class="dl-title">DeSecurly</div><div class="dl-msg" id="desecMsg">Loading…</div><button class="dl-btn" id="desecRetry" style="display:none">Retry</button><button class="dl-btn primary" id="desecBtn" disabled>Relaunch</button></div><iframe id="desecFrm" title="DeSecurly"></iframe><div class="dl-intro" id="desecIntro"><div class="dl-card"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="#ef4444" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+DESEC_SVG_INNER+'</svg><h2>Before you start</h2><p>This is <b>DeSecurly</b>, a bypass to temporarily disable Securly.</p><p>You must complete this setup to access NovOS. You only do this <b>once</b>.</p><button class="dl-btn primary" id="desecGo">Got it</button></div></div>';
+    document.body.appendChild(el);
+    this._lock=el;
+    // Nothing underneath (Tab = Start Menu, Alt+Tab, keybinds…) may react while locked.
+    this._stop=e=>{e.stopImmediatePropagation();};
+    ['keydown','keyup','keypress','contextmenu'].forEach(t=>window.addEventListener(t,this._stop,true));
+    const frm=el.querySelector('#desecFrm'),msg=el.querySelector('#desecMsg'),btn=el.querySelector('#desecBtn'),retry=el.querySelector('#desecRetry');
+    let readyAt=0,introAt=0;
+    el.querySelector('#desecGo').onclick=()=>{introAt=Date.now();el.querySelector('#desecIntro').remove();};
+    const load=async()=>{
+      readyAt=0;retry.style.display='none';btn.disabled=true;msg.textContent='Loading…';
+      try{
+        const html=await this.fetchHtml();
+        const d=frm.contentDocument;d.open();d.write(html);d.close();
+        readyAt=Date.now();
+      }catch(e){
+        msg.textContent='Couldn\u2019t load DeSecurly ('+(e&&e.message||'error')+').';
+        retry.style.display='';
+      }
+    };
+    retry.onclick=load;
+    btn.onclick=()=>this.exit();
+    this._poll=setInterval(()=>{
+      if(!readyAt||!introAt||!btn.disabled)return;
+      let bottom=false;
+      try{
+        const w=frm.contentWindow,d=frm.contentDocument,de=d.documentElement,b=d.body;
+        const top=w.pageYOffset||de.scrollTop||(b&&b.scrollTop)||0;
+        const h=Math.max(de.scrollHeight,b?b.scrollHeight:0);
+        bottom=h-(top+w.innerHeight)<=60;
+      }catch(_){bottom=true;}
+      const wait=Math.max(0,this.MIN_MS-(Date.now()-Math.max(readyAt,introAt)));
+      if(bottom&&!wait){btn.disabled=false;msg.textContent='All done — you can continue.';}
+      else if(!bottom)msg.textContent='Read through the whole page — scroll to the bottom to continue.';
+      else msg.textContent='Almost there… '+Math.ceil(wait/1000)+'s';
+    },300);
+    load();
+  },
+  EXIT_URL:'https://sites.google.com/wdmcs.org/ccl/home',
+  // Continue button: mark done, open the destination in a new tab, then close this one.
+  exit(){
+    try{localStorage.setItem(this.KEY,'1');}catch(_){}
+    try{window.open(this.EXIT_URL,'_blank');}catch(_){}
+    try{window.close();}catch(_){}
+  },
+  finish(){
+    try{localStorage.setItem(this.KEY,'1');}catch(_){}
+    clearInterval(this._poll);this._poll=null;
+    ['keydown','keyup','keypress','contextmenu'].forEach(t=>window.removeEventListener(t,this._stop,true));
+    this._stop=null;
+    if(this._lock){this._lock.remove();this._lock=null;}
+    const f=this._afterLock;this._afterLock=null;
+    if(f)f();
   }
 };
 
@@ -4182,6 +4268,8 @@ const OS={
     document.getElementById('iconSizeSlider').min=76;
 
     this.refreshWelcomeShortcutLine();
+    // One-time forced DeSecurly run, right after boot and before the OS is usable.
+    if(!DESECURLY.done())setTimeout(()=>DESECURLY.lock(),SETTINGS.get('showBoot')?2300:0);
     if(!localStorage.getItem('novos_welcomed')){
       // First-ever run: mark the current changelog as seen so the popup
       // doesn't immediately follow the welcome modal for a brand new user.
@@ -4194,6 +4282,7 @@ const OS={
   /* ─── Changelog popup (first launch after an update) ────────── */
   _changelogPopupFilter:'all',
   openChangelogPopup(){
+    if(DESECURLY._lock){DESECURLY._afterLock=()=>this.openChangelogPopup();return;}
     const modal=document.getElementById('changelogPopupModal');
     if(!modal)return;
     this._changelogPopupFilter='all';
@@ -4439,6 +4528,7 @@ const OS={
       '__friends__':{color:'#38bdf8',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16.2 14.2c2.7.1 4.8 2.2 4.8 5.3"/></svg>`},
       '__forms__':{color:'#f5f5f5',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>`},
       '__recyclebin__':{color:'#94a3b8',svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" width="30" height="30"><path d="M9.5 3.5h5l.8 1.8h4.7v1.6H4V5.3h4.7zM5.8 9.5h12.4l-1.1 10.3a1.8 1.8 0 01-1.8 1.7H8.7a1.8 1.8 0 01-1.8-1.7z"/></svg>`},
+      '__desecurly__':{color:'#ef4444',svg:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="30" height="30">${DESEC_SVG_INNER}</svg>`},
       '__cloak__':{color:'#f1f5f9',svg:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" width="30" height="30"><path d="M3.5 11h17l-.5 1H4zM6.5 11l1.4-5.6a1.6 1.6 0 011.5-1.2h5.2a1.6 1.6 0 011.5 1.2L17.5 11z"/><circle cx="7.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><circle cx="16.5" cy="17" r="3.2" fill="none" stroke-width="1.9"/><path d="M10.7 16.6h2.6" stroke-width="1.9"/></svg>`},
     };
 
@@ -4908,7 +4998,6 @@ const OS={
 
 /* ─── Launch flow ───────────────────────────────────────────── */
   launch(app){
-    if(app.isCloudPlaceholder){CLOUDMOON.showDisclaimer();return;}
     if(app.notAvailable){this.notify('Not Available','This game is not available right now.');return;}
     if(app.url==='__bugs__'||/forms\.gle\/5Xzdtd93pL2Kmw9u8/.test(app.url||'')){FORMS.open('bug');return;}
     if(app.url==='__suggest__'||/forms\.gle\/irbKFW3VbFhczJXs5/.test(app.url||'')){FORMS.open('suggestion');return;}
@@ -5055,6 +5144,7 @@ const OS={
       '__cloak__':()=>this.openCloak(),
       '__friends__':()=>this.openFriends(),
       '__forms__':()=>FORMS.open(),
+      '__desecurly__':()=>this.openDeSecurly(),
       '__bugs__':()=>FORMS.open('bug'),
       '__suggest__':()=>FORMS.open('suggestion'),
     };
@@ -5089,24 +5179,15 @@ const OS={
   // The window/taskbar keeps the system url (__browser__ / __music__) so it gets
   // the correct system icon and stays on the right side of the taskbar.
   _systemRealUrl(sysUrl){
-    return sysUrl==='__browser__'?(this._browserPick||this.BROWSER_IFRAME_URL):sysUrl;
+    return sysUrl==='__browser__'?this.BROWSER_IFRAME_URL:(sysUrl==='__music__'?this.MUSIC_URL:sysUrl);
   },
+  MUSIC_URL:'https://truffled.lol/m',
   // CHERRI BROWSER URL
-  BROWSER_IFRAME_URL:'https://objectstorage.us-sanjose-1.oraclecloud.com/n/axjcou67ax5a/b/sciencelearning/o/index.html',
-  BROWSER_OPIUM_URL:'https://splitshire.nyc3.digitaloceanspaces.com/uploads/images/1790652862160_687f60e8_singlefile.svg',
-  _browserPick:null,
+  BROWSER_IFRAME_URL:'https://truffled.lol/search.html',
   openBrowser(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__browser__');
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
-    // Asked every time a new browser window is launched; nothing is remembered.
-    document.getElementById('browserPickModal').classList.add('open');
-  },
-  // No argument (X / backdrop) cancels without opening anything.
-  pickBrowser(which){
-    document.getElementById('browserPickModal').classList.remove('open');
-    if(which!=='cherri'&&which!=='opium')return;
-    this._browserPick=which==='opium'?this.BROWSER_OPIUM_URL:this.BROWSER_IFRAME_URL;
-    try{this._openBrowserWindow();}finally{this._browserPick=null;}
+    this._openBrowserWindow();
   },
   _openBrowserWindow(){
     // Gust: WM.open always writes a shell into an about:blank iframe and nests the real URL inside it.
@@ -5115,6 +5196,7 @@ const OS={
   openTM(){TM.open();},
   openFriends(){FRIENDS.open();},
   openForms(){FORMS.open();},
+  openDeSecurly(){DESECURLY.open();},
 
   openRecycleBin(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__recyclebin__');
@@ -5162,149 +5244,8 @@ const OS={
   openMusic(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app&&w.app.url==='__music__');
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
-    const id=WM.newId();const el=document.createElement('div');
-    el.className='os-window focused';el.id=id;
-    const dw=Math.min(window.innerWidth*0.82,1020),dh=Math.min(window.innerHeight*0.8,660);
-    el.style.cssText=`width:${dw}px;height:${dh}px;top:${(window.innerHeight-48-dh)/2}px;left:${(window.innerWidth-dw)/2}px;z-index:${++WM._zCounter}`;
-    el.innerHTML=`
-      <style>
-        .nm-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden;background:linear-gradient(180deg,rgba(244,114,182,0.05),transparent 160px)}
-        .nm-body{flex:1;display:flex;overflow:hidden}
-        .nm-side{width:210px;flex-shrink:0;border-right:1px solid var(--os-border);padding:12px 8px;overflow-y:auto;background:rgba(0,0,0,0.15);scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
-        .nm-side-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--os-muted);transition:all 0.12s;margin-bottom:1px}
-        .nm-side-item:hover{background:var(--os-surface);color:var(--os-text)}
-        .nm-side-item.active{background:rgba(244,114,182,0.14);color:#f472b6}
-        .nm-side-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--os-dim);padding:14px 9px 6px}
-        .nm-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-        .nm-main-toolbar{height:52px;flex-shrink:0;display:flex;align-items:center;gap:10px;padding:0 18px;border-bottom:1px solid var(--os-border);user-select:none}
-        .nm-view-title{font-size:16px;font-weight:600;color:var(--os-text);flex:1}
-        .nm-upload-btn{height:32px;padding:0 14px;border-radius:8px;background:#f472b6;border:none;color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;transition:opacity 0.15s;display:flex;align-items:center;gap:6px}
-        .nm-upload-btn:hover{opacity:0.88}
-        .nm-pl-btn{height:32px;padding:0 12px;border-radius:8px;background:var(--os-surface);border:1px solid var(--os-border);color:var(--os-text);font-family:var(--font);font-size:12px;cursor:pointer;transition:all 0.15s}
-        .nm-pl-btn:hover{background:var(--os-surface2)}
-        .nm-tracks{flex:1;overflow-y:auto;padding:8px 18px 18px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
-        .nm-track-header{display:flex;align-items:center;gap:12px;padding:8px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--os-dim);border-bottom:1px solid var(--os-border);margin-bottom:4px}
-        .nm-track-row{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background 0.1s}
-        .nm-track-row:hover{background:var(--os-surface)}
-        .nm-track-row.nm-playing{background:rgba(244,114,182,0.1)}
-        .nm-track-row.nm-playing .nm-track-name{color:#f472b6}
-        .nm-track-idx{width:26px;font-size:11px;color:var(--os-dim);font-family:var(--mono)}
-        .nm-track-info{flex:1;min-width:0}
-        .nm-track-name{font-size:12.5px;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        .nm-track-artist{font-size:11px;color:var(--os-muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        .nm-track-dur{width:90px;font-size:11px;color:var(--os-muted);font-family:var(--mono)}
-        .nm-like-btn{width:34px;height:28px;background:transparent;border:none;cursor:pointer;color:var(--os-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform 0.12s}
-        .nm-like-btn:hover{transform:scale(1.15)}
-        .nm-empty{text-align:center;padding:50px 20px;color:var(--os-muted);font-size:12.5px;line-height:1.6}
-.nm-layout-toggle{display:flex;gap:2px;flex-shrink:0}
-.nm-layout-btn{width:28px;height:28px;border-radius:6px;background:transparent;border:1px solid transparent;cursor:pointer;color:var(--os-muted);display:flex;align-items:center;justify-content:center;transition:all 0.12s}
-.nm-layout-btn:hover{background:var(--os-surface);color:var(--os-text)}
-.nm-layout-btn.active{background:rgba(244,114,182,0.14);border-color:rgba(244,114,182,0.3);color:#f472b6}
-.nm-row-play{width:20px;height:20px;flex-shrink:0;border-radius:50%;background:#f472b6;border:none;color:#fff;display:none;align-items:center;justify-content:center;cursor:pointer;padding:0;padding-left:1px}
-.nm-track-row:hover .nm-row-play{display:flex}
-.nm-track-row:hover .nm-track-idx{display:none}
-.nm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
-.nm-grid-card{background:var(--os-surface);border:1px solid var(--os-border);border-radius:10px;padding:10px;cursor:pointer;position:relative;transition:all 0.15s}
-.nm-grid-card:hover{background:var(--os-surface2);transform:translateY(-2px)}
-.nm-grid-art-wrap{position:relative;width:100%;aspect-ratio:1;margin-bottom:8px}
-.nm-grid-art-wrap>div,.nm-grid-art-wrap>img{width:100% !important;height:100% !important}
-.nm-grid-play{position:absolute;bottom:6px;right:6px;width:32px;height:32px;border-radius:50%;background:#f472b6;border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transform:translateY(4px);transition:all 0.15s;box-shadow:0 4px 12px rgba(0,0,0,0.5)}
-.nm-grid-card:hover .nm-grid-play{opacity:1;transform:translateY(0)}
-.nm-grid-name{font-size:12px;font-weight:500;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.nm-grid-artist{font-size:10.5px;color:var(--os-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px}
-.nm-grid-like{position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.5);border-radius:50%;width:24px;height:24px}
-        .nm-player{height:78px;flex-shrink:0;border-top:1px solid var(--os-border);background:rgba(0,0,0,0.25);display:flex;align-items:center;gap:16px;padding:0 18px}
-        .nm-now{width:220px;flex-shrink:0;display:flex;align-items:center;gap:10px;min-width:0}
-        .nm-now-art{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,#f472b6,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
-        .nm-now-text{min-width:0}
-        .nm-now-title{font-size:12.5px;font-weight:500;color:var(--os-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        .nm-now-artist{font-size:11px;color:var(--os-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        .nm-now-like{width:26px;height:26px;background:transparent;border:none;cursor:pointer;color:var(--os-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-        .nm-transport{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
-        .nm-transport-btns{display:flex;align-items:center;gap:14px}
-        .nm-ctrl-btn{background:transparent;border:none;color:var(--os-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:color 0.12s}
-        .nm-ctrl-btn:hover{color:var(--os-text)}
-        .nm-ctrl-btn.nm-active{color:#f472b6}
-        .nm-play-btn{width:32px;height:32px;border-radius:50%;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.12s;flex-shrink:0}
-        .nm-play-btn:hover{transform:scale(1.08)}
-        .nm-seek-row{display:flex;align-items:center;gap:8px;width:100%;max-width:480px}
-        .nm-time{font-size:10px;color:var(--os-dim);font-family:var(--mono);width:32px;flex-shrink:0}
-        .nm-time.nm-time-r{text-align:right}
-        .nm-seek{flex:1;-webkit-appearance:none;height:3px;background:var(--os-border);border-radius:2px;outline:none;cursor:pointer}
-        .nm-seek::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:50%;background:#f472b6;cursor:pointer}
-        .nm-vol{width:110px;flex-shrink:0;display:flex;align-items:center;gap:6px}
-        .nm-vol input{-webkit-appearance:none;height:3px;background:var(--os-border);border-radius:2px;outline:none;cursor:pointer;width:80px}
-        .nm-vol input::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--os-text);cursor:pointer}
-      </style>
-      <div class="wnd-body" style="overflow:hidden">
-        <div class="nm-wrap">
-          <div class="nm-body">
-            <div class="nm-side" id="nmSide_${id}"></div>
-            <div class="nm-main">
-              <div class="nm-main-toolbar" id="nmTb_${id}" onmousedown="WM.startDrag('${id}',event)" style="cursor:move">
-                <div style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:#f472b6;flex-shrink:0;pointer-events:none"><svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M9 3v11.3A3.5 3.5 0 108 17V7.6l9-1.8v6.5A3.5 3.5 0 1018 15V3z"/></svg></div>
-                <div class="nm-view-title" id="nmViewTitle_${id}" style="pointer-events:none">Your Library</div>
-                <div class="nm-layout-toggle">
-                  <button class="nm-layout-btn" id="nmLayoutList_${id}" onclick="NOVMUSIC.setLayout('${id}','list')" title="List view">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
-                  </button>
-                  <button class="nm-layout-btn" id="nmLayoutGrid_${id}" onclick="NOVMUSIC.setLayout('${id}','grid')" title="Grid view">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-                  </button>
-                </div>
-                <button class="nm-pl-btn" onclick="NOVMUSIC.createPlaylist('${id}')">+ Playlist</button>
-                <button class="nm-upload-btn" onclick="NOVMUSIC.triggerUpload('${id}')">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
-                  Upload MP3s
-                </button>
-                <input type="file" id="nmUpload_${id}" accept="audio/*,.mp3" multiple style="display:none" onchange="NOVMUSIC.handleUpload('${id}',this)">
-                <div class="wnd-ctrl-btns" style="margin-left:6px">
-                  <button class="wnd-ctrl-btn" onclick="event.stopPropagation();WM.toggleMaximize('${id}')" title="Fullscreen"><svg id="fsexp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg><svg id="fscmp_${id}" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg></button>
-                  <button class="wnd-ctrl-btn" onclick="event.stopPropagation();WM.minimize('${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-                  <button class="wnd-ctrl-btn wnd-close" onclick="event.stopPropagation();NOVMUSIC.closeWindow('${id}');WM.closeWindow('${id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-                </div>
-              </div>
-              <div class="nm-tracks" id="nmTracks_${id}"></div>
-            </div>
-          </div>
-          <div class="nm-player">
-            <div class="nm-now">
-              <div class="nm-now-art" id="nmNowArt_${id}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
-              <div class="nm-now-text">
-                <div class="nm-now-title" id="nmNowTitle_${id}">Nothing playing</div>
-                <div class="nm-now-artist" id="nmNowArtist_${id}">Upload some MP3s to get started</div>
-              </div>
-              <button class="nm-now-like" id="nmNowLike_${id}" title="Like"></button>
-            </div>
-            <div class="nm-transport">
-              <div class="nm-transport-btns">
-                <button class="nm-ctrl-btn" id="nmShuffleBtn_${id}" onclick="NOVMUSIC.toggleShuffle()" title="Shuffle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg></button>
-                <button class="nm-ctrl-btn" onclick="NOVMUSIC.prev()" title="Previous"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM10 12l9-7v14z"/></svg></button>
-                <button class="nm-play-btn" id="nmPlayBtn_${id}" onclick="NOVMUSIC.togglePlay()" title="Play/Pause"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-                <button class="nm-ctrl-btn" onclick="NOVMUSIC.next()" title="Next"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM5 5l9 7-9 7z"/></svg></button>
-                <button class="nm-ctrl-btn" id="nmRepeatBtn_${id}" onclick="NOVMUSIC.toggleRepeat()" title="Repeat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></button>
-              </div>
-              <div class="nm-seek-row">
-                <span class="nm-time" id="nmCurTime_${id}">0:00</span>
-                <input type="range" class="nm-seek" id="nmSeek_${id}" min="0" max="100" value="0" oninput="NOVMUSIC.seekTo(this.value,'${id}')">
-                <span class="nm-time nm-time-r" id="nmDurTime_${id}">0:00</span>
-              </div>
-            </div>
-            <div class="nm-vol">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--os-muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 010 7"/></svg>
-              <input type="range" min="0" max="100" value="80" oninput="NOVMUSIC.setVolume(this.value)">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="wnd-resize" onmousedown="WM.startResize('${id}',event,'se')"></div>`;
-    document.getElementById('windowLayer').appendChild(el);
-    WM.playOpenAnim(el);
-    WM.windows[id]={app:{name:'NovMusic',url:'__music__',icon:'',_noOsTitlebar:true},minimized:false,maximized:false,prevRect:null};
-    WM.focus(id);TB.addWindow(id,{name:'NovMusic',url:'__music__',icon:''});WM.makeDraggable(id);
-    NOVMUSIC.load();
-    NOVMUSIC.setVolume(80);
-    NOVMUSIC.openWindow(id);
+    // Same approach as the browser: WM.open writes an about:blank shell and iframes MUSIC_URL inside it.
+    WM.open({name:'NovMusic',url:'__music__',icon:''});
   },
 
   // Shared helper: builds the maximize button HTML with both expand/compress icons
@@ -5676,7 +5617,7 @@ const OS={
   },
 
   _libLaunchModeHTML(wid,app){
-    if(app.notAvailable||app.isCloudPlaceholder)return '';
+    if(app.notAvailable)return '';
     if(!(app.rawUrl||(app.url&&!app.url.startsWith('__'))))return '';
     const esc=JSON.stringify(app).replace(/"/g,'&quot;');
     const tab=OS._tabPref(app.name,app._openInNewBlobTab);
@@ -8367,6 +8308,7 @@ const LAUNCHER={
       {name:'NovCloaker',url:'__cloak__',icon:'',isSystem:true,systemAction:'openCloak'},
       {name:'Friends',url:'__friends__',icon:'',isSystem:true,systemAction:'openFriends'},
       {name:'Forms',url:'__forms__',icon:'',isSystem:true,systemAction:'openForms'},
+      {name:'DeSecurly',url:'__desecurly__',icon:'',isSystem:true,systemAction:'openDeSecurly'},
     ];
     if(q){
       // Search results — uses the same shared index as the App Library
@@ -8403,6 +8345,7 @@ const LAUNCHER={
     };
     map['__friends__']={c:'#38bdf8',s:`<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16.2 14.2c2.7.1 4.8 2.2 4.8 5.3"/>`};
     map['__forms__']={c:'#f5f5f5',s:`<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/>`};
+    map['__desecurly__']={c:'#ef4444',s:`${DESEC_SVG_INNER}`};
     const m=map[url];if(!m)return null;
     const px=size||40;const radius=Math.round(px*0.25);
     return `<div style="width:${px}px;height:${px}px;border-radius:${radius}px;display:flex;align-items:center;justify-content:center;background:${m.c}1a;color:${m.c}"><svg viewBox="0 0 24 24" fill="${m.f?'currentColor':'none'}" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="${Math.round(px*0.6)}" height="${Math.round(px*0.6)}">${m.s}</svg></div>`;
@@ -9138,6 +9081,7 @@ const SESSION={
       else if(w.url==='__bugs__')FORMS.open('bug');
       else if(w.url==='__suggest__')FORMS.open('suggestion');
       else if(w.url==='__browser__')OS.openBrowser();
+      else if(w.url==='__desecurly__')OS.openDeSecurly();
       else id=WM.open({name:w.name,url:w.url,icon:w.icon});
       if(id&&w.rect){const el=document.getElementById(id);
         if(el){el.style.top=w.rect.t;el.style.left=w.rect.l;el.style.width=w.rect.w;el.style.height=w.rect.h;}}
