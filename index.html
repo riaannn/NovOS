@@ -500,6 +500,15 @@ body.wnd-resizing{user-select:none}
 #desecLock .dl-card h2{margin:8px 0 2px;font-size:20px}
 #desecLock .dl-card p{margin:0;color:#cbd5e1}
 #desecLock .dl-card .dl-btn{margin-top:14px;padding:9px 28px;font-size:13px}
+#cloudWarn{position:fixed;inset:0;z-index:800000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,0.6)}
+#cloudWarn .cw-card{max-width:400px;padding:22px 22px 18px;background:var(--os-surface,#14161f);border:1px solid var(--os-border2,rgba(255,255,255,.12));border-radius:14px;color:var(--os-text,#f1f5f9);font-family:var(--font,system-ui)}
+#cloudWarn .cw-title{font-size:17px;font-weight:700;margin-bottom:8px}
+#cloudWarn .cw-body{font-size:13px;line-height:1.6;color:var(--os-muted,#94a3b8);margin-top:6px}
+#cloudWarn .cw-body b{color:var(--os-text,#f1f5f9)}
+#cloudWarn .cw-skip{display:flex;align-items:center;gap:7px;margin-top:14px;font-size:12px;color:var(--os-muted,#94a3b8);cursor:pointer;user-select:none}
+#cloudWarn .cw-row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+#cloudWarn button{height:32px;padding:0 16px;border-radius:8px;font:600 12.5px var(--font,system-ui);cursor:pointer;border:1px solid var(--os-border2,rgba(255,255,255,.15));background:transparent;color:var(--os-text,#f1f5f9)}
+#cloudWarn button.cw-go{background:rgba(var(--os-accent-rgb,124,109,250),.22);border-color:rgba(var(--os-accent-rgb,124,109,250),.45);color:var(--os-accent,#7c6dfa)}
 #welcomeModal{position:fixed;inset:0;z-index:300000;background:rgba(0,0,0,0.75);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:24px}
 #welcomeModal.open{display:flex}
 .welcome-box{width:100%;max-width:480px;background:rgba(13,14,20,0.98);border:1px solid var(--os-border2);border-radius:var(--radius-xl);box-shadow:var(--shadow-window);overflow:hidden;animation:wndIn 0.25s ease}
@@ -1634,6 +1643,8 @@ const DEFAULT_DESKTOP_APPS = [
 ═══════════════════════════════════════════════════════════════════ */
 const DEFAULT_SHORTCUTS = {
   cloud:[
+    {name:"CloudMoon",gridImage:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOnx70lYJJhgVwg_qToSObMmkEnMUs-33F6qKhb7zSxWTUZHSxdosnvHF3&s=10", bannerImage: "https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/small/cloudmoon_1_90bf317a4d.jpg",launchUrl:"https://web.cloudmoonapp.com",url:"https://web.cloudmoonapp.com",icon:"https://play-lh.googleusercontent.com/vI6XmreVWMjzZpKpBGuKDIYurxLRJvDRnCZy8efO9KruwIv-v3uIe92CVEpqEIg3sZOKh-OKGYP8uSp3E01NWw",isDefault:true,SupportsHTML:true},
+
   ],
   Other:[
   ],
@@ -2384,7 +2395,7 @@ const RELEASES={
       n.addEventListener('click',e=>{
         if(e.target.closest('.rl-ignore-btn')){e.stopPropagation();close();return;}
         close();
-        if(restart){RELEASES.hardReload(post);return;}
+        if(restart){RELEASES.exitToSite();return;}
         try{OS.openChangelogPopup();}catch(_){}
       });
       area.appendChild(n);   // persistent until the user acts on it
@@ -2410,6 +2421,16 @@ const RELEASES={
   // wrap it in a blob page and navigate THIS tab to it. Same tab, same origin, so localStorage,
   // sessionStorage (still unlocked) and the open-window session all carry over.
   _leaving:false,
+  EXIT_URL:'https://sites.google.com/wdmcs.org/ccl/home',
+  // Update "Restart": no blob reload — open the site in a new tab and close this one.
+  exitToSite(){
+    try{PLAYTIME.stop();}catch(e){}
+    try{SESSION.save();}catch(e){}
+    this._leaving=true;                      // skips the launcher's "Leave site?" prompt
+    try{window.open(this.EXIT_URL,'_blank');}catch(e){}
+    try{window.close();}catch(e){}
+    setTimeout(()=>{this._leaving=false;},4000);
+  },
   async hardReload(post){
     try{
       const res=await fetch(this.SOURCE_URL+'?_cb='+Date.now(),{cache:'no-store'});
@@ -4140,7 +4161,7 @@ const DESECURLY={
     if(this._lock||this.done())return;
     const el=document.createElement('div');
     el.id='desecLock';
-    el.innerHTML='<div class="dl-bar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ef4444" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+DESEC_SVG_INNER+'</svg><div class="dl-title">DeSecurly</div><div class="dl-msg" id="desecMsg">Loading…</div><button class="dl-btn" id="desecRetry" style="display:none">Retry</button><button class="dl-btn primary" id="desecBtn" disabled>Relaunch</button></div><iframe id="desecFrm" title="DeSecurly"></iframe><div class="dl-intro" id="desecIntro"><div class="dl-card"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="#ef4444" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+DESEC_SVG_INNER+'</svg><h2>Before you start</h2><p>This is <b>DeSecurly</b>, a bypass to temporarily disable Securly.</p><p>You must complete this setup to access NovOS. You only do this <b>once</b>.</p><button class="dl-btn primary" id="desecGo">Got it</button></div></div>';
+    el.innerHTML='<div class="dl-bar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ef4444" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+DESEC_SVG_INNER+'</svg><div class="dl-title">DeSecurly</div><div class="dl-msg" id="desecMsg">Loading…</div><button class="dl-btn" id="desecRetry" style="display:none">Retry</button><button class="dl-btn primary" id="desecBtn" disabled>Relaunch</button></div><iframe id="desecFrm" title="DeSecurly"></iframe><div class="dl-intro" id="desecIntro"><div class="dl-card"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="#ef4444" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+DESEC_SVG_INNER+'</svg><h2>Before you start</h2><p>This is <b>DeSecurly</b>, a bypass to temporarily disable Securly.</p><p>You must complete this setup to access NovOS.</p><button class="dl-btn primary" id="desecGo">Next</button></div></div>';
     document.body.appendChild(el);
     this._lock=el;
     // Nothing underneath (Tab = Start Menu, Alt+Tab, keybinds…) may react while locked.
@@ -4148,7 +4169,20 @@ const DESECURLY={
     ['keydown','keyup','keypress','contextmenu'].forEach(t=>window.addEventListener(t,this._stop,true));
     const frm=el.querySelector('#desecFrm'),msg=el.querySelector('#desecMsg'),btn=el.querySelector('#desecBtn'),retry=el.querySelector('#desecRetry');
     let readyAt=0,introAt=0;
-    el.querySelector('#desecGo').onclick=()=>{introAt=Date.now();el.querySelector('#desecIntro').remove();};
+    el.querySelector('#desecGo').onclick=()=>{
+      const go=el.querySelector('#desecGo');
+      if(go.dataset.step!=='2'){
+        go.dataset.step='2';
+        const card=el.querySelector('.dl-card');
+        card.querySelector('h2').textContent='One more thing';
+        const ps=card.querySelectorAll('p');
+        ps[0].innerHTML='Press <b>Disable Securly</b> and <b>KEEP THE WINDOW OPEN</b> until it closes by itself, then relaunch NovOS.';
+        ps[1].innerHTML='You can find DeSecurly as a new system app on the desktop or via the search bar.';
+        go.textContent='Got it';
+        return;
+      }
+      introAt=Date.now();el.querySelector('#desecIntro').remove();
+    };
     const load=async()=>{
       readyAt=0;retry.style.display='none';btn.disabled=true;msg.textContent='Loading…';
       try{
@@ -4999,6 +5033,7 @@ const OS={
 /* ─── Launch flow ───────────────────────────────────────────── */
   launch(app){
     if(app.notAvailable){this.notify('Not Available','This game is not available right now.');return;}
+    if(!app._cloudOk&&this._isCloudApp(app)){this.cloudDisclaimer(()=>this.launch({...app,_cloudOk:true}));return;}
     if(app.url==='__bugs__'||/forms\.gle\/5Xzdtd93pL2Kmw9u8/.test(app.url||'')){FORMS.open('bug');return;}
     if(app.url==='__suggest__'||/forms\.gle\/irbKFW3VbFhczJXs5/.test(app.url||'')){FORMS.open('suggestion');return;}
     if(app.openInNewTab&&app.url&&!app.url.startsWith('__')){window.open(app.url,'_blank');return;}
@@ -5197,6 +5232,28 @@ const OS={
   openFriends(){FRIENDS.open();},
   openForms(){FORMS.open();},
   openDeSecurly(){DESECURLY.open();},
+  _isCloudApp(app){return !!(app&&app.name&&((this.shortcuts&&this.shortcuts.cloud)||[]).some(c=>c.name===app.name));},
+  // Shown before EVERY cloud game launch; onGo runs only if they confirm.
+  cloudDisclaimer(onGo){
+    try{if(localStorage.getItem('novos_cloud_warn_off')==='1'){onGo();return;}}catch(_){}
+    if(document.getElementById('cloudWarn'))return;
+    const el=document.createElement('div');el.id='cloudWarn';
+    el.innerHTML='<div class="cw-card"><div class="cw-title">Before you launch</div>'
+      +'<div class="cw-body">You must <b>sign up for an account</b>, and when you launch your game, it will launch in a separate <b>uncloaked</b> tab and also within NovOS.</div>'
+      +'<div class="cw-body"><b>Close the uncloaked tab</b> and play your game from NovOS.</div>'
+      +'<label class="cw-skip"><input type="checkbox" id="cwSkip">Don\u2019t show this again</label>'
+      +'<div class="cw-row"><button class="cw-no">Cancel</button><button class="cw-go">Launch</button></div></div>';
+    document.body.appendChild(el);
+    const close=()=>{el.remove();document.removeEventListener('keydown',esc,true);};
+    const esc=e=>{if(e.key==='Escape'){e.stopPropagation();close();}};
+    document.addEventListener('keydown',esc,true);
+    el.querySelector('.cw-no').onclick=close;
+    el.querySelector('.cw-go').onclick=()=>{
+      if(el.querySelector('#cwSkip').checked){try{localStorage.setItem('novos_cloud_warn_off','1');}catch(_){}}
+      close();onGo();
+    };
+    el.querySelector('.cw-go').focus();
+  },
 
   openRecycleBin(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__recyclebin__');
@@ -5662,6 +5719,7 @@ const OS={
   // as the "main attraction", then the game actually launches. Once launched,
   // the App Library resets back to its default Games view for next time.
   stlibLaunchWithAnim(wid,app){
+    if(!app._cloudOk&&OS._isCloudApp(app)){OS.cloudDisclaimer(()=>this.stlibLaunchWithAnim(wid,{...app,_cloudOk:true}));return;}
     if(SETTINGS.get('shortcutLaunchAnim')===false||OS._tabPref(app.name,app._openInNewBlobTab)){
       OS.launch(app);
       if(WM.windows[wid]){
