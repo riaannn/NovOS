@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,user-scalable=no"/>
+<title>Brotato</title>
+<!-- Remote Icons via RawGitHack -->
+<link rel="icon" type="image/png" href="https://raw.githack.com/hazzatazza/brotato-full-game/main/index.icon.png"/>
+<link rel="apple-touch-icon" href="https://raw.githack.com/hazzatazza/brotato-full-game/main/index.apple-touch-icon.png"/>
+<!-- Google Font: Chewy -->
+<link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:#000;
+  font-family:'Segoe UI',system-ui,sans-serif;
+  color:#e2e2e2;
+  height:100vh;overflow:hidden;
+  touch-action:none;
+}
+
+canvas{
+  display:block;position:fixed;inset:0;
+  width:100%;height:100%;border:none;
+  background:#000;
+}
+canvas:focus{outline:none}
+
+/* ─── Loader wrapper (Solid Black Screen) ─── */
+#loader{
+  position:fixed;inset:0;z-index:50;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;overflow:hidden;
+  background:#000000;
+  transition:opacity 0.7s ease;
+}
+
+/* ─── Content ─── */
+.content{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;
+  align-items:center;text-align:center;
+  gap:16px;
+  width:100%;max-width:400px;
+}
+
+/* ─── Loader Image ─── */
+.loader-img {
+  width: 140px;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 4px;
+  animation: pulseImg 2s ease-in-out infinite alternate;
+}
+@keyframes pulseImg {
+  from { transform: scale(1); filter: drop-shadow(0 0 10px rgba(168,85,247,0.2)); }
+  to { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(74,222,128,0.4)); }
+}
+
+/* ─── Loading Text ─── */
+.loading-title {
+  font-family: 'Chewy', cursive, sans-serif;
+  font-size: 2rem;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+
+/* ─── Fetching Details & Progress Counter ─── */
+.loading-detail {
+  font-size: 0.8rem;
+  font-family: 'Courier New', monospace;
+  color: rgba(255,255,255,0.5);
+  word-break: break-all;
+  min-height: 1.2em;
+}
+
+.loading-counter {
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: #4ade80;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
+/* ─── Error Box ─── */
+.err-box{
+  display:none;width:100%;
+  background:rgba(255,82,82,0.07);
+  border:1px solid rgba(255,82,82,0.25);
+  border-radius:10px;padding:12px 16px;
+  margin-top: 15px;
+  text-align: left;
+}
+.err-box.show{display:block}
+.err-title{
+  font-size:0.63rem;font-weight:700;color:#ff5252;
+  text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px;
+}
+.err-msg{
+  font-size:0.68rem;color:rgba(255,140,140,0.8);
+  font-family:'Courier New',monospace;word-break:break-all;line-height:1.5;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<div id="loader">
+  <div class="content">
+    <!-- Center Image -->
+    <img src="https://i.imgur.com/BWAkLGN.png" alt="Brotato Loading" class="loader-img" />
+    
+    <!-- Loading Text -->
+    <div class="loading-title">Loading...</div>
+
+    <!-- Small text of stuff fetching & counter moving up -->
+    <div class="loading-detail" id="loading-detail">Connecting to repository...</div>
+    <div class="loading-counter" id="loading-counter">0 / 13</div>
+
+    <div class="err-box" id="err-box">
+      <div class="err-title">&#9888; Load Failed</div>
+      <div class="err-msg" id="err-msg"></div>
+    </div>
+  </div><!-- /content -->
+</div><!-- /loader -->
+
+<!-- Remote Engine JS Script -->
+<script src="https://raw.githack.com/hazzatazza/brotato-full-game/main/index.js"></script>
+<script>
+// CDN base pointing directly to raw.githack for the repo
+const CDN = 'https://raw.githack.com/hazzatazza/brotato-full-game/main/';
+
+const GODOT_CONFIG = {
+  args: [], canvasResizePolicy: 2, executable: 'index',
+  experimentalVK: false,
+  fileSizes: { 'index.pck': 205270016, 'index.wasm': 26156492 },
+  focusCanvas: true, gdnativeLibs: []
+};
+
+/* ── helpers ── */
+const $  = id => document.getElementById(id);
+const tx = (id, v) => { const e = $(id); if (e) e.textContent = v; };
+
+function showError(msg) {
+  $('err-box').classList.add('show');
+  tx('err-msg', msg);
+  tx('loading-detail', 'Load failed.');
+}
+
+/* ── fetch + merge all parts for one file with cumulative counter (1 to 13 total) ── */
+async function fetchParts(key, filename, count, padded, totalBytes, globalIndexStart) {
+  const parts = [];
+  let fetched = 0;
+
+  for (let i = 1; i <= count; i++) {
+    const suffix  = padded ? String(i).padStart(2, '0') : String(i);
+    const part    = `${filename}.part${suffix}`;
+    const currentGlobalStep = globalIndexStart + i;
+
+    tx('loading-detail', `Fetching: ${part}`);
+    tx('loading-counter', `${currentGlobalStep} / 13`);
+
+    const resp = await fetch(CDN + part);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} \u2014 ${part}`);
+
+    const buf = await resp.arrayBuffer();
+    parts.push(buf);
+    fetched += buf.byteLength;
+  }
+
+  /* concatenate ArrayBuffers */
+  const merged = new Uint8Array(parts.reduce((s, b) => s + b.byteLength, 0));
+  let offset = 0;
+  for (const p of parts) { merged.set(new Uint8Array(p), offset); offset += p.byteLength; }
+
+  return merged.buffer;
+}
+
+/* ── main ── */
+(async () => {
+  if (!Engine.isWebGLAvailable()) {
+    showError('WebGL is unavailable. Try a different browser or enable hardware acceleration.');
+    return;
+  }
+
+  try {
+    tx('loading-detail', 'Fetching game data (index.pck)...');
+    tx('loading-counter', '0 / 13');
+
+    // 11 parts for index.pck (Parts 1 to 11)
+    const pckBuf = await fetchParts('pck', 'index.pck', 11, true, 205270016, 0);
+
+    tx('loading-detail', 'Fetching game engine (index.wasm)...');
+    tx('loading-counter', '11 / 13');
+
+    // 2 parts for index.wasm (Parts 12 to 13)
+    const wasmBuf = await fetchParts('wasm', 'index.wasm', 2, false, 26156492, 11);
+
+    tx('loading-detail', 'Assembling engine...');
+    tx('loading-counter', '13 / 13');
+
+    /* blob URL for the pck */
+    const pckUrl = URL.createObjectURL(
+      new Blob([pckBuf], { type: 'application/octet-stream' })
+    );
+
+    /* Intercept window.fetch for the merged wasm */
+    const _fetch = window.fetch.bind(window);
+    window.fetch = function (input, init) {
+      const url = input instanceof Request ? input.url : String(input);
+      if (/index\.wasm$/.test(url)) {
+        return Promise.resolve(new Response(
+          new Blob([wasmBuf], { type: 'application/wasm' }),
+          { status: 200, headers: { 'Content-Type': 'application/wasm' } }
+        ));
+      }
+      return _fetch(input, init);
+    };
+
+    tx('loading-detail', 'Starting Godot Runtime...');
+
+    const engine = new Engine(GODOT_CONFIG);
+
+    await engine.startGame({
+      executable: CDN + 'index',   /* Remote index.worker.js */
+      mainPack:   pckUrl,
+      onProgress(current, total) {
+        if (total > 0) {
+          const pct = Math.round((current / total) * 100);
+          tx('loading-detail', `Initializing engine assets... (${pct}%)`);
+        }
+      }
+    });
+
+    /* ── game started ── */
+    const loader = $('loader');
+    loader.style.opacity = '0';
+    loader.style.pointerEvents = 'none';
+    setTimeout(() => { loader.style.display = 'none'; }, 750);
+
+  } catch (e) {
+    console.error('[Brotato loader]', e);
+    showError(e.message || String(e));
+  }
+})();
+</script>
+</body>
+</html>
