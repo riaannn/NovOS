@@ -86,11 +86,11 @@ async function gunzip(bytes) {
 }
 
 globalThis.horizonOffline = async () => {
-    status.textContent = "Loading the game…";
+    status.textContent = "Loading the gameï¿½";
     const glue = await import(GLUE);
     // Runs the game's main, which only registers the game to start.
     await glue.default({ module_or_path: await gunzip(held("horizon-wasm")) });
-    status.textContent = "Unpacking resources…";
+    status.textContent = "Unpacking resourcesï¿½";
     const tar = await gunzip(held("horizon-boot"));
     // The files the game reads later: one block, cut by the manifest's lengths.
     const store = await gunzip(held("horizon-store"));
@@ -119,7 +119,7 @@ globalThis.horizonOffline = async () => {
 // commit URLs serve the uploaded archive chunks. The snapshot's commit is
 // also the current origin/main commit.
 const SOUND_COMMIT = "b21a7ae704b415182631429a7e71c797287661df";
-const SOUND_CDN = `https://cdn.jsdelivr.net/gh/AlexBoops/mc-rust-onweb@${SOUND_COMMIT}/`;
+const SOUND_CDN = `https://fastly.jsdelivr.net/gh/AlexBoops/mc-rust-onweb@${SOUND_COMMIT}/`;
 const SOUND_MANIFEST = `${SOUND_CDN}parts.json`;
 // jsDelivr caps a GitHub package at 50 MB, so uncached archive chunks can be
 // refused even though the commit URL is valid. The repo's Pages copy of the
