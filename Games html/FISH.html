@@ -1,130 +1,391 @@
-<!--
-FISH downloaded from gn-math! at 11/11/2026
-
-https://gn-math.dev
-https://discord.gg/gn-math
--->
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
-    <base href="https://cdn.jsdelivr.net/gh/web-ports/fish@latest/" />
-    <link rel="shortcut icon" href="TemplateData/favicon.ico" />
-    <link rel="stylesheet" href="TemplateData/style.css" />
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>FISH Webport</title>
+    <style>
+      html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; font-family: Arial, Helvetica, sans-serif; }
+      #unity-container { position: fixed; inset: 0; }
+      #unity-canvas { width: 100%; height: 100%; display: block; background: #000; }
+      #unity-loading-bar { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: none; width: 340px; text-align: center; color: #ddd; }
+      #unity-logo { font-size: 44px; font-weight: 700; letter-spacing: .2em; color: #fff; margin-bottom: 18px; }
+      #unity-progress-bar-empty { height: 10px; background: #333; border-radius: 6px; overflow: hidden; }
+      #unity-progress-bar-full { width: 0%; height: 100%; background: #4aa3ff; transition: width 0.1s ease; }
+      #unity-status { margin-top: 10px; font-size: 12px; color: #9aa; min-height: 15px; }
+      #unity-warning { position: absolute; left: 50%; top: 5%; transform: translate(-50%); background: #fff; color: #000; padding: 10px; display: none; max-width: 80%; z-index: 9999; }
+    </style>
   </head>
   <body>
-    <div
-      id="loading-text"
-      style="
-        color: white;
-        font-size: 48px;
-        font-family: cursive;
-        text-align: center;
-        margin-top: 20px;
-      "
-    >
-      LOADING...
-    </div>
     <div id="unity-container">
-      <canvas id="unity-canvas" width="960" height="540" tabindex="-1"></canvas>
+      <canvas id="unity-canvas" width="1920" height="1080" tabindex="-1"></canvas>
       <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
+        <div id="unity-logo">FISH</div>
+        <div id="unity-progress-bar-empty"><div id="unity-progress-bar-full"></div></div>
+        <div id="unity-status">Starting…</div>
       </div>
       <div id="unity-warning"></div>
     </div>
+
     <script>
-      var loadingText = document.querySelector("#loading-text");
-      let totalBytes = 0;
-      let loadedBytes = 0;
-      async function fetchWithProgress(url) {
-        const response = await fetch(url);
-        const reader = response.body.getReader();
-        let chunks = [];
-        let received = 0;
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          received += value.length;
-          loadedBytes += value.length;
-          chunks.push(value);
-          let mbDone = (loadedBytes / (1024 * 1024)).toFixed(2);
-          let mbTotal = "159.36";
-          loadingText.textContent = `LOADING... ${mbDone} MB / ${mbTotal} MB`;
+    (function () {
+      "use strict";
+
+      // ───────────── 0. Silence Firefox WEBGL_debug_renderer_info warning ─────────────
+      ["WebGLRenderingContext", "WebGL2RenderingContext"].forEach(function (ctxName) {
+        var Ctx = window[ctxName];
+        if (Ctx && Ctx.prototype && Ctx.prototype.getExtension) {
+          var origGetExt = Ctx.prototype.getExtension;
+          Ctx.prototype.getExtension = function (name) {
+            if (name === "WEBGL_debug_renderer_info") return null;
+            return origGetExt.call(this, name);
+          };
         }
-        let fullBuffer = new Uint8Array(received);
-        let offset = 0;
-        for (let chunk of chunks) {
-          fullBuffer.set(chunk, offset);
-          offset += chunk.length;
+      });
+
+      // ───────────── 1. CONFIG (RAW.GITHACK) ─────────────
+      var REPO = "riaannn/FISH", REF = "main", BUILD_DIR = "Build";
+      var PREFETCH = 3;
+      var DATA_PARTS = [10, 10];
+      var WASM_PARTS = 0;
+
+      // Using raw.githack.com for correct headers and full file-size support
+      var HOSTS = [
+        "https://raw.githack.com/" + REPO + "/" + REF + "/" + BUILD_DIR + "/"
+      ];
+
+      function seq(base, n) {
+        var a = [];
+        for (var i = 1; i <= n; i++) a.push(base + ".part" + (i < 10 ? "0" : "") + i);
+        return a;
+      }
+
+      var ASSETS = [
+        {
+          name: "FISH Export.framework.js.br",
+          parts: ["FISH Export.framework.js.br"],
+          type: "application/javascript",
+          size: 533000
+        },
+        {
+          name: "FISH Export.wasm.br",
+          parts: WASM_PARTS > 0 ? seq("FISH Export.wasm.br", WASM_PARTS) : ["FISH Export.wasm.br"],
+          type: "application/wasm",
+          size: 69700000
+        },
+        {
+          name: "FISH Export.data.br",
+          parts: seq("FISH Export.data.part1.br", DATA_PARTS[0]).concat(seq("FISH Export.data.part2.br", DATA_PARTS[1])),
+          type: "application/octet-stream",
+          size: 400228348
         }
-        return fullBuffer.buffer;
+      ];
+
+      // ───────────── 2. UI HELPERS ─────────────
+      var barFull = document.getElementById("unity-progress-bar-full");
+      var statusEl = document.getElementById("unity-status");
+      var totalExpected = 0, downloaded = 0, shownPct = 0;
+      ASSETS.forEach(function (a) { totalExpected += a.size; });
+
+      function setProgress(frac) {
+        var pct = Math.max(shownPct, Math.min(100, frac * 100));
+        shownPct = pct;
+        if (barFull) barFull.style.width = pct + "%";
       }
-      async function mergeFiles(fileParts, cacheKey) {
-        const buffers = await Promise.all(
-          fileParts.map((part) => fetchWithProgress(part)),
-        );
-        const mergedBlob = new Blob(buffers);
-        return URL.createObjectURL(mergedBlob);
+      function setStatus(t) { if (statusEl) statusEl.textContent = t; }
+      function onBytes(n) {
+        downloaded += n;
+        if (downloaded < 0) downloaded = 0;
+        setProgress(Math.min((downloaded / totalExpected) * 0.88, 0.88));
+        setStatus("Downloading… " + (downloaded / 1048576).toFixed(0) + " / " + (totalExpected / 1048576).toFixed(0) + " MB");
       }
-      function getParts(file, start, end) {
-        let parts = [];
-        for (let i = start; i <= end; i++) {
-          parts.push(file + ".part" + i);
+      window.__fishProgress = function (unityFrac) {
+        setProgress(0.88 + unityFrac * 0.12);
+        if (unityFrac < 1) setStatus("Initializing engine… " + Math.round(unityFrac * 100) + "%");
+      };
+
+      // ───────────── 3. DOWNLOAD & MERGE ─────────────
+      var nativeFetch = window.fetch.bind(window);
+
+      async function fetchPart(name) {
+        var lastErr = null;
+        for (var round = 0; round < 2; round++) {
+          for (var h = 0; h < HOSTS.length; h++) {
+            var got = 0;
+            try {
+              var res = await nativeFetch(HOSTS[h] + encodeURIComponent(name));
+              if (!res.ok) throw new Error(name + ": HTTP " + res.status + " from " + HOSTS[h]);
+              var reader = res.body.getReader(), chunks = [], total = 0;
+              for (;;) {
+                var r = await reader.read();
+                if (r.done) break;
+                chunks.push(r.value); total += r.value.length; got += r.value.length;
+                onBytes(r.value.length);
+              }
+              if (chunks.length === 1) return chunks[0];
+              var out = new Uint8Array(total), off = 0;
+              for (var i = 0; i < chunks.length; i++) { out.set(chunks[i], off); off += chunks[i].length; }
+              return out;
+            } catch (e) {
+              onBytes(-got);
+              lastErr = e;
+            }
+          }
         }
-        return parts;
+        throw lastErr || new Error("Could not download " + name);
       }
-      (async () => {
-        const [dataUrl, wasmUrl] = await Promise.all([
-          mergeFiles(getParts("Build/FISH.data", 1, 6), "FISH.data"),
-          mergeFiles(getParts("Build/FISH.wasm", 1, 3), "FISH.wasm"),
-        ]);
-        var container = document.querySelector("#unity-container");
-        var canvas = document.querySelector("#unity-canvas");
-        var loadingBar = document.querySelector("#unity-loading-bar");
-        var progressBarFull = document.querySelector(
-          "#unity-progress-bar-full",
-        );
-        var warningBanner = document.querySelector("#unity-warning");
-        function unityShowBanner(msg, type) {}
-        var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/FISH.loader.js";
-        var config = {
-          arguments: [],
-          dataUrl: dataUrl,
-          frameworkUrl: buildUrl + "/FISH.framework.js",
-          codeUrl: wasmUrl,
-          streamingAssetsUrl: "StreamingAssets",
-          companyName: "dmcaguy",
-          productName: "FISH",
-          productVersion: "2.0",
-          showBanner: unityShowBanner,
+
+      function orderedParts(parts) {
+        var next = 0, queue = [], cancelled = false;
+        function fill() {
+          while (!cancelled && next < parts.length && queue.length < PREFETCH) {
+            var p = fetchPart(parts[next++]);
+            p.catch(function () {});
+            queue.push(p);
+          }
+        }
+        fill();
+        return {
+          take: async function () {
+            if (!queue.length) return null;
+            var v = await queue.shift();
+            fill();
+            return v;
+          },
+          cancel: function () { cancelled = true; queue = []; }
         };
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-          var meta = document.createElement("meta");
-          meta.name = "viewport";
-          meta.content =
-            "width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes";
-          document.getElementsByTagName("head")[0].appendChild(meta);
+      }
+
+      async function mergeAll(parts, expected) {
+        var src = orderedParts(parts), buf = new Uint8Array(expected + 1048576), off = 0, v;
+        while ((v = await src.take()) !== null) {
+          if (off + v.length > buf.length) {
+            var bigger = new Uint8Array(Math.max((buf.length * 1.25) | 0, off + v.length));
+            bigger.set(buf.subarray(0, off));
+            buf = bigger;
+          }
+          buf.set(v, off); off += v.length;
         }
-        loadingBar.style.display = "block";
+        return buf.subarray(0, off);
+      }
+
+      // ───────────── 4. SAFE BROTLI DECOMPRESSION TO BLOB URL ─────────────
+      function isAlreadyDecompressed(bytes, assetName) {
+        if (!bytes || bytes.length < 16) return false;
+        if (assetName.indexOf(".wasm") !== -1) {
+          return bytes[0] === 0x00 && bytes[1] === 0x61 && bytes[2] === 0x73 && bytes[3] === 0x6d;
+        }
+        if (assetName.indexOf(".data") !== -1) {
+          var hdr = String.fromCharCode.apply(null, bytes.subarray(0, 12));
+          return hdr === "UnityWebData";
+        }
+        if (assetName.indexOf(".js") !== -1) {
+          for (var i = 0; i < 64; i++) {
+            var b = bytes[i];
+            if (b !== 9 && b !== 10 && b !== 13 && (b < 32 || b > 126)) return false;
+          }
+          return true;
+        }
+        return false;
+      }
+
+      function hasNativeBrotli() {
+        try { new DecompressionStream("brotli"); return true; } catch (e) { return false; }
+      }
+
+      var wasmBrotli = null;
+      function loadWasmBrotli() {
+        if (!wasmBrotli) wasmBrotli = (async function () {
+          var base = "https://fastly.jsdelivr.net/npm/brotli-wasm@3.0.1/pkg.web/";
+          var mod = await import(base + "brotli_wasm.js");
+          await mod.default(base + "brotli_wasm_bg.wasm");
+          return mod;
+        })();
+        return wasmBrotli;
+      }
+
+      async function decompressSingleShotNative(bytes) {
+        var ds = new DecompressionStream("brotli");
+        var writer = ds.writable.getWriter();
+        writer.write(bytes);
+        writer.close();
+        var buf = await new Response(ds.readable).arrayBuffer();
+        return new Uint8Array(buf);
+      }
+
+      var BLOB_MAP = {};
+
+      async function prepareBlob(asset) {
+        var merged = await mergeAll(asset.parts, asset.size);
+        var out;
+
+        if (isAlreadyDecompressed(merged, asset.name)) {
+          console.log("[FISH] " + asset.name + " is already uncompressed (" + merged.length + " bytes).");
+          out = merged;
+        } else {
+          setStatus("Decompressing " + asset.name + "…");
+          await new Promise(function (r) { setTimeout(r, 30); });
+
+          var decompressed = null;
+          if (hasNativeBrotli()) {
+            try {
+              decompressed = await decompressSingleShotNative(merged);
+            } catch (nativeErr) {
+              console.warn("[FISH] Native brotli failed on " + asset.name + ", falling back to brotli-wasm:", nativeErr);
+            }
+          }
+
+          if (!decompressed) {
+            try {
+              var mod = await loadWasmBrotli();
+              decompressed = mod.decompress(merged);
+            } catch (wasmErr) {
+              var preview = Array.from(merged.subarray(0, 32)).map(function (b) {
+                return ("0" + b.toString(16)).slice(-2);
+              }).join(" ");
+              throw new Error("Brotli failed on " + asset.name + " (" + merged.length + " bytes, header: " + preview + "): " + wasmErr);
+            }
+          }
+          out = decompressed;
+        }
+
+        merged = null;
+        var blob = new Blob([out], { type: asset.type });
+        var blobUrl = URL.createObjectURL(blob);
+        BLOB_MAP[asset.name] = blobUrl;
+        return blobUrl;
+      }
+
+      function resolveAssetUrl(url) {
+        if (!url) return url;
+        var path = String(url).split(/[?#]/)[0];
+        try { path = decodeURIComponent(path); } catch (e) {}
+        for (var name in BLOB_MAP) {
+          if (path.length >= name.length && path.slice(-name.length) === name) {
+            return BLOB_MAP[name];
+          }
+        }
+        return url;
+      }
+
+      // ───────────── 5. INTERCEPT FETCH, XHR, AND <SCRIPT> ─────────────
+      window.fetch = function (input, init) {
+        if (typeof input === "string") {
+          return nativeFetch(resolveAssetUrl(input), init);
+        }
+        return nativeFetch(input, init);
+      };
+
+      var origXHROpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function (method, url) {
+        var args = Array.prototype.slice.call(arguments);
+        args[1] = resolveAssetUrl(url);
+        return origXHROpen.apply(this, args);
+      };
+
+      var origCreateElement = document.createElement.bind(document);
+      document.createElement = function (tagName, options) {
+        var el = origCreateElement(tagName, options);
+        if (String(tagName).toLowerCase() === "script") {
+          var desc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, "src");
+          Object.defineProperty(el, "src", {
+            get: function () { return desc.get.call(this); },
+            set: function (val) { return desc.set.call(this, resolveAssetUrl(val)); },
+            configurable: true
+          });
+        }
+        return el;
+      };
+
+      window.__fishPrepareAll = async function () {
+        for (var i = 0; i < ASSETS.length; i++) {
+          await prepareBlob(ASSETS[i]);
+        }
+        return BLOB_MAP;
+      };
+
+      window.__fishBuild = { HOSTS: HOSTS, ASSETS: ASSETS };
+    })();
+    </script>
+
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var warningBanner = document.querySelector("#unity-warning");
+      var statusText = document.querySelector("#unity-status");
+
+      function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; color: #fff; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+      }
+
+      loadingBar.style.display = "block";
+
+      function fail(e) {
+        var m = (e && e.message) ? e.message : String(e);
+        statusText.textContent = "Failed to start.";
+        unityShowBanner("FISH failed to load: " + m, "error");
+        console.error(e);
+      }
+
+      var B = window.__fishBuild;
+
+      function loadLoader(i, blobs) {
+        if (i >= B.HOSTS.length) {
+          fail(new Error("Could not load FISH Export.loader.js from any host"));
+          return;
+        }
         var script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = () => {
-          createUnityInstance(canvas, config, (progress) => {
-            progressBarFull.style.width = 100 * progress + "%";
-          })
-            .then((unityInstance) => {
-              loadingBar.style.display = "none";
-              loadingText.remove();
-            })
-            .catch((message) => {
-              alert(message);
-            });
+        script.src = B.HOSTS[i] + encodeURIComponent("FISH Export.loader.js");
+        script.onload = function () {
+          var config = {
+            arguments: [],
+            dataUrl: blobs["FISH Export.data.br"],
+            frameworkUrl: blobs["FISH Export.framework.js.br"],
+            codeUrl: blobs["FISH Export.wasm.br"],
+            streamingAssetsUrl: B.HOSTS[0].replace(/Build\/$/, "StreamingAssets"),
+            companyName: "dmcaguy",
+            productName: "FISH",
+            productVersion: "5.0",
+            showBanner: unityShowBanner,
+            cacheControl: function () { return "no-store"; }
+          };
+
+          createUnityInstance(canvas, config, function (progress) {
+            window.__fishProgress(progress);
+          }).then(function () {
+            loadingBar.style.display = "none";
+          }).catch(fail);
         };
+        script.onerror = function () { script.remove(); loadLoader(i + 1, blobs); };
         document.body.appendChild(script);
-      })();
+      }
+
+      window.__fishPrepareAll()
+        .then(function (blobs) {
+          loadLoader(0, blobs);
+        })
+        .catch(fail);
     </script>
   </body>
 </html>
