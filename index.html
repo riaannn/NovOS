@@ -1829,7 +1829,7 @@ const DEFAULT_SHORTCUTS = {
     //{name:"Rain World", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/33d3d089ec35491f225946e1ab103991.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/838bea84b83eaf266eb26d4732d3b8ff.jpg",launchUrl: "https://school.euforiacs.com/f/WxUUCwMfSjYVGxsxCR4JAFsbGwIDFEsMAB8Z/", url: "https://school.euforiacs.com/f/WxUUCwMfSjYVGxsxCR4JAFsbGwIDFEsMAB8Z/",  icon:"https://cdn2.steamgriddb.com/icon/e53ba686b7ad2ec7825f0f4afff80a1b/32/256x256.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:false},
     //{name:"Slay the Spire", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/5cfa02f9154d8220d0a911d6ca82ddb5.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/eb18d63a27975cfc0e8b5cedea56f356.jpg",launchUrl: "https://school.euforiacs.com/f/WxUUCwMfShcAAVoPCAgAHFoaAQsK/", url: "https://school.euforiacs.com/f/WxUUCwMfShcAAVoPCAgAHFoaAQsK/",  icon:"https://cdn2.steamgriddb.com/icon/aecf89d1270d044970cf4da4de7cf218/32/256x256.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:false},
     //name:"Brawlhalla", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/c4caf9e04a0d4f83565449f2cce9d5d5.png", gridImage:"https://cdn2.steamgriddb.com/thumb/c4b454a1bf1b267ebf093555c096fdb8.jpg",launchUrl: "https://school.euforiacs.com/f/WxUUCwMfSgYGEwIKDg0JCBVdHAgCCR1KHAYYCg/", url: "https://school.euforiacs.com/f/WxUUCwMfSgYGEwIKDg0JCBVdHAgCCR1KHAYYCg/",  icon:"https://cdn2.steamgriddb.com/icon/ce476323fc088abd55d5c54c34995350/32/512x512.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:false},
-    //{name:"Getting Over It", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/0726e051d18e9ae347c103a30035f9a1.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/2157b6d660df50a65047393f125c07ab.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Getting%20Over%20It%20with%20Bennett%20Foddy.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/4bb1ec1ff58ad39558e8468054bfc469.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:false},
+    {name:"Getting Over It", bannerImage:"https://cdn2.steamgriddb.com/hero_thumb/0726e051d18e9ae347c103a30035f9a1.jpg", gridImage:"https://cdn2.steamgriddb.com/thumb/2157b6d660df50a65047393f125c07ab.jpg",rawUrl: "https://raw.githubusercontent.com/riaannn/NovOS/refs/heads/main/Games%20html/Getting%20Over%20It%20with%20Bennett%20Foddy.html", url: "__rawhtml__",  icon:"https://cdn2.steamgriddb.com/icon_thumb/4bb1ec1ff58ad39558e8468054bfc469.png",isDefault:true,SupportsHTML:true, notAvailable:false, _openInNewBlobTab:false},
 
 
 
@@ -5223,7 +5223,7 @@ const OS={
   MUSIC_URL:'https://school.euforiacs.com/m',
 
   // CHERRI BROWSER URL
-  BROWSER_IFRAME_URL:'https://school.euforiacs.com/search.html',
+  BROWSER_IFRAME_URL:'https://tinyurl.com/opiumdotbest',
   openBrowser(){
     const existing=Object.entries(WM.windows).find(([,w])=>w.app.url==='__browser__');
     if(existing){WM.windows[existing[0]].minimized?WM.restore(existing[0]):WM.focus(existing[0]);return;}
@@ -5435,6 +5435,18 @@ const OS={
         .stlib-detail-notes-text{font-size:12.5px;line-height:1.7;color:#c7ccd4;white-space:pre-wrap;word-break:break-word;min-height:60px;outline:none}
         .stlib-detail-notes-text:empty::before{content:attr(data-ph);color:#565c66}
         .stlib-detail-notes-stat{font-size:10px;color:#565c66;margin-top:8px;text-align:right;font-family:var(--mono)}
+        .stlib-rep-btn{display:flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:9px;border:1px solid rgba(248,113,113,0.35);background:rgba(248,113,113,0.08);color:#f87171;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit}
+        .stlib-rep-btn:hover{background:rgba(248,113,113,0.16)}
+        .stlib-rep-box{background:rgba(255,255,255,0.04);border:1px solid rgba(248,113,113,0.3);border-radius:10px;padding:14px 16px}
+        .stlib-rep-q{font-size:12.5px;font-weight:600;color:#d1d5db;margin-bottom:8px}
+        .stlib-rep-ta{width:100%;box-sizing:border-box;min-height:84px;resize:vertical;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#e5e7eb;font-family:inherit;font-size:12.5px;line-height:1.5;padding:9px 11px;outline:none}
+        .stlib-rep-ta:focus{border-color:rgba(248,113,113,0.5)}
+        .stlib-rep-row{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:10px}
+        .stlib-rep-msg{flex:1;font-size:11.5px}
+        .stlib-rep-cancel,.stlib-rep-send{height:30px;padding:0 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid rgba(255,255,255,0.12);background:transparent;color:#9aa0ab}
+        .stlib-rep-send{background:#f87171;border-color:#f87171;color:#1a0a0a}
+        .stlib-rep-send:disabled{opacity:.55;cursor:default}
+        .stlib-rep-done{font-size:13px;color:#4ade80;font-weight:600}
       </style>
       <div class="wnd-body" style="overflow:hidden;position:relative">
         <div class="stlib-root">
@@ -5603,7 +5615,7 @@ const OS={
     const lastPlayed=entry&&entry.lastPlayed?new Date(entry.lastPlayed).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
     const banner=this._bannerImg(app)||`https://www.google.com/s2/favicons?sz=256&domain=${app.url}`;
     const iconImg=app.icon||`https://www.google.com/s2/favicons?sz=128&domain=${app.url}`;
-    const note=this._getGameNote(app.url);
+    const note=this._getGameNote(app);
     // NEVER match pin status by url alone — raw-HTML games all share the
     // placeholder url '__rawhtml__', which previously made pinning ANY one
     // of them show every other raw-HTML game as pinned too. Match by name
@@ -5648,6 +5660,14 @@ const OS={
           <div class="stlib-detail-notes-text" id="stlibDetailNote_${wid}" contenteditable="true" data-ph="Click to add a note…">${note?note.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}</div>
           <div class="stlib-detail-notes-stat" id="stlibDetailNoteStat_${wid}">Saved</div>
         </div>
+        ${isGameCat&&!app.notAvailable?`<div class="stlib-detail-report">
+          <button class="stlib-rep-btn" id="stlibRepBtn_${wid}" onclick="OS.stlibToggleReport('${wid}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Report game as broken (not loading)</button>
+          <div class="stlib-rep-box" id="stlibRepBox_${wid}" style="display:none">
+            <div class="stlib-rep-q">Briefly describe what's going wrong</div>
+            <textarea class="stlib-rep-ta" id="stlibRepTa_${wid}" maxlength="500" placeholder="e.g. Stuck on a black screen after I press Launch…"></textarea>
+            <div class="stlib-rep-row"><span class="stlib-rep-msg" id="stlibRepMsg_${wid}"></span><button class="stlib-rep-cancel" onclick="OS.stlibToggleReport('${wid}')">Cancel</button><button class="stlib-rep-send" id="stlibRepSend_${wid}" onclick="OS.stlibSendReport('${wid}',${JSON.stringify(app.name).replace(/"/g,'&quot;')})">Send report</button></div>
+          </div>
+        </div>`:''}
       </div>`;
     ov.classList.add('open');
 
@@ -5672,7 +5692,7 @@ const OS={
         saveTimer=setTimeout(()=>{
           const notes=this._loadGameNotes();
           const val=noteEl.innerText.trim();
-          if(val)notes[app.url]=val;else delete notes[app.url];
+          const _nk='name:'+app.name;if(val)notes[_nk]=val;else delete notes[_nk];
           localStorage.setItem('novos_gamenotes',JSON.stringify(notes));
           if(statEl)statEl.textContent='Saved';
         },500);
@@ -5691,6 +5711,48 @@ const OS={
           <div><div class="stlib-lm-title">Launch Mode</div><div class="stlib-lm-sub">${tab?'Opens in a new browser tab.':'Opens inside NovOS.'}${changed?' (changed from default)':''}</div></div>
           <div class="stlib-lm-seg">${btn('window','Inside NovOS')}${btn('tab','New Browser Tab')}</div>
         </div>`;
+  },
+
+  stlibToggleReport(wid){
+    const box=document.getElementById('stlibRepBox_'+wid),btn=document.getElementById('stlibRepBtn_'+wid);
+    if(!box)return;
+    const open=box.style.display==='none';
+    box.style.display=open?'block':'none';
+    if(btn)btn.style.display=open?'none':'flex';
+    if(open){const ta=document.getElementById('stlibRepTa_'+wid);if(ta)ta.focus();}
+  },
+  // "Report game as broken": files a normal Forms bug report (kind 'bug', type 'Game bug') so it shows up in
+  // Forms > Responses > Bugs for the admin, tagged with the game name.
+  async stlibSendReport(wid,gameName){
+    const ta=document.getElementById('stlibRepTa_'+wid),msg=document.getElementById('stlibRepMsg_'+wid),
+          send=document.getElementById('stlibRepSend_'+wid),box=document.getElementById('stlibRepBox_'+wid);
+    if(!ta||!msg||!send)return;
+    const say=(t,bad)=>{msg.textContent=t;msg.style.color=bad?'#f87171':'#9aa0ab';};
+    const text=(ta.value||'').trim();
+    if(!text){say('Please describe what is going wrong.',true);return;}
+    this._brokenSent=this._brokenSent||{};
+    if(this._brokenSent[gameName]&&Date.now()-this._brokenSent[gameName]<300000){say('You already reported this game a moment ago.',true);return;}
+    send.disabled=true;say('Sending…');
+    try{
+      const sb=await FORMS._db();if(!sb)throw new Error('Cannot reach the server.');
+      const s=await sb.auth.getSession(),uid=s.data&&s.data.session&&s.data.session.user.id;
+      if(!uid)throw new Error('Sign in to NovOS to send a report.');
+      const sc=(this.shortcuts.games||[]).find(g=>g.name===gameName)||{name:gameName};
+      const answers={
+        'What type of bug did u encounter':'Game bug',
+        'Game':gameName,
+        'Problem':'Not loading',
+        'Launch mode':OS._tabPref(gameName,sc._openInNewBlobTab)?'New browser tab':'Inside NovOS',
+        'What happened?':text
+      };
+      const r=await sb.from('submissions').insert({kind:'bug',user_id:uid,answers});
+      if(r.error)throw new Error(r.error.message);
+      this._brokenSent[gameName]=Date.now();
+      if(box){box.innerHTML='<div class="stlib-rep-done">✓ Report sent. Thank you!</div>';}
+      try{OS.notify('Report sent','Thanks! '+gameName+' was reported as broken.');}catch(e){}
+    }catch(e){
+      send.disabled=false;say(e&&e.message||'Something went wrong. Try again.',true);
+    }
   },
 
   stlibSetLaunchMode(wid,app,mode){
@@ -5905,7 +5967,14 @@ const OS={
 
   _gameNotes:null,
   _loadGameNotes(){if(!this._gameNotes){try{this._gameNotes=JSON.parse(localStorage.getItem('novos_gamenotes')||'{}');}catch{this._gameNotes={};}}return this._gameNotes;},
-  _getGameNote(url){return this._loadGameNotes()[url]||'';},
+  // Notes are keyed by the game's NAME. They used to be keyed by app.url, which is the same placeholder
+  // ('__rawhtml__') for every raw-HTML game, so one note showed up on all of them.
+  _getGameNote(app){
+    const n=this._loadGameNotes(),k='name:'+app.name;
+    if(k in n)return n[k]||'';
+    if(app.url&&!app.url.startsWith('__')&&n[app.url])return n[app.url];   // older note on a real-URL app
+    return '';
+  },
 
   removeShortcut(app){
     if(!app.isDefault){
@@ -7073,7 +7142,7 @@ const VIEWERS={
   //     autoplay, pointer-lock, ...) — cross-origin frames get NONE by default, which is
   //     exactly what blocks gamepad inside a game that nests its own player frame.
   _GAME_ALLOW:'fullscreen; autoplay; clipboard-read; clipboard-write; pointer-lock; gamepad; microphone; camera; midi; accelerometer; gyroscope; encrypted-media; display-capture',
-  _patchGameSrc(src){
+  _patchGameSrc(src,lite){
     if(typeof src!=='string'||!src)return src;
     const ALLOW=VIEWERS._GAME_ALLOW;
     // Static <iframe ...> tags in the source: add/extend allow="" before they ever load.
@@ -7083,6 +7152,12 @@ const VIEWERS={
       return '<iframe allow="'+ALLOW+'"'+attrs+'>';
     });
     const prelude=function(ALLOW){
+      try{
+        var __n=0,__rep=function(m){try{if(__n++<3)window.parent.postMessage({__novos_gerr:1,m:String(m).slice(0,300)},'*');}catch(_){}};
+        window.addEventListener('error',function(e){__rep((e&&e.message)||(e&&e.error)||'error');});
+        window.addEventListener('unhandledrejection',function(e){var r=e&&e.reason;__rep((r&&r.message)||r||'Unhandled promise rejection');});
+        var ce0=console.error;console.error=function(){try{__rep(Array.prototype.slice.call(arguments).join(' '));}catch(_){}return ce0.apply(this,arguments);};
+      }catch(e){}
       try{
         var NP=window.Navigator&&Navigator.prototype,og=NP&&NP.getGamepads;
         if(og){Object.defineProperty(NP,'getGamepads',{configurable:true,writable:true,value:function(){try{return og.apply(this,arguments);}catch(e){return [];}}});}
@@ -7240,12 +7315,17 @@ const VIEWERS={
     // Split-part Unity builds (gn-math style) merge ~690MB into one Blob before Unity even starts: rename their
     // mergeFiles so the shim's streaming version takes over, and give merged blobs a proper MIME type.
     let _partStream=false;
-    if(/async\s+function\s+mergeFiles\s*\(/.test(out)&&/getParts\s*\(/.test(out)){
+    // Old-style UnityLoader.js builds (Granny etc.) read their data with XMLHttpRequest, which cannot read the fake streamed key blob (-> "offset is outside the bounds of the DataView"). They run fine unpatched in a real tab, so leave them completely alone.
+    const _oldUL=/UnityLoader/.test(src)&&!/createUnityInstance/.test(src);
+    if(!lite&&!_oldUL&&/async\s+function\s+mergeFiles\s*\(/.test(out)&&/getParts\s*\(/.test(out)){
       _partStream=true;
+      // Each game names mergeFiles' parameter differently (Hollow Knight: parts). Read the real name instead of assuming one.
+      const _mp=/async\s+function\s+mergeFiles\s*\(\s*([A-Za-z_$][\w$]*)/.exec(out);
+      const _pn=_mp?_mp[1]:null;
       out=out.replace(/async\s+function\s+mergeFiles\s*\(/,'async function __novosOrigMergeFiles(');
-      out=out.replace(/new Blob\(buffers\)/,"new Blob(buffers,{type:/wasm/i.test(String(parts[0]))?'application/wasm':'application/octet-stream'})");
+      out=out.replace(/new Blob\(buffers\)/,()=>_pn?"new Blob(buffers,{type:/wasm/i.test(String(typeof "+_pn+"!=='undefined'&&"+_pn+"&&"+_pn+"[0]||''))?'application/wasm':'application/octet-stream'})":'new Blob(buffers)');
     }
-    const _isUnity=/createUnityInstance|UnityLoader|\.loader\.js|\.framework\.js|\.wasm\b/i.test(src);
+    const _isUnity=!lite&&!_oldUL&&/createUnityInstance|UnityLoader|\.loader\.js|\.framework\.js|\.wasm\b/i.test(src);
     // Without a doctype the written document renders in Quirks Mode, which breaks Unity's canvas sizing.
     if(_isUnity&&!/^\s*(<!--[\s\S]*?-->\s*)*<!doctype/i.test(out))out='<!DOCTYPE html>'+out;
     const tag='<script>('+prelude.toString()+')('+JSON.stringify(ALLOW)+');<'+'/script>'
@@ -7258,32 +7338,60 @@ const VIEWERS={
     return out;
   },
 
+  _errHookOn:false,
+  _hookErrors(){
+    if(this._errHookOn)return;this._errHookOn=true;
+    window.addEventListener('message',ev=>{
+      const d=ev.data;if(!d||!d.__novos_gerr)return;
+      for(const id in WM.windows){
+        const w=WM.windows[id];if(!w||!w.app||!w.app._htmlSource)continue;
+        const f=document.getElementById('hvFrm_'+id);
+        if(!f||f.contentWindow!==ev.source)continue;
+        const m=String(d.m||'');
+        if(/ResizeObserver|^Script error\.?$/i.test(m))return;
+        (w.app._errLog=w.app._errLog||[]).push(m);
+        if(!w.app._errShown&&Date.now()-(w.app._t0||0)<20000){
+          w.app._errShown=1;
+          OS.notify(w.app.name+' reported an error',m.slice(0,160));
+        }
+        return;
+      }
+    });
+  },
   reinject(id){
+    VIEWERS._hookErrors();
     const w=WM.windows[id];
     if(!w||!w.app||!w.app._htmlSource)return;
-    const frm=document.getElementById('hvFrm_'+id);
+    let frm=document.getElementById('hvFrm_'+id);
     if(!frm)return;
-    const write=()=>{
+    // document.open() does NOT create a new Window: the old game's timers, requestAnimationFrame loops,
+    // WebGL context, audio and globals all keep running underneath the rewritten page, which is why a
+    // refresh froze on the first frame. A refresh therefore swaps in a brand-new iframe (a fresh Window).
+    const write=(f)=>{
+      if(f.__novosWrote)return;f.__novosWrote=true;
       try{
-        const doc=frm.contentDocument||(frm.contentWindow&&frm.contentWindow.document);
+        const doc=f.contentDocument||(f.contentWindow&&f.contentWindow.document);
         if(!doc)return;
         const _src=VIEWERS._patchGameSrc(w.app._htmlSource);
+        w.app._t0=Date.now();w.app._errShown=0;
         // Same path as a real new about:blank tab: write the full document so the
         // browser parses, orders and runs every script itself. The hand-rebuilt
         // _deferLoad path is only a last-resort fallback if the write throws.
         try{doc.open();doc.write(_src);doc.close();}
-        catch(_we){VIEWERS._deferLoad(frm,_src);}
+        catch(_we){VIEWERS._deferLoad(f,_src);}
         // Games size their canvas from the window at startup; tell them the real size once the
         // window has settled (a new tab is already full-size by the time the game starts).
-        [150,700,1800].forEach(t=>setTimeout(()=>{try{frm.contentWindow.dispatchEvent(new Event('resize'));}catch(_){}},t));
+        [150,700,1800].forEach(t=>setTimeout(()=>{try{f.contentWindow.dispatchEvent(new Event('resize'));}catch(_){}},t));
         // Inject the key relay after parsing settles, and again shortly after
         // in case the game rewrites its own document during startup.
-        const inject=()=>{if(WM._onIframeLoad)WM._onIframeLoad(frm);};
+        const inject=()=>{if(WM._onIframeLoad)WM._onIframeLoad(f);};
         setTimeout(inject,0);
         setTimeout(inject,400);
+        // An about:blank iframe can finish its own initial load AFTER our document.write and wipe it (black screen). If the frame is empty shortly after, write once more.
+        setTimeout(()=>{try{const d=f.contentDocument;if(!d||!d.body||!d.body.children.length){d.open();d.write(_src);d.close();setTimeout(inject,0);}}catch(_){}},700);
         // Same-origin fallback: listen for the hotkey directly on the frame.
         try{
-          const fw=frm.contentWindow;
+          const fw=f.contentWindow;
           if(fw){
             if(fw.__novosKeyFn)fw.removeEventListener('keydown',fw.__novosKeyFn,true);
             fw.__novosKeyFn=ev=>{if(typeof NOVOVERLAY!=='undefined')NOVOVERLAY.handleGlobalKey(ev);};
@@ -7292,8 +7400,15 @@ const VIEWERS={
         }catch(_){}
       }catch(e){}
     };
-    if(frm.contentDocument)write();
-    else frm.addEventListener('load',write,{once:true});
+    if(frm.__novosWrote){
+      const nf=frm.cloneNode(false);   // same id, sandbox, allow, size
+      nf.addEventListener('load',()=>write(nf),{once:true});   // attached BEFORE insertion: Chrome fires about:blank load synchronously
+      frm.replaceWith(nf);
+      setTimeout(()=>write(nf),300);   // Firefox / cases where no load event arrives
+      return;
+    }
+    if(frm.contentDocument)write(frm);
+    else frm.addEventListener('load',()=>write(frm),{once:true});
   },
 
   _deferLoad(frm,html,done){
